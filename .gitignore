@@ -1,0 +1,23 @@
+# Salida generada por Quarto
+_site/
+.quarto/
+
+# Cache de ejecucion de Python en Quarto
+__pycache__/
+*.pyc
+.jupyter_cache/
+
+# Entornos virtuales de Python
+.venv/
+venv/
+env/
+
+# Archivos de datos grandes (usar Git LFS si es necesario)
+data/*.fits
+data/*.fits.gz
+
+# macOS
+.DS_Store
+
+/.quarto/
+**/*.quarto_ipynb

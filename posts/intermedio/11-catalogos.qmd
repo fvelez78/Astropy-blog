@@ -1,0 +1,16 @@
+---
+title: "11 - Consultas a catalogos en linea"
+description: "Proximo modulo en preparacion"
+categories: [intermedio]
+toc: true
+execute:
+  echo: true
+  warning: false
+---
+
+<span class="badge-intermedio">Intermedio</span>
+
+::: {.callout-warning}
+## Modulo en construccion
+Este modulo esta siendo preparado. Vuelve pronto.
+:::

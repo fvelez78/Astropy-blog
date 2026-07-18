@@ -1,0 +1,24 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# requirements.txt
+# Dependencias del blog de Astropy en Español
+#
+# Instalacion:
+#   pip install -r requirements.txt
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ── Modulos basicos (01 al 05) ────────────────────────────────────────────────
+astropy>=6.0             # Libreria central: unidades, tiempo, coordenadas, FITS
+numpy>=1.26              # Algebra numerica (base de Astropy)
+matplotlib>=3.8          # Graficas y visualizacion
+
+# ── Modulos intermedios (06 al 11) ───────────────────────────────────────────
+photutils>=1.11          # Fotometria de apertura sobre imagenes astronomicas
+astroquery>=0.4.7        # Consultas a catalogos: Simbad, VizieR, NED
+
+# ── Modulos avanzados (12 al 17) ─────────────────────────────────────────────
+specutils>=1.13          # Manejo de espectros 1D y 2D
+
+# ── Soporte general ───────────────────────────────────────────────────────────
+scipy>=1.12              # Estadistica avanzada y ajuste de modelos
+pandas>=2.1              # Tablas complementarias
+ipykernel                # Kernel de Jupyter (necesario para ejecutar en Quarto)

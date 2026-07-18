@@ -1,0 +1,19 @@
+---
+title: "Sobre este blog"
+toc: false
+---
+
+Este blog nacio con un objetivo claro: hacer accesible la astronomia computacional
+a hispanohablantes con conocimientos basicos de Python.
+
+**Que necesitas para seguirlo?**
+
+- Python instalado (3.10 o superior recomendado)
+- Saber que es una variable, una lista y una funcion
+- Curiosidad astronomica
+
+**Herramientas utilizadas:**
+
+- [Astropy](https://www.astropy.org) — libreria central del blog
+- [Quarto](https://quarto.org) — generacion del sitio
+- [Jupyter](https://jupyter.org) — entorno de desarrollo interactivo

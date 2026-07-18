@@ -1,0 +1,459 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "18666883",
+   "metadata": {},
+   "source": [
+    "---\n",
+    "title: \"01 · ¿Qué es Astropy y por qué usarlo?\"\n",
+    "description: \"Instalación, ecosistema y tu primer script astronómico con Python\"\n",
+    "author: \"Blog AstroPy en Español\"\n",
+    "date: \"2025-05-25\"\n",
+    "categories: [basico]\n",
+    "toc: true\n",
+    "toc-depth: 3\n",
+    "number-sections: true\n",
+    "execute:\n",
+    "  echo: true\n",
+    "  warning: false\n",
+    "  message: false\n",
+    "---\n",
+    "\n",
+    "<span class=\"badge-basico\">🌱 Básico</span>\n",
+    "\n",
+    "## ¿Qué es Astropy?\n",
+    "\n",
+    "**Astropy** es una librería de Python creada por la comunidad astronómica\n",
+    "para facilitar el trabajo con datos del universo. Piensa en ella como una\n",
+    "caja de herramientas especializada: así como `pandas` sirve para tablas de\n",
+    "datos y `matplotlib` para gráficas, Astropy sirve para todo lo que tenga\n",
+    "que ver con astronomía.\n",
+    "\n",
+    "¿Qué problemas resuelve Astropy en la práctica?\n",
+    "\n",
+    "- Convertir entre sistemas de coordenadas celestes (¿dónde está esa galaxia\n",
+    "  en el cielo?)\n",
+    "- Manejar tiempos astronómicos (¿cuándo ocurrió ese eclipse exactamente?)\n",
+    "- Abrir archivos de imágenes astronómicas en formato FITS\n",
+    "- Trabajar con unidades físicas sin cometer errores de conversión\n",
+    "\n",
+    "::: {.callout-note}\n",
+    "## ¿Para quién es este blog?\n",
+    "Este blog asume que sabes lo básico de Python: variables, listas,\n",
+    "funciones e importar librerías con `import`. No necesitas saber\n",
+    "física avanzada — iremos explicando los conceptos astronómicos a\n",
+    "medida que los necesitemos.\n",
+    ":::\n",
+    "\n",
+    "---\n",
+    "\n",
+    "## El ecosistema de Astropy\n",
+    "\n",
+    "Astropy no está sola. Es el núcleo de un ecosistema más grande de\n",
+    "librerías que se especializan en tareas concretas:\n",
+    "\n",
+    "| Librería | ¿Para qué sirve? | ¿Cuándo la usaremos? |\n",
+    "|---|---|---|\n",
+    "| `astropy` | Núcleo: unidades, tiempo, coordenadas, FITS | Desde el módulo 01 |\n",
+    "| `photutils` | Fotometría (medir el brillo de estrellas) | Módulo 08 |\n",
+    "| `astroquery` | Consultar catálogos en línea (Simbad, NED) | Módulo 11 |\n",
+    "| `specutils` | Analizar espectros de luz | Módulo 12 |\n",
+    "\n",
+    "En este primer módulo nos enfocamos solo en el núcleo: `astropy`.\n",
+    "\n",
+    "---\n",
+    "\n",
+    "## Instalación\n",
+    "\n",
+    "Abre una terminal y ejecuta **uno** de estos comandos según cómo gestionas\n",
+    "tus paquetes de Python:\n",
+    "\n",
+    "```bash\n",
+    "# Opción A: usando pip (el más común)\n",
+    "pip install astropy\n",
+    "\n",
+    "# Opción B: usando conda (si usas Anaconda o Miniconda)\n",
+    "conda install -c conda-forge astropy\n",
+    "```\n",
+    "\n",
+    "Para verificar que la instalación fue exitosa:\n",
+    "\n",
+    "```bash\n",
+    "python -c \"import astropy; print(astropy.__version__)\"\n",
+    "```\n",
+    "\n",
+    "Deberías ver algo como `6.x.x`. Si ves un número, ¡estás listo!\n",
+    "\n",
+    "---\n",
+    "\n",
+    "## Tu primer script con Astropy\n",
+    "\n",
+    "Vamos a escribir nuestro primer código. No te preocupes si no entiendes\n",
+    "todo todavía — los módulos siguientes explican cada cosa en detalle.\n",
+    "El objetivo aquí es ver qué *se puede hacer* con Astropy.\n",
+    "\n",
+    "### Verificar la instalación desde Python"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "248664be",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Versión de Astropy instalada: 7.2.0\n"
+     ]
+    }
+   ],
+   "source": [
+    "# ─────────────────────────────────────────────────────────────────────────────\n",
+    "# Verificamos que Astropy está correctamente instalada\n",
+    "# ─────────────────────────────────────────────────────────────────────────────\n",
+    "\n",
+    "# Importamos el módulo principal de Astropy\n",
+    "import astropy\n",
+    "\n",
+    "# Imprimimos la versión instalada para confirmar que todo funciona\n",
+    "print(\"Versión de Astropy instalada:\", astropy.__version__)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "70d125f8",
+   "metadata": {},
+   "source": [
+    "### Unidades físicas: adiós a los errores de conversión\n",
+    "\n",
+    "Uno de los problemas más frecuentes en ciencia es confundir unidades.\n",
+    "En 1999 la NASA perdió una sonda espacial de 327 millones de dólares por\n",
+    "un error de conversión entre libras-fuerza y newtons. Astropy resuelve\n",
+    "esto de raíz:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "546f10ab",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Distancia Tierra-Sol:\n",
+      "  En unidades astronómicas : 1.0 AU\n",
+      "  En kilómetros            : 1.50e+08 km\n"
+     ]
+    }
+   ],
+   "source": [
+    "# ─────────────────────────────────────────────────────────────────────────────\n",
+    "# Ejemplo de unidades físicas con Astropy\n",
+    "# Las unidades viajan junto al número — imposible confundirlas\n",
+    "# ─────────────────────────────────────────────────────────────────────────────\n",
+    "\n",
+    "# Importamos el submódulo de unidades\n",
+    "import astropy.units as u\n",
+    "\n",
+    "# Definimos la distancia de la Tierra al Sol\n",
+    "# El número 1 seguido de * u.au significa \"1 unidad astronómica\"\n",
+    "# 1 UA = distancia media Tierra-Sol ≈ 150 millones de km\n",
+    "distancia_tierra_sol = 1 * u.au\n",
+    "\n",
+    "# Convertimos automáticamente a kilómetros con el método .to()\n",
+    "# Astropy conoce la equivalencia entre UA y km\n",
+    "distancia_en_km = distancia_tierra_sol.to(u.km)\n",
+    "\n",
+    "# Mostramos ambos valores — Astropy siempre muestra el número y la unidad\n",
+    "print(\"Distancia Tierra-Sol:\")\n",
+    "print(f\"  En unidades astronómicas : {distancia_tierra_sol}\")\n",
+    "print(f\"  En kilómetros            : {distancia_en_km:.2e}\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "16375edb",
+   "metadata": {},
+   "source": [
+    "### Coordenadas celestes: ubicar un objeto en el cielo"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "id": "2a70a7a0",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Nebulosa de Orión (M42):\n",
+      "  Ascensión recta  : 5h35m17.304s\n",
+      "  Declinación      : -5d23m27.96s\n"
+     ]
+    }
+   ],
+   "source": [
+    "# ─────────────────────────────────────────────────────────────────────────────\n",
+    "# Ejemplo de coordenadas celestes\n",
+    "# SkyCoord es la clase que representa una posición en el cielo\n",
+    "# ─────────────────────────────────────────────────────────────────────────────\n",
+    "\n",
+    "# Importamos SkyCoord para manejar posiciones en el cielo\n",
+    "from astropy.coordinates import SkyCoord\n",
+    "\n",
+    "# Importamos units para acompañar los ángulos con su unidad\n",
+    "import astropy.units as u\n",
+    "\n",
+    "# Creamos la posición de la famosa nebulosa de Orión (M42)\n",
+    "# ra  = ascensión recta  (equivale a la \"longitud\" en el cielo)\n",
+    "# dec = declinación      (equivale a la \"latitud\" en el cielo)\n",
+    "# frame='icrs' es el sistema de referencia astronómico estándar\n",
+    "nebulosa_orion = SkyCoord(\n",
+    "    ra=83.8221 * u.degree,   # posición horizontal en el cielo\n",
+    "    dec=-5.3911 * u.degree,  # posición vertical en el cielo\n",
+    "    frame='icrs'             # sistema de coordenadas estándar\n",
+    ")\n",
+    "\n",
+    "# Mostramos la posición en formato clásico de astronomía (horas:minutos:segundos)\n",
+    "print(\"Nebulosa de Orión (M42):\")\n",
+    "print(f\"  Ascensión recta  : {nebulosa_orion.ra.to_string(unit=u.hour)}\")\n",
+    "print(f\"  Declinación      : {nebulosa_orion.dec.to_string()}\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "1752b3dd",
+   "metadata": {},
+   "source": [
+    "### Tiempo astronómico: más preciso que un reloj normal"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "id": "d0117580",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Lanzamiento del telescopio James Webb:\n",
+      "  Fecha normal    : 2021-12-25 12:20:00.000\n",
+      "  Fecha Juliana   : 2459574.0139 días\n",
+      "  Días en órbita  : 1612 d\n"
+     ]
+    }
+   ],
+   "source": [
+    "# ─────────────────────────────────────────────────────────────────────────────\n",
+    "# Ejemplo de tiempo astronómico\n",
+    "# En astronomía necesitamos precisión de microsegundos y formatos especiales\n",
+    "# ─────────────────────────────────────────────────────────────────────────────\n",
+    "\n",
+    "# Importamos la clase Time para manejar tiempos astronómicos\n",
+    "from astropy.time import Time\n",
+    "\n",
+    "# Creamos un objeto de tiempo con la fecha del lanzamiento del telescopio\n",
+    "# espacial James Webb (25 de diciembre de 2021)\n",
+    "# format='iso' indica que el texto está en formato AAAA-MM-DD HH:MM:SS\n",
+    "lanzamiento_webb = Time('2021-12-25 12:20:00', format='iso', scale='utc')\n",
+    "\n",
+    "# Convertimos a Fecha Juliana — el sistema de fechas que usan los astrónomos\n",
+    "# cuenta los días desde el 1 de enero del año 4713 a.C.\n",
+    "print(\"Lanzamiento del telescopio James Webb:\")\n",
+    "print(f\"  Fecha normal    : {lanzamiento_webb.iso}\")\n",
+    "print(f\"  Fecha Juliana   : {lanzamiento_webb.jd:.4f} días\")\n",
+    "\n",
+    "# Calculamos cuántos días han pasado desde el lanzamiento hasta hoy\n",
+    "ahora = Time.now()                          # tiempo actual del sistema\n",
+    "dias_transcurridos = (ahora - lanzamiento_webb).to(u.day)\n",
+    "\n",
+    "print(f\"  Días en órbita  : {dias_transcurridos:.0f}\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "09462b6a",
+   "metadata": {},
+   "source": [
+    "### Constantes físicas: siempre disponibles y con unidades"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "id": "ea98f036",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Constantes físicas incluidas en Astropy:\n",
+      "  Velocidad de la luz  : 2.9979e+08 m / s\n",
+      "  Masa del Sol         : 1.9884e+30 kg\n",
+      "  Radio de la Tierra   : 6.3781e+06 m\n",
+      "  Constante gravitacional: 6.6743e-11 m3 / (kg s2)\n",
+      "\n",
+      "Tiempo que tarda la luz Sol → Tierra: 8.32 min\n"
+     ]
+    }
+   ],
+   "source": [
+    "# ─────────────────────────────────────────────────────────────────────────────\n",
+    "# Constantes físicas y astronómicas incluidas en Astropy\n",
+    "# No necesitas buscarlas en Wikipedia ni copiar números a mano\n",
+    "# ─────────────────────────────────────────────────────────────────────────────\n",
+    "\n",
+    "# Importamos el módulo de constantes físicas\n",
+    "from astropy import constants as const\n",
+    "\n",
+    "# El módulo de cosmología (que veremos más adelante) tiene constantes adicionales\n",
+    "# como H0 (constante de Hubble). Por ahora usamos las del módulo constants:\n",
+    "print(\"Constantes físicas incluidas en Astropy:\")\n",
+    "print(f\"  Velocidad de la luz  : {const.c:.4e}\")   # c\n",
+    "print(f\"  Masa del Sol         : {const.M_sun:.4e}\")  # M☉\n",
+    "print(f\"  Radio de la Tierra   : {const.R_earth:.4e}\")  # R⊕\n",
+    "print(f\"  Constante gravitacional: {const.G:.4e}\")  # G\n",
+    "\n",
+    "# Ejemplo: calculamos cuánto tarda la luz en llegar del Sol a la Tierra\n",
+    "# Física básica: tiempo = distancia / velocidad\n",
+    "distancia_sol = 1 * u.au             # distancia en unidades astronómicas\n",
+    "velocidad_luz = const.c              # velocidad de la luz\n",
+    "\n",
+    "# El método .to() convierte el resultado a minutos\n",
+    "tiempo_luz = (distancia_sol / velocidad_luz).to(u.minute)\n",
+    "print(f\"\\nTiempo que tarda la luz Sol → Tierra: {tiempo_luz:.2f}\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "faa3a2c7",
+   "metadata": {},
+   "source": [
+    "---\n",
+    "\n",
+    "## Resumen: ¿qué acabas de ver?\n",
+    "\n",
+    "En este primer contacto con Astropy usamos cuatro de sus herramientas principales:\n",
+    "\n",
+    "| Herramienta | Módulo | Lo que hace |\n",
+    "|---|---|---|\n",
+    "| Unidades | `astropy.units` | Adjunta unidades a los números |\n",
+    "| Coordenadas | `astropy.coordinates` | Ubica objetos en el cielo |\n",
+    "| Tiempo | `astropy.time` | Maneja fechas astronómicas |\n",
+    "| Constantes | `astropy.constants` | Provee constantes físicas oficiales |\n",
+    "\n",
+    "Cada una de estas herramientas tiene su propio módulo en este blog. Por ahora,\n",
+    "lo importante es que viste cómo Astropy convierte operaciones complejas\n",
+    "(convertir unidades, manejar coordenadas, calcular tiempos) en pocas\n",
+    "líneas de código legible.\n",
+    "\n",
+    "---\n",
+    "\n",
+    "## Ejercicio\n",
+    "\n",
+    "Usando lo que viste en este módulo, calcula cuánto tiempo tarda la luz\n",
+    "en llegar desde Neptuno hasta la Tierra. La distancia media de Neptuno\n",
+    "al Sol es de **30.07 UA**.\n",
+    "\n",
+    "::: {.callout-tip collapse=\"true\"}\n",
+    "## Ver solución"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "id": "0c06bfc6",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Distancia Neptuno - Tierra : 29.07 AU\n",
+      "Tiempo de viaje de la luz  : 241.8 min\n",
+      "                           : 4.03 h\n"
+     ]
+    }
+   ],
+   "source": [
+    "# ─────────────────────────────────────────────────────────────────────────────\n",
+    "# SOLUCIÓN: tiempo que tarda la luz de Neptuno en llegar a la Tierra\n",
+    "# ─────────────────────────────────────────────────────────────────────────────\n",
+    "\n",
+    "from astropy import constants as const\n",
+    "import astropy.units as u\n",
+    "\n",
+    "# Distancia de Neptuno al Sol (dato del enunciado)\n",
+    "distancia_neptuno_sol = 30.07 * u.au\n",
+    "\n",
+    "# Distancia de la Tierra al Sol (1 UA por definición)\n",
+    "distancia_tierra_sol = 1.0 * u.au\n",
+    "\n",
+    "# Distancia aproximada Neptuno → Tierra\n",
+    "# (usamos la diferencia — ambos en el mismo lado del Sol en promedio)\n",
+    "distancia_neptuno_tierra = distancia_neptuno_sol - distancia_tierra_sol\n",
+    "\n",
+    "# Calculamos el tiempo usando tiempo = distancia / velocidad\n",
+    "# .to(u.minute) convierte el resultado a minutos automáticamente\n",
+    "tiempo = (distancia_neptuno_tierra / const.c).to(u.minute)\n",
+    "\n",
+    "print(f\"Distancia Neptuno - Tierra : {distancia_neptuno_tierra:.2f}\")\n",
+    "print(f\"Tiempo de viaje de la luz  : {tiempo:.1f}\")\n",
+    "print(f\"                           : {tiempo.to(u.hour):.2f}\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "5d17d815",
+   "metadata": {},
+   "source": [
+    ":::\n",
+    "\n",
+    "---\n",
+    "\n",
+    "## ¿Qué aprendiste en este módulo? {.seccion-aprendiste}\n",
+    "\n",
+    "- ✅ Qué es Astropy y para qué sirve en la práctica\n",
+    "- ✅ Cómo instalarla con `pip` o `conda`\n",
+    "- ✅ Cómo usar unidades físicas para evitar errores de conversión\n",
+    "- ✅ Cómo representar posiciones en el cielo con `SkyCoord`\n",
+    "- ✅ Cómo manejar fechas astronómicas con `Time`\n",
+    "- ✅ Cómo acceder a constantes físicas con `astropy.constants`\n",
+    "\n",
+    "**Siguiente módulo →** [02 · Unidades y constantes físicas](02-unidades.qmd)"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3",
+   "path": "C:\\Users\\PC_FAVR\\AppData\\Roaming\\Python\\share\\jupyter\\kernels\\python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.12.10"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

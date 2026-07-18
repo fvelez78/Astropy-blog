@@ -1,0 +1,16 @@
+---
+title: "05 - Tablas astronomicas con astropy.tablebasico"
+description: "Proximo modulo en preparacion"
+categories: [Basico]
+toc: true
+execute:
+  echo: true
+  warning: false
+---
+
+<span class="badge-Basico"></span>
+
+::: {.callout-warning}
+## Modulo en construccion
+Este modulo esta siendo preparado. Vuelve pronto.
+:::

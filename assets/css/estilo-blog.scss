@@ -1,0 +1,86 @@
+/*-- scss:defaults --*/
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Variables base del blog
+// Quarto las usa para sobreescribir los valores del tema (cosmo / darkly)
+// ─────────────────────────────────────────────────────────────────────────────
+
+// Tipografía
+$font-family-sans-serif: 'Inter', 'Segoe UI', system-ui, sans-serif;
+$headings-font-weight:   600;
+
+// Colores de acento por nivel de dificultad
+$color-basico:    #1D9E75;   // teal   — nivel básico
+$color-inter:     #378ADD;   // azul   — nivel intermedio
+$color-avanzado:  #7F77DD;   // morado — nivel avanzado
+
+/*-- scss:rules --*/
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Badges de nivel (aparecen al inicio de cada módulo)
+// Uso en el .qmd:  <span class="badge-basico">🌱 Básico</span>
+// ─────────────────────────────────────────────────────────────────────────────
+
+.badge-basico {
+  background-color: $color-basico;
+  color: white;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 0.78em;
+}
+
+.badge-inter {
+  background-color: $color-inter;
+  color: white;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 0.78em;
+}
+
+.badge-avanzado {
+  background-color: $color-avanzado;
+  color: white;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 0.78em;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Bloques callout con los colores del blog
+// ─────────────────────────────────────────────────────────────────────────────
+
+.callout-tip     { border-left-color: $color-basico   !important; }
+.callout-note    { border-left-color: $color-inter    !important; }
+.callout-warning { border-left-color: $color-avanzado !important; }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Código: fuente monoespaciada más cómoda para leer
+// ─────────────────────────────────────────────────────────────────────────────
+
+code, pre {
+  font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+  font-size: 0.88em;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Tabla de contenidos lateral
+// ─────────────────────────────────────────────────────────────────────────────
+
+#TOC {
+  border-left: 2px solid rgba(0, 0, 0, 0.08);
+  padding-left: 1rem;
+  font-size: 0.88em;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Sección de cierre "¿Qué aprendiste?"
+// Uso en el .qmd:  ## Título {.seccion-aprendiste}
+// ─────────────────────────────────────────────────────────────────────────────
+
+.seccion-aprendiste {
+  background: rgba(29, 158, 117, 0.08);
+  border-left: 3px solid $color-basico;
+  border-radius: 0 6px 6px 0;
+  padding: 1rem 1.2rem;
+  margin-top: 2rem;
+}

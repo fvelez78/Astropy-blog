@@ -1,0 +1,16 @@
+---
+title: "04 - Coordenadas celestes con SkyCoord"
+description: "Proximo modulo en preparacion"
+categories: [basico]
+toc: true
+execute:
+  echo: true
+  warning: false
+---
+
+<span class="badge-basico">Basico</span>
+
+::: {.callout-warning}
+## Modulo en construccion
+Este modulo esta siendo preparado. Vuelve pronto.
+:::

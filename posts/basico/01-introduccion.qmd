@@ -1,0 +1,290 @@
+---
+title: "01 · ¿Qué es Astropy y por qué usarlo?"
+description: "Instalación, ecosistema y tu primer script astronómico con Python"
+author: "Blog AstroPy en Español"
+date: "2025-05-25"
+categories: [basico]
+toc: true
+toc-depth: 3
+number-sections: true
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+<span class="badge-basico">🌱 Básico</span>
+
+## ¿Qué es Astropy?
+
+**Astropy** es una librería de Python creada por la comunidad astronómica
+para facilitar el trabajo con datos del universo. Piensa en ella como una
+caja de herramientas especializada: así como `pandas` sirve para tablas de
+datos y `matplotlib` para gráficas, Astropy sirve para todo lo que tenga
+que ver con astronomía.
+
+¿Qué problemas resuelve Astropy en la práctica?
+
+- Convertir entre sistemas de coordenadas celestes (¿dónde está esa galaxia
+  en el cielo?)
+- Manejar tiempos astronómicos (¿cuándo ocurrió ese eclipse exactamente?)
+- Abrir archivos de imágenes astronómicas en formato FITS
+- Trabajar con unidades físicas sin cometer errores de conversión
+
+::: {.callout-note}
+## ¿Para quién es este blog?
+Este blog asume que sabes lo básico de Python: variables, listas,
+funciones e importar librerías con `import`. No necesitas saber
+física avanzada — iremos explicando los conceptos astronómicos a
+medida que los necesitemos.
+:::
+
+---
+
+## El ecosistema de Astropy
+
+Astropy no está sola. Es el núcleo de un ecosistema más grande de
+librerías que se especializan en tareas concretas:
+
+| Librería | ¿Para qué sirve? | ¿Cuándo la usaremos? |
+|---|---|---|
+| `astropy` | Núcleo: unidades, tiempo, coordenadas, FITS | Desde el módulo 01 |
+| `photutils` | Fotometría (medir el brillo de estrellas) | Módulo 08 |
+| `astroquery` | Consultar catálogos en línea (Simbad, NED) | Módulo 11 |
+| `specutils` | Analizar espectros de luz | Módulo 12 |
+
+En este primer módulo nos enfocamos solo en el núcleo: `astropy`.
+
+---
+
+## Instalación
+
+Abre una terminal y ejecuta **uno** de estos comandos según cómo gestionas
+tus paquetes de Python:
+
+```bash
+# Opción A: usando pip (el más común)
+pip install astropy
+
+# Opción B: usando conda (si usas Anaconda o Miniconda)
+conda install -c conda-forge astropy
+```
+
+Para verificar que la instalación fue exitosa:
+
+```bash
+python -c "import astropy; print(astropy.__version__)"
+```
+
+Deberías ver algo como `6.x.x`. Si ves un número, ¡estás listo!
+
+---
+
+## Tu primer script con Astropy
+
+Vamos a escribir nuestro primer código. No te preocupes si no entiendes
+todo todavía — los módulos siguientes explican cada cosa en detalle.
+El objetivo aquí es ver qué *se puede hacer* con Astropy.
+
+### Verificar la instalación desde Python
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Verificamos que Astropy está correctamente instalada
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Importamos el módulo principal de Astropy
+import astropy
+
+# Imprimimos la versión instalada para confirmar que todo funciona
+print("Versión de Astropy instalada:", astropy.__version__)
+```
+
+### Unidades físicas: adiós a los errores de conversión
+
+Uno de los problemas más frecuentes en ciencia es confundir unidades.
+En 1999 la NASA perdió una sonda espacial de 327 millones de dólares por
+un error de conversión entre libras-fuerza y newtons. Astropy resuelve
+esto de raíz:
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Ejemplo de unidades físicas con Astropy
+# Las unidades viajan junto al número — imposible confundirlas
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Importamos el submódulo de unidades
+import astropy.units as u
+
+# Definimos la distancia de la Tierra al Sol
+# El número 1 seguido de * u.au significa "1 unidad astronómica"
+# 1 UA = distancia media Tierra-Sol ≈ 150 millones de km
+distancia_tierra_sol = 1 * u.au
+
+# Convertimos automáticamente a kilómetros con el método .to()
+# Astropy conoce la equivalencia entre UA y km
+distancia_en_km = distancia_tierra_sol.to(u.km)
+
+# Mostramos ambos valores — Astropy siempre muestra el número y la unidad
+print("Distancia Tierra-Sol:")
+print(f"  En unidades astronómicas : {distancia_tierra_sol}")
+print(f"  En kilómetros            : {distancia_en_km:.2e}")
+```
+
+### Coordenadas celestes: ubicar un objeto en el cielo
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Ejemplo de coordenadas celestes
+# SkyCoord es la clase que representa una posición en el cielo
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Importamos SkyCoord para manejar posiciones en el cielo
+from astropy.coordinates import SkyCoord
+
+# Importamos units para acompañar los ángulos con su unidad
+import astropy.units as u
+
+# Creamos la posición de la famosa nebulosa de Orión (M42)
+# ra  = ascensión recta  (equivale a la "longitud" en el cielo)
+# dec = declinación      (equivale a la "latitud" en el cielo)
+# frame='icrs' es el sistema de referencia astronómico estándar
+nebulosa_orion = SkyCoord(
+    ra=83.8221 * u.degree,   # posición horizontal en el cielo
+    dec=-5.3911 * u.degree,  # posición vertical en el cielo
+    frame='icrs'             # sistema de coordenadas estándar
+)
+
+# Mostramos la posición en formato clásico de astronomía (horas:minutos:segundos)
+print("Nebulosa de Orión (M42):")
+print(f"  Ascensión recta  : {nebulosa_orion.ra.to_string(unit=u.hour)}")
+print(f"  Declinación      : {nebulosa_orion.dec.to_string()}")
+```
+
+### Tiempo astronómico: más preciso que un reloj normal
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Ejemplo de tiempo astronómico
+# En astronomía necesitamos precisión de microsegundos y formatos especiales
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Importamos la clase Time para manejar tiempos astronómicos
+from astropy.time import Time
+
+# Creamos un objeto de tiempo con la fecha del lanzamiento del telescopio
+# espacial James Webb (25 de diciembre de 2021)
+# format='iso' indica que el texto está en formato AAAA-MM-DD HH:MM:SS
+lanzamiento_webb = Time('2021-12-25 12:20:00', format='iso', scale='utc')
+
+# Convertimos a Fecha Juliana — el sistema de fechas que usan los astrónomos
+# cuenta los días desde el 1 de enero del año 4713 a.C.
+print("Lanzamiento del telescopio James Webb:")
+print(f"  Fecha normal    : {lanzamiento_webb.iso}")
+print(f"  Fecha Juliana   : {lanzamiento_webb.jd:.4f} días")
+
+# Calculamos cuántos días han pasado desde el lanzamiento hasta hoy
+ahora = Time.now()                          # tiempo actual del sistema
+dias_transcurridos = (ahora - lanzamiento_webb).to(u.day)
+
+print(f"  Días en órbita  : {dias_transcurridos:.0f}")
+```
+
+### Constantes físicas: siempre disponibles y con unidades
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Constantes físicas y astronómicas incluidas en Astropy
+# No necesitas buscarlas en Wikipedia ni copiar números a mano
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Importamos el módulo de constantes físicas
+from astropy import constants as const
+
+# El módulo de cosmología (que veremos más adelante) tiene constantes adicionales
+# como H0 (constante de Hubble). Por ahora usamos las del módulo constants:
+print("Constantes físicas incluidas en Astropy:")
+print(f"  Velocidad de la luz  : {const.c:.4e}")   # c
+print(f"  Masa del Sol         : {const.M_sun:.4e}")  # M☉
+print(f"  Radio de la Tierra   : {const.R_earth:.4e}")  # R⊕
+print(f"  Constante gravitacional: {const.G:.4e}")  # G
+
+# Ejemplo: calculamos cuánto tarda la luz en llegar del Sol a la Tierra
+# Física básica: tiempo = distancia / velocidad
+distancia_sol = 1 * u.au             # distancia en unidades astronómicas
+velocidad_luz = const.c              # velocidad de la luz
+
+# El método .to() convierte el resultado a minutos
+tiempo_luz = (distancia_sol / velocidad_luz).to(u.minute)
+print(f"\nTiempo que tarda la luz Sol → Tierra: {tiempo_luz:.2f}")
+```
+
+---
+
+## Resumen: ¿qué acabas de ver?
+
+En este primer contacto con Astropy usamos cuatro de sus herramientas principales:
+
+| Herramienta | Módulo | Lo que hace |
+|---|---|---|
+| Unidades | `astropy.units` | Adjunta unidades a los números |
+| Coordenadas | `astropy.coordinates` | Ubica objetos en el cielo |
+| Tiempo | `astropy.time` | Maneja fechas astronómicas |
+| Constantes | `astropy.constants` | Provee constantes físicas oficiales |
+
+Cada una de estas herramientas tiene su propio módulo en este blog. Por ahora,
+lo importante es que viste cómo Astropy convierte operaciones complejas
+(convertir unidades, manejar coordenadas, calcular tiempos) en pocas
+líneas de código legible.
+
+---
+
+## Ejercicio
+
+Usando lo que viste en este módulo, calcula cuánto tiempo tarda la luz
+en llegar desde Neptuno hasta la Tierra. La distancia media de Neptuno
+al Sol es de **30.07 UA**.
+
+::: {.callout-tip collapse="true"}
+## Ver solución
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# SOLUCIÓN: tiempo que tarda la luz de Neptuno en llegar a la Tierra
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy import constants as const
+import astropy.units as u
+
+# Distancia de Neptuno al Sol (dato del enunciado)
+distancia_neptuno_sol = 30.07 * u.au
+
+# Distancia de la Tierra al Sol (1 UA por definición)
+distancia_tierra_sol = 1.0 * u.au
+
+# Distancia aproximada Neptuno → Tierra
+# (usamos la diferencia — ambos en el mismo lado del Sol en promedio)
+distancia_neptuno_tierra = distancia_neptuno_sol - distancia_tierra_sol
+
+# Calculamos el tiempo usando tiempo = distancia / velocidad
+# .to(u.minute) convierte el resultado a minutos automáticamente
+tiempo = (distancia_neptuno_tierra / const.c).to(u.minute)
+
+print(f"Distancia Neptuno - Tierra : {distancia_neptuno_tierra:.2f}")
+print(f"Tiempo de viaje de la luz  : {tiempo:.1f}")
+print(f"                           : {tiempo.to(u.hour):.2f}")
+```
+:::
+
+---
+
+## ¿Qué aprendiste en este módulo? {.seccion-aprendiste}
+
+- ✅ Qué es Astropy y para qué sirve en la práctica
+- ✅ Cómo instalarla con `pip` o `conda`
+- ✅ Cómo usar unidades físicas para evitar errores de conversión
+- ✅ Cómo representar posiciones en el cielo con `SkyCoord`
+- ✅ Cómo manejar fechas astronómicas con `Time`
+- ✅ Cómo acceder a constantes físicas con `astropy.constants`
+
+**Siguiente módulo →** [02 · Unidades y constantes físicas](02-unidades.qmd)

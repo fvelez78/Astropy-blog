@@ -1,0 +1,408 @@
+---
+title: "02 · Unidades y constantes físicas"
+description: "Aprende a trabajar con unidades físicas en Python usando astropy.units y astropy.constants"
+author: "Blog AstroPy en Español"
+date: "2025-05-26"
+categories: [basico]
+toc: true
+toc-depth: 3
+number-sections: true
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+<span class="badge-basico">🌱 Básico</span>
+
+## ¿Por qué importan las unidades?
+
+En 1999, la NASA perdió la sonda **Mars Climate Orbiter** — una misión de
+327 millones de dólares — porque un equipo usó libras-fuerza y otro usó
+newtons. El software nunca detectó el error porque los números eran números
+sin unidad.
+
+En astronomía este problema se multiplica: mezclamos metros, años luz,
+parsecs, unidades astronómicas, ergios, julios y electronvoltios en el
+mismo cálculo. `astropy.units` resuelve esto de raíz: **el número y su
+unidad viajan juntos** y las conversiones son automáticas.
+
+::: {.callout-note}
+## Requisitos previos
+- Módulo 01 completado
+- Astropy instalada: `pip install astropy`
+:::
+
+---
+
+## El módulo `astropy.units`
+
+### Asignar una unidad a un número
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Importar el módulo de unidades
+# Por convención se abrevia como 'u' en toda la comunidad astronómica
+# ─────────────────────────────────────────────────────────────────────────────
+
+import astropy.units as u
+
+# Crear una cantidad física: número * unidad
+# El asterisco (*) une el valor numérico con su unidad
+distancia = 150e6 * u.km        # 150 millones de kilómetros
+masa      = 1.989e30 * u.kg     # masa del Sol en kilogramos
+tiempo    = 365.25 * u.day      # un año en días
+
+# Astropy muestra siempre el valor y la unidad juntos
+print(f"Distancia : {distancia}")
+print(f"Masa      : {masa:.3e}")
+print(f"Tiempo    : {tiempo}")
+```
+
+### Convertir entre unidades con `.to()`
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Convertir unidades con el método .to()
+# Solo hay que indicar a qué unidad se quiere llegar
+# ─────────────────────────────────────────────────────────────────────────────
+
+import astropy.units as u
+
+# Partimos de una distancia en kilómetros
+distancia_km = 150e6 * u.km
+
+# Convertimos a distintas unidades astronómicas
+distancia_m  = distancia_km.to(u.m)       # metros
+distancia_au = distancia_km.to(u.au)      # unidades astronómicas
+distancia_ly = distancia_km.to(u.lyr)     # años luz
+
+print("La distancia Tierra-Sol equivale a:")
+print(f"  {distancia_km:.3e}")
+print(f"  {distancia_m:.3e}")
+print(f"  {distancia_au:.4f}")
+print(f"  {distancia_ly:.6f}")
+```
+
+### Unidades compuestas: velocidad, presión, energía
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Las unidades se pueden combinar con * (por) y / (entre)
+# Astropy construye la unidad compuesta automáticamente
+# ─────────────────────────────────────────────────────────────────────────────
+
+import astropy.units as u
+
+# Velocidad = distancia / tiempo
+velocidad_luz = 3e5 * (u.km / u.s)        # velocidad de la luz en km/s
+print(f"Velocidad de la luz: {velocidad_luz}")
+
+# Convertir km/s a m/s
+velocidad_ms = velocidad_luz.to(u.m / u.s)
+print(f"En metros por segundo: {velocidad_ms:.3e}")
+
+# Energía en electronvoltios (muy usada en astrofísica de altas energías)
+energia_foton = 2.5 * u.eV                # energía de un fotón de luz visible
+energia_joules = energia_foton.to(u.J)    # convertir a julios
+print(f"\nEnergía del fotón: {energia_foton}")
+print(f"En julios        : {energia_joules:.3e}")
+```
+
+### Unidades angulares: grados, arcominutos, arcosegundos
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# En astronomía los ángulos tienen sus propias unidades:
+#   grado (°) → arcominuto (') → arcosegundo ('')
+# 1 grado = 60 arcominutos = 3600 arcosegundos
+# ─────────────────────────────────────────────────────────────────────────────
+
+import astropy.units as u
+
+# El diámetro angular de la Luna vista desde la Tierra
+diametro_luna = 0.5 * u.degree            # aproximadamente medio grado
+
+# Convertir a arcominutos y arcosegundos
+en_arcmin = diametro_luna.to(u.arcmin)    # arcominutos
+en_arcsec = diametro_luna.to(u.arcsec)   # arcosegundos
+
+print("Diámetro angular de la Luna:")
+print(f"  En grados       : {diametro_luna}")
+print(f"  En arcominutos  : {en_arcmin}")
+print(f"  En arcosegundos : {en_arcsec}")
+
+# El arcosegundo es clave: la resolución de los telescopios
+# se mide en arcosegundos (o miliarcsegundos en radioastronomía)
+limite_hubble = 0.05 * u.arcsec           # límite de resolución del HST
+print(f"\nResolución del Hubble : {limite_hubble}")
+print(f"En grados             : {limite_hubble.to(u.degree):.6f}")
+```
+
+---
+
+## Operaciones aritméticas con unidades
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Las cantidades con unidades se pueden sumar, restar, multiplicar y dividir
+# Astropy verifica automáticamente que las unidades sean compatibles
+# ─────────────────────────────────────────────────────────────────────────────
+
+import astropy.units as u
+
+# Suma: las dos cantidades deben ser del mismo tipo (ambas de longitud)
+# Si están en unidades distintas, primero convertimos una de ellas
+d1 = 100 * u.km
+d2 =   5 * u.au                   # unidad astronómica
+
+d2_en_km = d2.to(u.km)            # convertir antes de sumar
+total = d1 + d2_en_km
+print(f"Suma de distancias: {total:.3e}")
+
+# Multiplicación: produce una unidad compuesta
+masa         = 5.972e24 * u.kg        # masa de la Tierra
+aceleracion  = 9.8 * (u.m / u.s**2)  # aceleración de la gravedad
+fuerza       = masa * aceleracion     # kg·m/s² = Newton
+print(f"\nFuerza gravitacional: {fuerza:.3e}")
+print(f"En Newtons          : {fuerza.to(u.N):.3e}")
+
+# División: ley de Hubble → velocidad = H₀ × distancia
+H0   = 70 * (u.km / u.s / u.Mpc)    # constante de Hubble
+dist = 10 * u.Mpc                    # distancia a una galaxia (megaparsecs)
+vel  = H0 * dist                     # velocidad de recesión
+print(f"\nVelocidad de recesión: {vel:.0f}")
+```
+
+---
+
+## Errores comunes y cómo evitarlos
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Astropy lanza un error si intentamos mezclar unidades incompatibles
+# Esto es una PROTECCIÓN — evita errores silenciosos en los cálculos
+# ─────────────────────────────────────────────────────────────────────────────
+
+import astropy.units as u
+
+# Intentamos sumar kilómetros con kilogramos (no tiene sentido físico)
+try:
+    resultado = 100 * u.km + 50 * u.kg
+except u.UnitConversionError as error:
+    # UnitConversionError avisa que las unidades no son compatibles
+    print("Error detectado por Astropy:")
+    print(f"  {error}")
+    print("\n→ Esto es exactamente lo que queremos:")
+    print("  en vez de obtener un número sin sentido, Astropy nos avisa.")
+```
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Para extraer solo el número (sin la unidad) se usa .value
+# Útil cuando necesitamos pasar el dato a otra librería como matplotlib
+# ─────────────────────────────────────────────────────────────────────────────
+
+import astropy.units as u
+
+velocidad = 299792.458 * (u.km / u.s)   # velocidad de la luz
+
+solo_numero = velocidad.value            # extrae solo el número (float)
+solo_unidad = velocidad.unit             # extrae solo la unidad
+
+print(f"Cantidad completa : {velocidad}")
+print(f"Solo el número    : {solo_numero}")
+print(f"Solo la unidad    : {solo_unidad}")
+print(f"Tipo de dato      : {type(solo_numero)}")   # float normal de Python
+```
+
+---
+
+## Constantes físicas con `astropy.constants`
+
+Astropy incluye las constantes físicas y astronómicas más usadas, con sus
+valores oficiales del CODATA y la IAU (Unión Astronómica Internacional).
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# El módulo astropy.constants contiene constantes físicas oficiales
+# con valor, unidad e incertidumbre incluidos
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy import constants as const
+
+print("─── Constantes físicas ───────────────────────────────")
+print(f"Velocidad de la luz   c  = {const.c:.6e}")
+print(f"Constante gravitación G  = {const.G:.6e}")
+print(f"Constante de Planck   h  = {const.h:.6e}")
+print(f"Masa del electrón     mₑ = {const.m_e:.6e}")
+
+print("\n─── Constantes astronómicas ──────────────────────────")
+print(f"Masa del Sol          M☉ = {const.M_sun:.6e}")
+print(f"Radio del Sol         R☉ = {const.R_sun:.6e}")
+print(f"Masa de la Tierra     M⊕ = {const.M_earth:.6e}")
+print(f"Radio de la Tierra    R⊕ = {const.R_earth:.6e}")
+```
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Las constantes también se convierten con .to()
+# y se usan directamente en cálculos igual que cualquier cantidad con unidad
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy import constants as const
+import astropy.units as u
+
+# Velocidad de la luz en diferentes unidades
+print("Velocidad de la luz:")
+print(f"  en km/s  : {const.c:.5e}")
+print(f"  en m/s   : {const.c.to(u.m / u.s):.5e}")
+print(f"  en km/h  : {const.c.to(u.km / u.hr):.5e}")
+
+# Energía equivalente de la masa del electrón (E = mc²)
+energia    = const.m_e * const.c**2
+energia_eV = energia.to(u.eV)
+
+print(f"\nEnergía en reposo del electrón (E = mc²):")
+print(f"  En julios          : {energia:.4e}")
+print(f"  En electronvoltios : {energia_eV:.4f}")
+```
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Ver la ficha completa de una constante:
+# nombre, valor, incertidumbre, unidad y referencia bibliográfica
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy import constants as const
+
+# Imprimimos la ficha completa de la constante gravitacional
+print(const.G)
+```
+
+---
+
+## Aplicación práctica: velocidad de escape
+
+Calculamos cuánta velocidad necesita un cohete para escapar de la
+gravedad de distintos cuerpos del Sistema Solar.
+
+La fórmula es: $v_{escape} = \sqrt{\dfrac{2GM}{R}}$
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Velocidad de escape de distintos planetas
+# Fórmula: v = sqrt(2 * G * M / R)
+# Esta es la velocidad mínima para escapar de la atracción gravitacional
+# ─────────────────────────────────────────────────────────────────────────────
+
+import numpy as np                    # para la raíz cuadrada
+from astropy import constants as const
+import astropy.units as u
+
+# Datos de masa y radio de cada cuerpo
+# Las constantes del Sol y la Tierra vienen directamente de astropy.constants
+planetas = {
+    "Tierra" : {"M": const.M_earth,       "R": const.R_earth},
+    "Marte"  : {"M": 6.417e23 * u.kg,     "R": 3389.5 * u.km},
+    "Júpiter": {"M": 1.898e27 * u.kg,     "R": 69911  * u.km},
+    "Sol"    : {"M": const.M_sun,         "R": const.R_sun},
+}
+
+print(f"{'Cuerpo':<10} {'V. escape':>12}")
+print("─" * 25)
+
+for nombre, datos in planetas.items():
+    M = datos["M"]    # masa del cuerpo celeste
+    R = datos["R"]    # radio del cuerpo celeste
+
+    # Aplicamos la fórmula — numpy acepta cantidades con unidades de Astropy
+    v_escape = np.sqrt(2 * const.G * M / R)
+
+    # Convertimos a km/s para facilitar la comparación
+    v_kms = v_escape.to(u.km / u.s)
+
+    print(f"{nombre:<10} {v_kms.value:>8.2f} km/s")
+```
+
+---
+
+## Tabla de referencia rápida
+
+| Tipo | Código Astropy | Símbolo | Equivalencia |
+|---|---|---|---|
+| Longitud | `u.m`, `u.km` | m, km | base SI |
+| Longitud | `u.au` | UA | ≈ 1.496 × 10⁸ km |
+| Longitud | `u.lyr` | al | ≈ 9.461 × 10¹² km |
+| Longitud | `u.pc`, `u.kpc`, `u.Mpc` | pc | ≈ 3.086 × 10¹³ km |
+| Ángulo | `u.degree` | ° | 60 arcmin |
+| Ángulo | `u.arcmin` | ' | 60 arcsec |
+| Ángulo | `u.arcsec` | '' | 1/3600° |
+| Masa | `u.kg`, `u.g` | kg, g | base SI |
+| Masa | `u.M_sun` | M☉ | ≈ 1.989 × 10³⁰ kg |
+| Tiempo | `u.s`, `u.hr`, `u.day`, `u.yr` | s, h, d, a | — |
+| Energía | `u.J`, `u.eV` | J, eV | 1 eV ≈ 1.6×10⁻¹⁹ J |
+| Temperatura | `u.K` | K | Kelvin |
+
+---
+
+## Ejercicio
+
+El telescopio espacial **James Webb** orbita a 1.5 millones de km de la
+Tierra en el punto de Lagrange L2. Usando Astropy:
+
+1. Expresa esa distancia en unidades astronómicas y en metros
+2. Calcula cuánto tarda la señal de radio en llegar desde el JWST a la Tierra
+3. Expresa el resultado en minutos y en segundos
+
+::: {.callout-tip collapse="true"}
+## Ver solución
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# SOLUCIÓN: distancia y retardo de señal del telescopio James Webb
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy import constants as const
+import astropy.units as u
+
+# Paso 1: definir la distancia al punto L2
+distancia_km = 1.5e6 * u.km
+
+# Convertir a unidades astronómicas y metros
+distancia_au = distancia_km.to(u.au)
+distancia_m  = distancia_km.to(u.m)
+
+print("Distancia Tierra → JWST:")
+print(f"  En kilómetros          : {distancia_km:.3e}")
+print(f"  En unidades astronóm.  : {distancia_au:.5f}")
+print(f"  En metros              : {distancia_m:.3e}")
+
+# Paso 2: tiempo = distancia / velocidad de la luz
+# const.c está en m/s, así que convertimos distancia a metros
+tiempo = distancia_m / const.c         # resultado en segundos
+
+# Paso 3: convertir
+tiempo_seg = tiempo.to(u.s)
+tiempo_min = tiempo.to(u.min)
+
+print(f"\nRetardo de señal Tierra ↔ JWST:")
+print(f"  En segundos : {tiempo_seg:.2f}")
+print(f"  En minutos  : {tiempo_min:.2f}")
+```
+:::
+
+---
+
+## ¿Qué aprendiste en este módulo? {.seccion-aprendiste}
+
+- ✅ Crear cantidades físicas con `valor * u.unidad`
+- ✅ Convertir entre unidades con `.to()`
+- ✅ Combinar unidades en operaciones: km/s, kg·m/s², km/s/Mpc
+- ✅ Trabajar con unidades angulares: grado, arcominuto, arcosegundo
+- ✅ Dejar que Astropy detecte errores de unidades incompatibles
+- ✅ Extraer el número puro con `.value` cuando lo necesitas
+- ✅ Acceder a constantes físicas oficiales con `astropy.constants`
+- ✅ Aplicar todo en un cálculo real: velocidad de escape de planetas
+
+**Siguiente módulo →** [03 · Tiempo astronómico con `astropy.time`](03-tiempo.qmd)

@@ -1,0 +1,83 @@
+project:
+  type: website
+  output-dir: _site
+
+website:
+  title: "AstroPy en Español"
+  description: "Aprende astronomía computacional con Python y Astropy, desde cero hasta análisis profesional"
+  favicon: assets/logos/favicon.ico
+
+  navbar:
+    left:
+      - href: index.qmd
+        text: Inicio
+      - text: "Basico"
+        menu:
+          - href: posts/basico/01-introduccion.qmd
+            text: "01 - Introduccion a Astropy"
+          - href: posts/basico/02-unidades.qmd
+            text: "02 - Unidades y constantes"
+          - href: posts/basico/03-tiempo.qmd
+            text: "03 - Tiempo astronomico"
+          - href: posts/basico/04-coordenadas.qmd
+            text: "04 - Coordenadas celestes"
+          - href: posts/basico/05-tablas.qmd
+            text: "05 - Tablas astronomicas"
+      - text: "Intermedio"
+        menu:
+          - href: posts/intermedio/06-fits.qmd
+            text: "06 - Archivos FITS"
+          - href: posts/intermedio/07-wcs.qmd
+            text: "07 - WCS del pixel al cielo"
+          - href: posts/intermedio/08-fotometria.qmd
+            text: "08 - Fotometria de apertura"
+          - href: posts/intermedio/09-visualizacion.qmd
+            text: "09 - Visualizacion astronomica"
+          - href: posts/intermedio/10-estadistica.qmd
+            text: "10 - Estadistica y modelado"
+          - href: posts/intermedio/11-catalogos.qmd
+            text: "11 - Catalogos en linea"
+      - text: "Avanzado"
+        menu:
+          - href: posts/avanzado/12-espectroscopia.qmd
+            text: "12 - Espectroscopia"
+          - href: posts/avanzado/13-cosmologia.qmd
+            text: "13 - Cosmologia computacional"
+          - href: posts/avanzado/14-orbital.qmd
+            text: "14 - Mecanica orbital"
+          - href: posts/avanzado/15-series-temporales.qmd
+            text: "15 - Series temporales"
+          - href: posts/avanzado/16-extensiones.qmd
+            text: "16 - Extensiones propias"
+          - href: posts/avanzado/17-pipeline.qmd
+            text: "17 - Pipeline completo"
+      - href: sobre.qmd
+        text: Sobre el blog
+    right:
+      - icon: github
+        href: https://github.com/tu-usuario/astropy-blog
+        aria-label: GitHub
+
+  page-footer:
+    left: "Blog hecho con Quarto"
+    right: "Datos: Astropy Project"
+
+format:
+  html:
+    theme:
+      light: [cosmo, assets/css/estilo-blog.scss]
+      dark:  [darkly, assets/css/estilo-blog.scss]
+    highlight-style: github
+    code-copy: true
+    code-tools: true
+    toc: true
+    toc-depth: 3
+    toc-title: "En esta entrada"
+    number-sections: false
+    smooth-scroll: true
+
+execute:
+  freeze: auto
+  cache: true
+
+jupyter: python3

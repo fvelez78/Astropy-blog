@@ -1,0 +1,116 @@
+---
+# ─────────────────────────────────────────────────────────────────────────────
+# PLANTILLA PARA NUEVOS POSTS DEL BLOG DE ASTROPY
+#
+# Como usar:
+#   1. Copia este archivo a la carpeta del nivel correspondiente
+#      Ejemplo:  cp scripts/plantilla_post.qmd posts/basico/02-unidades.qmd
+#   2. Rellena los campos del encabezado YAML (entre los ---)
+#   3. Reemplaza el contenido de ejemplo con el tuyo
+# ─────────────────────────────────────────────────────────────────────────────
+title: "XX - Titulo del modulo"
+description: "Descripcion corta (aparece en listados y buscadores)"
+author: "Tu nombre"
+date: "2025-01-01"
+categories: [basico]        # opciones: basico | intermedio | avanzado
+image: "../../assets/images/modulo-XX.png"
+toc: true
+toc-depth: 3
+number-sections: true
+execute:
+  echo: true                # true = mostrar codigo en el blog
+  warning: false            # false = ocultar advertencias de Python
+  message: false            # false = ocultar mensajes de carga
+---
+
+<!-- Cambia la clase segun el nivel: badge-basico | badge-inter | badge-avanzado -->
+<span class="badge-basico">Basico</span>
+
+## Introduccion
+
+Explica en 2 o 3 parrafos que problema resuelve este modulo y por que es util.
+Escribe como si le hablaras a alguien que nunca vio Astropy.
+
+::: {.callout-note}
+## Requisitos previos
+- Modulo anterior completado
+- Libreria X instalada: `pip install X`
+:::
+
+---
+
+## Conceptos clave
+
+### Subtema 1
+
+Explicacion del concepto. Siempre va primero la teoria minima,
+luego el codigo.
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Descripcion breve de que hace este bloque de codigo
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Importaciones necesarias (explicar brevemente para que sirve cada una)
+import astropy.units as u    # Modulo de unidades fisicas de Astropy
+
+# Creamos una cantidad fisica: un numero con su unidad asociada
+# Esto evita errores de conversion manual (por ejemplo, metros vs kilometros)
+masa_sol = 1.989e30 * u.kg  # Masa del Sol expresada en kilogramos
+
+# Imprimimos el resultado: Astropy muestra el valor Y la unidad juntos
+print(masa_sol)
+```
+
+### Subtema 2
+
+Continua con el siguiente concepto del modulo.
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Ejemplo de conversion de unidades
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Convertimos la masa del Sol de kilogramos a gramos
+# El metodo .to() hace la conversion automaticamente
+masa_en_gramos = masa_sol.to(u.g)
+print(f"Masa del Sol en gramos: {masa_en_gramos:.3e}")
+```
+
+---
+
+## Ejercicio practico
+
+Resuelve el siguiente ejercicio antes de ver la solucion.
+
+**Enunciado:** Dado que la distancia de la Tierra al Sol es 149.6 millones de km,
+exprésala en unidades astronomicas (UA) usando Astropy.
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# SOLUCION DEL EJERCICIO
+# (Intenta resolverlo antes de leer este bloque)
+# ─────────────────────────────────────────────────────────────────────────────
+
+import astropy.units as u    # Importamos el modulo de unidades
+
+# Paso 1: definir la distancia con su unidad en kilometros
+distancia_km = 149.6e6 * u.km
+
+# Paso 2: convertir a unidades astronomicas con .to()
+# 1 UA = distancia media Tierra-Sol (aprox. 150 millones de km)
+distancia_ua = distancia_km.to(u.au)
+
+# Paso 3: mostrar el resultado
+print(f"Distancia Tierra-Sol: {distancia_ua:.4f}")
+```
+
+---
+
+## Que aprendiste en este modulo {.seccion-aprendiste}
+
+- Concepto A aplicado con Astropy
+- Concepto B: como se usa en la practica
+- Concepto C: errores comunes y como evitarlos
+
+**Siguiente modulo** [Titulo del siguiente](../siguiente.qmd)

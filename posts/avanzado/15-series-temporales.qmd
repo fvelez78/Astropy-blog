@@ -1,0 +1,16 @@
+---
+title: "15 - Series temporales astronomicas"
+description: "Proximo modulo en preparacion"
+categories: [avanzado]
+toc: true
+execute:
+  echo: true
+  warning: false
+---
+
+<span class="badge-avanzado">Avanzado</span>
+
+::: {.callout-warning}
+## Modulo en construccion
+Este modulo esta siendo preparado. Vuelve pronto.
+:::

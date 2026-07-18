@@ -1,0 +1,406 @@
+---
+title: "03 · Tiempo astronómico con astropy.time"
+description: "Aprende a manejar fechas y tiempos astronómicos: escalas, formatos, fechas julianas y operaciones con el tiempo"
+author: "Blog AstroPy en Español"
+date: "2025-05-27"
+categories: [basico]
+toc: true
+toc-depth: 3
+number-sections: true
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+<span class="badge-basico">🌱 Básico</span>
+
+## ¿Por qué el tiempo es especial en astronomía?
+
+En la vida cotidiana el tiempo es simple: miramos el reloj y listo.
+En astronomía la cosa se complica bastante:
+
+- Un satélite GPS necesita corregir su reloj por relatividad general
+- La posición de un asteroide depende de qué escala de tiempo usemos
+- Los datos del telescopio Kepler vienen en un sistema propio llamado BJD
+- Un eclipse calculado hace 2000 años sigue siendo válido hoy
+
+`astropy.time` resuelve todo esto con una sola clase: `Time`.
+Maneja más de 20 formatos de fecha y 10 escalas de tiempo diferentes,
+con precisión de nanosegundos.
+
+::: {.callout-note}
+## Requisitos previos
+- Módulos 01 y 02 completados
+- `astropy.units` (ya instalado con Astropy)
+:::
+
+---
+
+## Crear un objeto `Time`
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Importar la clase Time del módulo astropy.time
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy.time import Time
+
+# Crear un tiempo a partir de una fecha en formato ISO (el más legible)
+# format='iso'  → indica que el texto tiene forma AAAA-MM-DD HH:MM:SS
+# scale='utc'   → escala de tiempo: UTC (Tiempo Universal Coordinado)
+t1 = Time('2024-01-01 00:00:00', format='iso', scale='utc')
+
+print(f"Tiempo creado : {t1}")
+print(f"Formato       : {t1.format}")
+print(f"Escala        : {t1.scale}")
+```
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Varios formatos de entrada que acepta Time
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy.time import Time
+
+# Formato ISO estándar
+t_iso  = Time('2024-07-20 20:17:40', format='iso',  scale='utc')
+
+# Formato ISOT (ISO con T como separador — usado en FITS y JSON)
+t_isot = Time('2024-07-20T20:17:40', format='isot', scale='utc')
+
+# Fecha Juliana (días desde el 1 de enero del año 4713 a.C.)
+t_jd   = Time(2460512.345, format='jd', scale='utc')
+
+# Fecha Juliana Modificada (JD - 2400000.5 → números más manejables)
+t_mjd  = Time(60511.845,   format='mjd', scale='utc')
+
+# Época Besseliana (usada en catálogos estelares antiguos)
+t_byear = Time(2024.5,     format='byear', scale='utc')
+
+print("Distintos formatos de entrada:")
+print(f"  ISO   : {t_iso}")
+print(f"  ISOT  : {t_isot}")
+print(f"  JD    : {t_jd}")
+print(f"  MJD   : {t_mjd}")
+print(f"  Byear : {t_byear}")
+```
+
+---
+
+## Convertir entre formatos
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Un objeto Time se puede expresar en cualquier formato accediendo
+# a su atributo del mismo nombre
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy.time import Time
+
+# Fecha del primer alunizaje del Apolo 11 (20 de julio de 1969)
+apolo11 = Time('1969-07-20 20:17:40', format='iso', scale='utc')
+
+print("Alunizaje del Apolo 11 en distintos formatos:")
+print(f"  ISO             : {apolo11.iso}")
+print(f"  ISOT            : {apolo11.isot}")
+print(f"  Fecha Juliana   : {apolo11.jd:.4f} días")
+print(f"  MJD             : {apolo11.mjd:.4f} días")
+print(f"  Época Julia     : {apolo11.jyear:.6f}")
+print(f"  Época Besseliana: {apolo11.byear:.6f}")
+print(f"  Unix timestamp  : {apolo11.unix:.0f} segundos")
+```
+
+---
+
+## Escalas de tiempo
+
+Una **escala de tiempo** define *cómo* se mide el tiempo.
+No es lo mismo el reloj de un satélite GPS que el reloj de un observatorio
+en la Tierra — la relatividad los hace diferir en microsegundos por día.
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Las escalas de tiempo más usadas en astronomía:
+#
+#   UTC  → Tiempo Universal Coordinado (lo que usamos en la vida diaria)
+#   TAI  → Tiempo Atómico Internacional (sin segundos intercalares)
+#   TT   → Tiempo Terrestre (para efemérides de objetos del Sistema Solar)
+#   TDB  → Tiempo Dinámico Baricéntrico (para posiciones de precisión)
+#   UT1  → Basado en la rotación real de la Tierra (varía ligeramente)
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy.time import Time
+
+# Creamos un tiempo en UTC
+t = Time('2024-01-01 12:00:00', format='iso', scale='utc')
+
+# Convertimos a distintas escalas con el atributo de la escala
+print("El mismo instante en distintas escalas de tiempo:")
+print(f"  UTC : {t.utc.iso}")
+print(f"  TAI : {t.tai.iso}")    # adelanta 37 segundos respecto a UTC
+print(f"  TT  : {t.tt.iso}")    # adelanta 69.184 segundos respecto a UTC
+print(f"  TDB : {t.tdb.iso}")   # casi igual a TT pero corregido para el baricentro
+```
+
+::: {.callout-tip}
+## ¿Qué escala usar?
+Para la mayoría de los proyectos de este blog usaremos **UTC** (tiempo
+cotidiano) o **TT** (para calcular posiciones de cuerpos del Sistema Solar).
+Las diferencias importan cuando se necesita precisión de milisegundos
+o mejor — por ejemplo en física de púlsares o GPS.
+:::
+
+---
+
+## Operaciones con tiempo
+
+### Diferencia entre dos tiempos
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Restar dos objetos Time produce un objeto TimeDelta
+# que representa una duración (diferencia de tiempo)
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy.time import Time
+import astropy.units as u
+
+# Fechas importantes en exploración espacial
+lanzamiento_webb   = Time('2021-12-25 12:20:00', format='iso', scale='utc')
+primer_imagen_webb = Time('2022-07-12 00:00:00', format='iso', scale='utc')
+ahora              = Time.now()   # tiempo actual del sistema
+
+# Calcular cuánto tiempo pasó entre eventos
+tiempo_calibracion = primer_imagen_webb - lanzamiento_webb
+tiempo_orbita      = ahora - lanzamiento_webb
+
+print("Telescopio James Webb:")
+print(f"  Lanzamiento              : {lanzamiento_webb.iso}")
+print(f"  Primera imagen pública   : {primer_imagen_webb.iso}")
+print(f"  Días hasta primera imagen: {tiempo_calibracion.to(u.day):.1f}")
+print(f"  Días en órbita hasta hoy : {tiempo_orbita.to(u.day):.0f}")
+print(f"  Años en órbita hasta hoy : {tiempo_orbita.to(u.yr):.2f}")
+```
+
+### Sumar o restar una duración
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Se puede sumar o restar una duración a un objeto Time
+# usando TimeDelta o directamente una cantidad con unidades
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy.time import Time, TimeDelta
+import astropy.units as u
+
+# Fecha de referencia: equinoccio de primavera 2024
+equinoccio = Time('2024-03-20 03:06:00', format='iso', scale='utc')
+
+# Sumar duraciones usando TimeDelta
+un_mes    = TimeDelta(30 * u.day)     # 30 días
+seis_meses = TimeDelta(180 * u.day)   # 180 días
+
+fecha_futuro  = equinoccio + un_mes
+fecha_otono   = equinoccio + seis_meses
+
+print(f"Equinoccio de primavera 2024 : {equinoccio.iso}")
+print(f"Un mes después               : {fecha_futuro.iso}")
+print(f"Seis meses después           : {fecha_otono.iso}")
+
+# También podemos restar para ir hacia el pasado
+hace_un_siglo = equinoccio - TimeDelta(100 * u.yr)
+print(f"Hace 100 años                : {hace_un_siglo.iso}")
+```
+
+### Comparar tiempos
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Los objetos Time se pueden comparar con los operadores < > == !=
+# Muy útil para filtrar observaciones por fecha
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy.time import Time
+
+# Lista de fechas de observación (simuladas)
+observaciones = [
+    Time('2024-01-15 22:00:00', format='iso', scale='utc'),
+    Time('2024-03-10 21:30:00', format='iso', scale='utc'),
+    Time('2024-06-21 23:45:00', format='iso', scale='utc'),
+    Time('2024-09-05 20:00:00', format='iso', scale='utc'),
+    Time('2024-12-01 19:00:00', format='iso', scale='utc'),
+]
+
+# Fecha de corte: solo queremos observaciones después del equinoccio
+corte = Time('2024-03-20 00:00:00', format='iso', scale='utc')
+
+# Filtrar las observaciones usando comparación directa
+print("Observaciones después del equinoccio de primavera 2024:")
+for obs in observaciones:
+    if obs > corte:
+        print(f"  ✓ {obs.iso}")
+    else:
+        print(f"  ✗ {obs.iso}  (anterior al corte)")
+```
+
+---
+
+## Tiempos en arreglos (múltiples fechas a la vez)
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Time también acepta listas de fechas — muy útil para series de datos
+# Internamente las maneja como un arreglo numpy, lo que las hace eficientes
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy.time import Time
+import astropy.units as u
+
+# Crear un arreglo de tiempos a partir de una lista de fechas ISO
+fechas = Time([
+    '2024-01-01',
+    '2024-04-01',
+    '2024-07-01',
+    '2024-10-01',
+], format='iso', scale='utc')
+
+# Podemos operar sobre todo el arreglo a la vez
+print("Fechas en Fecha Juliana Modificada:")
+for f, mjd in zip(fechas.iso, fechas.mjd):
+    print(f"  {f}  →  MJD {mjd:.2f}")
+
+# Diferencia entre fechas consecutivas
+diferencias = fechas[1:] - fechas[:-1]    # restar arreglos desplazados
+print("\nDiferencia entre fechas consecutivas:")
+for d in diferencias:
+    print(f"  {d.to(u.day):.1f}")
+```
+
+---
+
+## Aplicación práctica: edad del universo y lookback time
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Ejemplo integrador: línea de tiempo cósmica
+#
+# NOTA: Time() solo funciona para fechas dentro del rango histórico (~año
+# -4000 a +9000). Para escalas de miles de millones de años trabajamos
+# directamente con cantidades de astropy.units, sin crear objetos Time.
+# ─────────────────────────────────────────────────────────────────────────────
+
+import astropy.units as u
+from astropy.time import Time
+
+# La edad del universo según el modelo estándar (Planck 2018)
+edad_universo = 13.787e9 * u.yr    # 13.787 mil millones de años
+
+# Tiempo actual (para referencia en escala histórica reciente)
+hoy = Time.now()
+
+print(f"Hoy                   : {hoy.iso[:10]}")
+print(f"Edad del universo     : {edad_universo:.3e}")
+
+# Hitos cósmicos: tiempo transcurrido desde el Big Bang
+# Trabajamos con la diferencia en unidades de tiempo, no con fechas absolutas
+hitos = {
+    "Primeras estrellas"        :  200e6 * u.yr,
+    "Vía Láctea (formación)"    :    1e9 * u.yr,
+    "Sistema Solar (formación)" :  9.2e9 * u.yr,
+    "Vida en la Tierra"         :  9.9e9 * u.yr,
+    "Homo sapiens"              : 13.787e9 * u.yr - 300e3 * u.yr,
+}
+
+print("\nHitos desde el Big Bang:")
+print(f"  {'Evento':<35} {'Hace (años)':>15}")
+print("  " + "─" * 52)
+for nombre, tiempo_desde_bb in hitos.items():
+    # Cuánto tiempo ha pasado desde ese hito hasta hoy
+    hace = edad_universo - tiempo_desde_bb
+    print(f"  {nombre:<35} {hace.to(u.yr):>15.3e}")
+```
+
+---
+
+## Tabla de referencia: formatos y escalas
+
+**Formatos más comunes:**
+
+| Formato | Código | Ejemplo |
+|---|---|---|
+| ISO legible | `'iso'` | `2024-01-01 12:00:00` |
+| ISO con T | `'isot'` | `2024-01-01T12:00:00` |
+| Fecha Juliana | `'jd'` | `2460310.0` |
+| MJD | `'mjd'` | `59909.5` |
+| Época Julia | `'jyear'` | `2024.0` |
+| Unix timestamp | `'unix'` | `1704067200` |
+
+**Escalas más usadas:**
+
+| Escala | Código | Uso típico |
+|---|---|---|
+| Universal Coordinado | `'utc'` | Uso general, datos de observatorio |
+| Atómico Internacional | `'tai'` | Relojes atómicos, satélites |
+| Terrestre | `'tt'` | Efemérides del Sistema Solar |
+| Din. Baricéntrico | `'tdb'` | Posiciones de alta precisión |
+
+---
+
+## Ejercicio
+
+El cometa **Halley** tiene un período orbital de aproximadamente **75.3 años**.
+Su último perihelio (paso más cercano al Sol) fue el **9 de febrero de 1986**.
+
+Usando `astropy.time`:
+
+1. Crea un objeto `Time` para la fecha del último perihelio
+2. Calcula la fecha aproximada del próximo perihelio sumando el período
+3. ¿Cuántos días faltan desde hoy hasta ese próximo perihelio?
+
+::: {.callout-tip collapse="true"}
+## Ver solución
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# SOLUCIÓN: próximo perihelio del cometa Halley
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy.time import Time, TimeDelta
+import astropy.units as u
+
+# Paso 1: fecha del último perihelio del Halley
+ultimo_perihelio = Time('1986-02-09 00:00:00', format='iso', scale='utc')
+
+# Paso 2: sumar el período orbital para obtener el próximo perihelio
+periodo = TimeDelta(75.3 * u.yr)           # período del Halley en años
+proximo_perihelio = ultimo_perihelio + periodo
+
+# Paso 3: días que faltan desde hoy
+hoy = Time.now()
+dias_restantes = (proximo_perihelio - hoy).to(u.day)
+anios_restantes = (proximo_perihelio - hoy).to(u.yr)
+
+print("Cometa Halley:")
+print(f"  Último perihelio   : {ultimo_perihelio.iso[:10]}")
+print(f"  Período orbital    : {periodo.to(u.yr):.1f}")
+print(f"  Próximo perihelio  : {proximo_perihelio.iso[:10]}")
+print(f"  Días restantes     : {dias_restantes:.0f}")
+print(f"  Años restantes     : {anios_restantes:.1f}")
+```
+:::
+
+---
+
+## ¿Qué aprendiste en este módulo? {.seccion-aprendiste}
+
+- ✅ Crear objetos `Time` en distintos formatos: ISO, JD, MJD, Unix
+- ✅ Convertir entre formatos accediendo al atributo correspondiente
+- ✅ Entender las escalas de tiempo: UTC, TAI, TT, TDB
+- ✅ Calcular diferencias entre fechas con `TimeDelta`
+- ✅ Sumar y restar duraciones para proyectar fechas futuras o pasadas
+- ✅ Comparar tiempos con `<`, `>`, `==` para filtrar datos
+- ✅ Manejar arreglos de fechas de manera eficiente
+- ✅ Aplicar todo en un contexto real: hitos cósmicos y cometas
+
+**Siguiente módulo →** [04 · Coordenadas celestes con `SkyCoord`](04-coordenadas.qmd)

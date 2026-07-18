@@ -1,0 +1,16 @@
+---
+title: "14 - Mecanica orbital y efemerides"
+description: "Proximo modulo en preparacion"
+categories: [avanzado]
+toc: true
+execute:
+  echo: true
+  warning: false
+---
+
+<span class="badge-avanzado">Avanzado</span>
+
+::: {.callout-warning}
+## Modulo en construccion
+Este modulo esta siendo preparado. Vuelve pronto.
+:::
