@@ -1,0 +1,366 @@
+[
+  {
+    "objectID": "sobre.html",
+    "href": "sobre.html",
+    "title": "Sobre este blog",
+    "section": "",
+    "text": "Este blog nacio con un objetivo claro: hacer accesible la astronomia computacional a hispanohablantes con conocimientos basicos de Python.\nQue necesitas para seguirlo?\n\nPython instalado (3.10 o superior recomendado)\nSaber que es una variable, una lista y una funcion\nCuriosidad astronomica\n\nHerramientas utilizadas:\n\nAstropy — libreria central del blog\nQuarto — generacion del sitio\nJupyter — entorno de desarrollo interactivo"
+  },
+  {
+    "objectID": "posts/intermedio/11-catalogos.html",
+    "href": "posts/intermedio/11-catalogos.html",
+    "title": "11 - Consultas a catalogos en linea",
+    "section": "",
+    "text": "Intermedio\n\n\n\n\n\n\nWarningModulo en construccion\n\n\n\nEste modulo esta siendo preparado. Vuelve pronto."
+  },
+  {
+    "objectID": "posts/intermedio/09-visualizacion.html",
+    "href": "posts/intermedio/09-visualizacion.html",
+    "title": "09 - Visualizacion astronomica",
+    "section": "",
+    "text": "Intermedio\n\n\n\n\n\n\nWarningModulo en construccion\n\n\n\nEste modulo esta siendo preparado. Vuelve pronto."
+  },
+  {
+    "objectID": "posts/intermedio/07-wcs.html",
+    "href": "posts/intermedio/07-wcs.html",
+    "title": "07 - WCS del pixel al cielo",
+    "section": "",
+    "text": "Intermedio\n\n\n\n\n\n\nWarningModulo en construccion\n\n\n\nEste modulo esta siendo preparado. Vuelve pronto."
+  },
+  {
+    "objectID": "posts/basico/05-tablas.html",
+    "href": "posts/basico/05-tablas.html",
+    "title": "05 - Tablas astronomicas con astropy.tablebasico",
+    "section": "",
+    "text": "WarningModulo en construccion\n\n\n\nEste modulo esta siendo preparado. Vuelve pronto."
+  },
+  {
+    "objectID": "posts/basico/03-tiempo.html",
+    "href": "posts/basico/03-tiempo.html",
+    "title": "03 · Tiempo astronómico con astropy.time",
+    "section": "",
+    "text": "🌱 Básico"
+  },
+  {
+    "objectID": "posts/basico/03-tiempo.html#por-qué-el-tiempo-es-especial-en-astronomía",
+    "href": "posts/basico/03-tiempo.html#por-qué-el-tiempo-es-especial-en-astronomía",
+    "title": "03 · Tiempo astronómico con astropy.time",
+    "section": "1 ¿Por qué el tiempo es especial en astronomía?",
+    "text": "1 ¿Por qué el tiempo es especial en astronomía?\nEn la vida cotidiana el tiempo es simple: miramos el reloj y listo. En astronomía la cosa se complica bastante:\n\nUn satélite GPS necesita corregir su reloj por relatividad general\nLa posición de un asteroide depende de qué escala de tiempo usemos\nLos datos del telescopio Kepler vienen en un sistema propio llamado BJD\nUn eclipse calculado hace 2000 años sigue siendo válido hoy\n\nastropy.time resuelve todo esto con una sola clase: Time. Maneja más de 20 formatos de fecha y 10 escalas de tiempo diferentes, con precisión de nanosegundos.\n\n\n\n\n\n\nNoteRequisitos previos\n\n\n\n\nMódulos 01 y 02 completados\nastropy.units (ya instalado con Astropy)"
+  },
+  {
+    "objectID": "posts/basico/03-tiempo.html#crear-un-objeto-time",
+    "href": "posts/basico/03-tiempo.html#crear-un-objeto-time",
+    "title": "03 · Tiempo astronómico con astropy.time",
+    "section": "2 Crear un objeto Time",
+    "text": "2 Crear un objeto Time\n\n# ─────────────────────────────────────────────────────────────────────────────\n# Importar la clase Time del módulo astropy.time\n# ─────────────────────────────────────────────────────────────────────────────\n\nfrom astropy.time import Time\n\n# Crear un tiempo a partir de una fecha en formato ISO (el más legible)\n# format='iso'  → indica que el texto tiene forma AAAA-MM-DD HH:MM:SS\n# scale='utc'   → escala de tiempo: UTC (Tiempo Universal Coordinado)\nt1 = Time('2024-01-01 00:00:00', format='iso', scale='utc')\n\nprint(f\"Tiempo creado : {t1}\")\nprint(f\"Formato       : {t1.format}\")\nprint(f\"Escala        : {t1.scale}\")\n\nTiempo creado : 2024-01-01 00:00:00.000\nFormato       : iso\nEscala        : utc\n\n\n\n# ─────────────────────────────────────────────────────────────────────────────\n# Varios formatos de entrada que acepta Time\n# ─────────────────────────────────────────────────────────────────────────────\n\nfrom astropy.time import Time\n\n# Formato ISO estándar\nt_iso  = Time('2024-07-20 20:17:40', format='iso',  scale='utc')\n\n# Formato ISOT (ISO con T como separador — usado en FITS y JSON)\nt_isot = Time('2024-07-20T20:17:40', format='isot', scale='utc')\n\n# Fecha Juliana (días desde el 1 de enero del año 4713 a.C.)\nt_jd   = Time(2460512.345, format='jd', scale='utc')\n\n# Fecha Juliana Modificada (JD - 2400000.5 → números más manejables)\nt_mjd  = Time(60511.845,   format='mjd', scale='utc')\n\n# Época Besseliana (usada en catálogos estelares antiguos)\nt_byear = Time(2024.5,     format='byear', scale='utc')\n\nprint(\"Distintos formatos de entrada:\")\nprint(f\"  ISO   : {t_iso}\")\nprint(f\"  ISOT  : {t_isot}\")\nprint(f\"  JD    : {t_jd}\")\nprint(f\"  MJD   : {t_mjd}\")\nprint(f\"  Byear : {t_byear}\")\n\nDistintos formatos de entrada:\n  ISO   : 2024-07-20 20:17:40.000\n  ISOT  : 2024-07-20T20:17:40.000\n  JD    : 2460512.345\n  MJD   : 60511.845\n  Byear : 2024.5"
+  },
+  {
+    "objectID": "posts/basico/03-tiempo.html#convertir-entre-formatos",
+    "href": "posts/basico/03-tiempo.html#convertir-entre-formatos",
+    "title": "03 · Tiempo astronómico con astropy.time",
+    "section": "3 Convertir entre formatos",
+    "text": "3 Convertir entre formatos\n\n# ─────────────────────────────────────────────────────────────────────────────\n# Un objeto Time se puede expresar en cualquier formato accediendo\n# a su atributo del mismo nombre\n# ─────────────────────────────────────────────────────────────────────────────\n\nfrom astropy.time import Time\n\n# Fecha del primer alunizaje del Apolo 11 (20 de julio de 1969)\napolo11 = Time('1969-07-20 20:17:40', format='iso', scale='utc')\n\nprint(\"Alunizaje del Apolo 11 en distintos formatos:\")\nprint(f\"  ISO             : {apolo11.iso}\")\nprint(f\"  ISOT            : {apolo11.isot}\")\nprint(f\"  Fecha Juliana   : {apolo11.jd:.4f} días\")\nprint(f\"  MJD             : {apolo11.mjd:.4f} días\")\nprint(f\"  Época Julia     : {apolo11.jyear:.6f}\")\nprint(f\"  Época Besseliana: {apolo11.byear:.6f}\")\nprint(f\"  Unix timestamp  : {apolo11.unix:.0f} segundos\")\n\nAlunizaje del Apolo 11 en distintos formatos:\n  ISO             : 1969-07-20 20:17:40.000\n  ISOT            : 1969-07-20T20:17:40.000\n  Fecha Juliana   : 2440423.3456 días\n  MJD             : 40422.8456 días\n  Época Julia     : 1969.550570\n  Época Besseliana: 1969.551197\n  Unix timestamp  : -14182940 segundos"
+  },
+  {
+    "objectID": "posts/basico/03-tiempo.html#escalas-de-tiempo",
+    "href": "posts/basico/03-tiempo.html#escalas-de-tiempo",
+    "title": "03 · Tiempo astronómico con astropy.time",
+    "section": "4 Escalas de tiempo",
+    "text": "4 Escalas de tiempo\nUna escala de tiempo define cómo se mide el tiempo. No es lo mismo el reloj de un satélite GPS que el reloj de un observatorio en la Tierra — la relatividad los hace diferir en microsegundos por día.\n\n# ─────────────────────────────────────────────────────────────────────────────\n# Las escalas de tiempo más usadas en astronomía:\n#\n#   UTC  → Tiempo Universal Coordinado (lo que usamos en la vida diaria)\n#   TAI  → Tiempo Atómico Internacional (sin segundos intercalares)\n#   TT   → Tiempo Terrestre (para efemérides de objetos del Sistema Solar)\n#   TDB  → Tiempo Dinámico Baricéntrico (para posiciones de precisión)\n#   UT1  → Basado en la rotación real de la Tierra (varía ligeramente)\n# ─────────────────────────────────────────────────────────────────────────────\n\nfrom astropy.time import Time\n\n# Creamos un tiempo en UTC\nt = Time('2024-01-01 12:00:00', format='iso', scale='utc')\n\n# Convertimos a distintas escalas con el atributo de la escala\nprint(\"El mismo instante en distintas escalas de tiempo:\")\nprint(f\"  UTC : {t.utc.iso}\")\nprint(f\"  TAI : {t.tai.iso}\")    # adelanta 37 segundos respecto a UTC\nprint(f\"  TT  : {t.tt.iso}\")    # adelanta 69.184 segundos respecto a UTC\nprint(f\"  TDB : {t.tdb.iso}\")   # casi igual a TT pero corregido para el baricentro\n\nEl mismo instante en distintas escalas de tiempo:\n  UTC : 2024-01-01 12:00:00.000\n  TAI : 2024-01-01 12:00:37.000\n  TT  : 2024-01-01 12:01:09.184\n  TDB : 2024-01-01 12:01:09.184\n\n\n\n\n\n\n\n\nTip¿Qué escala usar?\n\n\n\nPara la mayoría de los proyectos de este blog usaremos UTC (tiempo cotidiano) o TT (para calcular posiciones de cuerpos del Sistema Solar). Las diferencias importan cuando se necesita precisión de milisegundos o mejor — por ejemplo en física de púlsares o GPS."
+  },
+  {
+    "objectID": "posts/basico/03-tiempo.html#operaciones-con-tiempo",
+    "href": "posts/basico/03-tiempo.html#operaciones-con-tiempo",
+    "title": "03 · Tiempo astronómico con astropy.time",
+    "section": "5 Operaciones con tiempo",
+    "text": "5 Operaciones con tiempo\n\n5.1 Diferencia entre dos tiempos\n\n# ─────────────────────────────────────────────────────────────────────────────\n# Restar dos objetos Time produce un objeto TimeDelta\n# que representa una duración (diferencia de tiempo)\n# ─────────────────────────────────────────────────────────────────────────────\n\nfrom astropy.time import Time\nimport astropy.units as u\n\n# Fechas importantes en exploración espacial\nlanzamiento_webb   = Time('2021-12-25 12:20:00', format='iso', scale='utc')\nprimer_imagen_webb = Time('2022-07-12 00:00:00', format='iso', scale='utc')\nahora              = Time.now()   # tiempo actual del sistema\n\n# Calcular cuánto tiempo pasó entre eventos\ntiempo_calibracion = primer_imagen_webb - lanzamiento_webb\ntiempo_orbita      = ahora - lanzamiento_webb\n\nprint(\"Telescopio James Webb:\")\nprint(f\"  Lanzamiento              : {lanzamiento_webb.iso}\")\nprint(f\"  Primera imagen pública   : {primer_imagen_webb.iso}\")\nprint(f\"  Días hasta primera imagen: {tiempo_calibracion.to(u.day):.1f}\")\nprint(f\"  Días en órbita hasta hoy : {tiempo_orbita.to(u.day):.0f}\")\nprint(f\"  Años en órbita hasta hoy : {tiempo_orbita.to(u.yr):.2f}\")\n\nTelescopio James Webb:\n  Lanzamiento              : 2021-12-25 12:20:00.000\n  Primera imagen pública   : 2022-07-12 00:00:00.000\n  Días hasta primera imagen: 198.5 d\n  Días en órbita hasta hoy : 1666 d\n  Años en órbita hasta hoy : 4.56 yr\n\n\n\n\n5.2 Sumar o restar una duración\n\n# ─────────────────────────────────────────────────────────────────────────────\n# Se puede sumar o restar una duración a un objeto Time\n# usando TimeDelta o directamente una cantidad con unidades\n# ─────────────────────────────────────────────────────────────────────────────\n\nfrom astropy.time import Time, TimeDelta\nimport astropy.units as u\n\n# Fecha de referencia: equinoccio de primavera 2024\nequinoccio = Time('2024-03-20 03:06:00', format='iso', scale='utc')\n\n# Sumar duraciones usando TimeDelta\nun_mes    = TimeDelta(30 * u.day)     # 30 días\nseis_meses = TimeDelta(180 * u.day)   # 180 días\n\nfecha_futuro  = equinoccio + un_mes\nfecha_otono   = equinoccio + seis_meses\n\nprint(f\"Equinoccio de primavera 2024 : {equinoccio.iso}\")\nprint(f\"Un mes después               : {fecha_futuro.iso}\")\nprint(f\"Seis meses después           : {fecha_otono.iso}\")\n\n# También podemos restar para ir hacia el pasado\nhace_un_siglo = equinoccio - TimeDelta(100 * u.yr)\nprint(f\"Hace 100 años                : {hace_un_siglo.iso}\")\n\nEquinoccio de primavera 2024 : 2024-03-20 03:06:00.000\nUn mes después               : 2024-04-19 03:06:00.000\nSeis meses después           : 2024-09-16 03:06:00.000\nHace 100 años                : 1924-03-20 03:06:37.000\n\n\n\n\n5.3 Comparar tiempos\n\n# ─────────────────────────────────────────────────────────────────────────────\n# Los objetos Time se pueden comparar con los operadores &lt; &gt; == !=\n# Muy útil para filtrar observaciones por fecha\n# ─────────────────────────────────────────────────────────────────────────────\n\nfrom astropy.time import Time\n\n# Lista de fechas de observación (simuladas)\nobservaciones = [\n    Time('2024-01-15 22:00:00', format='iso', scale='utc'),\n    Time('2024-03-10 21:30:00', format='iso', scale='utc'),\n    Time('2024-06-21 23:45:00', format='iso', scale='utc'),\n    Time('2024-09-05 20:00:00', format='iso', scale='utc'),\n    Time('2024-12-01 19:00:00', format='iso', scale='utc'),\n]\n\n# Fecha de corte: solo queremos observaciones después del equinoccio\ncorte = Time('2024-03-20 00:00:00', format='iso', scale='utc')\n\n# Filtrar las observaciones usando comparación directa\nprint(\"Observaciones después del equinoccio de primavera 2024:\")\nfor obs in observaciones:\n    if obs &gt; corte:\n        print(f\"  ✓ {obs.iso}\")\n    else:\n        print(f\"  ✗ {obs.iso}  (anterior al corte)\")\n\nObservaciones después del equinoccio de primavera 2024:\n  ✗ 2024-01-15 22:00:00.000  (anterior al corte)\n  ✗ 2024-03-10 21:30:00.000  (anterior al corte)\n  ✓ 2024-06-21 23:45:00.000\n  ✓ 2024-09-05 20:00:00.000\n  ✓ 2024-12-01 19:00:00.000"
+  },
+  {
+    "objectID": "posts/basico/03-tiempo.html#tiempos-en-arreglos-múltiples-fechas-a-la-vez",
+    "href": "posts/basico/03-tiempo.html#tiempos-en-arreglos-múltiples-fechas-a-la-vez",
+    "title": "03 · Tiempo astronómico con astropy.time",
+    "section": "6 Tiempos en arreglos (múltiples fechas a la vez)",
+    "text": "6 Tiempos en arreglos (múltiples fechas a la vez)\n\n# ─────────────────────────────────────────────────────────────────────────────\n# Time también acepta listas de fechas — muy útil para series de datos\n# Internamente las maneja como un arreglo numpy, lo que las hace eficientes\n# ─────────────────────────────────────────────────────────────────────────────\n\nfrom astropy.time import Time\nimport astropy.units as u\n\n# Crear un arreglo de tiempos a partir de una lista de fechas ISO\nfechas = Time([\n    '2024-01-01',\n    '2024-04-01',\n    '2024-07-01',\n    '2024-10-01',\n], format='iso', scale='utc')\n\n# Podemos operar sobre todo el arreglo a la vez\nprint(\"Fechas en Fecha Juliana Modificada:\")\nfor f, mjd in zip(fechas.iso, fechas.mjd):\n    print(f\"  {f}  →  MJD {mjd:.2f}\")\n\n# Diferencia entre fechas consecutivas\ndiferencias = fechas[1:] - fechas[:-1]    # restar arreglos desplazados\nprint(\"\\nDiferencia entre fechas consecutivas:\")\nfor d in diferencias:\n    print(f\"  {d.to(u.day):.1f}\")\n\nFechas en Fecha Juliana Modificada:\n  2024-01-01 00:00:00.000  →  MJD 60310.00\n  2024-04-01 00:00:00.000  →  MJD 60401.00\n  2024-07-01 00:00:00.000  →  MJD 60492.00\n  2024-10-01 00:00:00.000  →  MJD 60584.00\n\nDiferencia entre fechas consecutivas:\n  91.0 d\n  91.0 d\n  92.0 d"
+  },
+  {
+    "objectID": "posts/basico/03-tiempo.html#aplicación-práctica-edad-del-universo-y-lookback-time",
+    "href": "posts/basico/03-tiempo.html#aplicación-práctica-edad-del-universo-y-lookback-time",
+    "title": "03 · Tiempo astronómico con astropy.time",
+    "section": "7 Aplicación práctica: edad del universo y lookback time",
+    "text": "7 Aplicación práctica: edad del universo y lookback time\n\n# ─────────────────────────────────────────────────────────────────────────────\n# Ejemplo integrador: línea de tiempo cósmica\n#\n# NOTA: Time() solo funciona para fechas dentro del rango histórico (~año\n# -4000 a +9000). Para escalas de miles de millones de años trabajamos\n# directamente con cantidades de astropy.units, sin crear objetos Time.\n# ─────────────────────────────────────────────────────────────────────────────\n\nimport astropy.units as u\nfrom astropy.time import Time\n\n# La edad del universo según el modelo estándar (Planck 2018)\nedad_universo = 13.787e9 * u.yr    # 13.787 mil millones de años\n\n# Tiempo actual (para referencia en escala histórica reciente)\nhoy = Time.now()\n\nprint(f\"Hoy                   : {hoy.iso[:10]}\")\nprint(f\"Edad del universo     : {edad_universo:.3e}\")\n\n# Hitos cósmicos: tiempo transcurrido desde el Big Bang\n# Trabajamos con la diferencia en unidades de tiempo, no con fechas absolutas\nhitos = {\n    \"Primeras estrellas\"        :  200e6 * u.yr,\n    \"Vía Láctea (formación)\"    :    1e9 * u.yr,\n    \"Sistema Solar (formación)\" :  9.2e9 * u.yr,\n    \"Vida en la Tierra\"         :  9.9e9 * u.yr,\n    \"Homo sapiens\"              : 13.787e9 * u.yr - 300e3 * u.yr,\n}\n\nprint(\"\\nHitos desde el Big Bang:\")\nprint(f\"  {'Evento':&lt;35} {'Hace (años)':&gt;15}\")\nprint(\"  \" + \"─\" * 52)\nfor nombre, tiempo_desde_bb in hitos.items():\n    # Cuánto tiempo ha pasado desde ese hito hasta hoy\n    hace = edad_universo - tiempo_desde_bb\n    print(f\"  {nombre:&lt;35} {hace.to(u.yr):&gt;15.3e}\")\n\nHoy                   : 2026-07-18\nEdad del universo     : 1.379e+10 yr\n\nHitos desde el Big Bang:\n  Evento                                  Hace (años)\n  ────────────────────────────────────────────────────\n  Primeras estrellas                        1.359e+10 yr\n  Vía Láctea (formación)                    1.279e+10 yr\n  Sistema Solar (formación)                 4.587e+09 yr\n  Vida en la Tierra                         3.887e+09 yr\n  Homo sapiens                              3.000e+05 yr"
+  },
+  {
+    "objectID": "posts/basico/03-tiempo.html#tabla-de-referencia-formatos-y-escalas",
+    "href": "posts/basico/03-tiempo.html#tabla-de-referencia-formatos-y-escalas",
+    "title": "03 · Tiempo astronómico con astropy.time",
+    "section": "8 Tabla de referencia: formatos y escalas",
+    "text": "8 Tabla de referencia: formatos y escalas\nFormatos más comunes:\n\n\n\nFormato\nCódigo\nEjemplo\n\n\n\n\nISO legible\n'iso'\n2024-01-01 12:00:00\n\n\nISO con T\n'isot'\n2024-01-01T12:00:00\n\n\nFecha Juliana\n'jd'\n2460310.0\n\n\nMJD\n'mjd'\n59909.5\n\n\nÉpoca Julia\n'jyear'\n2024.0\n\n\nUnix timestamp\n'unix'\n1704067200\n\n\n\nEscalas más usadas:\n\n\n\nEscala\nCódigo\nUso típico\n\n\n\n\nUniversal Coordinado\n'utc'\nUso general, datos de observatorio\n\n\nAtómico Internacional\n'tai'\nRelojes atómicos, satélites\n\n\nTerrestre\n'tt'\nEfemérides del Sistema Solar\n\n\nDin. Baricéntrico\n'tdb'\nPosiciones de alta precisión"
+  },
+  {
+    "objectID": "posts/basico/03-tiempo.html#ejercicio",
+    "href": "posts/basico/03-tiempo.html#ejercicio",
+    "title": "03 · Tiempo astronómico con astropy.time",
+    "section": "9 Ejercicio",
+    "text": "9 Ejercicio\nEl cometa Halley tiene un período orbital de aproximadamente 75.3 años. Su último perihelio (paso más cercano al Sol) fue el 9 de febrero de 1986.\nUsando astropy.time:\n\nCrea un objeto Time para la fecha del último perihelio\nCalcula la fecha aproximada del próximo perihelio sumando el período\n¿Cuántos días faltan desde hoy hasta ese próximo perihelio?\n\n\n\n\n\n\n\nTipVer solución\n\n\n\n\n\n\n# ─────────────────────────────────────────────────────────────────────────────\n# SOLUCIÓN: próximo perihelio del cometa Halley\n# ─────────────────────────────────────────────────────────────────────────────\n\nfrom astropy.time import Time, TimeDelta\nimport astropy.units as u\n\n# Paso 1: fecha del último perihelio del Halley\nultimo_perihelio = Time('1986-02-09 00:00:00', format='iso', scale='utc')\n\n# Paso 2: sumar el período orbital para obtener el próximo perihelio\nperiodo = TimeDelta(75.3 * u.yr)           # período del Halley en años\nproximo_perihelio = ultimo_perihelio + periodo\n\n# Paso 3: días que faltan desde hoy\nhoy = Time.now()\ndias_restantes = (proximo_perihelio - hoy).to(u.day)\nanios_restantes = (proximo_perihelio - hoy).to(u.yr)\n\nprint(\"Cometa Halley:\")\nprint(f\"  Último perihelio   : {ultimo_perihelio.iso[:10]}\")\nprint(f\"  Período orbital    : {periodo.to(u.yr):.1f}\")\nprint(f\"  Próximo perihelio  : {proximo_perihelio.iso[:10]}\")\nprint(f\"  Días restantes     : {dias_restantes:.0f}\")\nprint(f\"  Años restantes     : {anios_restantes:.1f}\")\n\nCometa Halley:\n  Último perihelio   : 1986-02-09\n  Período orbital    : 75.3 yr\n  Próximo perihelio  : 2061-05-29\n  Días restantes     : 12734 d\n  Años restantes     : 34.9 yr"
+  },
+  {
+    "objectID": "posts/basico/03-tiempo.html#qué-aprendiste-en-este-módulo",
+    "href": "posts/basico/03-tiempo.html#qué-aprendiste-en-este-módulo",
+    "title": "03 · Tiempo astronómico con astropy.time",
+    "section": "10 ¿Qué aprendiste en este módulo?",
+    "text": "10 ¿Qué aprendiste en este módulo?\n\n✅ Crear objetos Time en distintos formatos: ISO, JD, MJD, Unix\n✅ Convertir entre formatos accediendo al atributo correspondiente\n✅ Entender las escalas de tiempo: UTC, TAI, TT, TDB\n✅ Calcular diferencias entre fechas con TimeDelta\n✅ Sumar y restar duraciones para proyectar fechas futuras o pasadas\n✅ Comparar tiempos con &lt;, &gt;, == para filtrar datos\n✅ Manejar arreglos de fechas de manera eficiente\n✅ Aplicar todo en un contexto real: hitos cósmicos y cometas\n\nSiguiente módulo → 04 · Coordenadas celestes con SkyCoord"
+  },
+  {
+    "objectID": "posts/basico/01-introduccion.html",
+    "href": "posts/basico/01-introduccion.html",
+    "title": "01 · ¿Qué es Astropy y por qué usarlo?",
+    "section": "",
+    "text": "🌱 Básico"
+  },
+  {
+    "objectID": "posts/basico/01-introduccion.html#qué-es-astropy",
+    "href": "posts/basico/01-introduccion.html#qué-es-astropy",
+    "title": "01 · ¿Qué es Astropy y por qué usarlo?",
+    "section": "1 ¿Qué es Astropy?",
+    "text": "1 ¿Qué es Astropy?\nAstropy es una librería de Python creada por la comunidad astronómica para facilitar el trabajo con datos del universo. Piensa en ella como una caja de herramientas especializada: así como pandas sirve para tablas de datos y matplotlib para gráficas, Astropy sirve para todo lo que tenga que ver con astronomía.\n¿Qué problemas resuelve Astropy en la práctica?\n\nConvertir entre sistemas de coordenadas celestes (¿dónde está esa galaxia en el cielo?)\nManejar tiempos astronómicos (¿cuándo ocurrió ese eclipse exactamente?)\nAbrir archivos de imágenes astronómicas en formato FITS\nTrabajar con unidades físicas sin cometer errores de conversión\n\n\n\n\n\n\n\nNote¿Para quién es este blog?\n\n\n\nEste blog asume que sabes lo básico de Python: variables, listas, funciones e importar librerías con import. No necesitas saber física avanzada — iremos explicando los conceptos astronómicos a medida que los necesitemos."
+  },
+  {
+    "objectID": "posts/basico/01-introduccion.html#el-ecosistema-de-astropy",
+    "href": "posts/basico/01-introduccion.html#el-ecosistema-de-astropy",
+    "title": "01 · ¿Qué es Astropy y por qué usarlo?",
+    "section": "2 El ecosistema de Astropy",
+    "text": "2 El ecosistema de Astropy\nAstropy no está sola. Es el núcleo de un ecosistema más grande de librerías que se especializan en tareas concretas:\n\n\n\n\n\n\n\n\nLibrería\n¿Para qué sirve?\n¿Cuándo la usaremos?\n\n\n\n\nastropy\nNúcleo: unidades, tiempo, coordenadas, FITS\nDesde el módulo 01\n\n\nphotutils\nFotometría (medir el brillo de estrellas)\nMódulo 08\n\n\nastroquery\nConsultar catálogos en línea (Simbad, NED)\nMódulo 11\n\n\nspecutils\nAnalizar espectros de luz\nMódulo 12\n\n\n\nEn este primer módulo nos enfocamos solo en el núcleo: astropy."
+  },
+  {
+    "objectID": "posts/basico/01-introduccion.html#instalación",
+    "href": "posts/basico/01-introduccion.html#instalación",
+    "title": "01 · ¿Qué es Astropy y por qué usarlo?",
+    "section": "3 Instalación",
+    "text": "3 Instalación\nAbre una terminal y ejecuta uno de estos comandos según cómo gestionas tus paquetes de Python:\n# Opción A: usando pip (el más común)\npip install astropy\n\n# Opción B: usando conda (si usas Anaconda o Miniconda)\nconda install -c conda-forge astropy\nPara verificar que la instalación fue exitosa:\npython -c \"import astropy; print(astropy.__version__)\"\nDeberías ver algo como 6.x.x. Si ves un número, ¡estás listo!"
+  },
+  {
+    "objectID": "posts/basico/01-introduccion.html#tu-primer-script-con-astropy",
+    "href": "posts/basico/01-introduccion.html#tu-primer-script-con-astropy",
+    "title": "01 · ¿Qué es Astropy y por qué usarlo?",
+    "section": "4 Tu primer script con Astropy",
+    "text": "4 Tu primer script con Astropy\nVamos a escribir nuestro primer código. No te preocupes si no entiendes todo todavía — los módulos siguientes explican cada cosa en detalle. El objetivo aquí es ver qué se puede hacer con Astropy.\n\n4.1 Verificar la instalación desde Python\n\n# ─────────────────────────────────────────────────────────────────────────────\n# Verificamos que Astropy está correctamente instalada\n# ─────────────────────────────────────────────────────────────────────────────\n\n# Importamos el módulo principal de Astropy\nimport astropy\n\n# Imprimimos la versión instalada para confirmar que todo funciona\nprint(\"Versión de Astropy instalada:\", astropy.__version__)\n\nVersión de Astropy instalada: 7.2.0\n\n\n\n\n4.2 Unidades físicas: adiós a los errores de conversión\nUno de los problemas más frecuentes en ciencia es confundir unidades. En 1999 la NASA perdió una sonda espacial de 327 millones de dólares por un error de conversión entre libras-fuerza y newtons. Astropy resuelve esto de raíz:\n\n# ─────────────────────────────────────────────────────────────────────────────\n# Ejemplo de unidades físicas con Astropy\n# Las unidades viajan junto al número — imposible confundirlas\n# ─────────────────────────────────────────────────────────────────────────────\n\n# Importamos el submódulo de unidades\nimport astropy.units as u\n\n# Definimos la distancia de la Tierra al Sol\n# El número 1 seguido de * u.au significa \"1 unidad astronómica\"\n# 1 UA = distancia media Tierra-Sol ≈ 150 millones de km\ndistancia_tierra_sol = 1 * u.au\n\n# Convertimos automáticamente a kilómetros con el método .to()\n# Astropy conoce la equivalencia entre UA y km\ndistancia_en_km = distancia_tierra_sol.to(u.km)\n\n# Mostramos ambos valores — Astropy siempre muestra el número y la unidad\nprint(\"Distancia Tierra-Sol:\")\nprint(f\"  En unidades astronómicas : {distancia_tierra_sol}\")\nprint(f\"  En kilómetros            : {distancia_en_km:.2e}\")\n\nDistancia Tierra-Sol:\n  En unidades astronómicas : 1.0 AU\n  En kilómetros            : 1.50e+08 km\n\n\n\n\n4.3 Coordenadas celestes: ubicar un objeto en el cielo\n\n# ─────────────────────────────────────────────────────────────────────────────\n# Ejemplo de coordenadas celestes\n# SkyCoord es la clase que representa una posición en el cielo\n# ─────────────────────────────────────────────────────────────────────────────\n\n# Importamos SkyCoord para manejar posiciones en el cielo\nfrom astropy.coordinates import SkyCoord\n\n# Importamos units para acompañar los ángulos con su unidad\nimport astropy.units as u\n\n# Creamos la posición de la famosa nebulosa de Orión (M42)\n# ra  = ascensión recta  (equivale a la \"longitud\" en el cielo)\n# dec = declinación      (equivale a la \"latitud\" en el cielo)\n# frame='icrs' es el sistema de referencia astronómico estándar\nnebulosa_orion = SkyCoord(\n    ra=83.8221 * u.degree,   # posición horizontal en el cielo\n    dec=-5.3911 * u.degree,  # posición vertical en el cielo\n    frame='icrs'             # sistema de coordenadas estándar\n)\n\n# Mostramos la posición en formato clásico de astronomía (horas:minutos:segundos)\nprint(\"Nebulosa de Orión (M42):\")\nprint(f\"  Ascensión recta  : {nebulosa_orion.ra.to_string(unit=u.hour)}\")\nprint(f\"  Declinación      : {nebulosa_orion.dec.to_string()}\")\n\nNebulosa de Orión (M42):\n  Ascensión recta  : 5h35m17.304s\n  Declinación      : -5d23m27.96s\n\n\n\n\n4.4 Tiempo astronómico: más preciso que un reloj normal\n\n# ─────────────────────────────────────────────────────────────────────────────\n# Ejemplo de tiempo astronómico\n# En astronomía necesitamos precisión de microsegundos y formatos especiales\n# ─────────────────────────────────────────────────────────────────────────────\n\n# Importamos la clase Time para manejar tiempos astronómicos\nfrom astropy.time import Time\n\n# Creamos un objeto de tiempo con la fecha del lanzamiento del telescopio\n# espacial James Webb (25 de diciembre de 2021)\n# format='iso' indica que el texto está en formato AAAA-MM-DD HH:MM:SS\nlanzamiento_webb = Time('2021-12-25 12:20:00', format='iso', scale='utc')\n\n# Convertimos a Fecha Juliana — el sistema de fechas que usan los astrónomos\n# cuenta los días desde el 1 de enero del año 4713 a.C.\nprint(\"Lanzamiento del telescopio James Webb:\")\nprint(f\"  Fecha normal    : {lanzamiento_webb.iso}\")\nprint(f\"  Fecha Juliana   : {lanzamiento_webb.jd:.4f} días\")\n\n# Calculamos cuántos días han pasado desde el lanzamiento hasta hoy\nahora = Time.now()                          # tiempo actual del sistema\ndias_transcurridos = (ahora - lanzamiento_webb).to(u.day)\n\nprint(f\"  Días en órbita  : {dias_transcurridos:.0f}\")\n\nLanzamiento del telescopio James Webb:\n  Fecha normal    : 2021-12-25 12:20:00.000\n  Fecha Juliana   : 2459574.0139 días\n  Días en órbita  : 1612 d\n\n\n\n\n4.5 Constantes físicas: siempre disponibles y con unidades\n\n# ─────────────────────────────────────────────────────────────────────────────\n# Constantes físicas y astronómicas incluidas en Astropy\n# No necesitas buscarlas en Wikipedia ni copiar números a mano\n# ─────────────────────────────────────────────────────────────────────────────\n\n# Importamos el módulo de constantes físicas\nfrom astropy import constants as const\n\n# El módulo de cosmología (que veremos más adelante) tiene constantes adicionales\n# como H0 (constante de Hubble). Por ahora usamos las del módulo constants:\nprint(\"Constantes físicas incluidas en Astropy:\")\nprint(f\"  Velocidad de la luz  : {const.c:.4e}\")   # c\nprint(f\"  Masa del Sol         : {const.M_sun:.4e}\")  # M☉\nprint(f\"  Radio de la Tierra   : {const.R_earth:.4e}\")  # R⊕\nprint(f\"  Constante gravitacional: {const.G:.4e}\")  # G\n\n# Ejemplo: calculamos cuánto tarda la luz en llegar del Sol a la Tierra\n# Física básica: tiempo = distancia / velocidad\ndistancia_sol = 1 * u.au             # distancia en unidades astronómicas\nvelocidad_luz = const.c              # velocidad de la luz\n\n# El método .to() convierte el resultado a minutos\ntiempo_luz = (distancia_sol / velocidad_luz).to(u.minute)\nprint(f\"\\nTiempo que tarda la luz Sol → Tierra: {tiempo_luz:.2f}\")\n\nConstantes físicas incluidas en Astropy:\n  Velocidad de la luz  : 2.9979e+08 m / s\n  Masa del Sol         : 1.9884e+30 kg\n  Radio de la Tierra   : 6.3781e+06 m\n  Constante gravitacional: 6.6743e-11 m3 / (kg s2)\n\nTiempo que tarda la luz Sol → Tierra: 8.32 min"
+  },
+  {
+    "objectID": "posts/basico/01-introduccion.html#resumen-qué-acabas-de-ver",
+    "href": "posts/basico/01-introduccion.html#resumen-qué-acabas-de-ver",
+    "title": "01 · ¿Qué es Astropy y por qué usarlo?",
+    "section": "5 Resumen: ¿qué acabas de ver?",
+    "text": "5 Resumen: ¿qué acabas de ver?\nEn este primer contacto con Astropy usamos cuatro de sus herramientas principales:\n\n\n\n\n\n\n\n\nHerramienta\nMódulo\nLo que hace\n\n\n\n\nUnidades\nastropy.units\nAdjunta unidades a los números\n\n\nCoordenadas\nastropy.coordinates\nUbica objetos en el cielo\n\n\nTiempo\nastropy.time\nManeja fechas astronómicas\n\n\nConstantes\nastropy.constants\nProvee constantes físicas oficiales\n\n\n\nCada una de estas herramientas tiene su propio módulo en este blog. Por ahora, lo importante es que viste cómo Astropy convierte operaciones complejas (convertir unidades, manejar coordenadas, calcular tiempos) en pocas líneas de código legible."
+  },
+  {
+    "objectID": "posts/basico/01-introduccion.html#ejercicio",
+    "href": "posts/basico/01-introduccion.html#ejercicio",
+    "title": "01 · ¿Qué es Astropy y por qué usarlo?",
+    "section": "6 Ejercicio",
+    "text": "6 Ejercicio\nUsando lo que viste en este módulo, calcula cuánto tiempo tarda la luz en llegar desde Neptuno hasta la Tierra. La distancia media de Neptuno al Sol es de 30.07 UA.\n\n\n\n\n\n\nTipVer solución\n\n\n\n\n\n\n# ─────────────────────────────────────────────────────────────────────────────\n# SOLUCIÓN: tiempo que tarda la luz de Neptuno en llegar a la Tierra\n# ─────────────────────────────────────────────────────────────────────────────\n\nfrom astropy import constants as const\nimport astropy.units as u\n\n# Distancia de Neptuno al Sol (dato del enunciado)\ndistancia_neptuno_sol = 30.07 * u.au\n\n# Distancia de la Tierra al Sol (1 UA por definición)\ndistancia_tierra_sol = 1.0 * u.au\n\n# Distancia aproximada Neptuno → Tierra\n# (usamos la diferencia — ambos en el mismo lado del Sol en promedio)\ndistancia_neptuno_tierra = distancia_neptuno_sol - distancia_tierra_sol\n\n# Calculamos el tiempo usando tiempo = distancia / velocidad\n# .to(u.minute) convierte el resultado a minutos automáticamente\ntiempo = (distancia_neptuno_tierra / const.c).to(u.minute)\n\nprint(f\"Distancia Neptuno - Tierra : {distancia_neptuno_tierra:.2f}\")\nprint(f\"Tiempo de viaje de la luz  : {tiempo:.1f}\")\nprint(f\"                           : {tiempo.to(u.hour):.2f}\")\n\nDistancia Neptuno - Tierra : 29.07 AU\nTiempo de viaje de la luz  : 241.8 min\n                           : 4.03 h"
+  },
+  {
+    "objectID": "posts/basico/01-introduccion.html#qué-aprendiste-en-este-módulo",
+    "href": "posts/basico/01-introduccion.html#qué-aprendiste-en-este-módulo",
+    "title": "01 · ¿Qué es Astropy y por qué usarlo?",
+    "section": "7 ¿Qué aprendiste en este módulo?",
+    "text": "7 ¿Qué aprendiste en este módulo?\n\n✅ Qué es Astropy y para qué sirve en la práctica\n✅ Cómo instalarla con pip o conda\n✅ Cómo usar unidades físicas para evitar errores de conversión\n✅ Cómo representar posiciones en el cielo con SkyCoord\n✅ Cómo manejar fechas astronómicas con Time\n✅ Cómo acceder a constantes físicas con astropy.constants\n\nSiguiente módulo → 02 · Unidades y constantes físicas"
+  },
+  {
+    "objectID": "posts/avanzado/16-extensiones.html",
+    "href": "posts/avanzado/16-extensiones.html",
+    "title": "16 - Extensiones y modelos propios",
+    "section": "",
+    "text": "Avanzado\n\n\n\n\n\n\nWarningModulo en construccion\n\n\n\nEste modulo esta siendo preparado. Vuelve pronto."
+  },
+  {
+    "objectID": "posts/avanzado/14-orbital.html",
+    "href": "posts/avanzado/14-orbital.html",
+    "title": "14 - Mecanica orbital y efemerides",
+    "section": "",
+    "text": "Avanzado\n\n\n\n\n\n\nWarningModulo en construccion\n\n\n\nEste modulo esta siendo preparado. Vuelve pronto."
+  },
+  {
+    "objectID": "posts/avanzado/12-espectroscopia.html",
+    "href": "posts/avanzado/12-espectroscopia.html",
+    "title": "12 - Espectroscopia con specutils",
+    "section": "",
+    "text": "Avanzado\n\n\n\n\n\n\nWarningModulo en construccion\n\n\n\nEste modulo esta siendo preparado. Vuelve pronto."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "AstroPy en Español",
+    "section": "",
+    "text": "Bienvenido a este blog dedicado a aprender Astropy desde cero. No necesitas ser fisico ni matematico avanzado: solo tener nociones basicas de Python y mucha curiosidad por el universo."
+  },
+  {
+    "objectID": "index.html#niveles-de-aprendizaje",
+    "href": "index.html#niveles-de-aprendizaje",
+    "title": "AstroPy en Español",
+    "section": "Niveles de aprendizaje",
+    "text": "Niveles de aprendizaje\n\n\n\nBasico\nLos cimientos: unidades, tiempo, coordenadas y tablas. Aprende el “idioma” de Astropy antes de tocar datos reales.\nIr al nivel basico\n\n\n\nIntermedio\nImagenes FITS, fotometria, visualizacion y consultas a catalogos astronomicos en linea.\nIr al nivel intermedio\n\n\n\nAvanzado\nEspectros, cosmologia, mecanica orbital y un pipeline completo de reduccion de datos.\nIr al nivel avanzado"
+  },
+  {
+    "objectID": "index.html#modulos-disponibles",
+    "href": "index.html#modulos-disponibles",
+    "title": "AstroPy en Español",
+    "section": "Modulos disponibles",
+    "text": "Modulos disponibles\n\n\n\nNum\nTitulo\nNivel\n\n\n\n\n01\nIntroduccion a Astropy\nBasico\n\n\n02\nUnidades y constantes\nBasico\n\n\n03\nTiempo astronomico\nBasico\n\n\n04\nCoordenadas celestes\nBasico\n\n\n05\nTablas astronomicas\nBasico\n\n\n06\nArchivos FITS\nIntermedio\n\n\n07\nWCS: del pixel al cielo\nIntermedio\n\n\n08\nFotometria de apertura\nIntermedio\n\n\n09\nVisualizacion astronomica\nIntermedio\n\n\n10\nEstadistica y modelado\nIntermedio\n\n\n11\nCatalogos en linea\nIntermedio\n\n\n12\nEspectroscopia\nAvanzado\n\n\n13\nCosmologia computacional\nAvanzado\n\n\n14\nMecanica orbital\nAvanzado\n\n\n15\nSeries temporales\nAvanzado\n\n\n16\nExtensiones propias\nAvanzado\n\n\n17\nPipeline completo\nAvanzado"
+  },
+  {
+    "objectID": "posts/avanzado/13-cosmologia.html",
+    "href": "posts/avanzado/13-cosmologia.html",
+    "title": "13 - Cosmologia computacional",
+    "section": "",
+    "text": "Avanzado\n\n\n\n\n\n\nWarningModulo en construccion\n\n\n\nEste modulo esta siendo preparado. Vuelve pronto."
+  },
+  {
+    "objectID": "posts/avanzado/15-series-temporales.html",
+    "href": "posts/avanzado/15-series-temporales.html",
+    "title": "15 - Series temporales astronomicas",
+    "section": "",
+    "text": "Avanzado\n\n\n\n\n\n\nWarningModulo en construccion\n\n\n\nEste modulo esta siendo preparado. Vuelve pronto."
+  },
+  {
+    "objectID": "posts/avanzado/17-pipeline.html",
+    "href": "posts/avanzado/17-pipeline.html",
+    "title": "17 - Pipeline completo de reduccion",
+    "section": "",
+    "text": "Avanzado\n\n\n\n\n\n\nWarningModulo en construccion\n\n\n\nEste modulo esta siendo preparado. Vuelve pronto."
+  },
+  {
+    "objectID": "posts/basico/02-unidades.html",
+    "href": "posts/basico/02-unidades.html",
+    "title": "02 · Unidades y constantes físicas",
+    "section": "",
+    "text": "🌱 Básico"
+  },
+  {
+    "objectID": "posts/basico/02-unidades.html#por-qué-importan-las-unidades",
+    "href": "posts/basico/02-unidades.html#por-qué-importan-las-unidades",
+    "title": "02 · Unidades y constantes físicas",
+    "section": "1 ¿Por qué importan las unidades?",
+    "text": "1 ¿Por qué importan las unidades?\nEn 1999, la NASA perdió la sonda Mars Climate Orbiter — una misión de 327 millones de dólares — porque un equipo usó libras-fuerza y otro usó newtons. El software nunca detectó el error porque los números eran números sin unidad.\nEn astronomía este problema se multiplica: mezclamos metros, años luz, parsecs, unidades astronómicas, ergios, julios y electronvoltios en el mismo cálculo. astropy.units resuelve esto de raíz: el número y su unidad viajan juntos y las conversiones son automáticas.\n\n\n\n\n\n\nNoteRequisitos previos\n\n\n\n\nMódulo 01 completado\nAstropy instalada: pip install astropy"
+  },
+  {
+    "objectID": "posts/basico/02-unidades.html#el-módulo-astropy.units",
+    "href": "posts/basico/02-unidades.html#el-módulo-astropy.units",
+    "title": "02 · Unidades y constantes físicas",
+    "section": "2 El módulo astropy.units",
+    "text": "2 El módulo astropy.units\n\n2.1 Asignar una unidad a un número\n\n# ─────────────────────────────────────────────────────────────────────────────\n# Importar el módulo de unidades\n# Por convención se abrevia como 'u' en toda la comunidad astronómica\n# ─────────────────────────────────────────────────────────────────────────────\n\nimport astropy.units as u\n\n# Crear una cantidad física: número * unidad\n# El asterisco (*) une el valor numérico con su unidad\ndistancia = 150e6 * u.km        # 150 millones de kilómetros\nmasa      = 1.989e30 * u.kg     # masa del Sol en kilogramos\ntiempo    = 365.25 * u.day      # un año en días\n\n# Astropy muestra siempre el valor y la unidad juntos\nprint(f\"Distancia : {distancia}\")\nprint(f\"Masa      : {masa:.3e}\")\nprint(f\"Tiempo    : {tiempo}\")\n\nDistancia : 150000000.0 km\nMasa      : 1.989e+30 kg\nTiempo    : 365.25 d\n\n\n\n\n2.2 Convertir entre unidades con .to()\n\n# ─────────────────────────────────────────────────────────────────────────────\n# Convertir unidades con el método .to()\n# Solo hay que indicar a qué unidad se quiere llegar\n# ─────────────────────────────────────────────────────────────────────────────\n\nimport astropy.units as u\n\n# Partimos de una distancia en kilómetros\ndistancia_km = 150e6 * u.km\n\n# Convertimos a distintas unidades astronómicas\ndistancia_m  = distancia_km.to(u.m)       # metros\ndistancia_au = distancia_km.to(u.au)      # unidades astronómicas\ndistancia_ly = distancia_km.to(u.lyr)     # años luz\n\nprint(\"La distancia Tierra-Sol equivale a:\")\nprint(f\"  {distancia_km:.3e}\")\nprint(f\"  {distancia_m:.3e}\")\nprint(f\"  {distancia_au:.4f}\")\nprint(f\"  {distancia_ly:.6f}\")\n\nLa distancia Tierra-Sol equivale a:\n  1.500e+08 km\n  1.500e+11 m\n  1.0027 AU\n  0.000016 lyr\n\n\n\n\n2.3 Unidades compuestas: velocidad, presión, energía\n\n# ─────────────────────────────────────────────────────────────────────────────\n# Las unidades se pueden combinar con * (por) y / (entre)\n# Astropy construye la unidad compuesta automáticamente\n# ─────────────────────────────────────────────────────────────────────────────\n\nimport astropy.units as u\n\n# Velocidad = distancia / tiempo\nvelocidad_luz = 3e5 * (u.km / u.s)        # velocidad de la luz en km/s\nprint(f\"Velocidad de la luz: {velocidad_luz}\")\n\n# Convertir km/s a m/s\nvelocidad_ms = velocidad_luz.to(u.m / u.s)\nprint(f\"En metros por segundo: {velocidad_ms:.3e}\")\n\n# Energía en electronvoltios (muy usada en astrofísica de altas energías)\nenergia_foton = 2.5 * u.eV                # energía de un fotón de luz visible\nenergia_joules = energia_foton.to(u.J)    # convertir a julios\nprint(f\"\\nEnergía del fotón: {energia_foton}\")\nprint(f\"En julios        : {energia_joules:.3e}\")\n\nVelocidad de la luz: 300000.0 km / s\nEn metros por segundo: 3.000e+08 m / s\n\nEnergía del fotón: 2.5 eV\nEn julios        : 4.005e-19 J\n\n\n\n\n2.4 Unidades angulares: grados, arcominutos, arcosegundos\n\n# ─────────────────────────────────────────────────────────────────────────────\n# En astronomía los ángulos tienen sus propias unidades:\n#   grado (°) → arcominuto (') → arcosegundo ('')\n# 1 grado = 60 arcominutos = 3600 arcosegundos\n# ─────────────────────────────────────────────────────────────────────────────\n\nimport astropy.units as u\n\n# El diámetro angular de la Luna vista desde la Tierra\ndiametro_luna = 0.5 * u.degree            # aproximadamente medio grado\n\n# Convertir a arcominutos y arcosegundos\nen_arcmin = diametro_luna.to(u.arcmin)    # arcominutos\nen_arcsec = diametro_luna.to(u.arcsec)   # arcosegundos\n\nprint(\"Diámetro angular de la Luna:\")\nprint(f\"  En grados       : {diametro_luna}\")\nprint(f\"  En arcominutos  : {en_arcmin}\")\nprint(f\"  En arcosegundos : {en_arcsec}\")\n\n# El arcosegundo es clave: la resolución de los telescopios\n# se mide en arcosegundos (o miliarcsegundos en radioastronomía)\nlimite_hubble = 0.05 * u.arcsec           # límite de resolución del HST\nprint(f\"\\nResolución del Hubble : {limite_hubble}\")\nprint(f\"En grados             : {limite_hubble.to(u.degree):.6f}\")\n\nDiámetro angular de la Luna:\n  En grados       : 0.5 deg\n  En arcominutos  : 30.0 arcmin\n  En arcosegundos : 1800.0 arcsec\n\nResolución del Hubble : 0.05 arcsec\nEn grados             : 0.000014 deg"
+  },
+  {
+    "objectID": "posts/basico/02-unidades.html#operaciones-aritméticas-con-unidades",
+    "href": "posts/basico/02-unidades.html#operaciones-aritméticas-con-unidades",
+    "title": "02 · Unidades y constantes físicas",
+    "section": "3 Operaciones aritméticas con unidades",
+    "text": "3 Operaciones aritméticas con unidades\n\n# ─────────────────────────────────────────────────────────────────────────────\n# Las cantidades con unidades se pueden sumar, restar, multiplicar y dividir\n# Astropy verifica automáticamente que las unidades sean compatibles\n# ─────────────────────────────────────────────────────────────────────────────\n\nimport astropy.units as u\n\n# Suma: las dos cantidades deben ser del mismo tipo (ambas de longitud)\n# Si están en unidades distintas, primero convertimos una de ellas\nd1 = 100 * u.km\nd2 =   5 * u.au                   # unidad astronómica\n\nd2_en_km = d2.to(u.km)            # convertir antes de sumar\ntotal = d1 + d2_en_km\nprint(f\"Suma de distancias: {total:.3e}\")\n\n# Multiplicación: produce una unidad compuesta\nmasa         = 5.972e24 * u.kg        # masa de la Tierra\naceleracion  = 9.8 * (u.m / u.s**2)  # aceleración de la gravedad\nfuerza       = masa * aceleracion     # kg·m/s² = Newton\nprint(f\"\\nFuerza gravitacional: {fuerza:.3e}\")\nprint(f\"En Newtons          : {fuerza.to(u.N):.3e}\")\n\n# División: ley de Hubble → velocidad = H₀ × distancia\nH0   = 70 * (u.km / u.s / u.Mpc)    # constante de Hubble\ndist = 10 * u.Mpc                    # distancia a una galaxia (megaparsecs)\nvel  = H0 * dist                     # velocidad de recesión\nprint(f\"\\nVelocidad de recesión: {vel:.0f}\")\n\nSuma de distancias: 7.480e+08 km\n\nFuerza gravitacional: 5.853e+25 kg m / s2\nEn Newtons          : 5.853e+25 N\n\nVelocidad de recesión: 700 km / s"
+  },
+  {
+    "objectID": "posts/basico/02-unidades.html#errores-comunes-y-cómo-evitarlos",
+    "href": "posts/basico/02-unidades.html#errores-comunes-y-cómo-evitarlos",
+    "title": "02 · Unidades y constantes físicas",
+    "section": "4 Errores comunes y cómo evitarlos",
+    "text": "4 Errores comunes y cómo evitarlos\n\n# ─────────────────────────────────────────────────────────────────────────────\n# Astropy lanza un error si intentamos mezclar unidades incompatibles\n# Esto es una PROTECCIÓN — evita errores silenciosos en los cálculos\n# ─────────────────────────────────────────────────────────────────────────────\n\nimport astropy.units as u\n\n# Intentamos sumar kilómetros con kilogramos (no tiene sentido físico)\ntry:\n    resultado = 100 * u.km + 50 * u.kg\nexcept u.UnitConversionError as error:\n    # UnitConversionError avisa que las unidades no son compatibles\n    print(\"Error detectado por Astropy:\")\n    print(f\"  {error}\")\n    print(\"\\n→ Esto es exactamente lo que queremos:\")\n    print(\"  en vez de obtener un número sin sentido, Astropy nos avisa.\")\n\nError detectado por Astropy:\n  Can only apply 'add' function to quantities with compatible dimensions\n\n→ Esto es exactamente lo que queremos:\n  en vez de obtener un número sin sentido, Astropy nos avisa.\n\n\n\n# ─────────────────────────────────────────────────────────────────────────────\n# Para extraer solo el número (sin la unidad) se usa .value\n# Útil cuando necesitamos pasar el dato a otra librería como matplotlib\n# ─────────────────────────────────────────────────────────────────────────────\n\nimport astropy.units as u\n\nvelocidad = 299792.458 * (u.km / u.s)   # velocidad de la luz\n\nsolo_numero = velocidad.value            # extrae solo el número (float)\nsolo_unidad = velocidad.unit             # extrae solo la unidad\n\nprint(f\"Cantidad completa : {velocidad}\")\nprint(f\"Solo el número    : {solo_numero}\")\nprint(f\"Solo la unidad    : {solo_unidad}\")\nprint(f\"Tipo de dato      : {type(solo_numero)}\")   # float normal de Python\n\nCantidad completa : 299792.458 km / s\nSolo el número    : 299792.458\nSolo la unidad    : km / s\nTipo de dato      : &lt;class 'numpy.float64'&gt;"
+  },
+  {
+    "objectID": "posts/basico/02-unidades.html#constantes-físicas-con-astropy.constants",
+    "href": "posts/basico/02-unidades.html#constantes-físicas-con-astropy.constants",
+    "title": "02 · Unidades y constantes físicas",
+    "section": "5 Constantes físicas con astropy.constants",
+    "text": "5 Constantes físicas con astropy.constants\nAstropy incluye las constantes físicas y astronómicas más usadas, con sus valores oficiales del CODATA y la IAU (Unión Astronómica Internacional).\n\n# ─────────────────────────────────────────────────────────────────────────────\n# El módulo astropy.constants contiene constantes físicas oficiales\n# con valor, unidad e incertidumbre incluidos\n# ─────────────────────────────────────────────────────────────────────────────\n\nfrom astropy import constants as const\n\nprint(\"─── Constantes físicas ───────────────────────────────\")\nprint(f\"Velocidad de la luz   c  = {const.c:.6e}\")\nprint(f\"Constante gravitación G  = {const.G:.6e}\")\nprint(f\"Constante de Planck   h  = {const.h:.6e}\")\nprint(f\"Masa del electrón     mₑ = {const.m_e:.6e}\")\n\nprint(\"\\n─── Constantes astronómicas ──────────────────────────\")\nprint(f\"Masa del Sol          M☉ = {const.M_sun:.6e}\")\nprint(f\"Radio del Sol         R☉ = {const.R_sun:.6e}\")\nprint(f\"Masa de la Tierra     M⊕ = {const.M_earth:.6e}\")\nprint(f\"Radio de la Tierra    R⊕ = {const.R_earth:.6e}\")\n\n─── Constantes físicas ───────────────────────────────\nVelocidad de la luz   c  = 2.997925e+08 m / s\nConstante gravitación G  = 6.674300e-11 m3 / (kg s2)\nConstante de Planck   h  = 6.626070e-34 J s\nMasa del electrón     mₑ = 9.109384e-31 kg\n\n─── Constantes astronómicas ──────────────────────────\nMasa del Sol          M☉ = 1.988410e+30 kg\nRadio del Sol         R☉ = 6.957000e+08 m\nMasa de la Tierra     M⊕ = 5.972168e+24 kg\nRadio de la Tierra    R⊕ = 6.378100e+06 m\n\n\n\n# ─────────────────────────────────────────────────────────────────────────────\n# Las constantes también se convierten con .to()\n# y se usan directamente en cálculos igual que cualquier cantidad con unidad\n# ─────────────────────────────────────────────────────────────────────────────\n\nfrom astropy import constants as const\nimport astropy.units as u\n\n# Velocidad de la luz en diferentes unidades\nprint(\"Velocidad de la luz:\")\nprint(f\"  en km/s  : {const.c:.5e}\")\nprint(f\"  en m/s   : {const.c.to(u.m / u.s):.5e}\")\nprint(f\"  en km/h  : {const.c.to(u.km / u.hr):.5e}\")\n\n# Energía equivalente de la masa del electrón (E = mc²)\nenergia    = const.m_e * const.c**2\nenergia_eV = energia.to(u.eV)\n\nprint(f\"\\nEnergía en reposo del electrón (E = mc²):\")\nprint(f\"  En julios          : {energia:.4e}\")\nprint(f\"  En electronvoltios : {energia_eV:.4f}\")\n\nVelocidad de la luz:\n  en km/s  : 2.99792e+08 m / s\n  en m/s   : 2.99792e+08 m / s\n  en km/h  : 1.07925e+09 km / h\n\nEnergía en reposo del electrón (E = mc²):\n  En julios          : 8.1871e-14 m2 kg / s2\n  En electronvoltios : 510998.9500 eV\n\n\n\n# ─────────────────────────────────────────────────────────────────────────────\n# Ver la ficha completa de una constante:\n# nombre, valor, incertidumbre, unidad y referencia bibliográfica\n# ─────────────────────────────────────────────────────────────────────────────\n\nfrom astropy import constants as const\n\n# Imprimimos la ficha completa de la constante gravitacional\nprint(const.G)\n\n  Name   = Gravitational constant\n  Value  = 6.6743e-11\n  Uncertainty  = 1.5e-15\n  Unit  = m3 / (kg s2)\n  Reference = CODATA 2018"
+  },
+  {
+    "objectID": "posts/basico/02-unidades.html#aplicación-práctica-velocidad-de-escape",
+    "href": "posts/basico/02-unidades.html#aplicación-práctica-velocidad-de-escape",
+    "title": "02 · Unidades y constantes físicas",
+    "section": "6 Aplicación práctica: velocidad de escape",
+    "text": "6 Aplicación práctica: velocidad de escape\nCalculamos cuánta velocidad necesita un cohete para escapar de la gravedad de distintos cuerpos del Sistema Solar.\nLa fórmula es: \\(v_{escape} = \\sqrt{\\dfrac{2GM}{R}}\\)\n\n# ─────────────────────────────────────────────────────────────────────────────\n# Velocidad de escape de distintos planetas\n# Fórmula: v = sqrt(2 * G * M / R)\n# Esta es la velocidad mínima para escapar de la atracción gravitacional\n# ─────────────────────────────────────────────────────────────────────────────\n\nimport numpy as np                    # para la raíz cuadrada\nfrom astropy import constants as const\nimport astropy.units as u\n\n# Datos de masa y radio de cada cuerpo\n# Las constantes del Sol y la Tierra vienen directamente de astropy.constants\nplanetas = {\n    \"Tierra\" : {\"M\": const.M_earth,       \"R\": const.R_earth},\n    \"Marte\"  : {\"M\": 6.417e23 * u.kg,     \"R\": 3389.5 * u.km},\n    \"Júpiter\": {\"M\": 1.898e27 * u.kg,     \"R\": 69911  * u.km},\n    \"Sol\"    : {\"M\": const.M_sun,         \"R\": const.R_sun},\n}\n\nprint(f\"{'Cuerpo':&lt;10} {'V. escape':&gt;12}\")\nprint(\"─\" * 25)\n\nfor nombre, datos in planetas.items():\n    M = datos[\"M\"]    # masa del cuerpo celeste\n    R = datos[\"R\"]    # radio del cuerpo celeste\n\n    # Aplicamos la fórmula — numpy acepta cantidades con unidades de Astropy\n    v_escape = np.sqrt(2 * const.G * M / R)\n\n    # Convertimos a km/s para facilitar la comparación\n    v_kms = v_escape.to(u.km / u.s)\n\n    print(f\"{nombre:&lt;10} {v_kms.value:&gt;8.2f} km/s\")\n\nCuerpo        V. escape\n─────────────────────────\nTierra        11.18 km/s\nMarte          5.03 km/s\nJúpiter       60.20 km/s\nSol          617.67 km/s"
+  },
+  {
+    "objectID": "posts/basico/02-unidades.html#tabla-de-referencia-rápida",
+    "href": "posts/basico/02-unidades.html#tabla-de-referencia-rápida",
+    "title": "02 · Unidades y constantes físicas",
+    "section": "7 Tabla de referencia rápida",
+    "text": "7 Tabla de referencia rápida\n\n\n\nTipo\nCódigo Astropy\nSímbolo\nEquivalencia\n\n\n\n\nLongitud\nu.m, u.km\nm, km\nbase SI\n\n\nLongitud\nu.au\nUA\n≈ 1.496 × 10⁸ km\n\n\nLongitud\nu.lyr\nal\n≈ 9.461 × 10¹² km\n\n\nLongitud\nu.pc, u.kpc, u.Mpc\npc\n≈ 3.086 × 10¹³ km\n\n\nÁngulo\nu.degree\n°\n60 arcmin\n\n\nÁngulo\nu.arcmin\n’\n60 arcsec\n\n\nÁngulo\nu.arcsec\n’’\n1/3600°\n\n\nMasa\nu.kg, u.g\nkg, g\nbase SI\n\n\nMasa\nu.M_sun\nM☉\n≈ 1.989 × 10³⁰ kg\n\n\nTiempo\nu.s, u.hr, u.day, u.yr\ns, h, d, a\n—\n\n\nEnergía\nu.J, u.eV\nJ, eV\n1 eV ≈ 1.6×10⁻¹⁹ J\n\n\nTemperatura\nu.K\nK\nKelvin"
+  },
+  {
+    "objectID": "posts/basico/02-unidades.html#ejercicio",
+    "href": "posts/basico/02-unidades.html#ejercicio",
+    "title": "02 · Unidades y constantes físicas",
+    "section": "8 Ejercicio",
+    "text": "8 Ejercicio\nEl telescopio espacial James Webb orbita a 1.5 millones de km de la Tierra en el punto de Lagrange L2. Usando Astropy:\n\nExpresa esa distancia en unidades astronómicas y en metros\nCalcula cuánto tarda la señal de radio en llegar desde el JWST a la Tierra\nExpresa el resultado en minutos y en segundos\n\n\n\n\n\n\n\nTipVer solución\n\n\n\n\n\n\n# ─────────────────────────────────────────────────────────────────────────────\n# SOLUCIÓN: distancia y retardo de señal del telescopio James Webb\n# ─────────────────────────────────────────────────────────────────────────────\n\nfrom astropy import constants as const\nimport astropy.units as u\n\n# Paso 1: definir la distancia al punto L2\ndistancia_km = 1.5e6 * u.km\n\n# Convertir a unidades astronómicas y metros\ndistancia_au = distancia_km.to(u.au)\ndistancia_m  = distancia_km.to(u.m)\n\nprint(\"Distancia Tierra → JWST:\")\nprint(f\"  En kilómetros          : {distancia_km:.3e}\")\nprint(f\"  En unidades astronóm.  : {distancia_au:.5f}\")\nprint(f\"  En metros              : {distancia_m:.3e}\")\n\n# Paso 2: tiempo = distancia / velocidad de la luz\n# const.c está en m/s, así que convertimos distancia a metros\ntiempo = distancia_m / const.c         # resultado en segundos\n\n# Paso 3: convertir\ntiempo_seg = tiempo.to(u.s)\ntiempo_min = tiempo.to(u.min)\n\nprint(f\"\\nRetardo de señal Tierra ↔ JWST:\")\nprint(f\"  En segundos : {tiempo_seg:.2f}\")\nprint(f\"  En minutos  : {tiempo_min:.2f}\")\n\nDistancia Tierra → JWST:\n  En kilómetros          : 1.500e+06 km\n  En unidades astronóm.  : 0.01003 AU\n  En metros              : 1.500e+09 m\n\nRetardo de señal Tierra ↔ JWST:\n  En segundos : 5.00 s\n  En minutos  : 0.08 min"
+  },
+  {
+    "objectID": "posts/basico/02-unidades.html#qué-aprendiste-en-este-módulo",
+    "href": "posts/basico/02-unidades.html#qué-aprendiste-en-este-módulo",
+    "title": "02 · Unidades y constantes físicas",
+    "section": "9 ¿Qué aprendiste en este módulo?",
+    "text": "9 ¿Qué aprendiste en este módulo?\n\n✅ Crear cantidades físicas con valor * u.unidad\n✅ Convertir entre unidades con .to()\n✅ Combinar unidades en operaciones: km/s, kg·m/s², km/s/Mpc\n✅ Trabajar con unidades angulares: grado, arcominuto, arcosegundo\n✅ Dejar que Astropy detecte errores de unidades incompatibles\n✅ Extraer el número puro con .value cuando lo necesitas\n✅ Acceder a constantes físicas oficiales con astropy.constants\n✅ Aplicar todo en un cálculo real: velocidad de escape de planetas\n\nSiguiente módulo → 03 · Tiempo astronómico con astropy.time"
+  },
+  {
+    "objectID": "posts/basico/04-coordenadas.html",
+    "href": "posts/basico/04-coordenadas.html",
+    "title": "04 - Coordenadas celestes con SkyCoord",
+    "section": "",
+    "text": "Basico\n\n\n\n\n\n\nWarningModulo en construccion\n\n\n\nEste modulo esta siendo preparado. Vuelve pronto."
+  },
+  {
+    "objectID": "posts/intermedio/06-fits.html",
+    "href": "posts/intermedio/06-fits.html",
+    "title": "06 - Lectura y manipulacion de FITS",
+    "section": "",
+    "text": "Intermedio\n\n\n\n\n\n\nWarningModulo en construccion\n\n\n\nEste modulo esta siendo preparado. Vuelve pronto."
+  },
+  {
+    "objectID": "posts/intermedio/08-fotometria.html",
+    "href": "posts/intermedio/08-fotometria.html",
+    "title": "08 - Fotometria de apertura",
+    "section": "",
+    "text": "Intermedio\n\n\n\n\n\n\nWarningModulo en construccion\n\n\n\nEste modulo esta siendo preparado. Vuelve pronto."
+  },
+  {
+    "objectID": "posts/intermedio/10-estadistica.html",
+    "href": "posts/intermedio/10-estadistica.html",
+    "title": "10 - Estadistica y modelado",
+    "section": "",
+    "text": "Intermedio\n\n\n\n\n\n\nWarningModulo en construccion\n\n\n\nEste modulo esta siendo preparado. Vuelve pronto."
+  },
+  {
+    "objectID": "scripts/plantilla_post.html",
+    "href": "scripts/plantilla_post.html",
+    "title": "XX - Titulo del modulo",
+    "section": "",
+    "text": "Basico"
+  },
+  {
+    "objectID": "scripts/plantilla_post.html#introduccion",
+    "href": "scripts/plantilla_post.html#introduccion",
+    "title": "XX - Titulo del modulo",
+    "section": "1 Introduccion",
+    "text": "1 Introduccion\nExplica en 2 o 3 parrafos que problema resuelve este modulo y por que es util. Escribe como si le hablaras a alguien que nunca vio Astropy.\n\n\n\n\n\n\nNoteRequisitos previos\n\n\n\n\nModulo anterior completado\nLibreria X instalada: pip install X"
+  },
+  {
+    "objectID": "scripts/plantilla_post.html#conceptos-clave",
+    "href": "scripts/plantilla_post.html#conceptos-clave",
+    "title": "XX - Titulo del modulo",
+    "section": "2 Conceptos clave",
+    "text": "2 Conceptos clave\n\n2.1 Subtema 1\nExplicacion del concepto. Siempre va primero la teoria minima, luego el codigo.\n\n# ─────────────────────────────────────────────────────────────────────────────\n# Descripcion breve de que hace este bloque de codigo\n# ─────────────────────────────────────────────────────────────────────────────\n\n# Importaciones necesarias (explicar brevemente para que sirve cada una)\nimport astropy.units as u    # Modulo de unidades fisicas de Astropy\n\n# Creamos una cantidad fisica: un numero con su unidad asociada\n# Esto evita errores de conversion manual (por ejemplo, metros vs kilometros)\nmasa_sol = 1.989e30 * u.kg  # Masa del Sol expresada en kilogramos\n\n# Imprimimos el resultado: Astropy muestra el valor Y la unidad juntos\nprint(masa_sol)\n\n1.989e+30 kg\n\n\n\n\n2.2 Subtema 2\nContinua con el siguiente concepto del modulo.\n\n# ─────────────────────────────────────────────────────────────────────────────\n# Ejemplo de conversion de unidades\n# ─────────────────────────────────────────────────────────────────────────────\n\n# Convertimos la masa del Sol de kilogramos a gramos\n# El metodo .to() hace la conversion automaticamente\nmasa_en_gramos = masa_sol.to(u.g)\nprint(f\"Masa del Sol en gramos: {masa_en_gramos:.3e}\")\n\nMasa del Sol en gramos: 1.989e+33 g"
+  },
+  {
+    "objectID": "scripts/plantilla_post.html#ejercicio-practico",
+    "href": "scripts/plantilla_post.html#ejercicio-practico",
+    "title": "XX - Titulo del modulo",
+    "section": "3 Ejercicio practico",
+    "text": "3 Ejercicio practico\nResuelve el siguiente ejercicio antes de ver la solucion.\nEnunciado: Dado que la distancia de la Tierra al Sol es 149.6 millones de km, exprésala en unidades astronomicas (UA) usando Astropy.\n\n# ─────────────────────────────────────────────────────────────────────────────\n# SOLUCION DEL EJERCICIO\n# (Intenta resolverlo antes de leer este bloque)\n# ─────────────────────────────────────────────────────────────────────────────\n\nimport astropy.units as u    # Importamos el modulo de unidades\n\n# Paso 1: definir la distancia con su unidad en kilometros\ndistancia_km = 149.6e6 * u.km\n\n# Paso 2: convertir a unidades astronomicas con .to()\n# 1 UA = distancia media Tierra-Sol (aprox. 150 millones de km)\ndistancia_ua = distancia_km.to(u.au)\n\n# Paso 3: mostrar el resultado\nprint(f\"Distancia Tierra-Sol: {distancia_ua:.4f}\")\n\nDistancia Tierra-Sol: 1.0000 AU"
+  },
+  {
+    "objectID": "scripts/plantilla_post.html#que-aprendiste-en-este-modulo",
+    "href": "scripts/plantilla_post.html#que-aprendiste-en-este-modulo",
+    "title": "XX - Titulo del modulo",
+    "section": "4 Que aprendiste en este modulo",
+    "text": "4 Que aprendiste en este modulo\n\nConcepto A aplicado con Astropy\nConcepto B: como se usa en la practica\nConcepto C: errores comunes y como evitarlos\n\nSiguiente modulo Titulo del siguiente"
+  }
+]

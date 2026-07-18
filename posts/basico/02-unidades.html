@@ -1,0 +1,1969 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.37">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Blog AstroPy en Español">
+<meta name="dcterms.date" content="2025-05-26">
+<meta name="description" content="Aprende a trabajar con unidades físicas en Python usando astropy.units y astropy.constants">
+
+<title>02 · Unidades y constantes físicas – AstroPy en Español</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../assets/logos/favicon.ico" rel="icon">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-acf12a64177840b8d86f2d4f01b2e9fb.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-23bbe8b5e4efc1e257f6d59dce478b08.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-acf12a64177840b8d86f2d4f01b2e9fb.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-13f4910f51bb414f8177eb12ee348383.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-c414a890e2011809a78d515def34b275.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap-13f4910f51bb414f8177eb12ee348383.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">AstroPy en Español</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Inicio</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-basico" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Basico</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-basico">    
+        <li>
+    <a class="dropdown-item" href="../../posts/basico/01-introduccion.html">
+ <span class="dropdown-text">01 - Introduccion a Astropy</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../posts/basico/02-unidades.html">
+ <span class="dropdown-text">02 - Unidades y constantes</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../posts/basico/03-tiempo.html">
+ <span class="dropdown-text">03 - Tiempo astronomico</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../posts/basico/04-coordenadas.html">
+ <span class="dropdown-text">04 - Coordenadas celestes</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../posts/basico/05-tablas.html">
+ <span class="dropdown-text">05 - Tablas astronomicas</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-intermedio" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Intermedio</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-intermedio">    
+        <li>
+    <a class="dropdown-item" href="../../posts/intermedio/06-fits.html">
+ <span class="dropdown-text">06 - Archivos FITS</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../posts/intermedio/07-wcs.html">
+ <span class="dropdown-text">07 - WCS del pixel al cielo</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../posts/intermedio/08-fotometria.html">
+ <span class="dropdown-text">08 - Fotometria de apertura</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../posts/intermedio/09-visualizacion.html">
+ <span class="dropdown-text">09 - Visualizacion astronomica</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../posts/intermedio/10-estadistica.html">
+ <span class="dropdown-text">10 - Estadistica y modelado</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../posts/intermedio/11-catalogos.html">
+ <span class="dropdown-text">11 - Catalogos en linea</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-avanzado" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Avanzado</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-avanzado">    
+        <li>
+    <a class="dropdown-item" href="../../posts/avanzado/12-espectroscopia.html">
+ <span class="dropdown-text">12 - Espectroscopia</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../posts/avanzado/13-cosmologia.html">
+ <span class="dropdown-text">13 - Cosmologia computacional</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../posts/avanzado/14-orbital.html">
+ <span class="dropdown-text">14 - Mecanica orbital</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../posts/avanzado/15-series-temporales.html">
+ <span class="dropdown-text">15 - Series temporales</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../posts/avanzado/16-extensiones.html">
+ <span class="dropdown-text">16 - Extensiones propias</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../posts/avanzado/17-pipeline.html">
+ <span class="dropdown-text">17 - Pipeline completo</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="../../sobre.html"> 
+<span class="menu-text">Sobre el blog</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/tu-usuario/astropy-blog"> <i class="bi bi-github" role="img" aria-label="GitHub">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">En esta entrada</h2>
+   
+  <ul>
+  <li><a href="#por-qué-importan-las-unidades" id="toc-por-qué-importan-las-unidades" class="nav-link active" data-scroll-target="#por-qué-importan-las-unidades"><span class="header-section-number">1</span> ¿Por qué importan las unidades?</a></li>
+  <li><a href="#el-módulo-astropy.units" id="toc-el-módulo-astropy.units" class="nav-link" data-scroll-target="#el-módulo-astropy.units"><span class="header-section-number">2</span> El módulo <code>astropy.units</code></a>
+  <ul class="collapse">
+  <li><a href="#asignar-una-unidad-a-un-número" id="toc-asignar-una-unidad-a-un-número" class="nav-link" data-scroll-target="#asignar-una-unidad-a-un-número"><span class="header-section-number">2.1</span> Asignar una unidad a un número</a></li>
+  <li><a href="#convertir-entre-unidades-con-.to" id="toc-convertir-entre-unidades-con-.to" class="nav-link" data-scroll-target="#convertir-entre-unidades-con-.to"><span class="header-section-number">2.2</span> Convertir entre unidades con <code>.to()</code></a></li>
+  <li><a href="#unidades-compuestas-velocidad-presión-energía" id="toc-unidades-compuestas-velocidad-presión-energía" class="nav-link" data-scroll-target="#unidades-compuestas-velocidad-presión-energía"><span class="header-section-number">2.3</span> Unidades compuestas: velocidad, presión, energía</a></li>
+  <li><a href="#unidades-angulares-grados-arcominutos-arcosegundos" id="toc-unidades-angulares-grados-arcominutos-arcosegundos" class="nav-link" data-scroll-target="#unidades-angulares-grados-arcominutos-arcosegundos"><span class="header-section-number">2.4</span> Unidades angulares: grados, arcominutos, arcosegundos</a></li>
+  </ul></li>
+  <li><a href="#operaciones-aritméticas-con-unidades" id="toc-operaciones-aritméticas-con-unidades" class="nav-link" data-scroll-target="#operaciones-aritméticas-con-unidades"><span class="header-section-number">3</span> Operaciones aritméticas con unidades</a></li>
+  <li><a href="#errores-comunes-y-cómo-evitarlos" id="toc-errores-comunes-y-cómo-evitarlos" class="nav-link" data-scroll-target="#errores-comunes-y-cómo-evitarlos"><span class="header-section-number">4</span> Errores comunes y cómo evitarlos</a></li>
+  <li><a href="#constantes-físicas-con-astropy.constants" id="toc-constantes-físicas-con-astropy.constants" class="nav-link" data-scroll-target="#constantes-físicas-con-astropy.constants"><span class="header-section-number">5</span> Constantes físicas con <code>astropy.constants</code></a></li>
+  <li><a href="#aplicación-práctica-velocidad-de-escape" id="toc-aplicación-práctica-velocidad-de-escape" class="nav-link" data-scroll-target="#aplicación-práctica-velocidad-de-escape"><span class="header-section-number">6</span> Aplicación práctica: velocidad de escape</a></li>
+  <li><a href="#tabla-de-referencia-rápida" id="toc-tabla-de-referencia-rápida" class="nav-link" data-scroll-target="#tabla-de-referencia-rápida"><span class="header-section-number">7</span> Tabla de referencia rápida</a></li>
+  <li><a href="#ejercicio" id="toc-ejercicio" class="nav-link" data-scroll-target="#ejercicio"><span class="header-section-number">8</span> Ejercicio</a></li>
+  <li><a href="#qué-aprendiste-en-este-módulo" id="toc-qué-aprendiste-en-este-módulo" class="nav-link" data-scroll-target="#qué-aprendiste-en-este-módulo"><span class="header-section-number">9</span> ¿Qué aprendiste en este módulo?</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title">02 · Unidades y constantes físicas</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+  <div class="quarto-categories">
+    <div class="quarto-category">basico</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    Aprende a trabajar con unidades físicas en Python usando astropy.units y astropy.constants
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Blog AstroPy en Español </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">May 26, 2025</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p><span class="badge-basico">🌱 Básico</span></p>
+<section id="por-qué-importan-las-unidades" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="por-qué-importan-las-unidades"><span class="header-section-number">1</span> ¿Por qué importan las unidades?</h2>
+<p>En 1999, la NASA perdió la sonda <strong>Mars Climate Orbiter</strong> — una misión de 327 millones de dólares — porque un equipo usó libras-fuerza y otro usó newtons. El software nunca detectó el error porque los números eran números sin unidad.</p>
+<p>En astronomía este problema se multiplica: mezclamos metros, años luz, parsecs, unidades astronómicas, ergios, julios y electronvoltios en el mismo cálculo. <code>astropy.units</code> resuelve esto de raíz: <strong>el número y su unidad viajan juntos</strong> y las conversiones son automáticas.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Requisitos previos
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>Módulo 01 completado</li>
+<li>Astropy instalada: <code>pip install astropy</code></li>
+</ul>
+</div>
+</div>
+<hr>
+</section>
+<section id="el-módulo-astropy.units" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="el-módulo-astropy.units"><span class="header-section-number">2</span> El módulo <code>astropy.units</code></h2>
+<section id="asignar-una-unidad-a-un-número" class="level3" data-number="2.1">
+<h3 data-number="2.1" class="anchored" data-anchor-id="asignar-una-unidad-a-un-número"><span class="header-section-number">2.1</span> Asignar una unidad a un número</h3>
+<div id="a2f9db0d" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Importar el módulo de unidades</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Por convención se abrevia como 'u' en toda la comunidad astronómica</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> astropy.units <span class="im">as</span> u</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Crear una cantidad física: número * unidad</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># El asterisco (*) une el valor numérico con su unidad</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>distancia <span class="op">=</span> <span class="fl">150e6</span> <span class="op">*</span> u.km        <span class="co"># 150 millones de kilómetros</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>masa      <span class="op">=</span> <span class="fl">1.989e30</span> <span class="op">*</span> u.kg     <span class="co"># masa del Sol en kilogramos</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>tiempo    <span class="op">=</span> <span class="fl">365.25</span> <span class="op">*</span> u.day      <span class="co"># un año en días</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Astropy muestra siempre el valor y la unidad juntos</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Distancia : </span><span class="sc">{</span>distancia<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Masa      : </span><span class="sc">{</span>masa<span class="sc">:.3e}</span><span class="ss">"</span>)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Tiempo    : </span><span class="sc">{</span>tiempo<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Distancia : 150000000.0 km
+Masa      : 1.989e+30 kg
+Tiempo    : 365.25 d</code></pre>
+</div>
+</div>
+</section>
+<section id="convertir-entre-unidades-con-.to" class="level3" data-number="2.2">
+<h3 data-number="2.2" class="anchored" data-anchor-id="convertir-entre-unidades-con-.to"><span class="header-section-number">2.2</span> Convertir entre unidades con <code>.to()</code></h3>
+<div id="51806b32" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Convertir unidades con el método .to()</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Solo hay que indicar a qué unidad se quiere llegar</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> astropy.units <span class="im">as</span> u</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Partimos de una distancia en kilómetros</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>distancia_km <span class="op">=</span> <span class="fl">150e6</span> <span class="op">*</span> u.km</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Convertimos a distintas unidades astronómicas</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>distancia_m  <span class="op">=</span> distancia_km.to(u.m)       <span class="co"># metros</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>distancia_au <span class="op">=</span> distancia_km.to(u.au)      <span class="co"># unidades astronómicas</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>distancia_ly <span class="op">=</span> distancia_km.to(u.lyr)     <span class="co"># años luz</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"La distancia Tierra-Sol equivale a:"</span>)</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  </span><span class="sc">{</span>distancia_km<span class="sc">:.3e}</span><span class="ss">"</span>)</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  </span><span class="sc">{</span>distancia_m<span class="sc">:.3e}</span><span class="ss">"</span>)</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  </span><span class="sc">{</span>distancia_au<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  </span><span class="sc">{</span>distancia_ly<span class="sc">:.6f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>La distancia Tierra-Sol equivale a:
+  1.500e+08 km
+  1.500e+11 m
+  1.0027 AU
+  0.000016 lyr</code></pre>
+</div>
+</div>
+</section>
+<section id="unidades-compuestas-velocidad-presión-energía" class="level3" data-number="2.3">
+<h3 data-number="2.3" class="anchored" data-anchor-id="unidades-compuestas-velocidad-presión-energía"><span class="header-section-number">2.3</span> Unidades compuestas: velocidad, presión, energía</h3>
+<div id="6e25d3f8" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Las unidades se pueden combinar con * (por) y / (entre)</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Astropy construye la unidad compuesta automáticamente</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> astropy.units <span class="im">as</span> u</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Velocidad = distancia / tiempo</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>velocidad_luz <span class="op">=</span> <span class="fl">3e5</span> <span class="op">*</span> (u.km <span class="op">/</span> u.s)        <span class="co"># velocidad de la luz en km/s</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Velocidad de la luz: </span><span class="sc">{</span>velocidad_luz<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Convertir km/s a m/s</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>velocidad_ms <span class="op">=</span> velocidad_luz.to(u.m <span class="op">/</span> u.s)</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"En metros por segundo: </span><span class="sc">{</span>velocidad_ms<span class="sc">:.3e}</span><span class="ss">"</span>)</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Energía en electronvoltios (muy usada en astrofísica de altas energías)</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>energia_foton <span class="op">=</span> <span class="fl">2.5</span> <span class="op">*</span> u.eV                <span class="co"># energía de un fotón de luz visible</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>energia_joules <span class="op">=</span> energia_foton.to(u.J)    <span class="co"># convertir a julios</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Energía del fotón: </span><span class="sc">{</span>energia_foton<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"En julios        : </span><span class="sc">{</span>energia_joules<span class="sc">:.3e}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Velocidad de la luz: 300000.0 km / s
+En metros por segundo: 3.000e+08 m / s
+
+Energía del fotón: 2.5 eV
+En julios        : 4.005e-19 J</code></pre>
+</div>
+</div>
+</section>
+<section id="unidades-angulares-grados-arcominutos-arcosegundos" class="level3" data-number="2.4">
+<h3 data-number="2.4" class="anchored" data-anchor-id="unidades-angulares-grados-arcominutos-arcosegundos"><span class="header-section-number">2.4</span> Unidades angulares: grados, arcominutos, arcosegundos</h3>
+<div id="7c5e9db4" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co"># En astronomía los ángulos tienen sus propias unidades:</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   grado (°) → arcominuto (') → arcosegundo ('')</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 1 grado = 60 arcominutos = 3600 arcosegundos</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> astropy.units <span class="im">as</span> u</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co"># El diámetro angular de la Luna vista desde la Tierra</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>diametro_luna <span class="op">=</span> <span class="fl">0.5</span> <span class="op">*</span> u.degree            <span class="co"># aproximadamente medio grado</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Convertir a arcominutos y arcosegundos</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>en_arcmin <span class="op">=</span> diametro_luna.to(u.arcmin)    <span class="co"># arcominutos</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>en_arcsec <span class="op">=</span> diametro_luna.to(u.arcsec)   <span class="co"># arcosegundos</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Diámetro angular de la Luna:"</span>)</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  En grados       : </span><span class="sc">{</span>diametro_luna<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  En arcominutos  : </span><span class="sc">{</span>en_arcmin<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  En arcosegundos : </span><span class="sc">{</span>en_arcsec<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a><span class="co"># El arcosegundo es clave: la resolución de los telescopios</span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a><span class="co"># se mide en arcosegundos (o miliarcsegundos en radioastronomía)</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>limite_hubble <span class="op">=</span> <span class="fl">0.05</span> <span class="op">*</span> u.arcsec           <span class="co"># límite de resolución del HST</span></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Resolución del Hubble : </span><span class="sc">{</span>limite_hubble<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"En grados             : </span><span class="sc">{</span>limite_hubble<span class="sc">.</span>to(u.degree)<span class="sc">:.6f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Diámetro angular de la Luna:
+  En grados       : 0.5 deg
+  En arcominutos  : 30.0 arcmin
+  En arcosegundos : 1800.0 arcsec
+
+Resolución del Hubble : 0.05 arcsec
+En grados             : 0.000014 deg</code></pre>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="operaciones-aritméticas-con-unidades" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="operaciones-aritméticas-con-unidades"><span class="header-section-number">3</span> Operaciones aritméticas con unidades</h2>
+<div id="020f5fb8" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Las cantidades con unidades se pueden sumar, restar, multiplicar y dividir</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Astropy verifica automáticamente que las unidades sean compatibles</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> astropy.units <span class="im">as</span> u</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Suma: las dos cantidades deben ser del mismo tipo (ambas de longitud)</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Si están en unidades distintas, primero convertimos una de ellas</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>d1 <span class="op">=</span> <span class="dv">100</span> <span class="op">*</span> u.km</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>d2 <span class="op">=</span>   <span class="dv">5</span> <span class="op">*</span> u.au                   <span class="co"># unidad astronómica</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>d2_en_km <span class="op">=</span> d2.to(u.km)            <span class="co"># convertir antes de sumar</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>total <span class="op">=</span> d1 <span class="op">+</span> d2_en_km</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Suma de distancias: </span><span class="sc">{</span>total<span class="sc">:.3e}</span><span class="ss">"</span>)</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Multiplicación: produce una unidad compuesta</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>masa         <span class="op">=</span> <span class="fl">5.972e24</span> <span class="op">*</span> u.kg        <span class="co"># masa de la Tierra</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>aceleracion  <span class="op">=</span> <span class="fl">9.8</span> <span class="op">*</span> (u.m <span class="op">/</span> u.s<span class="op">**</span><span class="dv">2</span>)  <span class="co"># aceleración de la gravedad</span></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>fuerza       <span class="op">=</span> masa <span class="op">*</span> aceleracion     <span class="co"># kg·m/s² = Newton</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Fuerza gravitacional: </span><span class="sc">{</span>fuerza<span class="sc">:.3e}</span><span class="ss">"</span>)</span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"En Newtons          : </span><span class="sc">{</span>fuerza<span class="sc">.</span>to(u.N)<span class="sc">:.3e}</span><span class="ss">"</span>)</span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a><span class="co"># División: ley de Hubble → velocidad = H₀ × distancia</span></span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>H0   <span class="op">=</span> <span class="dv">70</span> <span class="op">*</span> (u.km <span class="op">/</span> u.s <span class="op">/</span> u.Mpc)    <span class="co"># constante de Hubble</span></span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>dist <span class="op">=</span> <span class="dv">10</span> <span class="op">*</span> u.Mpc                    <span class="co"># distancia a una galaxia (megaparsecs)</span></span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>vel  <span class="op">=</span> H0 <span class="op">*</span> dist                     <span class="co"># velocidad de recesión</span></span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Velocidad de recesión: </span><span class="sc">{</span>vel<span class="sc">:.0f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Suma de distancias: 7.480e+08 km
+
+Fuerza gravitacional: 5.853e+25 kg m / s2
+En Newtons          : 5.853e+25 N
+
+Velocidad de recesión: 700 km / s</code></pre>
+</div>
+</div>
+<hr>
+</section>
+<section id="errores-comunes-y-cómo-evitarlos" class="level2" data-number="4">
+<h2 data-number="4" class="anchored" data-anchor-id="errores-comunes-y-cómo-evitarlos"><span class="header-section-number">4</span> Errores comunes y cómo evitarlos</h2>
+<div id="c520d2aa" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Astropy lanza un error si intentamos mezclar unidades incompatibles</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Esto es una PROTECCIÓN — evita errores silenciosos en los cálculos</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> astropy.units <span class="im">as</span> u</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Intentamos sumar kilómetros con kilogramos (no tiene sentido físico)</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>    resultado <span class="op">=</span> <span class="dv">100</span> <span class="op">*</span> u.km <span class="op">+</span> <span class="dv">50</span> <span class="op">*</span> u.kg</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> u.UnitConversionError <span class="im">as</span> error:</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># UnitConversionError avisa que las unidades no son compatibles</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Error detectado por Astropy:"</span>)</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  </span><span class="sc">{</span>error<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">→ Esto es exactamente lo que queremos:"</span>)</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"  en vez de obtener un número sin sentido, Astropy nos avisa."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Error detectado por Astropy:
+  Can only apply 'add' function to quantities with compatible dimensions
+
+→ Esto es exactamente lo que queremos:
+  en vez de obtener un número sin sentido, Astropy nos avisa.</code></pre>
+</div>
+</div>
+<div id="8df5ee04" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Para extraer solo el número (sin la unidad) se usa .value</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Útil cuando necesitamos pasar el dato a otra librería como matplotlib</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> astropy.units <span class="im">as</span> u</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>velocidad <span class="op">=</span> <span class="fl">299792.458</span> <span class="op">*</span> (u.km <span class="op">/</span> u.s)   <span class="co"># velocidad de la luz</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>solo_numero <span class="op">=</span> velocidad.value            <span class="co"># extrae solo el número (float)</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>solo_unidad <span class="op">=</span> velocidad.unit             <span class="co"># extrae solo la unidad</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Cantidad completa : </span><span class="sc">{</span>velocidad<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Solo el número    : </span><span class="sc">{</span>solo_numero<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Solo la unidad    : </span><span class="sc">{</span>solo_unidad<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Tipo de dato      : </span><span class="sc">{</span><span class="bu">type</span>(solo_numero)<span class="sc">}</span><span class="ss">"</span>)   <span class="co"># float normal de Python</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Cantidad completa : 299792.458 km / s
+Solo el número    : 299792.458
+Solo la unidad    : km / s
+Tipo de dato      : &lt;class 'numpy.float64'&gt;</code></pre>
+</div>
+</div>
+<hr>
+</section>
+<section id="constantes-físicas-con-astropy.constants" class="level2" data-number="5">
+<h2 data-number="5" class="anchored" data-anchor-id="constantes-físicas-con-astropy.constants"><span class="header-section-number">5</span> Constantes físicas con <code>astropy.constants</code></h2>
+<p>Astropy incluye las constantes físicas y astronómicas más usadas, con sus valores oficiales del CODATA y la IAU (Unión Astronómica Internacional).</p>
+<div id="304c2bb1" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co"># El módulo astropy.constants contiene constantes físicas oficiales</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co"># con valor, unidad e incertidumbre incluidos</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy <span class="im">import</span> constants <span class="im">as</span> const</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"─── Constantes físicas ───────────────────────────────"</span>)</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Velocidad de la luz   c  = </span><span class="sc">{</span>const<span class="sc">.</span>c<span class="sc">:.6e}</span><span class="ss">"</span>)</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Constante gravitación G  = </span><span class="sc">{</span>const<span class="sc">.</span>G<span class="sc">:.6e}</span><span class="ss">"</span>)</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Constante de Planck   h  = </span><span class="sc">{</span>const<span class="sc">.</span>h<span class="sc">:.6e}</span><span class="ss">"</span>)</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Masa del electrón     mₑ = </span><span class="sc">{</span>const<span class="sc">.</span>m_e<span class="sc">:.6e}</span><span class="ss">"</span>)</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">─── Constantes astronómicas ──────────────────────────"</span>)</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Masa del Sol          M☉ = </span><span class="sc">{</span>const<span class="sc">.</span>M_sun<span class="sc">:.6e}</span><span class="ss">"</span>)</span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Radio del Sol         R☉ = </span><span class="sc">{</span>const<span class="sc">.</span>R_sun<span class="sc">:.6e}</span><span class="ss">"</span>)</span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Masa de la Tierra     M⊕ = </span><span class="sc">{</span>const<span class="sc">.</span>M_earth<span class="sc">:.6e}</span><span class="ss">"</span>)</span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Radio de la Tierra    R⊕ = </span><span class="sc">{</span>const<span class="sc">.</span>R_earth<span class="sc">:.6e}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>─── Constantes físicas ───────────────────────────────
+Velocidad de la luz   c  = 2.997925e+08 m / s
+Constante gravitación G  = 6.674300e-11 m3 / (kg s2)
+Constante de Planck   h  = 6.626070e-34 J s
+Masa del electrón     mₑ = 9.109384e-31 kg
+
+─── Constantes astronómicas ──────────────────────────
+Masa del Sol          M☉ = 1.988410e+30 kg
+Radio del Sol         R☉ = 6.957000e+08 m
+Masa de la Tierra     M⊕ = 5.972168e+24 kg
+Radio de la Tierra    R⊕ = 6.378100e+06 m</code></pre>
+</div>
+</div>
+<div id="44e56a89" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Las constantes también se convierten con .to()</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co"># y se usan directamente en cálculos igual que cualquier cantidad con unidad</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy <span class="im">import</span> constants <span class="im">as</span> const</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> astropy.units <span class="im">as</span> u</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Velocidad de la luz en diferentes unidades</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Velocidad de la luz:"</span>)</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  en km/s  : </span><span class="sc">{</span>const<span class="sc">.</span>c<span class="sc">:.5e}</span><span class="ss">"</span>)</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  en m/s   : </span><span class="sc">{</span>const<span class="sc">.</span>c<span class="sc">.</span>to(u.m <span class="op">/</span> u.s)<span class="sc">:.5e}</span><span class="ss">"</span>)</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  en km/h  : </span><span class="sc">{</span>const<span class="sc">.</span>c<span class="sc">.</span>to(u.km <span class="op">/</span> u.hr)<span class="sc">:.5e}</span><span class="ss">"</span>)</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Energía equivalente de la masa del electrón (E = mc²)</span></span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>energia    <span class="op">=</span> const.m_e <span class="op">*</span> const.c<span class="op">**</span><span class="dv">2</span></span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>energia_eV <span class="op">=</span> energia.to(u.eV)</span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Energía en reposo del electrón (E = mc²):"</span>)</span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  En julios          : </span><span class="sc">{</span>energia<span class="sc">:.4e}</span><span class="ss">"</span>)</span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  En electronvoltios : </span><span class="sc">{</span>energia_eV<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Velocidad de la luz:
+  en km/s  : 2.99792e+08 m / s
+  en m/s   : 2.99792e+08 m / s
+  en km/h  : 1.07925e+09 km / h
+
+Energía en reposo del electrón (E = mc²):
+  En julios          : 8.1871e-14 m2 kg / s2
+  En electronvoltios : 510998.9500 eV</code></pre>
+</div>
+</div>
+<div id="b045d121" class="cell" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Ver la ficha completa de una constante:</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="co"># nombre, valor, incertidumbre, unidad y referencia bibliográfica</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy <span class="im">import</span> constants <span class="im">as</span> const</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Imprimimos la ficha completa de la constante gravitacional</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(const.G)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Name   = Gravitational constant
+  Value  = 6.6743e-11
+  Uncertainty  = 1.5e-15
+  Unit  = m3 / (kg s2)
+  Reference = CODATA 2018</code></pre>
+</div>
+</div>
+<hr>
+</section>
+<section id="aplicación-práctica-velocidad-de-escape" class="level2" data-number="6">
+<h2 data-number="6" class="anchored" data-anchor-id="aplicación-práctica-velocidad-de-escape"><span class="header-section-number">6</span> Aplicación práctica: velocidad de escape</h2>
+<p>Calculamos cuánta velocidad necesita un cohete para escapar de la gravedad de distintos cuerpos del Sistema Solar.</p>
+<p>La fórmula es: <span class="math inline">\(v_{escape} = \sqrt{\dfrac{2GM}{R}}\)</span></p>
+<div id="5c957027" class="cell" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Velocidad de escape de distintos planetas</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Fórmula: v = sqrt(2 * G * M / R)</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Esta es la velocidad mínima para escapar de la atracción gravitacional</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np                    <span class="co"># para la raíz cuadrada</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy <span class="im">import</span> constants <span class="im">as</span> const</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> astropy.units <span class="im">as</span> u</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Datos de masa y radio de cada cuerpo</span></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Las constantes del Sol y la Tierra vienen directamente de astropy.constants</span></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>planetas <span class="op">=</span> {</span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Tierra"</span> : {<span class="st">"M"</span>: const.M_earth,       <span class="st">"R"</span>: const.R_earth},</span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Marte"</span>  : {<span class="st">"M"</span>: <span class="fl">6.417e23</span> <span class="op">*</span> u.kg,     <span class="st">"R"</span>: <span class="fl">3389.5</span> <span class="op">*</span> u.km},</span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Júpiter"</span>: {<span class="st">"M"</span>: <span class="fl">1.898e27</span> <span class="op">*</span> u.kg,     <span class="st">"R"</span>: <span class="dv">69911</span>  <span class="op">*</span> u.km},</span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Sol"</span>    : {<span class="st">"M"</span>: const.M_sun,         <span class="st">"R"</span>: const.R_sun},</span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span><span class="st">'Cuerpo'</span><span class="sc">:&lt;10}</span><span class="ss"> </span><span class="sc">{</span><span class="st">'V. escape'</span><span class="sc">:&gt;12}</span><span class="ss">"</span>)</span>
+<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"─"</span> <span class="op">*</span> <span class="dv">25</span>)</span>
+<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> nombre, datos <span class="kw">in</span> planetas.items():</span>
+<span id="cb21-24"><a href="#cb21-24" aria-hidden="true" tabindex="-1"></a>    M <span class="op">=</span> datos[<span class="st">"M"</span>]    <span class="co"># masa del cuerpo celeste</span></span>
+<span id="cb21-25"><a href="#cb21-25" aria-hidden="true" tabindex="-1"></a>    R <span class="op">=</span> datos[<span class="st">"R"</span>]    <span class="co"># radio del cuerpo celeste</span></span>
+<span id="cb21-26"><a href="#cb21-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-27"><a href="#cb21-27" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Aplicamos la fórmula — numpy acepta cantidades con unidades de Astropy</span></span>
+<span id="cb21-28"><a href="#cb21-28" aria-hidden="true" tabindex="-1"></a>    v_escape <span class="op">=</span> np.sqrt(<span class="dv">2</span> <span class="op">*</span> const.G <span class="op">*</span> M <span class="op">/</span> R)</span>
+<span id="cb21-29"><a href="#cb21-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-30"><a href="#cb21-30" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Convertimos a km/s para facilitar la comparación</span></span>
+<span id="cb21-31"><a href="#cb21-31" aria-hidden="true" tabindex="-1"></a>    v_kms <span class="op">=</span> v_escape.to(u.km <span class="op">/</span> u.s)</span>
+<span id="cb21-32"><a href="#cb21-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-33"><a href="#cb21-33" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>nombre<span class="sc">:&lt;10}</span><span class="ss"> </span><span class="sc">{</span>v_kms<span class="sc">.</span>value<span class="sc">:&gt;8.2f}</span><span class="ss"> km/s"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Cuerpo        V. escape
+─────────────────────────
+Tierra        11.18 km/s
+Marte          5.03 km/s
+Júpiter       60.20 km/s
+Sol          617.67 km/s</code></pre>
+</div>
+</div>
+<hr>
+</section>
+<section id="tabla-de-referencia-rápida" class="level2" data-number="7">
+<h2 data-number="7" class="anchored" data-anchor-id="tabla-de-referencia-rápida"><span class="header-section-number">7</span> Tabla de referencia rápida</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Tipo</th>
+<th>Código Astropy</th>
+<th>Símbolo</th>
+<th>Equivalencia</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Longitud</td>
+<td><code>u.m</code>, <code>u.km</code></td>
+<td>m, km</td>
+<td>base SI</td>
+</tr>
+<tr class="even">
+<td>Longitud</td>
+<td><code>u.au</code></td>
+<td>UA</td>
+<td>≈ 1.496 × 10⁸ km</td>
+</tr>
+<tr class="odd">
+<td>Longitud</td>
+<td><code>u.lyr</code></td>
+<td>al</td>
+<td>≈ 9.461 × 10¹² km</td>
+</tr>
+<tr class="even">
+<td>Longitud</td>
+<td><code>u.pc</code>, <code>u.kpc</code>, <code>u.Mpc</code></td>
+<td>pc</td>
+<td>≈ 3.086 × 10¹³ km</td>
+</tr>
+<tr class="odd">
+<td>Ángulo</td>
+<td><code>u.degree</code></td>
+<td>°</td>
+<td>60 arcmin</td>
+</tr>
+<tr class="even">
+<td>Ángulo</td>
+<td><code>u.arcmin</code></td>
+<td>’</td>
+<td>60 arcsec</td>
+</tr>
+<tr class="odd">
+<td>Ángulo</td>
+<td><code>u.arcsec</code></td>
+<td>’’</td>
+<td>1/3600°</td>
+</tr>
+<tr class="even">
+<td>Masa</td>
+<td><code>u.kg</code>, <code>u.g</code></td>
+<td>kg, g</td>
+<td>base SI</td>
+</tr>
+<tr class="odd">
+<td>Masa</td>
+<td><code>u.M_sun</code></td>
+<td>M☉</td>
+<td>≈ 1.989 × 10³⁰ kg</td>
+</tr>
+<tr class="even">
+<td>Tiempo</td>
+<td><code>u.s</code>, <code>u.hr</code>, <code>u.day</code>, <code>u.yr</code></td>
+<td>s, h, d, a</td>
+<td>—</td>
+</tr>
+<tr class="odd">
+<td>Energía</td>
+<td><code>u.J</code>, <code>u.eV</code></td>
+<td>J, eV</td>
+<td>1 eV ≈ 1.6×10⁻¹⁹ J</td>
+</tr>
+<tr class="even">
+<td>Temperatura</td>
+<td><code>u.K</code></td>
+<td>K</td>
+<td>Kelvin</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="ejercicio" class="level2" data-number="8">
+<h2 data-number="8" class="anchored" data-anchor-id="ejercicio"><span class="header-section-number">8</span> Ejercicio</h2>
+<p>El telescopio espacial <strong>James Webb</strong> orbita a 1.5 millones de km de la Tierra en el punto de Lagrange L2. Usando Astropy:</p>
+<ol type="1">
+<li>Expresa esa distancia en unidades astronómicas y en metros</li>
+<li>Calcula cuánto tarda la señal de radio en llegar desde el JWST a la Tierra</li>
+<li>Expresa el resultado en minutos y en segundos</li>
+</ol>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Ver solución
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div id="f9114823" class="cell" data-execution_count="12">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="co"># SOLUCIÓN: distancia y retardo de señal del telescopio James Webb</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy <span class="im">import</span> constants <span class="im">as</span> const</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> astropy.units <span class="im">as</span> u</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Paso 1: definir la distancia al punto L2</span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>distancia_km <span class="op">=</span> <span class="fl">1.5e6</span> <span class="op">*</span> u.km</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Convertir a unidades astronómicas y metros</span></span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>distancia_au <span class="op">=</span> distancia_km.to(u.au)</span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>distancia_m  <span class="op">=</span> distancia_km.to(u.m)</span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Distancia Tierra → JWST:"</span>)</span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  En kilómetros          : </span><span class="sc">{</span>distancia_km<span class="sc">:.3e}</span><span class="ss">"</span>)</span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  En unidades astronóm.  : </span><span class="sc">{</span>distancia_au<span class="sc">:.5f}</span><span class="ss">"</span>)</span>
+<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  En metros              : </span><span class="sc">{</span>distancia_m<span class="sc">:.3e}</span><span class="ss">"</span>)</span>
+<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Paso 2: tiempo = distancia / velocidad de la luz</span></span>
+<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a><span class="co"># const.c está en m/s, así que convertimos distancia a metros</span></span>
+<span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a>tiempo <span class="op">=</span> distancia_m <span class="op">/</span> const.c         <span class="co"># resultado en segundos</span></span>
+<span id="cb23-23"><a href="#cb23-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-24"><a href="#cb23-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Paso 3: convertir</span></span>
+<span id="cb23-25"><a href="#cb23-25" aria-hidden="true" tabindex="-1"></a>tiempo_seg <span class="op">=</span> tiempo.to(u.s)</span>
+<span id="cb23-26"><a href="#cb23-26" aria-hidden="true" tabindex="-1"></a>tiempo_min <span class="op">=</span> tiempo.to(u.<span class="bu">min</span>)</span>
+<span id="cb23-27"><a href="#cb23-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-28"><a href="#cb23-28" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Retardo de señal Tierra ↔ JWST:"</span>)</span>
+<span id="cb23-29"><a href="#cb23-29" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  En segundos : </span><span class="sc">{</span>tiempo_seg<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb23-30"><a href="#cb23-30" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  En minutos  : </span><span class="sc">{</span>tiempo_min<span class="sc">:.2f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Distancia Tierra → JWST:
+  En kilómetros          : 1.500e+06 km
+  En unidades astronóm.  : 0.01003 AU
+  En metros              : 1.500e+09 m
+
+Retardo de señal Tierra ↔ JWST:
+  En segundos : 5.00 s
+  En minutos  : 0.08 min</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</section>
+<section id="qué-aprendiste-en-este-módulo" class="level2 seccion-aprendiste" data-number="9">
+<h2 class="seccion-aprendiste anchored" data-number="9" data-anchor-id="qué-aprendiste-en-este-módulo"><span class="header-section-number">9</span> ¿Qué aprendiste en este módulo?</h2>
+<ul>
+<li>✅ Crear cantidades físicas con <code>valor * u.unidad</code></li>
+<li>✅ Convertir entre unidades con <code>.to()</code></li>
+<li>✅ Combinar unidades en operaciones: km/s, kg·m/s², km/s/Mpc</li>
+<li>✅ Trabajar con unidades angulares: grado, arcominuto, arcosegundo</li>
+<li>✅ Dejar que Astropy detecte errores de unidades incompatibles</li>
+<li>✅ Extraer el número puro con <code>.value</code> cuando lo necesitas</li>
+<li>✅ Acceder a constantes físicas oficiales con <code>astropy.constants</code></li>
+<li>✅ Aplicar todo en un cálculo real: velocidad de escape de planetas</li>
+</ul>
+<p><strong>Siguiente módulo →</strong> <a href="../../posts/basico/03-tiempo.html">03 · Tiempo astronómico con <code>astropy.time</code></a></p>
+
+
+<!-- -->
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "02 · Unidades y constantes físicas"</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="an">description:</span><span class="co"> "Aprende a trabajar con unidades físicas en Python usando astropy.units y astropy.constants"</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span><span class="co"> "Blog AstroPy en Español"</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> "2025-05-26"</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="an">categories:</span><span class="co"> [basico]</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a><span class="an">toc:</span><span class="co"> true</span></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a><span class="an">toc-depth:</span><span class="co"> 3</span></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="an">number-sections:</span><span class="co"> true</span></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a><span class="co">  echo: true</span></span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a><span class="co">  warning: false</span></span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a><span class="co">  message: false</span></span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">span</span><span class="ot"> class</span><span class="op">=</span><span class="st">"badge-basico"</span><span class="dt">&gt;</span>🌱 Básico<span class="dt">&lt;/</span><span class="kw">span</span><span class="dt">&gt;</span></span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a><span class="fu">## ¿Por qué importan las unidades?</span></span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a>En 1999, la NASA perdió la sonda **Mars Climate Orbiter** — una misión de</span>
+<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a>327 millones de dólares — porque un equipo usó libras-fuerza y otro usó</span>
+<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a>newtons. El software nunca detectó el error porque los números eran números</span>
+<span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a>sin unidad.</span>
+<span id="cb25-24"><a href="#cb25-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-25"><a href="#cb25-25" aria-hidden="true" tabindex="-1"></a>En astronomía este problema se multiplica: mezclamos metros, años luz,</span>
+<span id="cb25-26"><a href="#cb25-26" aria-hidden="true" tabindex="-1"></a>parsecs, unidades astronómicas, ergios, julios y electronvoltios en el</span>
+<span id="cb25-27"><a href="#cb25-27" aria-hidden="true" tabindex="-1"></a>mismo cálculo. <span class="in">`astropy.units`</span> resuelve esto de raíz: **el número y su</span>
+<span id="cb25-28"><a href="#cb25-28" aria-hidden="true" tabindex="-1"></a>unidad viajan juntos** y las conversiones son automáticas.</span>
+<span id="cb25-29"><a href="#cb25-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-30"><a href="#cb25-30" aria-hidden="true" tabindex="-1"></a>::: {.callout-note}</span>
+<span id="cb25-31"><a href="#cb25-31" aria-hidden="true" tabindex="-1"></a><span class="fu">## Requisitos previos</span></span>
+<span id="cb25-32"><a href="#cb25-32" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Módulo 01 completado</span>
+<span id="cb25-33"><a href="#cb25-33" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Astropy instalada: <span class="in">`pip install astropy`</span></span>
+<span id="cb25-34"><a href="#cb25-34" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb25-35"><a href="#cb25-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-36"><a href="#cb25-36" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb25-37"><a href="#cb25-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-38"><a href="#cb25-38" aria-hidden="true" tabindex="-1"></a><span class="fu">## El módulo `astropy.units`</span></span>
+<span id="cb25-39"><a href="#cb25-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-40"><a href="#cb25-40" aria-hidden="true" tabindex="-1"></a><span class="fu">### Asignar una unidad a un número</span></span>
+<span id="cb25-41"><a href="#cb25-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-44"><a href="#cb25-44" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb25-45"><a href="#cb25-45" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb25-46"><a href="#cb25-46" aria-hidden="true" tabindex="-1"></a><span class="co"># Importar el módulo de unidades</span></span>
+<span id="cb25-47"><a href="#cb25-47" aria-hidden="true" tabindex="-1"></a><span class="co"># Por convención se abrevia como 'u' en toda la comunidad astronómica</span></span>
+<span id="cb25-48"><a href="#cb25-48" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb25-49"><a href="#cb25-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-50"><a href="#cb25-50" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> astropy.units <span class="im">as</span> u</span>
+<span id="cb25-51"><a href="#cb25-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-52"><a href="#cb25-52" aria-hidden="true" tabindex="-1"></a><span class="co"># Crear una cantidad física: número * unidad</span></span>
+<span id="cb25-53"><a href="#cb25-53" aria-hidden="true" tabindex="-1"></a><span class="co"># El asterisco (*) une el valor numérico con su unidad</span></span>
+<span id="cb25-54"><a href="#cb25-54" aria-hidden="true" tabindex="-1"></a>distancia <span class="op">=</span> <span class="fl">150e6</span> <span class="op">*</span> u.km        <span class="co"># 150 millones de kilómetros</span></span>
+<span id="cb25-55"><a href="#cb25-55" aria-hidden="true" tabindex="-1"></a>masa      <span class="op">=</span> <span class="fl">1.989e30</span> <span class="op">*</span> u.kg     <span class="co"># masa del Sol en kilogramos</span></span>
+<span id="cb25-56"><a href="#cb25-56" aria-hidden="true" tabindex="-1"></a>tiempo    <span class="op">=</span> <span class="fl">365.25</span> <span class="op">*</span> u.day      <span class="co"># un año en días</span></span>
+<span id="cb25-57"><a href="#cb25-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-58"><a href="#cb25-58" aria-hidden="true" tabindex="-1"></a><span class="co"># Astropy muestra siempre el valor y la unidad juntos</span></span>
+<span id="cb25-59"><a href="#cb25-59" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Distancia : </span><span class="sc">{</span>distancia<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb25-60"><a href="#cb25-60" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Masa      : </span><span class="sc">{</span>masa<span class="sc">:.3e}</span><span class="ss">"</span>)</span>
+<span id="cb25-61"><a href="#cb25-61" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Tiempo    : </span><span class="sc">{</span>tiempo<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb25-62"><a href="#cb25-62" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-63"><a href="#cb25-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-64"><a href="#cb25-64" aria-hidden="true" tabindex="-1"></a><span class="fu">### Convertir entre unidades con `.to()`</span></span>
+<span id="cb25-65"><a href="#cb25-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-68"><a href="#cb25-68" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb25-69"><a href="#cb25-69" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb25-70"><a href="#cb25-70" aria-hidden="true" tabindex="-1"></a><span class="co"># Convertir unidades con el método .to()</span></span>
+<span id="cb25-71"><a href="#cb25-71" aria-hidden="true" tabindex="-1"></a><span class="co"># Solo hay que indicar a qué unidad se quiere llegar</span></span>
+<span id="cb25-72"><a href="#cb25-72" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb25-73"><a href="#cb25-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-74"><a href="#cb25-74" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> astropy.units <span class="im">as</span> u</span>
+<span id="cb25-75"><a href="#cb25-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-76"><a href="#cb25-76" aria-hidden="true" tabindex="-1"></a><span class="co"># Partimos de una distancia en kilómetros</span></span>
+<span id="cb25-77"><a href="#cb25-77" aria-hidden="true" tabindex="-1"></a>distancia_km <span class="op">=</span> <span class="fl">150e6</span> <span class="op">*</span> u.km</span>
+<span id="cb25-78"><a href="#cb25-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-79"><a href="#cb25-79" aria-hidden="true" tabindex="-1"></a><span class="co"># Convertimos a distintas unidades astronómicas</span></span>
+<span id="cb25-80"><a href="#cb25-80" aria-hidden="true" tabindex="-1"></a>distancia_m  <span class="op">=</span> distancia_km.to(u.m)       <span class="co"># metros</span></span>
+<span id="cb25-81"><a href="#cb25-81" aria-hidden="true" tabindex="-1"></a>distancia_au <span class="op">=</span> distancia_km.to(u.au)      <span class="co"># unidades astronómicas</span></span>
+<span id="cb25-82"><a href="#cb25-82" aria-hidden="true" tabindex="-1"></a>distancia_ly <span class="op">=</span> distancia_km.to(u.lyr)     <span class="co"># años luz</span></span>
+<span id="cb25-83"><a href="#cb25-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-84"><a href="#cb25-84" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"La distancia Tierra-Sol equivale a:"</span>)</span>
+<span id="cb25-85"><a href="#cb25-85" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  </span><span class="sc">{</span>distancia_km<span class="sc">:.3e}</span><span class="ss">"</span>)</span>
+<span id="cb25-86"><a href="#cb25-86" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  </span><span class="sc">{</span>distancia_m<span class="sc">:.3e}</span><span class="ss">"</span>)</span>
+<span id="cb25-87"><a href="#cb25-87" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  </span><span class="sc">{</span>distancia_au<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
+<span id="cb25-88"><a href="#cb25-88" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  </span><span class="sc">{</span>distancia_ly<span class="sc">:.6f}</span><span class="ss">"</span>)</span>
+<span id="cb25-89"><a href="#cb25-89" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-90"><a href="#cb25-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-91"><a href="#cb25-91" aria-hidden="true" tabindex="-1"></a><span class="fu">### Unidades compuestas: velocidad, presión, energía</span></span>
+<span id="cb25-92"><a href="#cb25-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-95"><a href="#cb25-95" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb25-96"><a href="#cb25-96" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb25-97"><a href="#cb25-97" aria-hidden="true" tabindex="-1"></a><span class="co"># Las unidades se pueden combinar con * (por) y / (entre)</span></span>
+<span id="cb25-98"><a href="#cb25-98" aria-hidden="true" tabindex="-1"></a><span class="co"># Astropy construye la unidad compuesta automáticamente</span></span>
+<span id="cb25-99"><a href="#cb25-99" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb25-100"><a href="#cb25-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-101"><a href="#cb25-101" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> astropy.units <span class="im">as</span> u</span>
+<span id="cb25-102"><a href="#cb25-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-103"><a href="#cb25-103" aria-hidden="true" tabindex="-1"></a><span class="co"># Velocidad = distancia / tiempo</span></span>
+<span id="cb25-104"><a href="#cb25-104" aria-hidden="true" tabindex="-1"></a>velocidad_luz <span class="op">=</span> <span class="fl">3e5</span> <span class="op">*</span> (u.km <span class="op">/</span> u.s)        <span class="co"># velocidad de la luz en km/s</span></span>
+<span id="cb25-105"><a href="#cb25-105" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Velocidad de la luz: </span><span class="sc">{</span>velocidad_luz<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb25-106"><a href="#cb25-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-107"><a href="#cb25-107" aria-hidden="true" tabindex="-1"></a><span class="co"># Convertir km/s a m/s</span></span>
+<span id="cb25-108"><a href="#cb25-108" aria-hidden="true" tabindex="-1"></a>velocidad_ms <span class="op">=</span> velocidad_luz.to(u.m <span class="op">/</span> u.s)</span>
+<span id="cb25-109"><a href="#cb25-109" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"En metros por segundo: </span><span class="sc">{</span>velocidad_ms<span class="sc">:.3e}</span><span class="ss">"</span>)</span>
+<span id="cb25-110"><a href="#cb25-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-111"><a href="#cb25-111" aria-hidden="true" tabindex="-1"></a><span class="co"># Energía en electronvoltios (muy usada en astrofísica de altas energías)</span></span>
+<span id="cb25-112"><a href="#cb25-112" aria-hidden="true" tabindex="-1"></a>energia_foton <span class="op">=</span> <span class="fl">2.5</span> <span class="op">*</span> u.eV                <span class="co"># energía de un fotón de luz visible</span></span>
+<span id="cb25-113"><a href="#cb25-113" aria-hidden="true" tabindex="-1"></a>energia_joules <span class="op">=</span> energia_foton.to(u.J)    <span class="co"># convertir a julios</span></span>
+<span id="cb25-114"><a href="#cb25-114" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Energía del fotón: </span><span class="sc">{</span>energia_foton<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb25-115"><a href="#cb25-115" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"En julios        : </span><span class="sc">{</span>energia_joules<span class="sc">:.3e}</span><span class="ss">"</span>)</span>
+<span id="cb25-116"><a href="#cb25-116" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-117"><a href="#cb25-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-118"><a href="#cb25-118" aria-hidden="true" tabindex="-1"></a><span class="fu">### Unidades angulares: grados, arcominutos, arcosegundos</span></span>
+<span id="cb25-119"><a href="#cb25-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-122"><a href="#cb25-122" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb25-123"><a href="#cb25-123" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb25-124"><a href="#cb25-124" aria-hidden="true" tabindex="-1"></a><span class="co"># En astronomía los ángulos tienen sus propias unidades:</span></span>
+<span id="cb25-125"><a href="#cb25-125" aria-hidden="true" tabindex="-1"></a><span class="co">#   grado (°) → arcominuto (') → arcosegundo ('')</span></span>
+<span id="cb25-126"><a href="#cb25-126" aria-hidden="true" tabindex="-1"></a><span class="co"># 1 grado = 60 arcominutos = 3600 arcosegundos</span></span>
+<span id="cb25-127"><a href="#cb25-127" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb25-128"><a href="#cb25-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-129"><a href="#cb25-129" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> astropy.units <span class="im">as</span> u</span>
+<span id="cb25-130"><a href="#cb25-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-131"><a href="#cb25-131" aria-hidden="true" tabindex="-1"></a><span class="co"># El diámetro angular de la Luna vista desde la Tierra</span></span>
+<span id="cb25-132"><a href="#cb25-132" aria-hidden="true" tabindex="-1"></a>diametro_luna <span class="op">=</span> <span class="fl">0.5</span> <span class="op">*</span> u.degree            <span class="co"># aproximadamente medio grado</span></span>
+<span id="cb25-133"><a href="#cb25-133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-134"><a href="#cb25-134" aria-hidden="true" tabindex="-1"></a><span class="co"># Convertir a arcominutos y arcosegundos</span></span>
+<span id="cb25-135"><a href="#cb25-135" aria-hidden="true" tabindex="-1"></a>en_arcmin <span class="op">=</span> diametro_luna.to(u.arcmin)    <span class="co"># arcominutos</span></span>
+<span id="cb25-136"><a href="#cb25-136" aria-hidden="true" tabindex="-1"></a>en_arcsec <span class="op">=</span> diametro_luna.to(u.arcsec)   <span class="co"># arcosegundos</span></span>
+<span id="cb25-137"><a href="#cb25-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-138"><a href="#cb25-138" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Diámetro angular de la Luna:"</span>)</span>
+<span id="cb25-139"><a href="#cb25-139" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  En grados       : </span><span class="sc">{</span>diametro_luna<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb25-140"><a href="#cb25-140" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  En arcominutos  : </span><span class="sc">{</span>en_arcmin<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb25-141"><a href="#cb25-141" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  En arcosegundos : </span><span class="sc">{</span>en_arcsec<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb25-142"><a href="#cb25-142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-143"><a href="#cb25-143" aria-hidden="true" tabindex="-1"></a><span class="co"># El arcosegundo es clave: la resolución de los telescopios</span></span>
+<span id="cb25-144"><a href="#cb25-144" aria-hidden="true" tabindex="-1"></a><span class="co"># se mide en arcosegundos (o miliarcsegundos en radioastronomía)</span></span>
+<span id="cb25-145"><a href="#cb25-145" aria-hidden="true" tabindex="-1"></a>limite_hubble <span class="op">=</span> <span class="fl">0.05</span> <span class="op">*</span> u.arcsec           <span class="co"># límite de resolución del HST</span></span>
+<span id="cb25-146"><a href="#cb25-146" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Resolución del Hubble : </span><span class="sc">{</span>limite_hubble<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb25-147"><a href="#cb25-147" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"En grados             : </span><span class="sc">{</span>limite_hubble<span class="sc">.</span>to(u.degree)<span class="sc">:.6f}</span><span class="ss">"</span>)</span>
+<span id="cb25-148"><a href="#cb25-148" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-149"><a href="#cb25-149" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-150"><a href="#cb25-150" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb25-151"><a href="#cb25-151" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-152"><a href="#cb25-152" aria-hidden="true" tabindex="-1"></a><span class="fu">## Operaciones aritméticas con unidades</span></span>
+<span id="cb25-153"><a href="#cb25-153" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-156"><a href="#cb25-156" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb25-157"><a href="#cb25-157" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb25-158"><a href="#cb25-158" aria-hidden="true" tabindex="-1"></a><span class="co"># Las cantidades con unidades se pueden sumar, restar, multiplicar y dividir</span></span>
+<span id="cb25-159"><a href="#cb25-159" aria-hidden="true" tabindex="-1"></a><span class="co"># Astropy verifica automáticamente que las unidades sean compatibles</span></span>
+<span id="cb25-160"><a href="#cb25-160" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb25-161"><a href="#cb25-161" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-162"><a href="#cb25-162" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> astropy.units <span class="im">as</span> u</span>
+<span id="cb25-163"><a href="#cb25-163" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-164"><a href="#cb25-164" aria-hidden="true" tabindex="-1"></a><span class="co"># Suma: las dos cantidades deben ser del mismo tipo (ambas de longitud)</span></span>
+<span id="cb25-165"><a href="#cb25-165" aria-hidden="true" tabindex="-1"></a><span class="co"># Si están en unidades distintas, primero convertimos una de ellas</span></span>
+<span id="cb25-166"><a href="#cb25-166" aria-hidden="true" tabindex="-1"></a>d1 <span class="op">=</span> <span class="dv">100</span> <span class="op">*</span> u.km</span>
+<span id="cb25-167"><a href="#cb25-167" aria-hidden="true" tabindex="-1"></a>d2 <span class="op">=</span>   <span class="dv">5</span> <span class="op">*</span> u.au                   <span class="co"># unidad astronómica</span></span>
+<span id="cb25-168"><a href="#cb25-168" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-169"><a href="#cb25-169" aria-hidden="true" tabindex="-1"></a>d2_en_km <span class="op">=</span> d2.to(u.km)            <span class="co"># convertir antes de sumar</span></span>
+<span id="cb25-170"><a href="#cb25-170" aria-hidden="true" tabindex="-1"></a>total <span class="op">=</span> d1 <span class="op">+</span> d2_en_km</span>
+<span id="cb25-171"><a href="#cb25-171" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Suma de distancias: </span><span class="sc">{</span>total<span class="sc">:.3e}</span><span class="ss">"</span>)</span>
+<span id="cb25-172"><a href="#cb25-172" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-173"><a href="#cb25-173" aria-hidden="true" tabindex="-1"></a><span class="co"># Multiplicación: produce una unidad compuesta</span></span>
+<span id="cb25-174"><a href="#cb25-174" aria-hidden="true" tabindex="-1"></a>masa         <span class="op">=</span> <span class="fl">5.972e24</span> <span class="op">*</span> u.kg        <span class="co"># masa de la Tierra</span></span>
+<span id="cb25-175"><a href="#cb25-175" aria-hidden="true" tabindex="-1"></a>aceleracion  <span class="op">=</span> <span class="fl">9.8</span> <span class="op">*</span> (u.m <span class="op">/</span> u.s<span class="op">**</span><span class="dv">2</span>)  <span class="co"># aceleración de la gravedad</span></span>
+<span id="cb25-176"><a href="#cb25-176" aria-hidden="true" tabindex="-1"></a>fuerza       <span class="op">=</span> masa <span class="op">*</span> aceleracion     <span class="co"># kg·m/s² = Newton</span></span>
+<span id="cb25-177"><a href="#cb25-177" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Fuerza gravitacional: </span><span class="sc">{</span>fuerza<span class="sc">:.3e}</span><span class="ss">"</span>)</span>
+<span id="cb25-178"><a href="#cb25-178" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"En Newtons          : </span><span class="sc">{</span>fuerza<span class="sc">.</span>to(u.N)<span class="sc">:.3e}</span><span class="ss">"</span>)</span>
+<span id="cb25-179"><a href="#cb25-179" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-180"><a href="#cb25-180" aria-hidden="true" tabindex="-1"></a><span class="co"># División: ley de Hubble → velocidad = H₀ × distancia</span></span>
+<span id="cb25-181"><a href="#cb25-181" aria-hidden="true" tabindex="-1"></a>H0   <span class="op">=</span> <span class="dv">70</span> <span class="op">*</span> (u.km <span class="op">/</span> u.s <span class="op">/</span> u.Mpc)    <span class="co"># constante de Hubble</span></span>
+<span id="cb25-182"><a href="#cb25-182" aria-hidden="true" tabindex="-1"></a>dist <span class="op">=</span> <span class="dv">10</span> <span class="op">*</span> u.Mpc                    <span class="co"># distancia a una galaxia (megaparsecs)</span></span>
+<span id="cb25-183"><a href="#cb25-183" aria-hidden="true" tabindex="-1"></a>vel  <span class="op">=</span> H0 <span class="op">*</span> dist                     <span class="co"># velocidad de recesión</span></span>
+<span id="cb25-184"><a href="#cb25-184" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Velocidad de recesión: </span><span class="sc">{</span>vel<span class="sc">:.0f}</span><span class="ss">"</span>)</span>
+<span id="cb25-185"><a href="#cb25-185" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-186"><a href="#cb25-186" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-187"><a href="#cb25-187" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb25-188"><a href="#cb25-188" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-189"><a href="#cb25-189" aria-hidden="true" tabindex="-1"></a><span class="fu">## Errores comunes y cómo evitarlos</span></span>
+<span id="cb25-190"><a href="#cb25-190" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-193"><a href="#cb25-193" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb25-194"><a href="#cb25-194" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb25-195"><a href="#cb25-195" aria-hidden="true" tabindex="-1"></a><span class="co"># Astropy lanza un error si intentamos mezclar unidades incompatibles</span></span>
+<span id="cb25-196"><a href="#cb25-196" aria-hidden="true" tabindex="-1"></a><span class="co"># Esto es una PROTECCIÓN — evita errores silenciosos en los cálculos</span></span>
+<span id="cb25-197"><a href="#cb25-197" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb25-198"><a href="#cb25-198" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-199"><a href="#cb25-199" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> astropy.units <span class="im">as</span> u</span>
+<span id="cb25-200"><a href="#cb25-200" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-201"><a href="#cb25-201" aria-hidden="true" tabindex="-1"></a><span class="co"># Intentamos sumar kilómetros con kilogramos (no tiene sentido físico)</span></span>
+<span id="cb25-202"><a href="#cb25-202" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
+<span id="cb25-203"><a href="#cb25-203" aria-hidden="true" tabindex="-1"></a>    resultado <span class="op">=</span> <span class="dv">100</span> <span class="op">*</span> u.km <span class="op">+</span> <span class="dv">50</span> <span class="op">*</span> u.kg</span>
+<span id="cb25-204"><a href="#cb25-204" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> u.UnitConversionError <span class="im">as</span> error:</span>
+<span id="cb25-205"><a href="#cb25-205" aria-hidden="true" tabindex="-1"></a>    <span class="co"># UnitConversionError avisa que las unidades no son compatibles</span></span>
+<span id="cb25-206"><a href="#cb25-206" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Error detectado por Astropy:"</span>)</span>
+<span id="cb25-207"><a href="#cb25-207" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  </span><span class="sc">{</span>error<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb25-208"><a href="#cb25-208" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">→ Esto es exactamente lo que queremos:"</span>)</span>
+<span id="cb25-209"><a href="#cb25-209" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"  en vez de obtener un número sin sentido, Astropy nos avisa."</span>)</span>
+<span id="cb25-210"><a href="#cb25-210" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-211"><a href="#cb25-211" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-214"><a href="#cb25-214" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb25-215"><a href="#cb25-215" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb25-216"><a href="#cb25-216" aria-hidden="true" tabindex="-1"></a><span class="co"># Para extraer solo el número (sin la unidad) se usa .value</span></span>
+<span id="cb25-217"><a href="#cb25-217" aria-hidden="true" tabindex="-1"></a><span class="co"># Útil cuando necesitamos pasar el dato a otra librería como matplotlib</span></span>
+<span id="cb25-218"><a href="#cb25-218" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb25-219"><a href="#cb25-219" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-220"><a href="#cb25-220" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> astropy.units <span class="im">as</span> u</span>
+<span id="cb25-221"><a href="#cb25-221" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-222"><a href="#cb25-222" aria-hidden="true" tabindex="-1"></a>velocidad <span class="op">=</span> <span class="fl">299792.458</span> <span class="op">*</span> (u.km <span class="op">/</span> u.s)   <span class="co"># velocidad de la luz</span></span>
+<span id="cb25-223"><a href="#cb25-223" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-224"><a href="#cb25-224" aria-hidden="true" tabindex="-1"></a>solo_numero <span class="op">=</span> velocidad.value            <span class="co"># extrae solo el número (float)</span></span>
+<span id="cb25-225"><a href="#cb25-225" aria-hidden="true" tabindex="-1"></a>solo_unidad <span class="op">=</span> velocidad.unit             <span class="co"># extrae solo la unidad</span></span>
+<span id="cb25-226"><a href="#cb25-226" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-227"><a href="#cb25-227" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Cantidad completa : </span><span class="sc">{</span>velocidad<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb25-228"><a href="#cb25-228" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Solo el número    : </span><span class="sc">{</span>solo_numero<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb25-229"><a href="#cb25-229" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Solo la unidad    : </span><span class="sc">{</span>solo_unidad<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb25-230"><a href="#cb25-230" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Tipo de dato      : </span><span class="sc">{</span><span class="bu">type</span>(solo_numero)<span class="sc">}</span><span class="ss">"</span>)   <span class="co"># float normal de Python</span></span>
+<span id="cb25-231"><a href="#cb25-231" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-232"><a href="#cb25-232" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-233"><a href="#cb25-233" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb25-234"><a href="#cb25-234" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-235"><a href="#cb25-235" aria-hidden="true" tabindex="-1"></a><span class="fu">## Constantes físicas con `astropy.constants`</span></span>
+<span id="cb25-236"><a href="#cb25-236" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-237"><a href="#cb25-237" aria-hidden="true" tabindex="-1"></a>Astropy incluye las constantes físicas y astronómicas más usadas, con sus</span>
+<span id="cb25-238"><a href="#cb25-238" aria-hidden="true" tabindex="-1"></a>valores oficiales del CODATA y la IAU (Unión Astronómica Internacional).</span>
+<span id="cb25-239"><a href="#cb25-239" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-242"><a href="#cb25-242" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb25-243"><a href="#cb25-243" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb25-244"><a href="#cb25-244" aria-hidden="true" tabindex="-1"></a><span class="co"># El módulo astropy.constants contiene constantes físicas oficiales</span></span>
+<span id="cb25-245"><a href="#cb25-245" aria-hidden="true" tabindex="-1"></a><span class="co"># con valor, unidad e incertidumbre incluidos</span></span>
+<span id="cb25-246"><a href="#cb25-246" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb25-247"><a href="#cb25-247" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-248"><a href="#cb25-248" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy <span class="im">import</span> constants <span class="im">as</span> const</span>
+<span id="cb25-249"><a href="#cb25-249" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-250"><a href="#cb25-250" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"─── Constantes físicas ───────────────────────────────"</span>)</span>
+<span id="cb25-251"><a href="#cb25-251" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Velocidad de la luz   c  = </span><span class="sc">{</span>const<span class="sc">.</span>c<span class="sc">:.6e}</span><span class="ss">"</span>)</span>
+<span id="cb25-252"><a href="#cb25-252" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Constante gravitación G  = </span><span class="sc">{</span>const<span class="sc">.</span>G<span class="sc">:.6e}</span><span class="ss">"</span>)</span>
+<span id="cb25-253"><a href="#cb25-253" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Constante de Planck   h  = </span><span class="sc">{</span>const<span class="sc">.</span>h<span class="sc">:.6e}</span><span class="ss">"</span>)</span>
+<span id="cb25-254"><a href="#cb25-254" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Masa del electrón     mₑ = </span><span class="sc">{</span>const<span class="sc">.</span>m_e<span class="sc">:.6e}</span><span class="ss">"</span>)</span>
+<span id="cb25-255"><a href="#cb25-255" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-256"><a href="#cb25-256" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">─── Constantes astronómicas ──────────────────────────"</span>)</span>
+<span id="cb25-257"><a href="#cb25-257" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Masa del Sol          M☉ = </span><span class="sc">{</span>const<span class="sc">.</span>M_sun<span class="sc">:.6e}</span><span class="ss">"</span>)</span>
+<span id="cb25-258"><a href="#cb25-258" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Radio del Sol         R☉ = </span><span class="sc">{</span>const<span class="sc">.</span>R_sun<span class="sc">:.6e}</span><span class="ss">"</span>)</span>
+<span id="cb25-259"><a href="#cb25-259" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Masa de la Tierra     M⊕ = </span><span class="sc">{</span>const<span class="sc">.</span>M_earth<span class="sc">:.6e}</span><span class="ss">"</span>)</span>
+<span id="cb25-260"><a href="#cb25-260" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Radio de la Tierra    R⊕ = </span><span class="sc">{</span>const<span class="sc">.</span>R_earth<span class="sc">:.6e}</span><span class="ss">"</span>)</span>
+<span id="cb25-261"><a href="#cb25-261" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-262"><a href="#cb25-262" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-265"><a href="#cb25-265" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb25-266"><a href="#cb25-266" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb25-267"><a href="#cb25-267" aria-hidden="true" tabindex="-1"></a><span class="co"># Las constantes también se convierten con .to()</span></span>
+<span id="cb25-268"><a href="#cb25-268" aria-hidden="true" tabindex="-1"></a><span class="co"># y se usan directamente en cálculos igual que cualquier cantidad con unidad</span></span>
+<span id="cb25-269"><a href="#cb25-269" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb25-270"><a href="#cb25-270" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-271"><a href="#cb25-271" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy <span class="im">import</span> constants <span class="im">as</span> const</span>
+<span id="cb25-272"><a href="#cb25-272" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> astropy.units <span class="im">as</span> u</span>
+<span id="cb25-273"><a href="#cb25-273" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-274"><a href="#cb25-274" aria-hidden="true" tabindex="-1"></a><span class="co"># Velocidad de la luz en diferentes unidades</span></span>
+<span id="cb25-275"><a href="#cb25-275" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Velocidad de la luz:"</span>)</span>
+<span id="cb25-276"><a href="#cb25-276" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  en km/s  : </span><span class="sc">{</span>const<span class="sc">.</span>c<span class="sc">:.5e}</span><span class="ss">"</span>)</span>
+<span id="cb25-277"><a href="#cb25-277" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  en m/s   : </span><span class="sc">{</span>const<span class="sc">.</span>c<span class="sc">.</span>to(u.m <span class="op">/</span> u.s)<span class="sc">:.5e}</span><span class="ss">"</span>)</span>
+<span id="cb25-278"><a href="#cb25-278" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  en km/h  : </span><span class="sc">{</span>const<span class="sc">.</span>c<span class="sc">.</span>to(u.km <span class="op">/</span> u.hr)<span class="sc">:.5e}</span><span class="ss">"</span>)</span>
+<span id="cb25-279"><a href="#cb25-279" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-280"><a href="#cb25-280" aria-hidden="true" tabindex="-1"></a><span class="co"># Energía equivalente de la masa del electrón (E = mc²)</span></span>
+<span id="cb25-281"><a href="#cb25-281" aria-hidden="true" tabindex="-1"></a>energia    <span class="op">=</span> const.m_e <span class="op">*</span> const.c<span class="op">**</span><span class="dv">2</span></span>
+<span id="cb25-282"><a href="#cb25-282" aria-hidden="true" tabindex="-1"></a>energia_eV <span class="op">=</span> energia.to(u.eV)</span>
+<span id="cb25-283"><a href="#cb25-283" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-284"><a href="#cb25-284" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Energía en reposo del electrón (E = mc²):"</span>)</span>
+<span id="cb25-285"><a href="#cb25-285" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  En julios          : </span><span class="sc">{</span>energia<span class="sc">:.4e}</span><span class="ss">"</span>)</span>
+<span id="cb25-286"><a href="#cb25-286" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  En electronvoltios : </span><span class="sc">{</span>energia_eV<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
+<span id="cb25-287"><a href="#cb25-287" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-288"><a href="#cb25-288" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-291"><a href="#cb25-291" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb25-292"><a href="#cb25-292" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb25-293"><a href="#cb25-293" aria-hidden="true" tabindex="-1"></a><span class="co"># Ver la ficha completa de una constante:</span></span>
+<span id="cb25-294"><a href="#cb25-294" aria-hidden="true" tabindex="-1"></a><span class="co"># nombre, valor, incertidumbre, unidad y referencia bibliográfica</span></span>
+<span id="cb25-295"><a href="#cb25-295" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb25-296"><a href="#cb25-296" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-297"><a href="#cb25-297" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy <span class="im">import</span> constants <span class="im">as</span> const</span>
+<span id="cb25-298"><a href="#cb25-298" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-299"><a href="#cb25-299" aria-hidden="true" tabindex="-1"></a><span class="co"># Imprimimos la ficha completa de la constante gravitacional</span></span>
+<span id="cb25-300"><a href="#cb25-300" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(const.G)</span>
+<span id="cb25-301"><a href="#cb25-301" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-302"><a href="#cb25-302" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-303"><a href="#cb25-303" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb25-304"><a href="#cb25-304" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-305"><a href="#cb25-305" aria-hidden="true" tabindex="-1"></a><span class="fu">## Aplicación práctica: velocidad de escape</span></span>
+<span id="cb25-306"><a href="#cb25-306" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-307"><a href="#cb25-307" aria-hidden="true" tabindex="-1"></a>Calculamos cuánta velocidad necesita un cohete para escapar de la</span>
+<span id="cb25-308"><a href="#cb25-308" aria-hidden="true" tabindex="-1"></a>gravedad de distintos cuerpos del Sistema Solar.</span>
+<span id="cb25-309"><a href="#cb25-309" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-310"><a href="#cb25-310" aria-hidden="true" tabindex="-1"></a>La fórmula es: $v_{escape} = \sqrt{\dfrac{2GM}{R}}$</span>
+<span id="cb25-311"><a href="#cb25-311" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-314"><a href="#cb25-314" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb25-315"><a href="#cb25-315" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb25-316"><a href="#cb25-316" aria-hidden="true" tabindex="-1"></a><span class="co"># Velocidad de escape de distintos planetas</span></span>
+<span id="cb25-317"><a href="#cb25-317" aria-hidden="true" tabindex="-1"></a><span class="co"># Fórmula: v = sqrt(2 * G * M / R)</span></span>
+<span id="cb25-318"><a href="#cb25-318" aria-hidden="true" tabindex="-1"></a><span class="co"># Esta es la velocidad mínima para escapar de la atracción gravitacional</span></span>
+<span id="cb25-319"><a href="#cb25-319" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb25-320"><a href="#cb25-320" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-321"><a href="#cb25-321" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np                    <span class="co"># para la raíz cuadrada</span></span>
+<span id="cb25-322"><a href="#cb25-322" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy <span class="im">import</span> constants <span class="im">as</span> const</span>
+<span id="cb25-323"><a href="#cb25-323" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> astropy.units <span class="im">as</span> u</span>
+<span id="cb25-324"><a href="#cb25-324" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-325"><a href="#cb25-325" aria-hidden="true" tabindex="-1"></a><span class="co"># Datos de masa y radio de cada cuerpo</span></span>
+<span id="cb25-326"><a href="#cb25-326" aria-hidden="true" tabindex="-1"></a><span class="co"># Las constantes del Sol y la Tierra vienen directamente de astropy.constants</span></span>
+<span id="cb25-327"><a href="#cb25-327" aria-hidden="true" tabindex="-1"></a>planetas <span class="op">=</span> {</span>
+<span id="cb25-328"><a href="#cb25-328" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Tierra"</span> : {<span class="st">"M"</span>: const.M_earth,       <span class="st">"R"</span>: const.R_earth},</span>
+<span id="cb25-329"><a href="#cb25-329" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Marte"</span>  : {<span class="st">"M"</span>: <span class="fl">6.417e23</span> <span class="op">*</span> u.kg,     <span class="st">"R"</span>: <span class="fl">3389.5</span> <span class="op">*</span> u.km},</span>
+<span id="cb25-330"><a href="#cb25-330" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Júpiter"</span>: {<span class="st">"M"</span>: <span class="fl">1.898e27</span> <span class="op">*</span> u.kg,     <span class="st">"R"</span>: <span class="dv">69911</span>  <span class="op">*</span> u.km},</span>
+<span id="cb25-331"><a href="#cb25-331" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Sol"</span>    : {<span class="st">"M"</span>: const.M_sun,         <span class="st">"R"</span>: const.R_sun},</span>
+<span id="cb25-332"><a href="#cb25-332" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb25-333"><a href="#cb25-333" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-334"><a href="#cb25-334" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span><span class="st">'Cuerpo'</span><span class="sc">:&lt;10}</span><span class="ss"> </span><span class="sc">{</span><span class="st">'V. escape'</span><span class="sc">:&gt;12}</span><span class="ss">"</span>)</span>
+<span id="cb25-335"><a href="#cb25-335" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"─"</span> <span class="op">*</span> <span class="dv">25</span>)</span>
+<span id="cb25-336"><a href="#cb25-336" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-337"><a href="#cb25-337" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> nombre, datos <span class="kw">in</span> planetas.items():</span>
+<span id="cb25-338"><a href="#cb25-338" aria-hidden="true" tabindex="-1"></a>    M <span class="op">=</span> datos[<span class="st">"M"</span>]    <span class="co"># masa del cuerpo celeste</span></span>
+<span id="cb25-339"><a href="#cb25-339" aria-hidden="true" tabindex="-1"></a>    R <span class="op">=</span> datos[<span class="st">"R"</span>]    <span class="co"># radio del cuerpo celeste</span></span>
+<span id="cb25-340"><a href="#cb25-340" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-341"><a href="#cb25-341" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Aplicamos la fórmula — numpy acepta cantidades con unidades de Astropy</span></span>
+<span id="cb25-342"><a href="#cb25-342" aria-hidden="true" tabindex="-1"></a>    v_escape <span class="op">=</span> np.sqrt(<span class="dv">2</span> <span class="op">*</span> const.G <span class="op">*</span> M <span class="op">/</span> R)</span>
+<span id="cb25-343"><a href="#cb25-343" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-344"><a href="#cb25-344" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Convertimos a km/s para facilitar la comparación</span></span>
+<span id="cb25-345"><a href="#cb25-345" aria-hidden="true" tabindex="-1"></a>    v_kms <span class="op">=</span> v_escape.to(u.km <span class="op">/</span> u.s)</span>
+<span id="cb25-346"><a href="#cb25-346" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-347"><a href="#cb25-347" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>nombre<span class="sc">:&lt;10}</span><span class="ss"> </span><span class="sc">{</span>v_kms<span class="sc">.</span>value<span class="sc">:&gt;8.2f}</span><span class="ss"> km/s"</span>)</span>
+<span id="cb25-348"><a href="#cb25-348" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-349"><a href="#cb25-349" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-350"><a href="#cb25-350" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb25-351"><a href="#cb25-351" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-352"><a href="#cb25-352" aria-hidden="true" tabindex="-1"></a><span class="fu">## Tabla de referencia rápida</span></span>
+<span id="cb25-353"><a href="#cb25-353" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-354"><a href="#cb25-354" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Tipo <span class="pp">|</span> Código Astropy <span class="pp">|</span> Símbolo <span class="pp">|</span> Equivalencia <span class="pp">|</span></span>
+<span id="cb25-355"><a href="#cb25-355" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|---|---|</span></span>
+<span id="cb25-356"><a href="#cb25-356" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Longitud <span class="pp">|</span> <span class="in">`u.m`</span>, <span class="in">`u.km`</span> <span class="pp">|</span> m, km <span class="pp">|</span> base SI <span class="pp">|</span></span>
+<span id="cb25-357"><a href="#cb25-357" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Longitud <span class="pp">|</span> <span class="in">`u.au`</span> <span class="pp">|</span> UA <span class="pp">|</span> ≈ 1.496 × 10⁸ km <span class="pp">|</span></span>
+<span id="cb25-358"><a href="#cb25-358" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Longitud <span class="pp">|</span> <span class="in">`u.lyr`</span> <span class="pp">|</span> al <span class="pp">|</span> ≈ 9.461 × 10¹² km <span class="pp">|</span></span>
+<span id="cb25-359"><a href="#cb25-359" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Longitud <span class="pp">|</span> <span class="in">`u.pc`</span>, <span class="in">`u.kpc`</span>, <span class="in">`u.Mpc`</span> <span class="pp">|</span> pc <span class="pp">|</span> ≈ 3.086 × 10¹³ km <span class="pp">|</span></span>
+<span id="cb25-360"><a href="#cb25-360" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Ángulo <span class="pp">|</span> <span class="in">`u.degree`</span> <span class="pp">|</span> ° <span class="pp">|</span> 60 arcmin <span class="pp">|</span></span>
+<span id="cb25-361"><a href="#cb25-361" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Ángulo <span class="pp">|</span> <span class="in">`u.arcmin`</span> <span class="pp">|</span> ' <span class="pp">|</span> 60 arcsec <span class="pp">|</span></span>
+<span id="cb25-362"><a href="#cb25-362" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Ángulo <span class="pp">|</span> <span class="in">`u.arcsec`</span> <span class="pp">|</span> '' <span class="pp">|</span> 1/3600° <span class="pp">|</span></span>
+<span id="cb25-363"><a href="#cb25-363" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Masa <span class="pp">|</span> <span class="in">`u.kg`</span>, <span class="in">`u.g`</span> <span class="pp">|</span> kg, g <span class="pp">|</span> base SI <span class="pp">|</span></span>
+<span id="cb25-364"><a href="#cb25-364" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Masa <span class="pp">|</span> <span class="in">`u.M_sun`</span> <span class="pp">|</span> M☉ <span class="pp">|</span> ≈ 1.989 × 10³⁰ kg <span class="pp">|</span></span>
+<span id="cb25-365"><a href="#cb25-365" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Tiempo <span class="pp">|</span> <span class="in">`u.s`</span>, <span class="in">`u.hr`</span>, <span class="in">`u.day`</span>, <span class="in">`u.yr`</span> <span class="pp">|</span> s, h, d, a <span class="pp">|</span> — <span class="pp">|</span></span>
+<span id="cb25-366"><a href="#cb25-366" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Energía <span class="pp">|</span> <span class="in">`u.J`</span>, <span class="in">`u.eV`</span> <span class="pp">|</span> J, eV <span class="pp">|</span> 1 eV ≈ 1.6×10⁻¹⁹ J <span class="pp">|</span></span>
+<span id="cb25-367"><a href="#cb25-367" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Temperatura <span class="pp">|</span> <span class="in">`u.K`</span> <span class="pp">|</span> K <span class="pp">|</span> Kelvin <span class="pp">|</span></span>
+<span id="cb25-368"><a href="#cb25-368" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-369"><a href="#cb25-369" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb25-370"><a href="#cb25-370" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-371"><a href="#cb25-371" aria-hidden="true" tabindex="-1"></a><span class="fu">## Ejercicio</span></span>
+<span id="cb25-372"><a href="#cb25-372" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-373"><a href="#cb25-373" aria-hidden="true" tabindex="-1"></a>El telescopio espacial **James Webb** orbita a 1.5 millones de km de la</span>
+<span id="cb25-374"><a href="#cb25-374" aria-hidden="true" tabindex="-1"></a>Tierra en el punto de Lagrange L2. Usando Astropy:</span>
+<span id="cb25-375"><a href="#cb25-375" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-376"><a href="#cb25-376" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Expresa esa distancia en unidades astronómicas y en metros</span>
+<span id="cb25-377"><a href="#cb25-377" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Calcula cuánto tarda la señal de radio en llegar desde el JWST a la Tierra</span>
+<span id="cb25-378"><a href="#cb25-378" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Expresa el resultado en minutos y en segundos</span>
+<span id="cb25-379"><a href="#cb25-379" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-380"><a href="#cb25-380" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip collapse="true"}</span>
+<span id="cb25-381"><a href="#cb25-381" aria-hidden="true" tabindex="-1"></a><span class="fu">## Ver solución</span></span>
+<span id="cb25-382"><a href="#cb25-382" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-385"><a href="#cb25-385" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb25-386"><a href="#cb25-386" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb25-387"><a href="#cb25-387" aria-hidden="true" tabindex="-1"></a><span class="co"># SOLUCIÓN: distancia y retardo de señal del telescopio James Webb</span></span>
+<span id="cb25-388"><a href="#cb25-388" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb25-389"><a href="#cb25-389" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-390"><a href="#cb25-390" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy <span class="im">import</span> constants <span class="im">as</span> const</span>
+<span id="cb25-391"><a href="#cb25-391" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> astropy.units <span class="im">as</span> u</span>
+<span id="cb25-392"><a href="#cb25-392" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-393"><a href="#cb25-393" aria-hidden="true" tabindex="-1"></a><span class="co"># Paso 1: definir la distancia al punto L2</span></span>
+<span id="cb25-394"><a href="#cb25-394" aria-hidden="true" tabindex="-1"></a>distancia_km <span class="op">=</span> <span class="fl">1.5e6</span> <span class="op">*</span> u.km</span>
+<span id="cb25-395"><a href="#cb25-395" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-396"><a href="#cb25-396" aria-hidden="true" tabindex="-1"></a><span class="co"># Convertir a unidades astronómicas y metros</span></span>
+<span id="cb25-397"><a href="#cb25-397" aria-hidden="true" tabindex="-1"></a>distancia_au <span class="op">=</span> distancia_km.to(u.au)</span>
+<span id="cb25-398"><a href="#cb25-398" aria-hidden="true" tabindex="-1"></a>distancia_m  <span class="op">=</span> distancia_km.to(u.m)</span>
+<span id="cb25-399"><a href="#cb25-399" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-400"><a href="#cb25-400" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Distancia Tierra → JWST:"</span>)</span>
+<span id="cb25-401"><a href="#cb25-401" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  En kilómetros          : </span><span class="sc">{</span>distancia_km<span class="sc">:.3e}</span><span class="ss">"</span>)</span>
+<span id="cb25-402"><a href="#cb25-402" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  En unidades astronóm.  : </span><span class="sc">{</span>distancia_au<span class="sc">:.5f}</span><span class="ss">"</span>)</span>
+<span id="cb25-403"><a href="#cb25-403" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  En metros              : </span><span class="sc">{</span>distancia_m<span class="sc">:.3e}</span><span class="ss">"</span>)</span>
+<span id="cb25-404"><a href="#cb25-404" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-405"><a href="#cb25-405" aria-hidden="true" tabindex="-1"></a><span class="co"># Paso 2: tiempo = distancia / velocidad de la luz</span></span>
+<span id="cb25-406"><a href="#cb25-406" aria-hidden="true" tabindex="-1"></a><span class="co"># const.c está en m/s, así que convertimos distancia a metros</span></span>
+<span id="cb25-407"><a href="#cb25-407" aria-hidden="true" tabindex="-1"></a>tiempo <span class="op">=</span> distancia_m <span class="op">/</span> const.c         <span class="co"># resultado en segundos</span></span>
+<span id="cb25-408"><a href="#cb25-408" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-409"><a href="#cb25-409" aria-hidden="true" tabindex="-1"></a><span class="co"># Paso 3: convertir</span></span>
+<span id="cb25-410"><a href="#cb25-410" aria-hidden="true" tabindex="-1"></a>tiempo_seg <span class="op">=</span> tiempo.to(u.s)</span>
+<span id="cb25-411"><a href="#cb25-411" aria-hidden="true" tabindex="-1"></a>tiempo_min <span class="op">=</span> tiempo.to(u.<span class="bu">min</span>)</span>
+<span id="cb25-412"><a href="#cb25-412" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-413"><a href="#cb25-413" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Retardo de señal Tierra ↔ JWST:"</span>)</span>
+<span id="cb25-414"><a href="#cb25-414" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  En segundos : </span><span class="sc">{</span>tiempo_seg<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb25-415"><a href="#cb25-415" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  En minutos  : </span><span class="sc">{</span>tiempo_min<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb25-416"><a href="#cb25-416" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-417"><a href="#cb25-417" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb25-418"><a href="#cb25-418" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-419"><a href="#cb25-419" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb25-420"><a href="#cb25-420" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-421"><a href="#cb25-421" aria-hidden="true" tabindex="-1"></a><span class="fu">## ¿Qué aprendiste en este módulo? {.seccion-aprendiste}</span></span>
+<span id="cb25-422"><a href="#cb25-422" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-423"><a href="#cb25-423" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Crear cantidades físicas con <span class="in">`valor * u.unidad`</span></span>
+<span id="cb25-424"><a href="#cb25-424" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Convertir entre unidades con <span class="in">`.to()`</span></span>
+<span id="cb25-425"><a href="#cb25-425" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Combinar unidades en operaciones: km/s, kg·m/s², km/s/Mpc</span>
+<span id="cb25-426"><a href="#cb25-426" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Trabajar con unidades angulares: grado, arcominuto, arcosegundo</span>
+<span id="cb25-427"><a href="#cb25-427" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Dejar que Astropy detecte errores de unidades incompatibles</span>
+<span id="cb25-428"><a href="#cb25-428" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Extraer el número puro con <span class="in">`.value`</span> cuando lo necesitas</span>
+<span id="cb25-429"><a href="#cb25-429" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Acceder a constantes físicas oficiales con <span class="in">`astropy.constants`</span></span>
+<span id="cb25-430"><a href="#cb25-430" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Aplicar todo en un cálculo real: velocidad de escape de planetas</span>
+<span id="cb25-431"><a href="#cb25-431" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-432"><a href="#cb25-432" aria-hidden="true" tabindex="-1"></a>**Siguiente módulo →** <span class="co">[</span><span class="ot">03 · Tiempo astronómico con `astropy.time`</span><span class="co">](03-tiempo.qmd)</span></span>
+</code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>Blog hecho con Quarto</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p>Datos: Astropy Project</p>
+</div>
+  </div>
+</footer>
+
+
+
+
+<script src="../../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>
