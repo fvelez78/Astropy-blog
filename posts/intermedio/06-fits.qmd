@@ -1,16 +1,497 @@
 ---
-title: "06 - Lectura y manipulacion de FITS"
-description: "Proximo modulo en preparacion"
+title: "06 · Lectura y manipulación de archivos FITS"
+description: "Aprende la estructura de un archivo FITS (HDU, encabezados, imágenes y tablas) y cómo leerlo, modificarlo y escribirlo con astropy.io.fits"
+author: "Blog AstroPy en Español"
+date: "2026-11-01"
 categories: [intermedio]
 toc: true
+toc-depth: 3
+number-sections: true
 execute:
   echo: true
   warning: false
+  message: false
 ---
 
-<span class="badge-intermedio">Intermedio</span>
+<span class="badge-inter">🔭 Intermedio</span>
+
+## ¿Qué es un archivo FITS?
+
+**FITS** (*Flexible Image Transport System*) es el formato estándar de la
+astronomía desde 1981. Casi todo lo que sale de un telescopio profesional
+—imágenes del Hubble, espectros del SDSS, catálogos de Gaia— viene en FITS.
+
+Un archivo FITS es como una carpeta con varios "compartimentos" llamados
+**HDU** (*Header Data Unit*). Cada HDU tiene dos partes:
+
+- **Encabezado (header):** texto con metadatos en formato `CLAVE = valor / comentario`
+  (telescopio, fecha, tiempo de exposición, filtro...)
+- **Datos (data):** una imagen (arreglo 2D), un cubo de datos (3D) o una tabla
+
+```
+archivo.fits
+├── HDU 0 (Primario)  → encabezado + imagen
+├── HDU 1 (Extensión) → encabezado + tabla
+└── HDU 2 (Extensión) → encabezado + otra imagen
+```
+
+::: {.callout-note}
+## Requisitos previos
+- Módulos 01 al 05 completados (especialmente el 05 de tablas)
+- `numpy`, `matplotlib` y `astropy` instalados
+:::
+
+::: {.callout-tip}
+## Sobre los datos de este módulo
+Para que puedas ejecutar todo sin descargar nada, **fabricamos nuestra propia
+imagen FITS** con estrellas simuladas. Al final verás cómo abrir archivos
+reales descargados de archivos públicos.
+:::
+
+---
+
+## Crear una imagen astronómica sintética
+
+Primero construimos una imagen de 200×200 píxeles con ruido de fondo y
+algunas "estrellas" (manchas con forma de campana gaussiana).
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Fabricar una imagen sintética con estrellas
+# Simula lo que entrega una cámara CCD: fondo del cielo + ruido + estrellas
+# ─────────────────────────────────────────────────────────────────────────────
+
+import numpy as np
+
+# Fijamos la semilla aleatoria para que el resultado sea siempre el mismo
+rng = np.random.default_rng(seed=42)
+
+# Tamaño de la imagen en píxeles
+ny, nx = 200, 200
+
+# Fondo del cielo: valor constante de 100 cuentas + ruido gaussiano
+imagen = 100 + rng.normal(loc=0, scale=5, size=(ny, nx))
+
+# Creamos una malla de coordenadas (x, y) para dibujar las estrellas
+y, x = np.mgrid[0:ny, 0:nx]
+
+# Lista de estrellas: (posición x, posición y, brillo máximo)
+estrellas = [(50, 60, 800), (120, 140, 1500), (160, 40, 600),
+             (90, 110, 2500), (30, 170, 400)]
+
+sigma = 2.5   # "ancho" de cada estrella en píxeles (depende del seeing)
+
+# Sumamos una gaussiana 2D por cada estrella
+for x0, y0, brillo in estrellas:
+    imagen += brillo * np.exp(-((x - x0)**2 + (y - y0)**2) / (2 * sigma**2))
+
+# Convertimos a float32: es el tipo de dato habitual en imágenes FITS
+imagen = imagen.astype(np.float32)
+
+print(f"Forma de la imagen : {imagen.shape}")
+print(f"Valor mínimo       : {imagen.min():.1f}")
+print(f"Valor máximo       : {imagen.max():.1f}")
+```
+
+---
+
+## Escribir un archivo FITS
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Guardar la imagen en un archivo FITS con un encabezado informativo
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy.io import fits
+
+# PrimaryHDU es el primer compartimento obligatorio de todo FITS
+hdu_primario = fits.PrimaryHDU(data=imagen)
+
+# Agregamos metadatos al encabezado: header['CLAVE'] = (valor, 'comentario')
+# Las claves tienen máximo 8 caracteres y se escriben en MAYÚSCULAS
+hdu_primario.header['TELESCOP'] = ('Simulado', 'Telescopio usado')
+hdu_primario.header['INSTRUME'] = ('CCD-200', 'Camara')
+hdu_primario.header['OBJECT']   = ('Campo de prueba', 'Objeto observado')
+hdu_primario.header['EXPTIME']  = (60.0, 'Tiempo de exposicion [s]')
+hdu_primario.header['FILTER']   = ('V', 'Filtro fotometrico')
+hdu_primario.header['DATE-OBS'] = ('2026-03-15T03:20:00', 'Inicio de la observacion (UTC)')
+
+# IMPORTANTE: el estándar FITS solo admite caracteres ASCII en el encabezado.
+# Por eso escribimos 'Camara' y 'exposicion' SIN tilde: con tildes, Astropy
+# lanza un ValueError.
+
+# writeto() escribe el archivo; overwrite=True reemplaza si ya existe
+hdu_primario.writeto('imagen_sintetica.fits', overwrite=True)
+print("Archivo 'imagen_sintetica.fits' creado ✓")
+```
 
 ::: {.callout-warning}
-## Modulo en construccion
-Este modulo esta siendo preparado. Vuelve pronto.
+## Sin tildes ni eñes en el encabezado
+El formato FITS nació en 1981 y su encabezado solo acepta texto **ASCII**.
+Palabras como `Cámara` u `observación` provocan un error. Escríbelas sin
+tilde (`Camara`, `observacion`). Los **datos** no tienen esta restricción.
 :::
+
+---
+
+## Abrir y explorar un archivo FITS
+
+### Ver la estructura con `info()`
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Abrir un FITS y mostrar sus HDU
+# Usamos 'with' para que el archivo se cierre solo al terminar el bloque
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy.io import fits
+
+with fits.open('imagen_sintetica.fits') as hdul:   # hdul = lista de HDUs
+    hdul.info()                                     # resumen de la estructura
+```
+
+La salida muestra: número de HDU, nombre, tipo, número de tarjetas del
+encabezado, dimensiones y tipo de dato.
+
+### Leer el encabezado
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Leer el encabezado y acceder a valores individuales
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy.io import fits
+
+with fits.open('imagen_sintetica.fits') as hdul:
+    encabezado = hdul[0].header   # encabezado del HDU primario (índice 0)
+
+    # Acceder a una clave igual que en un diccionario de Python
+    print(f"Objeto       : {encabezado['OBJECT']}")
+    print(f"Exposición   : {encabezado['EXPTIME']} s")
+    print(f"Filtro       : {encabezado['FILTER']}")
+
+    # Los comentarios se consultan con .comments
+    print(f"Comentario de EXPTIME: {encabezado.comments['EXPTIME']}")
+
+    # Claves que Astropy genera automáticamente al escribir
+    print(f"\nNAXIS  (dimensiones) : {encabezado['NAXIS']}")
+    print(f"NAXIS1 (ancho, x)    : {encabezado['NAXIS1']}")
+    print(f"NAXIS2 (alto,  y)    : {encabezado['NAXIS2']}")
+    print(f"BITPIX (tipo dato)   : {encabezado['BITPIX']}  (-32 = float32)")
+```
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Mostrar el encabezado completo tal como se ve en el archivo
+# repr() lo presenta en el formato clásico de "tarjetas" de 80 caracteres
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy.io import fits
+
+encabezado = fits.getheader('imagen_sintetica.fits')   # atajo: lee solo el header
+print(repr(encabezado))
+```
+
+### Leer los datos
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Dos formas de obtener los datos de la imagen
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy.io import fits
+import numpy as np
+
+# Forma 1: abriendo el archivo (útil si también necesitas el encabezado)
+with fits.open('imagen_sintetica.fits') as hdul:
+    datos = hdul[0].data.copy()   # .copy() para conservarlos tras cerrar el archivo
+
+# Forma 2: atajo directo cuando solo quieres los datos
+datos_rapido = fits.getdata('imagen_sintetica.fits')
+
+# Los datos son un arreglo de numpy normal
+print(f"Tipo de objeto : {type(datos)}")
+print(f"Forma          : {datos.shape}   (filas=y, columnas=x)")
+print(f"Mediana        : {np.median(datos):.2f}")
+
+# ¡OJO! numpy indexa [fila, columna] = [y, x]
+print(f"Valor en x=90, y=110 (centro de una estrella): {datos[110, 90]:.1f}")
+```
+
+::: {.callout-warning}
+## Orden de los ejes: [y, x]
+En numpy el primer índice es la **fila (y)** y el segundo la **columna (x)**.
+Además, FITS cuenta los píxeles desde 1 y numpy desde 0. Es la fuente de
+error más común al trabajar con imágenes astronómicas.
+:::
+
+### Visualizar la imagen
+
+```{python}
+#| label: fig-imagen-fits
+#| fig-cap: "Imagen sintética leída desde el archivo FITS"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Mostrar la imagen con matplotlib
+# ─────────────────────────────────────────────────────────────────────────────
+
+import matplotlib.pyplot as plt
+from astropy.io import fits
+
+datos = fits.getdata('imagen_sintetica.fits')
+
+fig, ax = plt.subplots(figsize=(6, 5))
+
+# origin='lower' pone el píxel (0,0) abajo a la izquierda, como en astronomía
+# vmin/vmax recortan el rango de colores para que se vean las estrellas débiles
+im = ax.imshow(datos, origin='lower', cmap='gray', vmin=90, vmax=300)
+
+fig.colorbar(im, ax=ax, label='Cuentas (ADU)')
+ax.set_xlabel('x [píxel]')
+ax.set_ylabel('y [píxel]')
+ax.set_title('Imagen sintética')
+plt.show()
+```
+
+---
+
+## Modificar un archivo FITS
+
+### Editar el encabezado
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Agregar, cambiar y borrar claves del encabezado
+# mode='update' permite guardar los cambios en el mismo archivo
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy.io import fits
+
+with fits.open('imagen_sintetica.fits', mode='update') as hdul:
+    hdr = hdul[0].header
+
+    hdr['OBSERVER'] = ('Blog AstroPy', 'Nombre del observador')   # agregar
+    hdr['EXPTIME']  = 120.0                                        # cambiar valor
+    hdr.add_history('Exposicion corregida a 120 s')                # registro HISTORY
+    hdr.add_comment('Archivo de practica del modulo 06')          # línea COMMENT
+
+    # Borrar una clave (si existe)
+    if 'INSTRUME' in hdr:
+        del hdr['INSTRUME']
+# Al salir del 'with' los cambios se escriben en el disco
+
+# Verificamos
+hdr = fits.getheader('imagen_sintetica.fits')
+print(f"OBSERVER : {hdr['OBSERVER']}")
+print(f"EXPTIME  : {hdr['EXPTIME']}")
+print(f"INSTRUME presente: {'INSTRUME' in hdr}")
+print(f"HISTORY  : {hdr['HISTORY']}")
+```
+
+### Operar sobre los datos y guardar una versión nueva
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Restar el fondo del cielo y guardar en un archivo nuevo
+# Buena práctica: NUNCA sobrescribir los datos crudos originales
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy.io import fits
+import numpy as np
+
+datos, hdr = fits.getdata('imagen_sintetica.fits', header=True)  # datos + header
+
+# Estimamos el fondo con la mediana (robusta ante las estrellas brillantes)
+fondo = np.median(datos)
+datos_sin_fondo = datos - fondo
+
+# Normalizamos por el tiempo de exposición → cuentas por segundo
+datos_por_segundo = datos_sin_fondo / hdr['EXPTIME']
+
+# Actualizamos el encabezado para documentar lo que hicimos
+hdr['BUNIT'] = ('ADU/s', 'Unidad de los datos')
+hdr.add_history(f'Fondo de {fondo:.2f} ADU restado (mediana)')
+hdr.add_history('Datos divididos por EXPTIME')
+
+fits.writeto('imagen_procesada.fits', datos_por_segundo.astype(np.float32),
+             header=hdr, overwrite=True)
+
+print(f"Fondo restado       : {fondo:.2f} ADU")
+print(f"Nuevo valor máximo  : {datos_por_segundo.max():.2f} ADU/s")
+print("Guardado en 'imagen_procesada.fits' ✓")
+```
+
+---
+
+## Archivos FITS con varias extensiones
+
+Muchos FITS reales combinan imágenes y tablas. Construyamos uno con tres
+HDU: la imagen, un mapa de errores y una tabla con el catálogo de estrellas.
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Crear un FITS con varias extensiones (multi-extensión)
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy.io import fits
+from astropy.table import Table
+import numpy as np
+
+datos = fits.getdata('imagen_sintetica.fits')
+
+# HDU 0: primario (la imagen)
+primario = fits.PrimaryHDU(data=datos)
+primario.header['OBJECT'] = 'Campo de prueba'
+
+# HDU 1: imagen de errores (raíz cuadrada de las cuentas = ruido de Poisson)
+errores = fits.ImageHDU(data=np.sqrt(np.abs(datos)).astype(np.float32), name='ERROR')
+
+# HDU 2: tabla con las posiciones y brillos de las estrellas que creamos
+catalogo = Table({
+    'id'    : [1, 2, 3, 4, 5],
+    'x'     : [50, 120, 160, 90, 30],
+    'y'     : [60, 140, 40, 110, 170],
+    'brillo': [800, 1500, 600, 2500, 400],
+})
+tabla_hdu = fits.BinTableHDU(catalogo, name='CATALOGO')   # tabla binaria FITS
+
+# Juntamos todo en una HDUList y lo guardamos
+hdul = fits.HDUList([primario, errores, tabla_hdu])
+hdul.writeto('campo_multiext.fits', overwrite=True)
+
+# Revisamos la estructura
+fits.info('campo_multiext.fits')
+```
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Acceder a cada extensión por índice o por nombre
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy.io import fits
+from astropy.table import Table
+
+with fits.open('campo_multiext.fits') as hdul:
+    # Por nombre (más legible y no depende del orden)
+    errores = hdul['ERROR'].data
+    print(f"Mapa de error: forma {errores.shape}, mediana {errores.mean():.2f}")
+
+# Las tablas FITS se leen directamente como Table de Astropy (módulo 05)
+cat = Table.read('campo_multiext.fits', hdu='CATALOGO')
+print("\nCatálogo leído desde la extensión CATALOGO:")
+print(cat)
+```
+
+---
+
+## Recortar una región (cutout)
+
+```{python}
+#| label: fig-cutout
+#| fig-cap: "Recorte de 30×30 píxeles alrededor de la estrella más brillante"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Cutout2D extrae una subimagen alrededor de una posición
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy.nddata import Cutout2D
+from astropy.io import fits
+import matplotlib.pyplot as plt
+
+datos = fits.getdata('imagen_sintetica.fits')
+
+# position=(x, y) — ¡aquí el orden SÍ es (x, y)!
+# size=(alto, ancho) en píxeles
+recorte = Cutout2D(datos, position=(90, 110), size=(30, 30))
+
+print(f"Forma del recorte                : {recorte.data.shape}")
+print(f"Esquina inferior izq. en original: {recorte.origin_original}")
+
+fig, ax = plt.subplots(figsize=(4, 4))
+ax.imshow(recorte.data, origin='lower', cmap='magma')
+ax.set_title('Recorte alrededor de la estrella 4')
+plt.show()
+```
+
+---
+
+## Abrir un FITS real
+
+Cuando trabajes con datos reales el procedimiento es idéntico. Algunos
+archivos públicos de donde descargar FITS gratis:
+
+| Archivo | Qué ofrece |
+|---|---|
+| [MAST](https://archive.stsci.edu) | Hubble, JWST, TESS, Kepler |
+| [SDSS SkyServer](https://skyserver.sdss.org) | Imágenes y espectros del Sloan |
+| [ESO Archive](https://archive.eso.org) | Telescopios del Observatorio Europeo Austral |
+| [SkyView (NASA)](https://skyview.gsfc.nasa.gov) | Recortes de casi cualquier zona del cielo |
+
+```python
+# Ejemplo (no se ejecuta en el blog): abrir un FITS remoto directamente por URL
+# use_fsspec=True permite leer solo la parte necesaria sin descargar todo
+from astropy.io import fits
+
+url = "https://ruta/a/un/archivo.fits"
+with fits.open(url, use_fsspec=True) as hdul:
+    hdul.info()
+```
+
+::: {.callout-tip}
+## Archivos grandes
+Por defecto `fits.open()` usa *memory mapping*: no carga toda la imagen en
+la RAM, solo lo que vas leyendo. Por eso puedes abrir archivos de varios GB
+sin problemas.
+:::
+
+---
+
+## Ejercicio
+
+Usando el archivo `campo_multiext.fits` creado en este módulo:
+
+1. Lee la extensión `CATALOGO` como tabla
+2. Para cada estrella, mide el valor del píxel central en la imagen (HDU 0)
+3. Agrega una columna `pico_medido` a la tabla y guárdala en un FITS nuevo
+   llamado `catalogo_medido.fits`
+
+::: {.callout-tip collapse="true"}
+## Ver solución
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# SOLUCIÓN: medir el pico de cada estrella del catálogo
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy.io import fits
+from astropy.table import Table
+
+# Paso 1: leer la tabla y la imagen
+cat    = Table.read('campo_multiext.fits', hdu='CATALOGO')
+imagen = fits.getdata('campo_multiext.fits', ext=0)
+
+# Paso 2: valor del píxel central de cada estrella (recuerda: [y, x])
+picos = [imagen[fila['y'], fila['x']] for fila in cat]
+
+# Paso 3: agregar la columna y guardar
+cat['pico_medido'] = picos
+cat.write('catalogo_medido.fits', overwrite=True)
+
+print(cat)
+print("\nGuardado en 'catalogo_medido.fits' ✓")
+```
+:::
+
+---
+
+## ¿Qué aprendiste en este módulo? {.seccion-aprendiste}
+
+- ✅ La estructura de un FITS: HDU, encabezado y datos
+- ✅ Crear y escribir archivos FITS con `PrimaryHDU` y `writeto()`
+- ✅ Explorar archivos con `fits.info()`, `getheader()` y `getdata()`
+- ✅ Editar encabezados con `mode='update'`, `HISTORY` y `COMMENT`
+- ✅ Crear archivos multi-extensión con imágenes y tablas
+- ✅ Recortar regiones con `Cutout2D`
+- ✅ La trampa del orden de ejes `[y, x]`
+
+**Siguiente módulo →** [07 · WCS: del píxel al cielo](07-wcs.qmd)

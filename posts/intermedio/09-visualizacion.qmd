@@ -1,16 +1,467 @@
 ---
-title: "09 - Visualizacion astronomica"
-description: "Proximo modulo en preparacion"
+title: "09 · Visualización astronómica"
+description: "Muestra imágenes astronómicas como un profesional: escalas y estiramientos, ejes con coordenadas celestes (WCSAxes), superposición de catálogos y mapas del cielo completo"
+author: "Blog AstroPy en Español"
+date: "2026-11-01"
 categories: [intermedio]
 toc: true
+toc-depth: 3
+number-sections: true
 execute:
   echo: true
   warning: false
+  message: false
 ---
 
-<span class="badge-inter">Intermedio</span>
+<span class="badge-inter">🔭 Intermedio</span>
 
-::: {.callout-warning}
-## Modulo en construccion
-Este modulo esta siendo preparado. Vuelve pronto.
+## El reto de mostrar una imagen astronómica
+
+Una imagen astronómica tiene un **rango dinámico enorme**: el núcleo de una
+galaxia puede ser 10 000 veces más brillante que sus brazos espirales. Si
+mostramos los valores tal cual, vemos un punto blanco sobre negro y nada más.
+
+`astropy.visualization` resuelve dos problemas:
+
+1. **Cómo comprimir el rango de brillo** (intervalos y estiramientos)
+2. **Cómo poner coordenadas celestes en los ejes** (WCSAxes)
+
+::: {.callout-note}
+## Requisitos previos
+- Módulos 06 (FITS) y 07 (WCS)
+- `matplotlib` instalado
 :::
+
+---
+
+## Una galaxia sintética para practicar
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Construir una imagen con mucho rango dinámico:
+# una galaxia con núcleo muy brillante + disco tenue + estrellas de campo
+# ─────────────────────────────────────────────────────────────────────────────
+
+import numpy as np
+
+rng = np.random.default_rng(seed=9)
+ny, nx = 300, 300
+yy, xx = np.mgrid[0:ny, 0:nx]
+
+# Coordenadas relativas al centro, con el disco inclinado (elíptico)
+dx, dy = xx - 150, yy - 150
+angulo = np.radians(35)
+xr =  dx * np.cos(angulo) + dy * np.sin(angulo)
+yr = (-dx * np.sin(angulo) + dy * np.cos(angulo)) / 0.45   # 0.45 = achatamiento
+r = np.hypot(xr, yr)
+
+# Núcleo brillante (perfil muy concentrado) + disco exponencial tenue
+nucleo = 20_000 * np.exp(-(r / 4)**2)
+disco  =    300 * np.exp(-r / 35)
+
+# Brazos espirales sutiles modulando el disco
+theta = np.arctan2(yr, xr)
+brazos = 1 + 0.6 * np.cos(2 * theta - r / 12)
+
+imagen = 50 + nucleo + disco * brazos
+
+# Estrellas de campo
+for _ in range(40):
+    x0, y0 = rng.uniform(0, nx), rng.uniform(0, ny)
+    b = 10 ** rng.uniform(2, 4)
+    imagen += b * np.exp(-((xx - x0)**2 + (yy - y0)**2) / (2 * 1.8**2))
+
+# Ruido
+imagen = rng.poisson(np.clip(imagen, 0, None)).astype(float)
+print(f"Rango de valores: {imagen.min():.0f} a {imagen.max():.0f}")
+```
+
+---
+
+## El problema: escala lineal
+
+```{python}
+#| label: fig-lineal
+#| fig-cap: "Con escala lineal solo se ve el núcleo"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Mostrar la imagen sin ningún ajuste
+# ─────────────────────────────────────────────────────────────────────────────
+
+import matplotlib.pyplot as plt
+
+fig, ax = plt.subplots(figsize=(5, 5))
+ax.imshow(imagen, origin='lower', cmap='gray')
+ax.set_title('Escala lineal (min → max)')
+plt.show()
+```
+
+El núcleo ocupa todo el rango de colores y el disco queda invisible.
+
+---
+
+## Intervalos y estiramientos
+
+Un **intervalo** decide qué valores mínimo y máximo se muestran. Un
+**estiramiento** (*stretch*) decide cómo se reparten los colores entre ellos.
+
+| Intervalo | Qué hace |
+|---|---|
+| `MinMaxInterval` | Usa todo el rango (min → max) |
+| `PercentileInterval(99.5)` | Ignora el 0.25 % extremo de cada lado |
+| `ZScaleInterval` | El algoritmo clásico de IRAF/DS9: resalta el fondo y objetos tenues |
+
+| Estiramiento | Efecto |
+|---|---|
+| `LinearStretch` | Sin compresión |
+| `SqrtStretch` | Compresión suave |
+| `LogStretch` | Compresión fuerte, ideal para galaxias |
+| `AsinhStretch` | Lineal en lo débil, logarítmico en lo brillante (muy usado) |
+
+```{python}
+#| label: fig-estiramientos
+#| fig-cap: "El mismo dato con cuatro combinaciones de intervalo y estiramiento"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Comparar combinaciones con ImageNormalize
+# ─────────────────────────────────────────────────────────────────────────────
+
+import matplotlib.pyplot as plt
+from astropy.visualization import (ImageNormalize, MinMaxInterval,
+                                   PercentileInterval, ZScaleInterval,
+                                   LinearStretch, SqrtStretch,
+                                   LogStretch, AsinhStretch)
+
+# Cada combinación: (título, intervalo, estiramiento)
+combinaciones = [
+    ('MinMax + Lineal',      MinMaxInterval(),        LinearStretch()),
+    ('Percentil 99.5 + Sqrt', PercentileInterval(99.5), SqrtStretch()),
+    ('ZScale + Lineal',      ZScaleInterval(),        LinearStretch()),
+    ('Percentil 99.9 + Asinh', PercentileInterval(99.9), AsinhStretch(a=0.02)),
+]
+
+fig, ejes = plt.subplots(2, 2, figsize=(8, 8))
+for ax, (titulo, intervalo, estiramiento) in zip(ejes.flat, combinaciones):
+    # ImageNormalize combina intervalo + estiramiento en un objeto para imshow
+    norma = ImageNormalize(imagen, interval=intervalo, stretch=estiramiento)
+    ax.imshow(imagen, origin='lower', cmap='gray', norm=norma)
+    ax.set_title(titulo, fontsize=10)
+    ax.set_xticks([]); ax.set_yticks([])
+plt.tight_layout()
+plt.show()
+```
+
+::: {.callout-tip}
+## Atajo: `simple_norm`
+Para no importar tantas clases, `simple_norm(imagen, 'asinh', percent=99.9)`
+crea la normalización en una línea. Lo usamos en el módulo 08.
+:::
+
+---
+
+## Ejes con coordenadas celestes: WCSAxes
+
+Con un WCS (módulo 07) podemos pedirle a matplotlib que dibuje **RA y Dec**
+en vez de números de píxel. Basta con `projection=wcs`.
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Crear el WCS de nuestra galaxia (la ubicamos donde está M51)
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy.wcs import WCS
+
+wcs = WCS(naxis=2)
+wcs.wcs.crpix = [150.5, 150.5]           # centro de la imagen (base FITS)
+wcs.wcs.crval = [202.4696, 47.1952]      # RA, Dec de M51 (Galaxia Remolino)
+wcs.wcs.cdelt = [-1.5/3600, 1.5/3600]    # 1.5 segundos de arco por píxel
+wcs.wcs.ctype = ["RA---TAN", "DEC--TAN"]
+```
+
+```{python}
+#| label: fig-wcsaxes
+#| fig-cap: "Imagen con ejes en ascensión recta y declinación"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Imagen con ejes celestes y cuadrícula de coordenadas
+# ─────────────────────────────────────────────────────────────────────────────
+
+import matplotlib.pyplot as plt
+from astropy.visualization import simple_norm
+
+norma = simple_norm(imagen, 'asinh', percent=99.9, asinh_a=0.02)
+
+fig = plt.figure(figsize=(6, 6))
+ax = fig.add_subplot(projection=wcs)        # ← aquí está la magia
+
+ax.imshow(imagen, origin='lower', cmap='magma', norm=norma)
+
+# Cuadrícula de coordenadas (líneas de RA y Dec constantes)
+ax.coords.grid(color='white', alpha=0.4, linestyle='dashed')
+
+# Etiquetas de los ejes
+ax.coords['ra'].set_axislabel('Ascensión recta (J2000)')
+ax.coords['dec'].set_axislabel('Declinación (J2000)')
+
+# Formato de las marcas: horas:min:seg para RA, grados:arcmin para Dec
+ax.coords['ra'].set_major_formatter('hh:mm:ss')
+ax.coords['dec'].set_major_formatter('dd:mm')
+
+ax.set_title('Galaxia sintética con WCSAxes')
+plt.show()
+```
+
+### Superponer coordenadas galácticas
+
+```{python}
+#| label: fig-overlay-galactico
+#| fig-cap: "Cuadrícula ecuatorial (blanco) y galáctica (cian) sobre la misma imagen"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# get_coords_overlay() añade una segunda cuadrícula en otro sistema
+# ─────────────────────────────────────────────────────────────────────────────
+
+import matplotlib.pyplot as plt
+
+fig = plt.figure(figsize=(6, 6))
+ax = fig.add_subplot(projection=wcs)
+ax.imshow(imagen, origin='lower', cmap='gray', norm=norma)
+ax.coords.grid(color='white', alpha=0.3)
+
+# Cuadrícula en coordenadas galácticas (l, b)
+galactico = ax.get_coords_overlay('galactic')
+galactico.grid(color='cyan', linestyle='dotted', alpha=0.8)
+galactico[0].set_axislabel('Longitud galáctica')
+galactico[1].set_axislabel('Latitud galáctica')
+
+plt.show()
+```
+
+---
+
+## Superponer un catálogo sobre la imagen
+
+```{python}
+#| label: fig-catalogo
+#| fig-cap: "Objetos de un catálogo marcados por sus coordenadas celestes"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Marcar posiciones dadas en RA/Dec usando transform=ax.get_transform('world')
+# ─────────────────────────────────────────────────────────────────────────────
+
+import numpy as np
+import matplotlib.pyplot as plt
+from astropy.coordinates import SkyCoord
+import astropy.units as u
+
+# Un "catálogo" de posiciones en el cielo alrededor del centro
+centro = SkyCoord(202.4696 * u.deg, 47.1952 * u.deg)
+rng = np.random.default_rng(1)
+cat = SkyCoord(ra = centro.ra  + rng.uniform(-2.5, 2.5, 8) * u.arcmin,
+               dec = centro.dec + rng.uniform(-2.5, 2.5, 8) * u.arcmin)
+
+fig = plt.figure(figsize=(6, 6))
+ax = fig.add_subplot(projection=wcs)
+ax.imshow(imagen, origin='lower', cmap='gray', norm=norma)
+
+# transform='world' → matplotlib interpreta x=RA, y=Dec en grados
+ax.scatter(cat.ra.deg, cat.dec.deg, transform=ax.get_transform('world'),
+           s=150, edgecolor='lime', facecolor='none', lw=1.5, label='Catálogo')
+
+# Marcar el centro de la galaxia
+ax.scatter(centro.ra.deg, centro.dec.deg, transform=ax.get_transform('world'),
+           marker='+', s=300, color='red', label='Núcleo')
+
+# Escribir una etiqueta junto a cada objeto
+for i, c in enumerate(cat, start=1):
+    ax.text(c.ra.deg, c.dec.deg + 0.004, str(i), color='lime',
+            transform=ax.get_transform('world'), ha='center')
+
+ax.legend(loc='upper right')
+plt.show()
+```
+
+### Contornos de brillo
+
+```{python}
+#| label: fig-contornos
+#| fig-cap: "Contornos logarítmicos de brillo superficial"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Las líneas de contorno muestran la forma de la galaxia a distintos niveles
+# ─────────────────────────────────────────────────────────────────────────────
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Niveles espaciados logarítmicamente desde el fondo hasta el núcleo
+niveles = np.logspace(np.log10(120), np.log10(5000), 7)
+
+fig = plt.figure(figsize=(6, 6))
+ax = fig.add_subplot(projection=wcs)
+ax.imshow(imagen, origin='lower', cmap='Greys_r', norm=norma)
+ax.contour(imagen, levels=niveles, colors='orange', linewidths=0.8)
+ax.set_title('Contornos de brillo')
+plt.show()
+```
+
+---
+
+## Imagen en color (RGB)
+
+```{python}
+#| label: fig-rgb
+#| fig-cap: "Composición en color a partir de tres filtros simulados"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# make_rgb_image combina tres imágenes (filtros) en una imagen a color
+# Usa el método de Lupton et al. (2004), el mismo del Sloan Digital Sky Survey
+# ─────────────────────────────────────────────────────────────────────────────
+
+import numpy as np
+import matplotlib.pyplot as plt
+from astropy.visualization import make_lupton_rgb
+
+# Simulamos tres filtros: el núcleo es más rojo, los brazos más azules
+r_img = np.clip(imagen * 1.0 + nucleo * 0.5, 0, None)
+g_img = np.clip(imagen * 0.8, 0, None)
+b_img = np.clip(imagen * 0.6 + disco * brazos * 0.8, 0, None)
+
+# stretch y Q controlan el contraste (prueba a cambiarlos)
+rgb = make_lupton_rgb(r_img - 50, g_img - 40, b_img - 30, stretch=400, Q=8)
+
+fig = plt.figure(figsize=(6, 6))
+ax = fig.add_subplot(projection=wcs)
+ax.imshow(rgb, origin='lower')
+ax.coords['ra'].set_axislabel('Ascensión recta')
+ax.coords['dec'].set_axislabel('Declinación')
+ax.set_title('Composición RGB (Lupton)')
+plt.show()
+```
+
+---
+
+## Mapas del cielo completo
+
+Para mostrar objetos repartidos por todo el cielo se usan proyecciones
+como **Aitoff** o **Mollweide**, que dibujan la esfera celeste completa en
+un óvalo.
+
+```{python}
+#| label: fig-cielo-completo
+#| fig-cap: "Objetos Messier brillantes en coordenadas galácticas (proyección Mollweide)"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Mapa de todo el cielo en coordenadas galácticas
+# ─────────────────────────────────────────────────────────────────────────────
+
+import numpy as np
+import matplotlib.pyplot as plt
+from astropy.coordinates import SkyCoord
+import astropy.units as u
+
+# Algunos objetos Messier con su tipo (RA, Dec en grados)
+objetos = {
+    'M1':  (83.63, 22.01, 'Nebulosa'),  'M8':  (270.90, -24.38, 'Nebulosa'),
+    'M13': (250.42, 36.46, 'Cúmulo'),   'M22': (279.10, -23.90, 'Cúmulo'),
+    'M31': (10.68, 41.27, 'Galaxia'),   'M33': (23.46, 30.66, 'Galaxia'),
+    'M42': (83.82, -5.39, 'Nebulosa'),  'M45': (56.75, 24.12, 'Cúmulo'),
+    'M51': (202.47, 47.20, 'Galaxia'),  'M81': (148.89, 69.07, 'Galaxia'),
+    'M87': (187.71, 12.39, 'Galaxia'),  'M104': (190.00, -11.62, 'Galaxia'),
+}
+nombres = list(objetos)
+ra   = np.array([v[0] for v in objetos.values()]) * u.deg
+dec  = np.array([v[1] for v in objetos.values()]) * u.deg
+tipo = np.array([v[2] for v in objetos.values()])
+
+gal = SkyCoord(ra=ra, dec=dec).galactic
+
+# Matplotlib espera longitudes en radianes entre -π y π
+# wrap_at(180°) lleva los 360° de l al rango -180°..+180°
+l_rad = gal.l.wrap_at(180 * u.deg).radian
+b_rad = gal.b.radian
+
+fig = plt.figure(figsize=(10, 5))
+ax = fig.add_subplot(projection='mollweide')
+colores = {'Galaxia': 'C0', 'Nebulosa': 'C3', 'Cúmulo': 'C2'}
+for t, c in colores.items():
+    m = tipo == t
+    # El signo menos invierte el eje para seguir la convención astronómica
+    ax.scatter(-l_rad[m], b_rad[m], s=60, color=c, label=t)
+for n, l, b in zip(nombres, l_rad, b_rad):
+    ax.text(-l, b + 0.06, n, fontsize=8, ha='center')
+
+ax.grid(True, alpha=0.4)
+ax.set_xticklabels([])   # ocultar etiquetas confusas al invertir el eje
+ax.set_title('Objetos Messier en coordenadas galácticas\n(el ecuador = plano de la Vía Láctea)')
+ax.legend(loc='lower right', fontsize=9)
+plt.show()
+```
+
+Observa cómo las **galaxias** quedan lejos del ecuador galáctico (el polvo
+de la Vía Láctea las oculta cerca del plano), mientras que las **nebulosas**
+y los cúmulos abiertos como M45 se concentran cerca de él. Los cúmulos
+**globulares** como M13 son la excepción: orbitan en el halo de la galaxia,
+por eso aparecen a latitudes altas.
+
+---
+
+## Ejercicio
+
+Con la imagen `imagen` y el `wcs` de este módulo:
+
+1. Muéstrala con `ZScaleInterval` y `LogStretch` usando WCSAxes
+2. Agrega una barra de color
+3. Dibuja un círculo de **1 minuto de arco** de radio centrado en el núcleo
+   usando `SphericalCircle` de `astropy.visualization.wcsaxes`
+
+::: {.callout-tip collapse="true"}
+## Ver solución
+
+```{python}
+#| label: fig-ejercicio-09
+#| fig-cap: "Solución del ejercicio"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# SOLUCIÓN: ZScale + Log, barra de color y círculo de 1 arcmin
+# ─────────────────────────────────────────────────────────────────────────────
+
+import matplotlib.pyplot as plt
+import astropy.units as u
+from astropy.visualization import ImageNormalize, ZScaleInterval, LogStretch
+from astropy.visualization.wcsaxes import SphericalCircle
+
+# Paso 1: normalización ZScale + Log
+norma_ej = ImageNormalize(imagen, interval=ZScaleInterval(), stretch=LogStretch())
+
+fig = plt.figure(figsize=(6, 6))
+ax = fig.add_subplot(projection=wcs)
+im = ax.imshow(imagen, origin='lower', cmap='viridis', norm=norma_ej)
+
+# Paso 2: barra de color
+fig.colorbar(im, ax=ax, label='Cuentas', fraction=0.046, pad=0.04)
+
+# Paso 3: círculo de 1 arcmin alrededor del núcleo (en coordenadas del cielo)
+circulo = SphericalCircle((202.4696 * u.deg, 47.1952 * u.deg), 1 * u.arcmin,
+                          edgecolor='red', facecolor='none', lw=2,
+                          transform=ax.get_transform('icrs'))
+ax.add_patch(circulo)
+
+ax.set_title('ZScale + Log con círculo de 1′')
+plt.show()
+```
+:::
+
+---
+
+## ¿Qué aprendiste en este módulo? {.seccion-aprendiste}
+
+- ✅ Por qué la escala lineal no sirve para imágenes astronómicas
+- ✅ Combinar intervalos y estiramientos con `ImageNormalize` y `simple_norm`
+- ✅ Graficar con ejes en RA/Dec usando `projection=wcs`
+- ✅ Superponer cuadrículas en otros sistemas con `get_coords_overlay`
+- ✅ Marcar catálogos con `transform=ax.get_transform('world')`
+- ✅ Dibujar contornos y crear imágenes RGB con `make_lupton_rgb`
+- ✅ Hacer mapas del cielo completo con proyección Mollweide
+
+**Siguiente módulo →** [10 · Estadística y modelado](10-estadistica.qmd)

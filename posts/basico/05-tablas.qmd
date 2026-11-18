@@ -1,16 +1,522 @@
 ---
-title: "05 - Tablas astronomicas con astropy.tablebasico"
-description: "Proximo modulo en preparacion"
-categories: [Basico]
+title: "05 · Tablas astronómicas con astropy.table"
+description: "Aprende a crear, leer, filtrar y exportar tablas de datos astronómicos usando astropy.table"
+author: "Blog AstroPy en Español"
+date: "2025-05-29"
+categories: [basico]
 toc: true
+toc-depth: 3
+number-sections: true
 execute:
   echo: true
   warning: false
+  message: false
 ---
 
-<span class="badge-Basico"></span>
+<span class="badge-basico">🌱 Básico</span>
 
-::: {.callout-warning}
-## Modulo en construccion
-Este modulo esta siendo preparado. Vuelve pronto.
+## ¿Por qué tablas astronómicas?
+
+En astronomía casi todo son tablas: catálogos de estrellas con millones
+de filas, listas de exoplanetas, resultados de observaciones, datos de
+telescopios espaciales. El formato más común es FITS (lo veremos en el
+módulo 06), pero también abundan CSV, VOTable y ECSV.
+
+`astropy.table` ofrece una clase `Table` que:
+
+- Lee y escribe múltiples formatos (CSV, FITS, VOTable, HTML, LaTeX...)
+- Mantiene las **unidades físicas** en cada columna
+- Permite filtrar, ordenar y combinar catálogos fácilmente
+- Se integra directamente con `SkyCoord`, `Time` y `units`
+
+::: {.callout-note}
+## Requisitos previos
+- Módulos 01 al 04 completados
+- Astropy instalada: `pip install astropy`
 :::
+
+---
+
+## Crear una tabla desde cero
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Crear una Table de Astropy con datos de estrellas brillantes
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy.table import Table
+import astropy.units as u
+
+# Definimos cada columna como una lista de Python
+# (igual que haríamos con un diccionario o un DataFrame de pandas)
+nombres      = ['Sirio', 'Canopus', 'Rigil Kent.', 'Arcturus', 'Vega']
+magnitud_v   = [-1.46, -0.72, -0.27, -0.05,  0.03]   # magnitud visual
+distancia_ly = [  8.6,  310.0,   4.37,  36.7, 25.04]  # distancia en años luz
+tipo_espectral = ['A1V', 'A9II', 'G2V', 'K1.5III', 'A0V']
+
+# Crear la tabla pasando un diccionario con nombre_columna: lista_de_valores
+estrellas = Table({
+    'nombre'        : nombres,
+    'magnitud_V'    : magnitud_v,
+    'distancia_ly'  : distancia_ly,
+    'tipo_espectral': tipo_espectral,
+})
+
+# Mostrar la tabla — Astropy la imprime con formato legible
+print(estrellas)
+```
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Agregar unidades a las columnas para que la tabla sea más informativa
+# Las unidades viajan con la columna igual que con astropy.units
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy.table import Table, Column
+import astropy.units as u
+
+# Reconstruimos la tabla con unidades explícitas en cada columna numérica
+estrellas = Table({
+    'nombre'        : ['Sirio', 'Canopus', 'Rigil Kent.', 'Arcturus', 'Vega'],
+    'magnitud_V'    : Column([-1.46, -0.72, -0.27, -0.05, 0.03],
+                             description='Magnitud visual aparente'),
+    'distancia_ly'  : Column([8.6, 310.0, 4.37, 36.7, 25.04],
+                             unit=u.lyr,
+                             description='Distancia en años luz'),
+    'tipo_espectral': ['A1V', 'A9II', 'G2V', 'K1.5III', 'A0V'],
+})
+
+# Mostrar información completa de la tabla
+print("Tabla con unidades:")
+print(estrellas)
+print()
+
+# Ver los metadatos de cada columna
+print("Unidades por columna:")
+for col in estrellas.colnames:
+    unidad = estrellas[col].unit if estrellas[col].unit else "—"
+    print(f"  {col:<20} : {unidad}")
+```
+
+---
+
+## Acceder a filas y columnas
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Acceder a columnas, filas y celdas individuales
+# La sintaxis es similar a numpy y pandas
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy.table import Table, Column
+import astropy.units as u
+
+# Recreamos la tabla de estrellas
+estrellas = Table({
+    'nombre'      : ['Sirio', 'Canopus', 'Rigil Kent.', 'Arcturus', 'Vega'],
+    'magnitud_V'  : Column([-1.46, -0.72, -0.27, -0.05, 0.03]),
+    'distancia_ly': Column([8.6, 310.0, 4.37, 36.7, 25.04], unit=u.lyr),
+    'tipo'        : ['A1V', 'A9II', 'G2V', 'K1.5III', 'A0V'],
+})
+
+# Acceder a una columna completa (devuelve un Column, similar a array numpy)
+print("Columna 'nombre':")
+print(estrellas['nombre'])
+
+# Acceder a una fila por índice (devuelve una Row)
+print("\nFila 0 (primera estrella):")
+print(estrellas[0])
+
+# Acceder a una celda específica: tabla[columna][fila]
+print(f"\nDistancia de Canopus : {estrellas['distancia_ly'][1]}")
+
+# Acceder a varias filas con slicing (igual que listas de Python)
+print("\nPrimeras 3 estrellas:")
+print(estrellas[:3])
+```
+
+---
+
+## Filtrar filas con condiciones
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Filtrar filas usando condiciones booleanas
+# Muy útil para seleccionar subconjuntos de un catálogo
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy.table import Table, Column
+import astropy.units as u
+
+# Catálogo de estrellas con más datos
+estrellas = Table({
+    'nombre'      : ['Sirio', 'Canopus', 'Rigil Kent.', 'Arcturus',
+                     'Vega', 'Capella', 'Rigel', 'Proción'],
+    'magnitud_V'  : [-1.46, -0.72, -0.27, -0.05, 0.03, 0.08, 0.12, 0.38],
+    'distancia_ly': [8.6, 310.0, 4.37, 36.7, 25.04, 42.9, 860.0, 11.46],
+    'tipo'        : ['A1V','A9II','G2V','K1.5III','A0V','G5III','B8Ia','F5IV'],
+})
+
+# Filtro 1: estrellas más cercanas que 50 años luz
+cercanas = estrellas[estrellas['distancia_ly'] < 50]
+print("Estrellas a menos de 50 años luz:")
+print(cercanas['nombre', 'distancia_ly'])
+
+# Filtro 2: estrellas de tipo A (tipo espectral que empieza con 'A')
+import numpy as np
+# np.char.startswith aplica la comparación a todos los elementos de la columna
+tipo_a = estrellas[np.char.startswith(estrellas['tipo'].astype(str), 'A')]
+print("\nEstrellas de tipo espectral A:")
+print(tipo_a['nombre', 'tipo', 'magnitud_V'])
+
+# Filtro 3: combinación de condiciones con & (y) y | (o)
+brillantes_y_cercanas = estrellas[
+    (estrellas['magnitud_V'] < 0) &        # más brillantes que magnitud 0
+    (estrellas['distancia_ly'] < 100)       # a menos de 100 años luz
+]
+print("\nEstrellas brillantes (mag < 0) Y cercanas (< 100 al):")
+print(brillantes_y_cercanas['nombre', 'magnitud_V', 'distancia_ly'])
+```
+
+---
+
+## Ordenar una tabla
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# sort() ordena la tabla por una o varias columnas
+# Por defecto ordena de menor a mayor
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy.table import Table
+import numpy as np
+
+estrellas = Table({
+    'nombre'      : ['Sirio', 'Canopus', 'Rigil Kent.', 'Arcturus',
+                     'Vega', 'Capella', 'Rigel', 'Proción'],
+    'magnitud_V'  : [-1.46, -0.72, -0.27, -0.05, 0.03, 0.08, 0.12, 0.38],
+    'distancia_ly': [8.6, 310.0, 4.37, 36.7, 25.04, 42.9, 860.0, 11.46],
+})
+
+# Ordenar por magnitud (más brillante primero = magnitud más negativa)
+estrellas.sort('magnitud_V')
+print("Ordenadas por brillo (más brillante primero):")
+print(estrellas['nombre', 'magnitud_V'])
+
+# Ordenar por distancia (más cercana primero)
+estrellas.sort('distancia_ly')
+print("\nOrdenadas por distancia (más cercana primero):")
+print(estrellas['nombre', 'distancia_ly'])
+```
+
+---
+
+## Agregar y eliminar columnas
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Agregar columnas calculadas a partir de las existentes
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy.table import Table, Column
+import astropy.units as u
+import numpy as np
+
+estrellas = Table({
+    'nombre'      : ['Sirio', 'Canopus', 'Rigil Kent.', 'Arcturus', 'Vega'],
+    'magnitud_V'  : [-1.46, -0.72, -0.27, -0.05,  0.03],
+    'distancia_ly': [  8.6,  310.0,   4.37,  36.7, 25.04],
+})
+
+# Calcular la magnitud absoluta con la fórmula: M = m - 5*log10(d/10)
+# donde d es la distancia en parsecs (1 parsec = 3.2616 años luz)
+distancia_pc = estrellas['distancia_ly'] / 3.2616     # convertir a parsecs
+mag_absoluta = estrellas['magnitud_V'] - 5 * np.log10(distancia_pc / 10)
+
+# Agregar la nueva columna a la tabla
+estrellas['magnitud_abs'] = Column(
+    np.round(mag_absoluta, 2),
+    description='Magnitud absoluta (brillo intrínseco)'
+)
+
+# Agregar también la distancia en parsecs
+estrellas['distancia_pc'] = Column(
+    np.round(distancia_pc, 2),
+    unit=u.pc,
+    description='Distancia en parsecs'
+)
+
+print("Tabla con columnas calculadas:")
+print(estrellas)
+
+# Eliminar una columna que ya no necesitamos
+estrellas.remove_column('distancia_ly')
+print("\nDespués de eliminar 'distancia_ly':")
+print(estrellas.colnames)
+```
+
+---
+
+## Leer y escribir archivos
+
+### Guardar en CSV
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Escribir la tabla a distintos formatos con write()
+# El parámetro overwrite=True permite sobreescribir si ya existe el archivo
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy.table import Table, Column
+import astropy.units as u
+
+estrellas = Table({
+    'nombre'      : ['Sirio', 'Canopus', 'Rigil Kent.', 'Arcturus', 'Vega'],
+    'magnitud_V'  : [-1.46, -0.72, -0.27, -0.05,  0.03],
+    'distancia_pc': Column([2.64, 95.1, 1.34, 11.26, 7.68], unit=u.pc),
+})
+
+# Guardar como CSV (legible en Excel, LibreOffice, etc.)
+estrellas.write('estrellas.csv', format='csv', overwrite=True)
+print("Tabla guardada en 'estrellas.csv'")
+
+# Guardar como ECSV (CSV mejorado: preserva unidades y tipos de dato)
+estrellas.write('estrellas.ecsv', format='ascii.ecsv', overwrite=True)
+print("Tabla guardada en 'estrellas.ecsv'")
+
+# Ver el contenido del CSV generado
+with open('estrellas.csv') as f:
+    print("\nContenido del CSV:")
+    print(f.read())
+```
+
+### Leer desde CSV
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Leer una tabla desde un archivo CSV con read()
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy.table import Table
+
+# Leer el CSV que acabamos de crear
+tabla_leida = Table.read('estrellas.csv', format='csv')
+
+print("Tabla leída desde CSV:")
+print(tabla_leida)
+print(f"\nNúmero de filas    : {len(tabla_leida)}")
+print(f"Nombres de columnas: {tabla_leida.colnames}")
+```
+
+### Leer desde ECSV (con unidades preservadas)
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# ECSV (Enhanced CSV) preserva las unidades y los tipos de datos
+# Es el formato recomendado para intercambiar tablas astronómicas en texto
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy.table import Table
+
+# Leer el archivo ECSV
+tabla_ecsv = Table.read('estrellas.ecsv', format='ascii.ecsv')
+
+print("Tabla leída desde ECSV (unidades preservadas):")
+print(tabla_ecsv)
+print("\nUnidades de cada columna:")
+for col in tabla_ecsv.colnames:
+    unidad = tabla_ecsv[col].unit if tabla_ecsv[col].unit else "—"
+    print(f"  {col:<15} : {unidad}")
+```
+
+---
+
+## Combinar tablas
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# vstack: apilar tablas verticalmente (agregar más filas)
+# hstack: apilar tablas horizontalmente (agregar más columnas)
+# join  : combinar por una columna común (como un JOIN de SQL)
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy.table import Table, vstack, hstack, join
+
+# Tabla A: estrellas del hemisferio norte
+norte = Table({
+    'nombre'    : ['Vega', 'Arcturus', 'Capella'],
+    'magnitud_V': [0.03, -0.05, 0.08],
+    'hemisferio': ['Norte', 'Norte', 'Norte'],
+})
+
+# Tabla B: estrellas del hemisferio sur
+sur = Table({
+    'nombre'    : ['Sirio', 'Canopus', 'Rigil Kent.'],
+    'magnitud_V': [-1.46, -0.72, -0.27],
+    'hemisferio': ['Sur', 'Sur', 'Sur'],
+})
+
+# vstack: unir las dos listas en una sola tabla
+catalogo_completo = vstack([norte, sur])
+catalogo_completo.sort('magnitud_V')
+print("Catálogo combinado (vstack):")
+print(catalogo_completo)
+
+# Tabla con datos adicionales para un join
+datos_extra = Table({
+    'nombre'      : ['Vega', 'Sirio', 'Arcturus', 'Canopus'],
+    'distancia_ly': [25.04, 8.6, 36.7, 310.0],
+})
+
+# join: combinar por la columna 'nombre' (como SQL JOIN)
+# solo incluye las filas que aparecen en AMBAS tablas (inner join por defecto)
+combinada = join(catalogo_completo, datos_extra, keys='nombre')
+print("\nTabla combinada con join:")
+print(combinada)
+```
+
+---
+
+## Estadísticas básicas sobre columnas
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Las columnas de una Table se comportan como arrays de numpy
+# Podemos calcular estadísticas directamente
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy.table import Table
+import numpy as np
+
+estrellas = Table({
+    'nombre'      : ['Sirio','Canopus','Rigil Kent.','Arcturus',
+                     'Vega','Capella','Rigel','Proción'],
+    'magnitud_V'  : [-1.46, -0.72, -0.27, -0.05, 0.03, 0.08, 0.12, 0.38],
+    'distancia_ly': [8.6, 310.0, 4.37, 36.7, 25.04, 42.9, 860.0, 11.46],
+})
+
+# Estadísticas sobre la columna de magnitudes
+mag = estrellas['magnitud_V']
+print("Estadísticas de magnitud visual:")
+print(f"  Mínima (más brillante): {mag.min():.2f}")
+print(f"  Máxima (más tenue)    : {mag.max():.2f}")
+print(f"  Promedio              : {np.mean(mag):.2f}")
+print(f"  Mediana               : {np.median(mag):.2f}")
+
+# Encontrar la estrella más brillante y la más lejana
+idx_brillante = np.argmin(estrellas['magnitud_V'])
+idx_lejana    = np.argmax(estrellas['distancia_ly'])
+
+print(f"\nEstrella más brillante : {estrellas['nombre'][idx_brillante]}")
+print(f"Estrella más lejana    : {estrellas['nombre'][idx_lejana]}")
+print(f"  a {estrellas['distancia_ly'][idx_lejana]:.0f} años luz")
+```
+
+---
+
+## Resumen de formatos soportados
+
+| Formato | Extensión | Código en `read/write` | Notas |
+|---|---|---|---|
+| CSV simple | `.csv` | `'csv'` | Sin unidades |
+| ECSV | `.ecsv` | `'ascii.ecsv'` | Con unidades y tipos |
+| FITS | `.fits` | `'fits'` | Módulo 06 |
+| VOTable | `.xml`, `.vot` | `'votable'` | Catálogos virtuales |
+| HTML | `.html` | `'html'` | Para web |
+| LaTeX | `.tex` | `'latex'` | Para publicaciones |
+| Fixed width | `.txt` | `'ascii.fixed_width'` | Texto alineado |
+
+---
+
+## Ejercicio
+
+Crea una tabla con los **8 planetas del Sistema Solar** con estas columnas:
+
+- `nombre`: nombre del planeta
+- `masa_kg`: masa en kg (búscalos o usa valores aproximados)
+- `radio_km`: radio ecuatorial en km
+- `distancia_ua`: distancia media al Sol en unidades astronómicas
+
+Luego:
+
+1. Agrega una columna `densidad` calculada a partir de masa y radio
+   (densidad = masa / volumen, volumen = (4/3)π r³)
+2. Filtra los planetas más masivos que la Tierra (masa Tierra ≈ 5.972×10²⁴ kg)
+3. Ordena por densidad de mayor a menor
+
+::: {.callout-tip collapse="true"}
+## Ver solución
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# SOLUCIÓN: tabla de planetas del Sistema Solar
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy.table import Table, Column
+import astropy.units as u
+import numpy as np
+
+# Paso 1: crear la tabla con datos de los planetas
+planetas = Table({
+    'nombre'     : ['Mercurio','Venus','Tierra','Marte',
+                    'Júpiter','Saturno','Urano','Neptuno'],
+    'masa_kg'    : Column(
+        [3.301e23, 4.867e24, 5.972e24, 6.417e23,
+         1.898e27, 5.683e26, 8.681e25, 1.024e26],
+        unit=u.kg
+    ),
+    'radio_km'   : Column(
+        [2439.7, 6051.8, 6371.0, 3389.5,
+         69911.0, 58232.0, 25362.0, 24622.0],
+        unit=u.km
+    ),
+    'distancia_ua': Column(
+        [0.387, 0.723, 1.000, 1.524,
+         5.203, 9.537, 19.19, 30.07],
+        unit=u.au
+    ),
+})
+
+# Paso 2: calcular densidad media (kg/m³)
+# Primero convertimos el radio a metros para que las unidades sean consistentes
+radio_m  = planetas['radio_km'].to(u.m)              # km → m
+volumen  = (4/3) * np.pi * radio_m**3               # volumen en m³
+densidad = planetas['masa_kg'] / volumen             # densidad en kg/m³
+
+planetas['densidad_kgm3'] = Column(
+    np.round(densidad.to(u.kg / u.m**3).value, 1),
+    unit=u.kg / u.m**3,
+    description='Densidad media'
+)
+
+print("Tabla de planetas:")
+print(planetas['nombre', 'masa_kg', 'radio_km', 'densidad_kgm3'])
+
+# Paso 3: filtrar planetas más masivos que la Tierra
+masa_tierra = 5.972e24 * u.kg
+gigantes = planetas[planetas['masa_kg'] > masa_tierra]
+print(f"\nPlanetas más masivos que la Tierra ({len(gigantes)}):")
+print(gigantes['nombre', 'masa_kg'])
+
+# Paso 4: ordenar por densidad de mayor a menor
+planetas.sort('densidad_kgm3', reverse=True)
+print("\nPlanetas ordenados por densidad (mayor a menor):")
+print(planetas['nombre', 'densidad_kgm3'])
+```
+:::
+
+---
+
+## ¿Qué aprendiste en este módulo? {.seccion-aprendiste}
+
+- ✅ Crear tablas con `Table` a partir de diccionarios y listas
+- ✅ Asignar unidades y descripciones a columnas con `Column`
+- ✅ Acceder a columnas, filas y celdas individuales
+- ✅ Filtrar filas con condiciones booleanas
+- ✅ Ordenar por una o más columnas con `sort()`
+- ✅ Agregar columnas calculadas y eliminar columnas
+- ✅ Guardar y leer tablas en CSV, ECSV y otros formatos
+- ✅ Combinar tablas con `vstack`, `hstack` y `join`
+- ✅ Calcular estadísticas sobre columnas
+
+**Siguiente módulo →** [06 · Lectura y manipulación de archivos FITS](../intermedio/06-fits.qmd)

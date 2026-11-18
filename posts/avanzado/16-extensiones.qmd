@@ -1,16 +1,515 @@
 ---
-title: "16 - Extensiones y modelos propios"
-description: "Proximo modulo en preparacion"
+title: "16 · Extensiones y modelos propios"
+description: "Extiende Astropy: crea unidades y equivalencias propias, protege funciones con quantity_input, define modelos personalizados y estima incertidumbres con un MCMC bayesiano escrito desde cero"
+author: "Blog AstroPy en Español"
+date: "2026-11-01"
 categories: [avanzado]
 toc: true
+toc-depth: 3
+number-sections: true
 execute:
   echo: true
   warning: false
+  message: false
 ---
 
-<span class="badge-avanzado">Avanzado</span>
+<span class="badge-avanzado">🚀 Avanzado</span>
+
+## Cuando lo que trae Astropy no alcanza
+
+Astropy es muy completo, pero tarde o temprano necesitarás algo propio:
+una unidad que usa tu grupo de investigación, una conversión especial,
+o un modelo físico que no existe en `astropy.modeling`. Este módulo
+muestra cómo **extender** Astropy de forma limpia:
+
+1. Unidades personalizadas y unidades logarítmicas (magnitudes)
+2. Equivalencias: conversiones entre magnitudes físicas distintas
+3. Funciones que validan sus unidades con `@quantity_input`
+4. Modelos propios para ajustar datos
+5. Inferencia bayesiana con un MCMC escrito paso a paso
+
+::: {.callout-note}
+## Requisitos previos
+- Módulos 02 (unidades) y 10 (modelado)
+- Saber definir funciones y clases básicas en Python
+:::
+
+---
+
+## Unidades personalizadas
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# def_unit crea una unidad nueva a partir de otras existentes
+# ─────────────────────────────────────────────────────────────────────────────
+
+import astropy.units as u
+
+# Mes sinódico: tiempo entre dos Lunas nuevas
+mes_sinodico = u.def_unit('mes_sinodico', 29.530589 * u.day,
+                          doc='Período entre dos lunas nuevas')
+
+# Unidad de distancia "Tierra-Luna"
+dist_lunar = u.def_unit('LD', 384_400 * u.km, doc='Distancia media Tierra-Luna')
+
+# Se usan exactamente igual que las incluidas
+print(f"Un año tiene {(1 * u.yr).to(mes_sinodico):.2f}")
+print(f"Un mes sinódico en horas: {(1 * mes_sinodico).to(u.hour):.1f}")
+
+# Ejemplo real: el asteroide Apophis pasará a ~31 600 km de la Tierra en 2029
+apophis = 31_600 * u.km
+print(f"Apophis en 2029 pasará a {apophis.to(dist_lunar):.3f} de la Tierra")
+```
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Registrar las unidades para poder escribirlas como texto: u.Unit('LD')
+# ─────────────────────────────────────────────────────────────────────────────
+
+u.add_enabled_units([mes_sinodico, dist_lunar])
+
+distancia = u.Quantity('2.5 LD')             # ahora el texto 'LD' se reconoce
+print(f"{distancia} = {distancia.to(u.km):.0f}")
+```
+
+### Unidades logarítmicas: magnitudes
+
+Las magnitudes son **logarítmicas**: sumar 5 magnitudes equivale a dividir
+el flujo por 100. Astropy las maneja como unidades especiales.
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Magnitudes AB: sistema basado en densidad de flujo por unidad de frecuencia
+# ─────────────────────────────────────────────────────────────────────────────
+
+import astropy.units as u
+
+# Densidad de flujo de una fuente en Janskys (unidad de radioastronomía)
+flujo = 3.631e-3 * u.Jy
+
+# Convertir a magnitud AB directamente
+mag_ab = flujo.to(u.ABmag)
+print(f"{flujo} = {mag_ab:.2f}")
+
+# El camino inverso
+print(f"20 ABmag = {(20 * u.ABmag).to(u.uJy):.2f}")
+
+# Diferencias de magnitud = cocientes de flujo
+m1, m2 = 15.0 * u.ABmag, 20.0 * u.ABmag
+cociente = (m1.to(u.Jy) / m2.to(u.Jy)).decompose()
+print(f"Una estrella de mag 15 es {cociente:.0f} veces más brillante que una de mag 20")
+```
+
+---
+
+## Equivalencias
+
+Algunas conversiones no son de "la misma dimensión" pero tienen sentido
+físico en un contexto: longitud de onda ↔ frecuencia, paralaje ↔ distancia,
+temperatura ↔ energía. Astropy las llama **equivalencias**.
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Equivalencias incluidas en Astropy
+# ─────────────────────────────────────────────────────────────────────────────
+
+import astropy.units as u
+
+# 1. Espectral: λ ↔ ν ↔ E  (lo usamos en el módulo 12)
+print(f"Hα (656.28 nm) = {(656.28 * u.nm).to(u.eV, equivalencies=u.spectral()):.3f}")
+
+# 2. Paralaje ↔ distancia  (d [pc] = 1 / p [arcsec])
+print(f"Paralaje de 7.3 mas → {(7.3 * u.mas).to(u.pc, equivalencies=u.parallax()):.1f}")
+
+# 3. Temperatura ↔ energía térmica (E = k T)
+print(f"10 millones K (corona solar) = {(1e7 * u.K).to(u.keV, equivalencies=u.temperature_energy()):.2f}")
+
+# 4. Densidad espectral: F_ν ↔ F_λ (requiere indicar la longitud de onda)
+f_nu = 1 * u.mJy
+f_lam = f_nu.to(u.erg / u.s / u.cm**2 / u.AA,
+                equivalencies=u.spectral_density(5500 * u.AA))
+print(f"1 mJy a 5500 Å = {f_lam:.3e}")
+```
+
+### Crear una equivalencia propia
+
+Una equivalencia es una lista de tuplas
+`(unidad_origen, unidad_destino, función_ida, función_vuelta)`.
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Equivalencia de Hubble: distancia ↔ velocidad de recesión (v = H0 · d)
+# ─────────────────────────────────────────────────────────────────────────────
+
+import astropy.units as u
+from astropy.cosmology import Planck18
+
+def hubble(H0=Planck18.H0):
+    """Equivalencia entre distancia (Mpc) y velocidad de recesión (km/s)."""
+    h = H0.to_value(u.km / u.s / u.Mpc)       # número: km/s por cada Mpc
+    return u.Equivalency([
+        (u.Mpc, u.km / u.s,
+         lambda d: d * h,                      # distancia → velocidad
+         lambda v: v / h)                      # velocidad → distancia
+    ], name='hubble')
+
+# Ahora se puede convertir entre magnitudes que antes eran incompatibles
+print(f"Galaxia a 100 Mpc → v = {(100 * u.Mpc).to(u.km / u.s, equivalencies=hubble()):.0f}")
+print(f"Galaxia a 5548 km/s → d = {(5548 * u.km / u.s).to(u.Mpc, equivalencies=hubble()):.1f}")
+
+# Y con otro valor de H0 (la "tensión de Hubble" del módulo 13)
+h73 = hubble(73 * u.km / u.s / u.Mpc)
+print(f"Con H0 = 73: 5548 km/s → d = {(5548 * u.km / u.s).to(u.Mpc, equivalencies=h73):.1f}")
+```
 
 ::: {.callout-warning}
-## Modulo en construccion
-Este modulo esta siendo preparado. Vuelve pronto.
+## Úsala solo donde tiene sentido
+Esta equivalencia (ley de Hubble lineal) solo vale para galaxias cercanas
+(z < 0.1). Para distancias mayores usa `astropy.cosmology` (módulo 13).
 :::
+
+---
+
+## Funciones que validan sus unidades
+
+El decorador `@u.quantity_input` comprueba automáticamente que los
+argumentos tengan unidades compatibles. Es la mejor defensa contra el tipo
+de error que destruyó el Mars Climate Orbiter (módulo 02).
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Las anotaciones de tipo indican la unidad esperada (o compatible)
+# ─────────────────────────────────────────────────────────────────────────────
+
+import numpy as np
+import astropy.units as u
+from astropy import constants as const
+
+@u.quantity_input
+def velocidad_escape(masa: u.kg, radio: u.m) -> u.km / u.s:
+    """Velocidad de escape de un cuerpo esférico."""
+    return np.sqrt(2 * const.G * masa / radio)
+
+# Funciona con cualquier unidad COMPATIBLE: masas solares, km, etc.
+print(f"Tierra : {velocidad_escape(const.M_earth, const.R_earth):.2f}")
+print(f"Sol    : {velocidad_escape(1 * u.M_sun, 696_000 * u.km):.1f}")
+
+# Si se pasa algo incorrecto, el error es claro e inmediato
+try:
+    velocidad_escape(5.97e24, 6371)            # ¡olvidamos las unidades!
+except TypeError as error:
+    print(f"\nError capturado: {error}")
+
+try:
+    velocidad_escape(1 * u.M_sun, 3 * u.s)     # radio en segundos (sin sentido)
+except u.UnitsError as error:
+    print(f"Error capturado: {error}")
+```
+
+---
+
+## Modelos propios en `astropy.modeling`
+
+Vamos a modelar la **curva de luz de una supernova**. La función de Bazin
+(2009), usada para clasificar supernovas en grandes cartografiados, describe
+una subida rápida y una caída exponencial:
+
+$$f(t) = A\,\frac{e^{-(t - t_0)/\tau_{caída}}}{1 + e^{-(t - t_0)/\tau_{subida}}} + B$$
+
+### Forma rápida: `@custom_model`
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# @custom_model convierte una función normal en un modelo ajustable
+# Los argumentos con valor por defecto se vuelven PARÁMETROS del modelo
+# ─────────────────────────────────────────────────────────────────────────────
+
+import numpy as np
+from astropy.modeling.models import custom_model
+
+@custom_model
+def Bazin(t, A=100., t0=0., tau_subida=3., tau_caida=20., B=0.):
+    """Curva de luz de supernova (Bazin et al. 2009)."""
+    return A * np.exp(-(t - t0) / tau_caida) / (1 + np.exp(-(t - t0) / tau_subida)) + B
+
+modelo = Bazin(A=200, t0=10)
+print(modelo)
+print(f"\nParámetros: {modelo.param_names}")
+print(f"Flujo en t = 15 días: {modelo(15.0):.2f}")
+```
+
+### Forma completa: subclase de `Fittable1DModel`
+
+La subclase permite fijar **límites** a los parámetros y documentarlos.
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Modelo con parámetros declarados explícitamente y límites físicos
+# ─────────────────────────────────────────────────────────────────────────────
+
+import numpy as np
+from astropy.modeling import Fittable1DModel, Parameter
+
+class CurvaSupernova(Fittable1DModel):
+    """Función de Bazin con parámetros acotados físicamente."""
+
+    # Cada Parameter tiene valor por defecto, límites y descripción
+    A          = Parameter(default=100.0, bounds=(0, None),  description='Amplitud')
+    t0         = Parameter(default=0.0,                      description='Tiempo de referencia [d]')
+    tau_subida = Parameter(default=3.0,   bounds=(0.1, 30),  description='Escala de subida [d]')
+    tau_caida  = Parameter(default=20.0,  bounds=(1, 200),   description='Escala de caída [d]')
+    B          = Parameter(default=0.0,                      description='Fondo')
+
+    @staticmethod
+    def evaluate(t, A, t0, tau_subida, tau_caida, B):
+        """La fórmula del modelo: Astropy la llama al evaluar y al ajustar."""
+        return A * np.exp(-(t - t0) / tau_caida) / (1 + np.exp(-(t - t0) / tau_subida)) + B
+
+print(CurvaSupernova())
+```
+
+### Ajustar el modelo a una supernova simulada
+
+```{python}
+#| label: fig-supernova
+#| fig-cap: "Curva de luz de una supernova simulada y el ajuste del modelo de Bazin"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Datos simulados + ajuste por mínimos cuadrados (módulo 10)
+# ─────────────────────────────────────────────────────────────────────────────
+
+import numpy as np
+import matplotlib.pyplot as plt
+from astropy.modeling import fitting
+
+rng = np.random.default_rng(16)
+
+# Parámetros "verdaderos" de la supernova
+verdad = dict(A=520, t0=8.0, tau_subida=2.5, tau_caida=28.0, B=12.0)
+
+# 45 observaciones irregulares durante 100 días
+t_obs = np.sort(rng.uniform(-15, 85, 45))
+error = 6 + 0.04 * CurvaSupernova.evaluate(t_obs, **verdad)
+flujo = CurvaSupernova.evaluate(t_obs, **verdad) + rng.normal(0, error)
+
+# Ajuste con valores iniciales aproximados
+inicial = CurvaSupernova(A=300, t0=0, tau_subida=5, tau_caida=15, B=0)
+ajustador = fitting.TRFLSQFitter(calc_uncertainties=True)
+ajuste = ajustador(inicial, t_obs, flujo, weights=1 / error)
+
+print(f"{'Parámetro':<11} {'Ajuste':>16} {'Verdad':>8}")
+for nombre in ajuste.param_names:
+    p = getattr(ajuste, nombre)
+    print(f"{nombre:<11} {p.value:>9.2f} ± {p.std:<5.2f} {verdad[nombre]:>8}")
+
+t_lin = np.linspace(-15, 85, 400)
+fig, ax = plt.subplots(figsize=(8, 4))
+ax.errorbar(t_obs, flujo, yerr=error, fmt='o', ms=4, alpha=0.7, label='Observaciones')
+ax.plot(t_lin, ajuste(t_lin), 'C3', lw=2, label='Ajuste Bazin')
+ax.set_xlabel('Días'); ax.set_ylabel('Flujo')
+ax.legend()
+plt.show()
+```
+
+::: {.callout-tip}
+## Fijar y relacionar parámetros
+- `modelo.B.fixed = True` → el parámetro no se ajusta
+- `modelo.tau_caida.bounds = (10, 50)` → cambia los límites
+- `modelo.tied = {...}` → ata un parámetro a otro (por ejemplo, dos líneas
+  espectrales con el mismo ancho)
+:::
+
+---
+
+## Más allá de los mínimos cuadrados: MCMC
+
+Los mínimos cuadrados dan **un** mejor valor y un error que supone
+distribuciones gaussianas. La inferencia **bayesiana** obtiene la
+**distribución completa** de cada parámetro (la *posterior*), que puede
+ser asimétrica o tener correlaciones.
+
+El algoritmo de **Metropolis–Hastings** recorre el espacio de parámetros así:
+
+1. Propone un paso aleatorio desde la posición actual
+2. Si la propuesta explica mejor los datos, la acepta
+3. Si la explica peor, la acepta solo **a veces** (con probabilidad proporcional)
+4. Repite miles de veces: la nube de puntos visitados es la posterior
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Metropolis–Hastings escrito desde cero con numpy
+# ─────────────────────────────────────────────────────────────────────────────
+
+import numpy as np
+
+def log_verosimilitud(theta):
+    """Qué tan bien explican los parámetros theta los datos (chi² / 2)."""
+    A, t0, ts, tc, B = theta
+    # Priors planos: fuera de los límites físicos la probabilidad es cero
+    if not (A > 0 and 0.1 < ts < 30 and 1 < tc < 200):
+        return -np.inf
+    modelo = CurvaSupernova.evaluate(t_obs, A, t0, ts, tc, B)
+    return -0.5 * np.sum(((flujo - modelo) / error) ** 2)
+
+rng = np.random.default_rng(42)
+n_pasos = 40_000
+
+# Arrancamos en el resultado de mínimos cuadrados
+theta = np.array(ajuste.parameters)
+logp = log_verosimilitud(theta)
+
+# Tamaño de los pasos: proporcional al error de mínimos cuadrados
+tam_paso = 0.5 * np.array([getattr(ajuste, n).std for n in ajuste.param_names])
+
+cadena = np.empty((n_pasos, theta.size))
+aceptados = 0
+for i in range(n_pasos):
+    propuesta = theta + tam_paso * rng.normal(size=theta.size)   # paso 1
+    logp_prop = log_verosimilitud(propuesta)
+    # Pasos 2 y 3: aceptar con probabilidad min(1, exp(Δlog p))
+    if np.log(rng.random()) < logp_prop - logp:
+        theta, logp = propuesta, logp_prop
+        aceptados += 1
+    cadena[i] = theta                                             # paso 4
+
+# Descartamos el primer 20 % ("quemado") mientras la cadena se estabiliza
+cadena = cadena[n_pasos // 5:]
+print(f"Tasa de aceptación: {aceptados / n_pasos:.1%}  (ideal: 20–50 %)")
+```
+
+```{python}
+#| label: fig-posteriores
+#| fig-cap: "Distribuciones posteriores de los parámetros. Línea roja: valor verdadero"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Resumir y graficar las posteriores
+# ─────────────────────────────────────────────────────────────────────────────
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+nombres = ajuste.param_names
+fig, ejes = plt.subplots(1, 5, figsize=(14, 2.8))
+print(f"{'Parámetro':<11} {'Mediana':>9} {'−1σ':>7} {'+1σ':>7}")
+for k, (ax, nombre) in enumerate(zip(ejes, nombres)):
+    muestras = cadena[:, k]
+    p16, p50, p84 = np.percentile(muestras, [16, 50, 84])
+    print(f"{nombre:<11} {p50:>9.2f} {p50 - p16:>7.2f} {p84 - p50:>7.2f}")
+    ax.hist(muestras, bins=40, color='C0', alpha=0.7)
+    ax.axvline(verdad[nombre], color='C3', lw=2)
+    ax.set_title(nombre); ax.set_yticks([])
+plt.tight_layout()
+plt.show()
+```
+
+```{python}
+#| label: fig-correlacion
+#| fig-cap: "Correlación entre el tiempo de referencia t0 y la escala de subida"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Las correlaciones entre parámetros: algo que los errores simples no muestran
+# ─────────────────────────────────────────────────────────────────────────────
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Columnas de la cadena: 0=A, 1=t0, 2=tau_subida, 3=tau_caida, 4=B
+fig, ax = plt.subplots(figsize=(5, 4.5))
+ax.plot(cadena[::10, 1], cadena[::10, 2], '.', ms=2, alpha=0.3)
+ax.plot(verdad['t0'], verdad['tau_subida'], '*', color='C3', ms=15, label='Verdad')
+ax.set_xlabel('t0 [días]'); ax.set_ylabel('tau_subida [días]')
+coef = np.corrcoef(cadena[:, 1], cadena[:, 2])[0, 1]
+ax.set_title(f'Coeficiente de correlación: {coef:.2f}')
+ax.legend()
+plt.show()
+
+# Matriz de correlación completa entre todos los parámetros
+print("Matriz de correlación:")
+print(np.round(np.corrcoef(cadena.T), 2))
+```
+
+`t0` y `tau_subida` están fuertemente correlacionados: si la supernova
+"empieza" un poco más tarde, una subida algo más lenta compensa y la curva
+se ve casi igual. Por eso estos dos parámetros quedan algo desplazados del
+valor verdadero **a la vez**: los datos no distinguen bien entre ambas
+combinaciones. Esto es justo lo que un error simple "± σ" no muestra.
+
+::: {.callout-tip}
+## En proyectos reales: emcee
+Nuestro Metropolis–Hastings es didáctico. Para trabajo serio usa
+[emcee](https://emcee.readthedocs.io) (`pip install emcee`), que lanza
+muchos "caminantes" en paralelo y se adapta solo, y `corner` para los
+gráficos de posteriores.
+:::
+
+---
+
+## Ejercicio
+
+1. Crea con `@custom_model` un modelo de **ley de potencia con corte
+   exponencial**: $f(x) = A\,x^{-\alpha}\,e^{-x/x_c}$ (típico de espectros
+   de rayos gamma de púlsares)
+2. Ajústalo a los datos simulados de abajo
+3. Reporta $\alpha$ y $x_c$ con sus errores
+
+```{python}
+# Datos del ejercicio: espectro de energía de un púlsar (GeV)
+import numpy as np
+rng = np.random.default_rng(7)
+energia = np.logspace(-1, 1.5, 30)                       # 0.1 a 30 GeV
+flujo_g = 50 * energia**-1.4 * np.exp(-energia / 3.2)
+err_g = 0.08 * flujo_g
+flujo_g = flujo_g + rng.normal(0, err_g)
+```
+
+::: {.callout-tip collapse="true"}
+## Ver solución
+
+```{python}
+#| label: fig-ejercicio-16
+#| fig-cap: "Ley de potencia con corte exponencial ajustada al espectro"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# SOLUCIÓN: modelo propio de ley de potencia con corte
+# ─────────────────────────────────────────────────────────────────────────────
+
+import numpy as np
+import matplotlib.pyplot as plt
+from astropy.modeling.models import custom_model
+from astropy.modeling import fitting
+
+# Paso 1: definir el modelo
+@custom_model
+def PotenciaConCorte(x, A=10., alpha=1., x_c=1.):
+    """Ley de potencia con corte exponencial."""
+    return A * x**(-alpha) * np.exp(-x / x_c)
+
+# Paso 2: ajustar
+ajustador = fitting.TRFLSQFitter(calc_uncertainties=True)
+res = ajustador(PotenciaConCorte(A=30, alpha=1, x_c=5), energia, flujo_g, weights=1 / err_g)
+
+# Paso 3: reportar
+print(f"α   = {res.alpha.value:.3f} ± {res.alpha.std:.3f}   (verdad: 1.4)")
+print(f"x_c = {res.x_c.value:.2f} ± {res.x_c.std:.2f} GeV   (verdad: 3.2)")
+
+fig, ax = plt.subplots(figsize=(6, 4))
+ax.errorbar(energia, flujo_g, yerr=err_g, fmt='o', ms=4)
+ax.plot(energia, res(energia), 'C3')
+ax.set_xscale('log'); ax.set_yscale('log')
+ax.set_xlabel('Energía [GeV]'); ax.set_ylabel('Flujo')
+plt.show()
+```
+:::
+
+---
+
+## ¿Qué aprendiste en este módulo? {.seccion-aprendiste}
+
+- ✅ Crear y registrar unidades propias con `def_unit` y `add_enabled_units`
+- ✅ Trabajar con magnitudes AB como unidades logarítmicas
+- ✅ Usar equivalencias (`spectral`, `parallax`, `spectral_density`...) y crear las tuyas
+- ✅ Validar unidades en tus funciones con `@u.quantity_input`
+- ✅ Definir modelos con `@custom_model` y con subclases de `Fittable1DModel`
+- ✅ Implementar un MCMC de Metropolis–Hastings y leer posteriores y correlaciones
+
+**Siguiente módulo →** [17 · Pipeline completo de reducción](17-pipeline.qmd)

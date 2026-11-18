@@ -1,16 +1,425 @@
 ---
-title: "10 - Estadistica y modelado"
-description: "Proximo modulo en preparacion"
+title: "10 · Estadística y modelado"
+description: "Herramientas estadísticas para datos astronómicos: estimadores robustos, sigma clipping, bootstrap, histogramas inteligentes y ajuste de modelos con astropy.stats y astropy.modeling"
+author: "Blog AstroPy en Español"
+date: "2026-11-01"
 categories: [intermedio]
 toc: true
+toc-depth: 3
+number-sections: true
 execute:
   echo: true
   warning: false
+  message: false
 ---
 
-<span class="badge-intermedio">Intermedio</span>
+<span class="badge-inter">🔭 Intermedio</span>
+
+## Datos astronómicos: ruidosos y con "intrusos"
+
+Los datos astronómicos casi nunca son limpios. En una imagen hay rayos
+cósmicos, píxeles calientes, satélites que cruzan el campo. En un catálogo
+hay estrellas mal medidas. Si calculamos un **promedio** simple, un solo
+valor extremo lo arruina.
+
+En este módulo veremos dos submódulos:
+
+- **`astropy.stats`**: estimadores robustos, recorte sigma, bootstrap,
+  intervalos de confianza para conteos de fotones
+- **`astropy.modeling`**: definir modelos (gaussianas, polinomios, perfiles)
+  y ajustarlos a los datos
+
+::: {.callout-note}
+## Requisitos previos
+- Módulos 01 al 08
+- Conocer qué son media, mediana y desviación estándar
+:::
+
+---
+
+## Estimadores robustos
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Comparar estimadores clásicos y robustos cuando hay valores atípicos
+# ─────────────────────────────────────────────────────────────────────────────
+
+import numpy as np
+from astropy.stats import mad_std, biweight_location, biweight_scale
+
+rng = np.random.default_rng(seed=10)
+
+# 1000 mediciones del fondo del cielo: valor real 100, ruido 5
+fondo = rng.normal(100, 5, 1000)
+
+# Contaminamos el 3 % con rayos cósmicos (valores enormes)
+n_malos = 30
+fondo[:n_malos] = rng.uniform(500, 3000, n_malos)
+
+print("              Centro      Dispersión")
+print(f"Clásico   :  {np.mean(fondo):8.2f}    {np.std(fondo):8.2f}   (media, desv. estándar)")
+print(f"Mediana   :  {np.median(fondo):8.2f}    {mad_std(fondo):8.2f}   (mediana, MAD escalada)")
+print(f"Biweight  :  {biweight_location(fondo):8.2f}    {biweight_scale(fondo):8.2f}")
+print("Verdad    :    100.00        5.00")
+```
+
+- **`mad_std`**: desviación absoluta mediana, multiplicada por 1.4826 para
+  que equivalga a la desviación estándar cuando los datos son normales.
+- **Biweight**: estimador de Tukey, combina la robustez de la mediana con
+  la eficiencia de la media. Muy usado en cúmulos de galaxias.
+
+---
+
+## Recorte sigma (*sigma clipping*)
+
+El recorte sigma es un procedimiento iterativo:
+
+1. Calcula el centro (mediana) y la dispersión
+2. Descarta los puntos a más de N sigmas del centro
+3. Repite hasta que no se descarte nada
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# sigma_clip devuelve un arreglo enmascarado: los valores rechazados
+# quedan "ocultos" pero no se borran
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy.stats import sigma_clip, sigma_clipped_stats
+import numpy as np
+
+recortado = sigma_clip(fondo, sigma=3, maxiters=10)
+
+print(f"Puntos originales    : {len(fondo)}")
+print(f"Puntos rechazados    : {recortado.mask.sum()}")
+print(f"Media tras el recorte: {recortado.mean():.2f}")
+print(f"Desv. tras el recorte: {recortado.std():.2f}")
+
+# Atajo: las tres estadísticas en una línea (lo usamos en el módulo 08)
+media, mediana, desv = sigma_clipped_stats(fondo, sigma=3)
+print(f"\nsigma_clipped_stats → media={media:.2f}, mediana={mediana:.2f}, desv={desv:.2f}")
+```
 
 ::: {.callout-warning}
-## Modulo en construccion
-Este modulo esta siendo preparado. Vuelve pronto.
+## No recortes a ciegas
+El recorte sigma asume que los datos "buenos" son aproximadamente normales.
+Si tu distribución es asimétrica (por ejemplo, magnitudes de galaxias)
+puedes eliminar datos válidos. Siempre mira un histograma primero.
 :::
+
+---
+
+## Histogramas con bins inteligentes
+
+¿Cuántos intervalos (*bins*) usar en un histograma? Muy pocos ocultan
+estructura; demasiados muestran ruido. `astropy.visualization.hist`
+ofrece reglas automáticas.
+
+```{python}
+#| label: fig-histogramas
+#| fig-cap: "El mismo conjunto de datos con cuatro reglas para elegir los bins"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Comparar reglas de binning sobre una distribución con dos picos
+# ─────────────────────────────────────────────────────────────────────────────
+
+import numpy as np
+import matplotlib.pyplot as plt
+from astropy.visualization import hist   # versión mejorada de plt.hist
+
+rng = np.random.default_rng(3)
+# Ejemplo: velocidades radiales de dos grupos de estrellas superpuestos
+vel = np.concatenate([rng.normal(-20, 8, 600), rng.normal(15, 4, 250)])
+
+reglas = ['scott', 'freedman', 'knuth', 'blocks']
+fig, ejes = plt.subplots(1, 4, figsize=(13, 3), sharey=True)
+for ax, regla in zip(ejes, reglas):
+    # density=True normaliza el área a 1 para comparar formas
+    hist(vel, bins=regla, ax=ax, histtype='stepfilled', alpha=0.6, density=True)
+    ax.set_title(f"bins='{regla}'")
+    ax.set_xlabel('Velocidad [km/s]')
+plt.tight_layout()
+plt.show()
+```
+
+`knuth` y `blocks` (*Bayesian Blocks*) se basan en estadística bayesiana;
+`blocks` usa bins de **ancho variable**, ideal para detectar cambios bruscos.
+
+---
+
+## Bootstrap: incertidumbre sin fórmulas
+
+¿Cuál es el error de la mediana? No hay una fórmula sencilla. El
+**bootstrap** lo estima remuestreando los datos con reemplazo muchas veces.
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Estimar el error de la mediana con bootstrap
+# ─────────────────────────────────────────────────────────────────────────────
+
+import numpy as np
+from astropy.stats import bootstrap
+
+rng = np.random.default_rng(5)
+# 40 mediciones del período de una estrella variable (días), con un atípico
+periodos = np.append(rng.normal(5.37, 0.08, 39), 6.9)
+
+# bootstrap usa el generador aleatorio global de numpy:
+# fijamos su semilla para obtener siempre el mismo resultado
+np.random.seed(1)
+
+# bootstrap genera 'bootnum' remuestreos y aplica 'bootfunc' a cada uno
+medianas = bootstrap(periodos, bootnum=5000, bootfunc=np.median)
+
+# Intervalo de confianza del 68 % (equivalente a ±1σ)
+bajo, alto = np.percentile(medianas, [16, 84])
+
+print(f"Mediana de los datos : {np.median(periodos):.3f} días")
+print(f"Error (bootstrap)    : ±{np.std(medianas):.3f} días")
+print(f"Intervalo 68 %       : [{bajo:.3f}, {alto:.3f}]")
+```
+
+---
+
+## Conteos de fotones: intervalos de Poisson
+
+Cuando detectamos **pocos** fotones (rayos X, rayos gamma, neutrinos), la
+aproximación $\sqrt{N}$ falla. `poisson_conf_interval` da intervalos exactos.
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Intervalos de confianza para conteos pequeños
+# ─────────────────────────────────────────────────────────────────────────────
+
+import numpy as np
+from astropy.stats import poisson_conf_interval
+
+conteos = np.array([0, 1, 3, 10, 100])
+
+# 'frequentist-confidence' → intervalo de Garwood (estándar en astrofísica)
+inferior, superior = poisson_conf_interval(conteos, interval='frequentist-confidence')
+
+print(f"{'N':>5} {'√N simple':>16} {'Poisson exacto':>18}")
+for n, lo, hi in zip(conteos, inferior, superior):
+    print(f"{n:>5} {f'[{n - np.sqrt(n):.2f}, {n + np.sqrt(n):.2f}]':>16} {f'[{lo:.2f}, {hi:.2f}]':>18}")
+```
+
+Con 0 fotones, $\sqrt{N}$ dice "0 ± 0" (absurdo); Poisson dice que el valor
+real podría ser hasta 1.84.
+
+---
+
+## `astropy.modeling`: ajustar modelos a datos
+
+El flujo de trabajo siempre tiene tres pasos:
+
+1. **Crear un modelo** con valores iniciales aproximados
+2. **Elegir un ajustador** (*fitter*)
+3. **Ajustar**: `modelo_ajustado = ajustador(modelo, x, y)`
+
+### Ajuste de una gaussiana: línea de emisión
+
+```{python}
+#| label: fig-ajuste-gauss
+#| fig-cap: "Ajuste de una gaussiana más un continuo lineal a una línea de emisión"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Ajustar una línea espectral: gaussiana + continuo lineal
+# ─────────────────────────────────────────────────────────────────────────────
+
+import numpy as np
+import matplotlib.pyplot as plt
+from astropy.modeling import models, fitting
+
+rng = np.random.default_rng(11)
+
+# Datos simulados: línea H-alfa (6563 Å) sobre un continuo inclinado
+x = np.linspace(6520, 6610, 180)                           # longitud de onda [Å]
+y_real = 50 + 0.05 * (x - 6563) + 120 * np.exp(-0.5 * ((x - 6563.8) / 3.2)**2)
+errores = np.full_like(x, 6.0)
+y = y_real + rng.normal(0, errores)
+
+# PASO 1: modelo compuesto → gaussiana + recta (se suman con +)
+modelo_inicial = (models.Gaussian1D(amplitude=100, mean=6560, stddev=5)
+                  + models.Linear1D(slope=0, intercept=40))
+
+# PASO 2: ajustador de mínimos cuadrados no lineal
+# calc_uncertainties=True calcula los errores de cada parámetro
+ajustador = fitting.TRFLSQFitter(calc_uncertainties=True)
+
+# PASO 3: ajustar (weights = 1/error para un ajuste ponderado)
+modelo = ajustador(modelo_inicial, x, y, weights=1 / errores)
+
+# Resultados: los parámetros de la parte 0 (gaussiana) llevan sufijo _0
+g = modelo[0]   # componente gaussiana
+print(f"Centro de la línea : {g.mean.value:.2f} ± {g.mean.std:.2f} Å")
+print(f"Ancho (sigma)      : {g.stddev.value:.2f} ± {g.stddev.std:.2f} Å")
+print(f"Amplitud           : {g.amplitude.value:.1f} ± {g.amplitude.std:.1f}")
+print(f"FWHM               : {g.fwhm:.2f} Å")
+
+fig, ax = plt.subplots(figsize=(8, 4))
+ax.errorbar(x, y, yerr=errores, fmt='.', color='gray', alpha=0.5, label='Datos')
+ax.plot(x, modelo(x), 'C3', lw=2, label='Modelo ajustado')
+ax.plot(x, modelo[1](x), 'C0--', label='Continuo')
+ax.set_xlabel('Longitud de onda [Å]')
+ax.set_ylabel('Flujo')
+ax.legend()
+plt.show()
+```
+
+### Calidad del ajuste: chi-cuadrado reducido
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# χ² reducido ≈ 1 indica que el modelo describe los datos dentro de los errores
+# ─────────────────────────────────────────────────────────────────────────────
+
+import numpy as np
+
+residuos = (y - modelo(x)) / errores
+n_param  = len(modelo.parameters)              # 5 parámetros libres
+gl       = len(x) - n_param                    # grados de libertad
+chi2_red = np.sum(residuos**2) / gl
+
+print(f"χ² reducido = {chi2_red:.2f}  (grados de libertad: {gl})")
+if 0.7 < chi2_red < 1.3:
+    print("→ Ajuste consistente con los errores ✓")
+```
+
+### Ajuste 2D: el perfil de una estrella
+
+```{python}
+#| label: fig-ajuste-2d
+#| fig-cap: "Datos, modelo y residuos del ajuste gaussiano 2D a una estrella"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Gaussian2D: medir posición, ancho y elongación de una estrella
+# El FWHM de las estrellas mide el "seeing" (turbulencia de la atmósfera)
+# ─────────────────────────────────────────────────────────────────────────────
+
+import numpy as np
+import matplotlib.pyplot as plt
+from astropy.modeling import models, fitting
+from astropy.stats import gaussian_sigma_to_fwhm
+
+rng = np.random.default_rng(12)
+yy, xx = np.mgrid[0:31, 0:31]
+
+# Estrella real: ligeramente elongada (viento movió el telescopio)
+real = models.Gaussian2D(amplitude=900, x_mean=15.3, y_mean=14.6,
+                         x_stddev=2.1, y_stddev=2.7, theta=0.4)
+datos = real(xx, yy) + 20 + rng.normal(0, 8, xx.shape)
+
+# Modelo: gaussiana 2D + fondo constante
+inicial = (models.Gaussian2D(amplitude=datos.max(), x_mean=15, y_mean=15,
+                             x_stddev=2, y_stddev=2)
+           + models.Const2D(amplitude=np.median(datos)))
+ajuste = fitting.TRFLSQFitter()(inicial, xx, yy, datos)
+
+g = ajuste[0]
+fwhm_x = gaussian_sigma_to_fwhm * g.x_stddev.value
+fwhm_y = gaussian_sigma_to_fwhm * g.y_stddev.value
+print(f"Centro     : ({g.x_mean.value:.2f}, {g.y_mean.value:.2f})")
+print(f"FWHM x, y  : {fwhm_x:.2f}, {fwhm_y:.2f} px")
+print(f"Elongación : {max(fwhm_x, fwhm_y) / min(fwhm_x, fwhm_y):.2f}")
+
+fig, ejes = plt.subplots(1, 3, figsize=(10, 3.2))
+for ax, img, tit in zip(ejes, [datos, ajuste(xx, yy), datos - ajuste(xx, yy)],
+                        ['Datos', 'Modelo', 'Residuos']):
+    ax.imshow(img, origin='lower', cmap='viridis')
+    ax.set_title(tit)
+    ax.set_xticks([]); ax.set_yticks([])
+plt.tight_layout()
+plt.show()
+```
+
+Los residuos deben parecer **ruido sin estructura**. Si se ve un patrón
+(un anillo, una mancha), el modelo no es adecuado.
+
+---
+
+## Modelos disponibles
+
+| Modelo | Uso típico |
+|---|---|
+| `Gaussian1D`, `Gaussian2D` | Líneas espectrales, perfiles estelares |
+| `Lorentz1D`, `Voigt1D` | Líneas con alas anchas |
+| `Moffat2D` | PSF estelar realista (mejor que gaussiana) |
+| `Polynomial1D`, `Chebyshev1D` | Continuos, calibraciones |
+| `PowerLaw1D`, `BrokenPowerLaw1D` | Espectros de rayos X, funciones de masa |
+| `Sersic1D`, `Sersic2D` | Perfiles de brillo de galaxias |
+| `BlackBody` | Emisión térmica de estrellas |
+
+En el módulo 16 aprenderemos a **crear modelos propios**.
+
+---
+
+## Ejercicio
+
+Una galaxia elíptica sigue un perfil de **Sérsic**. Con los datos
+simulados de abajo:
+
+1. Ajusta un modelo `Sersic1D` (valores iniciales: `amplitude=10`, `r_eff=5`, `n=2`)
+2. Reporta el radio efectivo `r_eff` y el índice `n` con sus errores
+3. ¿Es una elíptica (n ≈ 4) o un disco (n ≈ 1)?
+
+```{python}
+# Datos del ejercicio: perfil de brillo radial de una galaxia
+import numpy as np
+from astropy.modeling import models
+rng = np.random.default_rng(99)
+radio = np.linspace(0.5, 30, 60)                               # arcsec
+brillo_real = models.Sersic1D(amplitude=8, r_eff=7, n=4)(radio)
+err_brillo = 0.05 * brillo_real + 0.05
+brillo = brillo_real + rng.normal(0, err_brillo)
+```
+
+::: {.callout-tip collapse="true"}
+## Ver solución
+
+```{python}
+#| label: fig-sersic
+#| fig-cap: "Ajuste de Sérsic al perfil radial (escala logarítmica)"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# SOLUCIÓN: ajuste de un perfil de Sérsic
+# ─────────────────────────────────────────────────────────────────────────────
+
+import matplotlib.pyplot as plt
+from astropy.modeling import models, fitting
+
+# Paso 1: modelo inicial y ajuste ponderado
+inicial = models.Sersic1D(amplitude=10, r_eff=5, n=2)
+ajustador = fitting.TRFLSQFitter(calc_uncertainties=True)
+sersic = ajustador(inicial, radio, brillo, weights=1 / err_brillo)
+
+# Paso 2: resultados con errores
+print(f"r_eff = {sersic.r_eff.value:.2f} ± {sersic.r_eff.std:.2f} arcsec")
+print(f"n     = {sersic.n.value:.2f} ± {sersic.n.std:.2f}")
+
+# Paso 3: interpretación
+tipo = 'elíptica (de Vaucouleurs)' if sersic.n.value > 2.5 else 'disco (exponencial)'
+print(f"→ Perfil compatible con una galaxia {tipo}")
+
+fig, ax = plt.subplots(figsize=(6, 4))
+ax.errorbar(radio, brillo, yerr=err_brillo, fmt='o', ms=3, label='Datos')
+ax.plot(radio, sersic(radio), 'C3', label=f'Sérsic n={sersic.n.value:.1f}')
+ax.set_yscale('log')
+ax.set_xlabel('Radio [arcsec]'); ax.set_ylabel('Brillo superficial')
+ax.legend()
+plt.show()
+```
+:::
+
+---
+
+## ¿Qué aprendiste en este módulo? {.seccion-aprendiste}
+
+- ✅ Estimadores robustos: mediana, `mad_std`, biweight
+- ✅ Recorte sigma con `sigma_clip` y `sigma_clipped_stats`
+- ✅ Elegir bins con `scott`, `freedman`, `knuth` y `blocks`
+- ✅ Estimar incertidumbres con `bootstrap`
+- ✅ Intervalos de confianza para conteos con `poisson_conf_interval`
+- ✅ Ajustar modelos 1D y 2D con `astropy.modeling` y obtener errores
+- ✅ Evaluar el ajuste con χ² reducido y residuos
+
+**Siguiente módulo →** [11 · Consultas a catálogos en línea](11-catalogos.qmd)

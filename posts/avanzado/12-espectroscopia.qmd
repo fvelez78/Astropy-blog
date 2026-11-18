@@ -1,16 +1,428 @@
 ---
-title: "12 - Espectroscopia con specutils"
-description: "Proximo modulo en preparacion"
+title: "12 · Espectroscopía con specutils"
+description: "Analiza espectros 1D: continuo, líneas de emisión y absorción, flujo, ancho equivalente, corrimiento al rojo y velocidad radial con specutils"
+author: "Blog AstroPy en Español"
+date: "2026-11-01"
 categories: [avanzado]
 toc: true
+toc-depth: 3
+number-sections: true
 execute:
   echo: true
   warning: false
+  message: false
 ---
 
-<span class="badge-avanzado">Avanzado</span>
+<span class="badge-avanzado">🚀 Avanzado</span>
 
-::: {.callout-warning}
-## Modulo en construccion
-Este modulo esta siendo preparado. Vuelve pronto.
+## La luz descompuesta
+
+Un **espectro** muestra cuánta luz emite un objeto en cada longitud de
+onda. Es la herramienta más poderosa de la astrofísica: de un espectro
+sacamos la **composición química**, la **temperatura**, la **velocidad**
+(efecto Doppler) y, para galaxias lejanas, la **distancia** (corrimiento
+al rojo).
+
+Un espectro típico tiene:
+
+- **Continuo**: la emisión "de fondo", suave (radiación térmica de las estrellas)
+- **Líneas de emisión**: picos producidos por gas caliente (nebulosas, galaxias activas)
+- **Líneas de absorción**: valles producidos por átomos que absorben luz
+
+**specutils** es la librería afiliada a Astropy para analizar espectros.
+
+::: {.callout-note}
+## Requisitos previos
+- Módulos 02 (unidades) y 10 (modelado)
+- Instalar: `pip install specutils`
 :::
+
+::: {.callout-tip}
+## specutils 1.x vs 2.x
+En specutils 2.0 la clase principal pasó a llamarse `Spectrum` (antes
+`Spectrum1D`). El bloque de importación de abajo funciona con ambas versiones.
+:::
+
+---
+
+## Crear un espectro
+
+Simulamos el espectro de una **galaxia con formación estelar** a
+corrimiento al rojo $z = 0.0185$ (unos 80 Mpc de distancia). Sus líneas
+de emisión vienen del gas ionizado por estrellas jóvenes.
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Importar la clase de espectro según la versión instalada de specutils
+# ─────────────────────────────────────────────────────────────────────────────
+
+try:
+    from specutils import Spectrum                   # specutils ≥ 2.0
+except ImportError:
+    from specutils import Spectrum1D as Spectrum     # specutils 1.x
+
+import numpy as np
+import astropy.units as u
+from astropy.nddata import StdDevUncertainty
+
+# Longitudes de onda EN REPOSO (medidas en laboratorio) de líneas típicas [Å]
+LINEAS = {
+    'Hβ':       4861.33,
+    '[OIII]a':  4958.91,
+    '[OIII]b':  5006.84,
+    '[NII]a':   6548.05,
+    'Hα':       6562.80,
+    '[NII]b':   6583.45,
+    '[SII]a':   6716.44,
+    '[SII]b':   6730.82,
+}
+
+z_real = 0.0185                      # corrimiento al rojo de la galaxia
+rng = np.random.default_rng(12)
+
+# Eje espectral observado: de 4700 a 7000 Å con resolución de 1 Å
+lam = np.arange(4700, 7000, 1.0)
+
+# Continuo: suave y ligeramente decreciente hacia el rojo
+continuo = 30 * (lam / 5500) ** -1.2
+
+# Intensidades relativas de cada línea (típicas de una región H II)
+intensidad = {'Hβ': 60, '[OIII]a': 35, '[OIII]b': 105, '[NII]a': 25,
+              'Hα': 200, '[NII]b': 70, '[SII]a': 30, '[SII]b': 22}
+sigma_linea = 2.5    # ancho de las líneas en Å (dispersión de velocidades)
+
+flujo = continuo.copy()
+for nombre, lam0 in LINEAS.items():
+    lam_obs = lam0 * (1 + z_real)               # posición desplazada al rojo
+    flujo += intensidad[nombre] * np.exp(-0.5 * ((lam - lam_obs) / sigma_linea) ** 2)
+
+# Ruido gaussiano y su incertidumbre asociada
+error = np.full_like(lam, 1.5)
+flujo += rng.normal(0, error)
+
+# Crear el objeto espectro: flujo + eje espectral + incertidumbre, CON unidades
+unidad_flujo = u.Unit('1e-17 erg / (s cm2 Angstrom)')
+espectro = Spectrum(flux=flujo * unidad_flujo,
+                    spectral_axis=lam * u.AA,
+                    uncertainty=StdDevUncertainty(error))
+
+print(espectro)
+```
+
+```{python}
+#| label: fig-espectro
+#| fig-cap: "Espectro simulado de una galaxia con formación estelar"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Graficar el espectro marcando las líneas
+# ─────────────────────────────────────────────────────────────────────────────
+
+import matplotlib.pyplot as plt
+
+fig, ax = plt.subplots(figsize=(10, 4))
+ax.plot(espectro.spectral_axis, espectro.flux, lw=0.8, color='C7')
+
+# Etiquetar solo las líneas principales en su posición observada
+for nombre in ['Hβ', '[OIII]b', 'Hα', '[NII]b', '[SII]a']:
+    x = LINEAS[nombre] * (1 + z_real)
+    ax.annotate(nombre, (x, 0), xytext=(x, 225), ha='center', fontsize=9, color='C3')
+
+ax.set_xlabel(f'Longitud de onda observada [{espectro.spectral_axis.unit}]')
+ax.set_ylabel(f'Flujo [{espectro.flux.unit}]')
+ax.set_ylim(0, 250)
+plt.show()
+```
+
+---
+
+## Operaciones básicas con espectros
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Un espectro se comporta como un arreglo con unidades:
+# se puede recortar, convertir de unidad y operar aritméticamente
+# ─────────────────────────────────────────────────────────────────────────────
+
+from specutils import SpectralRegion
+from specutils.manipulation import extract_region
+
+# Convertir el eje espectral a otras unidades (nm, micras, frecuencia)
+print(f"Primeros valores en nm   : {espectro.spectral_axis[:3].to(u.nm)}")
+print(f"Primeros valores en THz  : {espectro.spectral_axis[:3].to(u.THz, equivalencies=u.spectral())}")
+
+# Recortar una región: alrededor de Hα y [NII]
+region_ha = SpectralRegion(6620 * u.AA, 6740 * u.AA)
+espectro_ha = extract_region(espectro, region_ha)
+
+print(f"\nPuntos en el espectro completo : {len(espectro.flux)}")
+print(f"Puntos en la región de Hα      : {len(espectro_ha.flux)}")
+```
+
+`u.spectral()` es una **equivalencia**: le dice a Astropy cómo convertir
+entre longitud de onda, frecuencia y energía ($\nu = c/\lambda$, $E = h\nu$).
+
+---
+
+## Ajustar y restar el continuo
+
+Para medir las líneas primero hay que modelar el continuo **sin** ellas.
+Excluimos las zonas con líneas y ajustamos un modelo suave.
+
+```{python}
+#| label: fig-continuo
+#| fig-cap: "Arriba: espectro y continuo ajustado. Abajo: espectro normalizado al continuo"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# fit_generic_continuum ajusta un polinomio de Chebyshev al continuo
+# ─────────────────────────────────────────────────────────────────────────────
+
+from specutils.fitting import fit_generic_continuum
+import matplotlib.pyplot as plt
+
+# Regiones a EXCLUIR del ajuste: ±25 Å alrededor de cada línea
+regiones_lineas = [SpectralRegion((l * (1 + z_real) - 25) * u.AA,
+                                  (l * (1 + z_real) + 25) * u.AA)
+                   for l in LINEAS.values()]
+
+# Ajuste del continuo excluyendo las líneas
+modelo_continuo = fit_generic_continuum(espectro, exclude_regions=regiones_lineas)
+continuo_ajustado = modelo_continuo(espectro.spectral_axis)
+
+# Espectro normalizado: dividir por el continuo (las líneas quedan sobre 1.0)
+normalizado = espectro / continuo_ajustado
+
+# Espectro con el continuo restado (las líneas quedan sobre 0)
+sin_continuo = espectro - continuo_ajustado
+
+fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 6), sharex=True)
+ax1.plot(espectro.spectral_axis, espectro.flux, color='C7', lw=0.7, label='Espectro')
+ax1.plot(espectro.spectral_axis, continuo_ajustado, 'C1', lw=2, label='Continuo')
+ax1.set_ylim(0, 80); ax1.legend()
+ax2.plot(normalizado.spectral_axis, normalizado.flux, color='C7', lw=0.7)
+ax2.axhline(1, color='C1', ls='--')
+ax2.set_xlabel('Longitud de onda [Å]'); ax2.set_ylabel('Flujo normalizado')
+plt.tight_layout()
+plt.show()
+```
+
+---
+
+## Medir líneas espectrales
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Mediciones sobre la línea Hα: flujo, centroide, ancho y ancho equivalente
+# ─────────────────────────────────────────────────────────────────────────────
+
+from specutils.analysis import line_flux, centroid, fwhm, equivalent_width
+
+# Región que contiene solo la línea Hα (±8 Å de su posición observada)
+ha_obs = LINEAS['Hα'] * (1 + z_real)
+region = SpectralRegion((ha_obs - 8) * u.AA, (ha_obs + 8) * u.AA)
+
+# Flujo integrado de la línea (sobre el espectro SIN continuo)
+flujo_ha = line_flux(sin_continuo, regions=region)
+
+# Centroide: "centro de masa" de la línea → posición observada
+centro_ha = centroid(sin_continuo, regions=region)
+
+# Ancho a media altura
+ancho_ha = fwhm(sin_continuo, regions=region)
+
+# Ancho equivalente: área de la línea expresada como un ancho del continuo
+# (se calcula sobre el espectro NORMALIZADO; negativo = emisión)
+ew_ha = equivalent_width(normalizado, regions=region)
+
+print(f"Hα observada:")
+print(f"  Flujo integrado    : {flujo_ha.to(u.Unit('1e-17 erg / (s cm2)')):.1f}")
+print(f"  Centroide          : {centro_ha:.2f}")
+print(f"  FWHM               : {ancho_ha:.2f}")
+print(f"  Ancho equivalente  : {ew_ha:.1f}")
+```
+
+::: {.callout-tip}
+## El ancho equivalente
+El ancho equivalente (EW) responde: *¿qué tan ancho tendría que ser un
+rectángulo de altura igual al continuo para tener la misma área que la
+línea?* No depende de la calibración absoluta del flujo, por eso es muy usado.
+:::
+
+---
+
+## Corrimiento al rojo y velocidad
+
+$$z = \frac{\lambda_{obs} - \lambda_{reposo}}{\lambda_{reposo}}, \qquad v \approx c\,z \;\; (\text{si } z \ll 1)$$
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Medir z con varias líneas y promediar
+# ─────────────────────────────────────────────────────────────────────────────
+
+import numpy as np
+from astropy import constants as const
+
+zs = []
+print(f"{'Línea':<9} {'λ reposo':>10} {'λ obs':>10} {'z':>9}")
+for nombre in ['Hβ', '[OIII]b', 'Hα', '[NII]b']:
+    lam0 = LINEAS[nombre] * u.AA
+    l_obs_aprox = lam0 * (1 + 0.0185)
+    reg = SpectralRegion(l_obs_aprox - 8 * u.AA, l_obs_aprox + 8 * u.AA)
+    lam_obs = centroid(sin_continuo, regions=reg)
+    z = ((lam_obs - lam0) / lam0).decompose().value
+    zs.append(z)
+    print(f"{nombre:<9} {lam0.value:>10.2f} {lam_obs.value:>10.2f} {z:>9.5f}")
+
+z_medido = np.mean(zs)
+z_error  = np.std(zs) / np.sqrt(len(zs))
+velocidad = (z_medido * const.c).to(u.km / u.s)
+
+print(f"\nz medido  = {z_medido:.5f} ± {z_error:.1e}   (real: {z_real})")
+print(f"Velocidad de recesión ≈ {velocidad:.0f}")
+```
+
+### La forma elegante: equivalencias Doppler
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Astropy convierte longitud de onda ↔ velocidad con u.doppler_optical
+# indicando la longitud de onda en reposo de la línea
+# ─────────────────────────────────────────────────────────────────────────────
+
+ha_reposo = LINEAS['Hα'] * u.AA
+
+# Equivalencia Doppler óptica: v = c (λ - λ0) / λ0
+doppler = u.doppler_optical(ha_reposo)
+
+v_ha = centro_ha.to(u.km / u.s, equivalencies=doppler)
+print(f"Velocidad de Hα: {v_ha:.0f}")
+
+# Pasar TODO el eje espectral a velocidades relativas a Hα
+# u.Quantity() convierte el eje especial de specutils en una cantidad simple
+v_eje = u.Quantity(espectro_ha.spectral_axis).to(u.km / u.s, equivalencies=doppler)
+print(f"La región de Hα va de {v_eje[0]:.0f} a {v_eje[-1]:.0f}")
+```
+
+---
+
+## Ajustar el triplete Hα + [NII]
+
+Hα y las dos líneas de [NII] están muy juntas y se superponen. Para medir
+cada una se ajustan **tres gaussianas simultáneamente** (módulo 10).
+
+```{python}
+#| label: fig-triplete
+#| fig-cap: "Ajuste simultáneo de Hα y el doblete de [NII]"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# fit_lines de specutils usa modelos de astropy.modeling
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy.modeling import models
+from specutils.fitting import fit_lines
+import matplotlib.pyplot as plt
+
+# Recortamos la región del espectro SIN continuo
+triplete = extract_region(sin_continuo, region_ha)
+
+# Valores iniciales: posiciones observadas aproximadas
+g_nii_a = models.Gaussian1D(amplitude=20 * unidad_flujo,
+                            mean=LINEAS['[NII]a'] * 1.0185 * u.AA, stddev=2 * u.AA)
+g_ha    = models.Gaussian1D(amplitude=180 * unidad_flujo,
+                            mean=LINEAS['Hα'] * 1.0185 * u.AA, stddev=2 * u.AA)
+g_nii_b = models.Gaussian1D(amplitude=60 * unidad_flujo,
+                            mean=LINEAS['[NII]b'] * 1.0185 * u.AA, stddev=2 * u.AA)
+
+ajuste = fit_lines(triplete, g_nii_a + g_ha + g_nii_b)
+
+# Flujo de una gaussiana = amplitud × sigma × √(2π)
+def flujo_gauss(g):
+    return (g.amplitude * g.stddev * np.sqrt(2 * np.pi)).to(u.Unit('1e-17 erg / (s cm2)'))
+
+f_nii = flujo_gauss(ajuste[2]); f_ha = flujo_gauss(ajuste[1])
+print(f"Flujo [NII]6583 : {f_nii:.1f}")
+print(f"Flujo Hα        : {f_ha:.1f}")
+
+# El cociente [NII]/Hα es un diagnóstico clásico de la fuente de ionización
+cociente = (f_nii / f_ha).decompose().value
+print(f"log([NII]/Hα)   : {np.log10(cociente):.2f}  (< -0.4 indica formación estelar)")
+
+fig, ax = plt.subplots(figsize=(8, 4))
+ax.plot(triplete.spectral_axis, triplete.flux, '.', color='C7', ms=3, label='Datos')
+ax.plot(triplete.spectral_axis, ajuste(triplete.spectral_axis), 'C3', label='Ajuste total')
+for i, nombre in enumerate(['[NII]6548', 'Hα', '[NII]6583']):
+    ax.plot(triplete.spectral_axis, ajuste[i](triplete.spectral_axis), '--', lw=1, label=nombre)
+ax.set_xlabel('Longitud de onda [Å]'); ax.set_ylabel('Flujo')
+ax.legend()
+plt.show()
+```
+
+---
+
+## Leer espectros reales
+
+specutils lee directamente muchos formatos (SDSS, JWST, archivos FITS
+genéricos). Por ejemplo, un espectro del Sloan Digital Sky Survey:
+
+```{python}
+#| eval: false
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Ejemplo (no se ejecuta en el blog): leer un espectro de SDSS
+# Descárgalo desde https://dr18.sdss.org → buscar una galaxia → "Download spectrum"
+# ─────────────────────────────────────────────────────────────────────────────
+
+espectro_sdss = Spectrum.read('spec-0266-51602-0001.fits', format='SDSS-III/IV spec')
+print(espectro_sdss)
+```
+
+---
+
+## Ejercicio
+
+El doblete de **[SII] 6716/6731** es un "termómetro de densidad": su
+cociente de flujos indica la densidad electrónica del gas.
+
+1. Mide el flujo de cada línea con `line_flux` (regiones de ±6 Å)
+2. Calcula el cociente $R = F(6716) / F(6731)$
+3. Si $R > 1.3$ el gas es de **baja densidad** (< 100 cm⁻³); si $R < 0.6$ es de **alta densidad**
+
+::: {.callout-tip collapse="true"}
+## Ver solución
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# SOLUCIÓN: densidad del gas con el doblete de [SII]
+# ─────────────────────────────────────────────────────────────────────────────
+
+flujos_sii = {}
+for nombre in ['[SII]a', '[SII]b']:
+    centro = LINEAS[nombre] * (1 + z_medido) * u.AA      # usamos el z medido
+    reg = SpectralRegion(centro - 6 * u.AA, centro + 6 * u.AA)
+    flujos_sii[nombre] = line_flux(sin_continuo, regions=reg)
+    print(f"{nombre}: {flujos_sii[nombre].to(u.Unit('1e-17 erg / (s cm2)')):.1f}")
+
+R = (flujos_sii['[SII]a'] / flujos_sii['[SII]b']).decompose().value
+print(f"\nCociente R = {R:.2f}")
+
+if R > 1.3:
+    print("→ Gas de baja densidad (< 100 electrones por cm³)")
+elif R < 0.6:
+    print("→ Gas de alta densidad (> 10⁴ electrones por cm³)")
+else:
+    print("→ Densidad intermedia")
+```
+:::
+
+---
+
+## ¿Qué aprendiste en este módulo? {.seccion-aprendiste}
+
+- ✅ Las partes de un espectro: continuo, emisión y absorción
+- ✅ Crear un `Spectrum` con unidades e incertidumbres
+- ✅ Recortar regiones y convertir unidades con `u.spectral()`
+- ✅ Ajustar y restar el continuo con `fit_generic_continuum`
+- ✅ Medir flujo, centroide, FWHM y ancho equivalente
+- ✅ Calcular corrimiento al rojo y velocidad con `u.doppler_optical`
+- ✅ Ajustar líneas superpuestas con `fit_lines`
+
+**Siguiente módulo →** [13 · Cosmología computacional](13-cosmologia.qmd)

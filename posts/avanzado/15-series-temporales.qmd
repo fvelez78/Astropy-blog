@@ -1,16 +1,436 @@
 ---
-title: "15 - Series temporales astronomicas"
-description: "Proximo modulo en preparacion"
+title: "15 · Series temporales astronómicas"
+description: "Analiza curvas de luz con astropy.timeseries: encuentra el período de una estrella variable con Lomb-Scargle y descubre un exoplaneta en tránsito con Box Least Squares"
+author: "Blog AstroPy en Español"
+date: "2026-11-01"
 categories: [avanzado]
 toc: true
+toc-depth: 3
+number-sections: true
 execute:
   echo: true
   warning: false
+  message: false
 ---
 
-<span class="badge-avanzado">Avanzado</span>
+<span class="badge-avanzado">🚀 Avanzado</span>
+
+## El cielo cambia
+
+Muchas estrellas cambian de brillo: algunas **pulsan** (se expanden y
+contraen), otras son **binarias eclipsantes**, y otras tienen **planetas**
+que pasan por delante y bloquean una pequeña fracción de su luz. Una
+**curva de luz** es la serie temporal del brillo de una estrella.
+
+El reto: los datos astronómicos casi nunca están **igualmente espaciados**.
+Desde tierra solo observamos de noche, cuando no hay nubes ni Luna llena.
+Por eso la transformada de Fourier clásica no sirve, y usamos métodos
+diseñados para muestreo irregular.
+
+`astropy.timeseries` ofrece:
+
+| Herramienta | Para qué |
+|---|---|
+| `TimeSeries` | Tabla con una columna de tiempo (`Time`) y datos |
+| `LombScargle` | Periodograma para señales sinusoidales con muestreo irregular |
+| `BoxLeastSquares` | Periodograma para tránsitos (caídas "en forma de caja") |
+| `aggregate_downsample` | Agrupar datos en intervalos de tiempo (*binning*) |
+
+::: {.callout-note}
+## Requisitos previos
+- Módulos 03 (tiempo), 05 (tablas) y 10 (estadística)
+:::
+
+---
+
+## Una estrella variable observada desde tierra
+
+Simulamos una estrella **RR Lyrae** (una pulsante clásica, usada para medir
+distancias en la galaxia) observada durante 40 noches desde un observatorio.
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Simular observaciones nocturnas e irregulares de una RR Lyrae
+# ─────────────────────────────────────────────────────────────────────────────
+
+import numpy as np
+import astropy.units as u
+from astropy.time import Time
+from astropy.timeseries import TimeSeries
+
+rng = np.random.default_rng(15)
+
+periodo_real = 0.56686          # días (valor típico de una RR Lyrae)
+inicio = Time('2026-01-05T00:00:00', scale='utc')
+
+# Tiempos de observación: 40 noches, ~6 h por noche, algunas noches nubladas
+tiempos = []
+for noche in range(40):
+    if rng.random() < 0.3:                       # 30 % de noches perdidas
+        continue
+    n_obs = rng.integers(8, 20)                  # observaciones esa noche
+    horas = np.sort(rng.uniform(0, 6, n_obs))    # entre las 0 y las 6 h
+    tiempos.extend(noche + horas / 24)
+tiempos = np.array(tiempos)                      # días desde el inicio
+
+# Forma de la curva de RR Lyrae: subida rápida y bajada lenta (armónicos)
+fase = (tiempos / periodo_real) % 1
+magnitud = (14.5
+            - 0.45 * np.sin(2 * np.pi * fase)
+            - 0.20 * np.sin(4 * np.pi * fase + 0.6)
+            - 0.08 * np.sin(6 * np.pi * fase + 1.2))
+error = np.full_like(tiempos, 0.02)
+magnitud += rng.normal(0, error)
+
+# TimeSeries: como una Table, pero con una columna especial 'time'
+serie = TimeSeries(time=inicio + tiempos * u.day,
+                   data={'mag': magnitud, 'mag_err': error})
+
+print(f"Observaciones: {len(serie)} en {len(np.unique(tiempos.astype(int)))} noches")
+print(serie[:5])
+```
+
+```{python}
+#| label: fig-curva-cruda
+#| fig-cap: "Curva de luz cruda: a simple vista no se distingue el período"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Graficar la curva de luz en función del tiempo
+# ─────────────────────────────────────────────────────────────────────────────
+
+import matplotlib.pyplot as plt
+
+fig, ax = plt.subplots(figsize=(10, 3.5))
+ax.errorbar(serie.time.datetime64, serie['mag'], yerr=serie['mag_err'],
+            fmt='.', ms=3, alpha=0.6)
+ax.invert_yaxis()                     # magnitudes: más brillante = más arriba
+ax.set_ylabel('Magnitud V')
+ax.set_title('Curva de luz observada')
+fig.autofmt_xdate()
+plt.show()
+```
+
+---
+
+## Periodograma de Lomb–Scargle
+
+El periodograma de Lomb–Scargle prueba miles de frecuencias y mide qué tan
+bien una sinusoide de cada frecuencia describe los datos. El pico más alto
+indica el período más probable.
+
+```{python}
+#| label: fig-lomb-scargle
+#| fig-cap: "Periodograma de Lomb-Scargle: el pico principal marca la frecuencia de pulsación"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Calcular el periodograma sobre frecuencias de 0.5 a 5 ciclos por día
+# ─────────────────────────────────────────────────────────────────────────────
+
+import numpy as np
+import matplotlib.pyplot as plt
+from astropy.timeseries import LombScargle
+
+# Tiempo en días desde la primera observación (número simple)
+t_dias = (serie.time - serie.time[0]).to_value(u.day)
+
+ls = LombScargle(t_dias, serie['mag'], serie['mag_err'])
+
+# autopower elige automáticamente la rejilla de frecuencias;
+# samples_per_peak=20 la hace más fina para precisar mejor el pico
+frecuencia, potencia = ls.autopower(minimum_frequency=0.5, maximum_frequency=5,
+                                    samples_per_peak=20)
+
+mejor_f = frecuencia[np.argmax(potencia)]
+periodo_medido = 1 / mejor_f
+print(f"Período encontrado : {periodo_medido:.5f} días")
+print(f"Período real       : {periodo_real:.5f} días")
+
+# Probabilidad de falsa alarma: ¿podría este pico ser solo ruido?
+fap = ls.false_alarm_probability(potencia.max())
+print(f"Probabilidad de falsa alarma: {fap:.1e}")
+
+fig, ax = plt.subplots(figsize=(10, 3.5))
+ax.plot(frecuencia, potencia, lw=0.8)
+ax.axvline(mejor_f, color='C3', ls='--', lw=1)
+ax.set_xlabel('Frecuencia [ciclos/día]'); ax.set_ylabel('Potencia')
+ax.set_title(f'Lomb–Scargle: pico en P = {periodo_medido:.4f} d')
+plt.show()
+```
 
 ::: {.callout-warning}
-## Modulo en construccion
-Este modulo esta siendo preparado. Vuelve pronto.
+## Cuidado con los "alias"
+¿Ves picos secundarios separados por ~1 ciclo/día? Son **alias**: aparecen
+porque solo observamos de noche, con una periodicidad de 1 día. Un período
+de 0.567 d puede confundirse con 1.3 d o 0.36 d. Siempre verifica doblando
+la curva con el período candidato.
 :::
+
+---
+
+## Doblar la curva de luz (*phase folding*)
+
+Si el período es correcto, al colocar todas las observaciones en un solo
+ciclo (fase entre 0 y 1) la curva se ve limpia.
+
+```{python}
+#| label: fig-doblada
+#| fig-cap: "Curva de luz doblada con el período encontrado y el modelo de Lomb-Scargle"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# fold() convierte los tiempos en fase usando el período
+# ─────────────────────────────────────────────────────────────────────────────
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+# normalize_phase=True → fase de -0.5 a 0.5 en vez de tiempo
+doblada = serie.fold(period=periodo_medido * u.day, normalize_phase=True)
+
+# Modelo de Lomb-Scargle con 3 armónicos para la forma no sinusoidal
+ls3 = LombScargle(t_dias, serie['mag'], serie['mag_err'], nterms=3)
+fase_modelo = np.linspace(-0.5, 0.5, 300)
+t_modelo = fase_modelo * periodo_medido + t_dias[0]
+mag_modelo = ls3.model(t_modelo, mejor_f)
+
+# fold() usa la primera observación como fase 0, igual que t_modelo
+fase_datos = doblada.time.value          # fase sin unidades
+
+fig, ax = plt.subplots(figsize=(8, 4))
+# Dibujamos dos ciclos para ver la forma completa
+for desplazamiento in [0, 1]:
+    ax.errorbar(fase_datos + desplazamiento, doblada['mag'], yerr=doblada['mag_err'],
+                fmt='.', ms=3, color='C0', alpha=0.5)
+    ax.plot(fase_modelo + desplazamiento, mag_modelo, color='C3', lw=2)
+ax.invert_yaxis()
+ax.set_xlabel('Fase'); ax.set_ylabel('Magnitud V')
+ax.set_title(f'RR Lyrae doblada con P = {periodo_medido:.5f} d')
+plt.show()
+
+amplitud = doblada['mag'].max() - doblada['mag'].min()
+print(f"Amplitud de la variación: {amplitud:.2f} mag")
+```
+
+La forma asimétrica (sube rápido, baja despacio) es la "firma" de una RR Lyrae.
+
+---
+
+## Cazar un exoplaneta en tránsito
+
+Ahora simulamos datos tipo **TESS**: observación continua desde el
+espacio, un punto cada 10 minutos durante 27 días. La estrella tiene un
+planeta que bloquea el 0.8 % de su luz cada pocos días.
+
+```{python}
+#| label: fig-tess
+#| fig-cap: "Curva de luz simulada tipo TESS: los tránsitos apenas se distinguen del ruido"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Curva de luz con tránsitos poco profundos + ruido + variabilidad estelar
+# ─────────────────────────────────────────────────────────────────────────────
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+rng = np.random.default_rng(2026)
+
+P_planeta   = 3.5249        # período orbital [días]
+duracion    = 0.12          # duración del tránsito [días] ≈ 3 horas
+profundidad = 0.008         # 0.8 % de caída de flujo
+t0_real     = 1.37          # momento del primer tránsito [días]
+
+t = np.arange(0, 27, 10 / (60 * 24))          # cada 10 minutos
+flujo = np.ones_like(t)
+
+# Tránsito: cuando estamos a menos de duracion/2 del centro de un tránsito
+fase_t = ((t - t0_real + 0.5 * P_planeta) % P_planeta) - 0.5 * P_planeta
+flujo[np.abs(fase_t) < duracion / 2] -= profundidad
+
+# Variabilidad lenta de la estrella (manchas que rotan) + ruido
+flujo *= 1 + 0.003 * np.sin(2 * np.pi * t / 9.1)
+err_flujo = np.full_like(t, 0.003)
+flujo += rng.normal(0, err_flujo)
+
+serie_tess = TimeSeries(time=Time('2026-03-01') + t * u.day,
+                        data={'flujo': flujo, 'flujo_err': err_flujo})
+
+fig, ax = plt.subplots(figsize=(10, 3.5))
+ax.plot(t, flujo, '.', ms=1.5, alpha=0.5)
+ax.set_xlabel('Días'); ax.set_ylabel('Flujo relativo')
+ax.set_title('Curva de luz cruda')
+plt.show()
+```
+
+### Paso 1: quitar la variabilidad lenta (*detrending*)
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Dividir por una versión suavizada de la curva (mediana móvil de 1 día)
+# Así eliminamos la variación estelar lenta y conservamos los tránsitos cortos
+# ─────────────────────────────────────────────────────────────────────────────
+
+from scipy.ndimage import median_filter
+
+ventana = int(1.0 / (10 / (60 * 24)))       # 1 día expresado en número de puntos
+tendencia = median_filter(flujo, size=ventana, mode='nearest')
+flujo_plano = flujo / tendencia
+
+print(f"Dispersión antes : {np.std(flujo) * 1e3:.2f} ppt")
+print(f"Dispersión después: {np.std(flujo_plano) * 1e3:.2f} ppt  (ppt = partes por mil)")
+```
+
+### Paso 2: Box Least Squares
+
+Un tránsito no es una sinusoide sino una **caja**: el flujo cae de golpe,
+se mantiene y sube. `BoxLeastSquares` (BLS) busca exactamente esa forma.
+
+```{python}
+#| label: fig-bls
+#| fig-cap: "Periodograma BLS: el pico más alto revela el período orbital del planeta"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Buscar tránsitos con períodos entre 1 y 10 días
+# ─────────────────────────────────────────────────────────────────────────────
+
+import numpy as np
+import matplotlib.pyplot as plt
+from astropy.timeseries import BoxLeastSquares
+
+bls = BoxLeastSquares(t * u.day, flujo_plano, dy=err_flujo)
+
+# Períodos a probar y duraciones de tránsito posibles
+periodos = np.exp(np.linspace(np.log(1), np.log(10), 20_000)) * u.day
+duraciones = [0.05, 0.08, 0.12, 0.16] * u.day
+
+resultado = bls.power(periodos, duraciones)
+
+i = np.argmax(resultado.power)
+P_bls  = resultado.period[i]
+t0_bls = resultado.transit_time[i]
+dur_bls = resultado.duration[i]
+prof_bls = resultado.depth[i]
+
+print(f"Período    : {P_bls:.4f}   (real: {P_planeta} d)")
+print(f"Duración   : {dur_bls.to(u.hour):.2f}")
+print(f"Profundidad: {prof_bls * 100:.3f} %   (real: {profundidad * 100} %)")
+print(f"Primer tránsito en t = {t0_bls:.3f}")
+
+# La profundidad sale un poco menor que la real: el modelo de "caja" y el
+# filtro de mediana son aproximaciones. Un ajuste con un modelo físico de
+# tránsito (por ejemplo con la librería batman) la recuperaría mejor.
+
+fig, ax = plt.subplots(figsize=(10, 3.5))
+ax.plot(resultado.period, resultado.power, lw=0.7)
+ax.axvline(P_bls.value, color='C3', ls='--', lw=1)
+ax.set_xscale('log')
+ax.set_xlabel('Período [días]'); ax.set_ylabel('Potencia BLS')
+plt.show()
+```
+
+### Paso 3: doblar, promediar y caracterizar el planeta
+
+```{python}
+#| label: fig-transito
+#| fig-cap: "Tránsito doblado: puntos individuales (gris) y promedios cada 20 minutos (rojo)"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Doblar la curva con el período BLS y promediar en bins de tiempo
+# ─────────────────────────────────────────────────────────────────────────────
+
+import numpy as np
+import matplotlib.pyplot as plt
+from astropy.timeseries import aggregate_downsample
+
+serie_plana = TimeSeries(time=Time('2026-03-01') + t * u.day,
+                         data={'flujo': flujo_plano})
+
+# epoch_time: un instante de tránsito → el tránsito queda centrado en 0
+doblada_t = serie_plana.fold(period=P_bls, epoch_time=Time('2026-03-01') + t0_bls)
+
+# Promediar en bins de 20 minutos
+binned = aggregate_downsample(doblada_t, time_bin_size=20 * u.min)
+
+horas = doblada_t.time.to_value(u.hour)
+fig, ax = plt.subplots(figsize=(8, 4))
+ax.plot(horas, doblada_t['flujo'], '.', ms=2, color='gray', alpha=0.4)
+ax.plot(binned.time_bin_center.to_value(u.hour), binned['flujo'], 'o', color='C3', ms=4)
+ax.set_xlim(-8, 8)
+ax.set_xlabel('Horas desde el centro del tránsito'); ax.set_ylabel('Flujo relativo')
+plt.show()
+```
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Del tránsito al planeta: radio y distancia a la estrella
+# Profundidad ≈ (R_planeta / R_estrella)²
+# ─────────────────────────────────────────────────────────────────────────────
+
+import numpy as np
+from astropy import constants as const
+
+R_estrella = 1.05 * const.R_sun        # supuesto: estrella parecida al Sol
+M_estrella = 1.02 * const.M_sun
+
+R_planeta = np.sqrt(prof_bls) * R_estrella
+print(f"Radio del planeta: {R_planeta.to(u.R_jup):.2f} = {R_planeta.to(u.R_earth):.1f}")
+
+# Semieje mayor con la tercera ley de Kepler (módulo 14)
+a = ((const.G * M_estrella * P_bls**2 / (4 * np.pi**2)) ** (1 / 3)).to(u.au)
+print(f"Distancia a la estrella: {a:.4f}")
+print("→ Un planeta del tamaño de Júpiter muy cerca de su estrella: un 'Júpiter caliente'")
+```
+
+---
+
+## Ejercicio
+
+Con la curva de luz plana `flujo_plano`:
+
+1. Usa el método `compute_stats` de BLS para obtener la profundidad de los
+   tránsitos **pares** e **impares** por separado
+   (`bls.compute_stats(P_bls, dur_bls, t0_bls)`, claves `depth_even` y `depth_odd`)
+2. Si son muy distintas, la señal sería en realidad una **binaria eclipsante**
+   con el doble de período. ¿Es nuestro caso un planeta?
+
+::: {.callout-tip collapse="true"}
+## Ver solución
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# SOLUCIÓN: prueba de tránsitos pares vs impares
+# ─────────────────────────────────────────────────────────────────────────────
+
+stats = bls.compute_stats(P_bls, dur_bls, t0_bls)
+
+# Cada valor es (profundidad, incertidumbre)
+prof_par,   err_par   = stats['depth_even']
+prof_impar, err_impar = stats['depth_odd']
+
+print(f"Profundidad tránsitos pares  : {prof_par * 100:.3f} ± {err_par * 100:.3f} %")
+print(f"Profundidad tránsitos impares: {prof_impar * 100:.3f} ± {err_impar * 100:.3f} %")
+
+# Diferencia en unidades de su incertidumbre combinada
+diferencia_sigma = abs(prof_par - prof_impar) / np.hypot(err_par, err_impar)
+print(f"Diferencia: {diferencia_sigma:.1f} σ")
+
+if diferencia_sigma < 3:
+    print("→ Profundidades consistentes: compatible con un PLANETA ✓")
+else:
+    print("→ Profundidades distintas: probable BINARIA ECLIPSANTE")
+
+print(f"\nTránsitos individuales detectados: {len(stats['transit_times'])}")
+```
+:::
+
+---
+
+## ¿Qué aprendiste en este módulo? {.seccion-aprendiste}
+
+- ✅ Crear y manejar `TimeSeries` con tiempos astronómicos
+- ✅ Encontrar períodos en datos irregulares con `LombScargle`
+- ✅ Evaluar la significancia con la probabilidad de falsa alarma
+- ✅ Reconocer alias causados por el muestreo nocturno
+- ✅ Doblar curvas de luz con `fold()` y promediar con `aggregate_downsample`
+- ✅ Quitar tendencias lentas antes de buscar tránsitos
+- ✅ Detectar y caracterizar un exoplaneta con `BoxLeastSquares`
+
+**Siguiente módulo →** [16 · Extensiones y modelos propios](16-extensiones.qmd)

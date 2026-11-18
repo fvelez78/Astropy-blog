@@ -21,3 +21,6 @@ data/*.fits.gz
 
 /.quarto/
 **/*.quarto_ipynb
+
+*.fits
+noche_simulada/

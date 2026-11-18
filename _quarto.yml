@@ -1,79 +1,81 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# _quarto.yml · Configuración del blog "AstroPy en Español"
+# Tema: "Observatorio nocturno" (modo oscuro)
+# ─────────────────────────────────────────────────────────────────────────────
+
 project:
   type: website
   output-dir: _site
+
+lang: es                      # etiquetas y fechas en español ("Autor/a", "1 de noviembre")
 
 website:
   title: "AstroPy en Español"
   description: "Aprende astronomía computacional con Python y Astropy, desde cero hasta análisis profesional"
   favicon: assets/logos/favicon.ico
+  page-navigation: true       # enlaces "anterior / siguiente" al pie de cada módulo
+  back-to-top-navigation: true
 
+  # ── Barra superior ──────────────────────────────────────────────────────────
   navbar:
+    # El título "AstroPy en Español" ya lleva a la página de inicio
     left:
-      - href: index.qmd
-        text: Inicio
-      - text: "Basico"
-        menu:
-          - href: posts/basico/01-introduccion.qmd
-            text: "01 - Introduccion a Astropy"
-          - href: posts/basico/02-unidades.qmd
-            text: "02 - Unidades y constantes"
-          - href: posts/basico/03-tiempo.qmd
-            text: "03 - Tiempo astronomico"
-          - href: posts/basico/04-coordenadas.qmd
-            text: "04 - Coordenadas celestes"
-          - href: posts/basico/05-tablas.qmd
-            text: "05 - Tablas astronomicas"
-      - text: "Intermedio"
-        menu:
-          - href: posts/intermedio/06-fits.qmd
-            text: "06 - Archivos FITS"
-          - href: posts/intermedio/07-wcs.qmd
-            text: "07 - WCS del pixel al cielo"
-          - href: posts/intermedio/08-fotometria.qmd
-            text: "08 - Fotometria de apertura"
-          - href: posts/intermedio/09-visualizacion.qmd
-            text: "09 - Visualizacion astronomica"
-          - href: posts/intermedio/10-estadistica.qmd
-            text: "10 - Estadistica y modelado"
-          - href: posts/intermedio/11-catalogos.qmd
-            text: "11 - Catalogos en linea"
-      - text: "Avanzado"
-        menu:
-          - href: posts/avanzado/12-espectroscopia.qmd
-            text: "12 - Espectroscopia"
-          - href: posts/avanzado/13-cosmologia.qmd
-            text: "13 - Cosmologia computacional"
-          - href: posts/avanzado/14-orbital.qmd
-            text: "14 - Mecanica orbital"
-          - href: posts/avanzado/15-series-temporales.qmd
-            text: "15 - Series temporales"
-          - href: posts/avanzado/16-extensiones.qmd
-            text: "16 - Extensiones propias"
-          - href: posts/avanzado/17-pipeline.qmd
-            text: "17 - Pipeline completo"
+      - href: posts/basico/01-introduccion.qmd
+        text: Módulos
       - href: sobre.qmd
         text: Sobre el blog
     right:
       - icon: github
-        href: https://github.com/tu-usuario/astropy-blog
+        href: https://github.com/fvelez78/astropy-blog
         aria-label: GitHub
 
+  # ── Menú lateral con los tres niveles ───────────────────────────────────────
+  # Los títulos de cada módulo se toman automáticamente de su encabezado YAML
+  sidebar:
+    style: "docked"
+    search: true
+    collapse-level: 2
+    contents:
+      - text: "Inicio"
+        href: index.qmd
+      - section: "Nivel 1 · Básico"
+        contents:
+          - posts/basico/01-introduccion.qmd
+          - posts/basico/02-unidades.qmd
+          - posts/basico/03-tiempo.qmd
+          - posts/basico/04-coordenadas.qmd
+          - posts/basico/05-tablas.qmd
+      - section: "Nivel 2 · Intermedio"
+        contents:
+          - posts/intermedio/06-fits.qmd
+          - posts/intermedio/07-wcs.qmd
+          - posts/intermedio/08-fotometria.qmd
+          - posts/intermedio/09-visualizacion.qmd
+          - posts/intermedio/10-estadistica.qmd
+          - posts/intermedio/11-catalogos.qmd
+      - section: "Nivel 3 · Avanzado"
+        contents:
+          - posts/avanzado/12-espectroscopia.qmd
+          - posts/avanzado/13-cosmologia.qmd
+          - posts/avanzado/14-orbital.qmd
+          - posts/avanzado/15-series-temporales.qmd
+          - posts/avanzado/16-extensiones.qmd
+          - posts/avanzado/17-pipeline.qmd
+
   page-footer:
-    left: "Blog hecho con Quarto"
-    right: "Datos: Astropy Project"
+    left: "AstroPy en Español · Blog de astronomía computacional"
+    right: "Hecho con [Quarto](https://quarto.org) y [Astropy](https://www.astropy.org)"
 
 format:
   html:
-    theme:
-      light: [cosmo, assets/css/estilo-blog.scss]
-      dark:  [darkly, assets/css/estilo-blog.scss]
-    highlight-style: github
+    theme: [darkly, assets/css/estilo-blog.scss]   # base oscura + estilos propios
+    highlight-style: nord                            # colores de código para fondo oscuro
     code-copy: true
     code-tools: true
     toc: true
+    toc-location: right
     toc-depth: 3
-    toc-title: "En esta entrada"
-    number-sections: false
+    toc-title: "En esta página"
     smooth-scroll: true
 
 execute:

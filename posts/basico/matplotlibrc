@@ -1,0 +1,37 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# matplotlibrc · Estilo de gráficas para el tema oscuro "Observatorio nocturno"
+#
+# Matplotlib lee automáticamente un archivo llamado 'matplotlibrc' que esté en
+# la misma carpeta desde donde se ejecuta el código. Quarto ejecuta cada módulo
+# desde su carpeta, así que TODAS las figuras de esta carpeta usan este estilo
+# sin tener que modificar el código de los módulos.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Fondo de la figura y de los ejes: el mismo azul de las tarjetas del blog
+figure.facecolor  : 0f1f30
+axes.facecolor    : 0f1f30
+savefig.facecolor : 0f1f30
+
+# Textos, etiquetas y marcas en gris claro (legibles sobre el fondo oscuro)
+text.color        : cdd7e1
+axes.labelcolor   : cdd7e1
+axes.titlecolor   : f1f5f9
+xtick.color       : 9fb0c1
+ytick.color       : 9fb0c1
+axes.edgecolor    : 3a5068
+
+# Cuadrícula y leyenda
+grid.color        : 22384d
+legend.facecolor  : 0b1622
+legend.edgecolor  : 3a5068
+legend.labelcolor : cdd7e1
+
+# Paleta de colores brillantes para fondo oscuro (C0, C1, ... C9)
+# C0 cian · C1 ámbar · C2 verde · C3 rojo · C7 gris claro (reemplaza al negro)
+axes.prop_cycle   : cycler('color', ['5fb8d6', 'f4b860', '6fcf97', 'f2777a', 'b39ddb', 'd4a373', 'f49ac1', 'c8d2dc', 'd4d77a', '7fdbda'])
+
+# Paredes de los gráficos 3D (módulo 08): azul oscuro semitransparente
+axes3d.xaxis.panecolor : (0.08, 0.16, 0.24, 0.6)
+axes3d.yaxis.panecolor : (0.08, 0.16, 0.24, 0.6)
+axes3d.zaxis.panecolor : (0.08, 0.16, 0.24, 0.6)
+

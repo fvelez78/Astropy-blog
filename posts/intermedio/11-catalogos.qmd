@@ -1,16 +1,391 @@
 ---
-title: "11 - Consultas a catalogos en linea"
-description: "Proximo modulo en preparacion"
+title: "11 · Consultas a catálogos en línea"
+description: "Consulta bases de datos astronómicas reales desde Python con astroquery: Simbad, VizieR (Hipparcos, Gaia) y el NASA Exoplanet Archive"
+author: "Blog AstroPy en Español"
+date: "2026-11-01"
 categories: [intermedio]
 toc: true
+toc-depth: 3
+number-sections: true
 execute:
   echo: true
   warning: false
+  message: false
 ---
 
-<span class="badge-intermedio">Intermedio</span>
+<span class="badge-inter">🔭 Intermedio</span>
 
-::: {.callout-warning}
-## Modulo en construccion
-Este modulo esta siendo preparado. Vuelve pronto.
+## El cielo ya está catalogado
+
+No hace falta un telescopio para trabajar con datos astronómicos reales.
+Misiones como **Hipparcos** y **Gaia** midieron la posición, distancia y
+brillo de millones de estrellas, y todo está disponible gratis en internet.
+
+**astroquery** es la librería afiliada a Astropy que conecta Python con
+decenas de estos servicios. Todas las consultas devuelven una `Table` de
+Astropy (módulo 05), así que ya sabes trabajar con los resultados.
+
+| Servicio | Qué contiene | Módulo de astroquery |
+|---|---|---|
+| **Simbad** (CDS, Estrasburgo) | Identificación y datos básicos de ~20 millones de objetos | `astroquery.simbad` |
+| **VizieR** (CDS) | Más de 25 000 catálogos publicados | `astroquery.vizier` |
+| **NASA Exoplanet Archive** | Todos los exoplanetas confirmados | `astroquery.ipac.nexsci.nasa_exoplanet_archive` |
+| **Gaia Archive** (ESA) | ~1 800 millones de estrellas | `astroquery.gaia` |
+| **MAST** (STScI) | Hubble, JWST, TESS, Kepler | `astroquery.mast` |
+
+::: {.callout-note}
+## Requisitos previos
+- Módulos 04 (coordenadas) y 05 (tablas)
+- Instalar: `pip install astroquery`
+- **Conexión a internet**
 :::
+
+::: {.callout-tip}
+## Buena práctica: consulta una vez, guarda siempre
+Los servicios en línea pueden estar lentos o caídos. En este módulo usamos
+un patrón profesional: **si el archivo ya existe en disco, lo leemos; si no,
+consultamos y lo guardamos**. Así tu análisis es reproducible y no
+dependes de la red cada vez que ejecutas el código.
+:::
+
+---
+
+## Simbad: ¿qué es este objeto?
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Consultar un objeto por su nombre en Simbad
+# Envolvemos la consulta en try/except: si no hay internet,
+# el blog sigue funcionando y muestra un aviso
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astroquery.simbad import Simbad
+
+try:
+    # query_object acepta cualquier nombre que Simbad reconozca:
+    # 'M31', 'Andromeda Galaxy', 'NGC 224'... todos son el mismo objeto
+    resultado = Simbad.query_object('M31')
+    print(resultado)
+except Exception as error:
+    print(f"No se pudo consultar Simbad: {error}")
+```
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# ¿Qué objetos hay alrededor de una posición? Búsqueda por cono
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astroquery.simbad import Simbad
+from astropy.coordinates import SkyCoord
+import astropy.units as u
+
+try:
+    # Centro del cúmulo de las Pléyades (M45)
+    pleyades_centro = SkyCoord(ra=56.75 * u.deg, dec=24.12 * u.deg)
+
+    # Todos los objetos de Simbad a menos de 5 arcmin
+    vecinos = Simbad.query_region(pleyades_centro, radius=5 * u.arcmin)
+    print(f"Objetos de Simbad a menos de 5' del centro de M45: {len(vecinos)}")
+    print(vecinos[:5])      # primeras 5 filas
+except Exception as error:
+    print(f"No se pudo consultar Simbad: {error}")
+```
+
+---
+
+## VizieR: el catálogo Hipparcos de las Pléyades
+
+VizieR identifica cada catálogo con un código. El catálogo principal de
+Hipparcos es `I/239/hip_main`. Pediremos solo las columnas que necesitamos:
+
+| Columna | Significado |
+|---|---|
+| `HIP` | Número en el catálogo Hipparcos |
+| `RAICRS`, `DEICRS` | Coordenadas (grados) |
+| `Vmag` | Magnitud visual aparente |
+| `Plx` | Paralaje en milisegundos de arco (mas) |
+| `B-V` | Índice de color (azul − visual): negativo = azul, positivo = rojo |
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Consultar Hipparcos alrededor de las Pléyades con caché en disco
+# ─────────────────────────────────────────────────────────────────────────────
+
+import os
+from astropy.table import Table
+from astropy.coordinates import SkyCoord
+import astropy.units as u
+
+archivo = 'pleyades_hipparcos.ecsv'   # aquí guardamos la consulta
+pleyades = None                       # quedará en None si todo falla
+
+if os.path.exists(archivo):
+    # Caso 1: ya consultamos antes → leemos del disco (instantáneo)
+    pleyades = Table.read(archivo)
+    print(f"Leído desde disco: {len(pleyades)} estrellas")
+else:
+    # Caso 2: primera vez → consultamos VizieR
+    try:
+        from astroquery.vizier import Vizier
+
+        # Configurar el consultor: columnas deseadas y sin límite de filas (-1)
+        consultor = Vizier(catalog='I/239/hip_main',
+                           columns=['HIP', 'RAICRS', 'DEICRS', 'Vmag', 'Plx', 'B-V'],
+                           row_limit=-1)
+
+        centro = SkyCoord(ra=56.75 * u.deg, dec=24.12 * u.deg)
+        respuesta = consultor.query_region(centro, radius=2 * u.deg)
+
+        # La respuesta es una lista de tablas (una por catálogo): tomamos la primera
+        pleyades = respuesta[0]
+        pleyades.write(archivo, overwrite=True)   # guardar para la próxima vez
+        print(f"Consultado en VizieR: {len(pleyades)} estrellas (guardado en disco)")
+    except Exception as error:
+        print(f"No se pudo consultar VizieR: {error}")
+
+if pleyades is not None:
+    print(pleyades[:8])
+```
+
+### Filtrar los miembros del cúmulo por paralaje
+
+Las estrellas de las Pléyades están todas a la misma distancia (~136 pc),
+así que tienen **paralaje parecida** (~7.3 mas). Las estrellas de fondo y
+de primer plano tienen paralajes diferentes.
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Separar miembros del cúmulo de las estrellas de campo
+# La distancia en parsecs es 1000 / paralaje (en mas)
+# ─────────────────────────────────────────────────────────────────────────────
+
+import numpy as np
+import astropy.units as u
+
+if pleyades is not None:
+    # Pasamos a pandas: los datos faltantes del catálogo quedan como NaN
+    df_ple = pleyades.to_pandas()
+
+    # Miembros: paralaje entre 6.5 y 8.5 mas (≈ 118–154 pc)
+    df_ple['miembro'] = df_ple['Plx'].between(6.5, 8.5)
+
+    # Distancia de cada estrella en parsecs
+    df_ple['dist_pc'] = 1000 / df_ple['Plx']
+
+    miembros = df_ple[df_ple['miembro']]
+    print(f"Estrellas en el campo  : {len(df_ple)}")
+    print(f"Miembros del cúmulo    : {len(miembros)}")
+    print(f"Distancia media        : {miembros['dist_pc'].mean():.1f} pc")
+    print(f"                       = {(miembros['dist_pc'].mean() * u.pc).to(u.lyr):.0f}")
+else:
+    print("Sin datos: ejecuta este módulo con conexión a internet.")
+```
+
+### Diagrama color–magnitud (Hertzsprung–Russell)
+
+Con la distancia podemos calcular la **magnitud absoluta** (el brillo
+real de cada estrella):
+
+$$M_V = V + 5 \log_{10}(\varpi) - 10 \quad \text{(con } \varpi \text{ en mas)}$$
+
+```{python}
+#| label: fig-hr-pleyades
+#| fig-cap: "Diagrama color-magnitud de las Pléyades con datos de Hipparcos"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Diagrama HR: color (B-V) vs magnitud absoluta
+# Los miembros del cúmulo dibujan la "secuencia principal"
+# ─────────────────────────────────────────────────────────────────────────────
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+if pleyades is not None:
+    # Magnitud absoluta; las paralajes ≤ 0 (ruido de medición) quedan como NaN
+    plx_valida = df_ple['Plx'].where(df_ple['Plx'] > 0)
+    df_ple['M_V'] = df_ple['Vmag'] + 5 * np.log10(plx_valida) - 10
+
+    campo    = df_ple[~df_ple['miembro']]
+    miembros = df_ple[df_ple['miembro']]
+
+    fig, ax = plt.subplots(figsize=(6, 6))
+    ax.scatter(campo['B-V'], campo['M_V'], s=12, color='gray', alpha=0.5,
+               label='Estrellas de campo')
+    ax.scatter(miembros['B-V'], miembros['M_V'], s=25, color='C0',
+               label='Miembros de las Pléyades')
+    ax.invert_yaxis()               # brillantes arriba (magnitudes pequeñas)
+    ax.set_xlabel('Índice de color B − V  (azul ← → rojo)')
+    ax.set_ylabel('Magnitud absoluta $M_V$')
+    ax.set_title('Diagrama color–magnitud de las Pléyades')
+    ax.legend()
+    plt.show()
+else:
+    print("Sin datos: ejecuta este módulo con conexión a internet.")
+```
+
+---
+
+## NASA Exoplanet Archive
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Exoplanetas confirmados a menos de 30 parsecs del Sol
+# La tabla 'pscomppars' tiene un registro por planeta con los mejores valores
+# ─────────────────────────────────────────────────────────────────────────────
+
+import os
+from astropy.table import Table
+
+archivo_exo = 'exoplanetas_cercanos.ecsv'
+exo = None
+
+if os.path.exists(archivo_exo):
+    exo = Table.read(archivo_exo)
+    print(f"Leído desde disco: {len(exo)} planetas")
+else:
+    try:
+        from astroquery.ipac.nexsci.nasa_exoplanet_archive import NasaExoplanetArchive
+
+        # select: columnas a pedir | where: condición (sintaxis SQL/ADQL)
+        resultado = NasaExoplanetArchive.query_criteria(
+            table='pscomppars',
+            select='pl_name, hostname, discoverymethod, disc_year, '
+                   'pl_orbper, pl_rade, pl_bmasse, sy_dist',
+            where='sy_dist < 30',
+        )
+        # Convertimos a Table simple (sin columnas especiales) y guardamos
+        exo = Table(resultado[['pl_name', 'hostname', 'discoverymethod', 'disc_year',
+                               'pl_orbper', 'pl_rade', 'pl_bmasse', 'sy_dist']])
+        exo.write(archivo_exo, overwrite=True)
+        print(f"Consultado: {len(exo)} planetas (guardado en disco)")
+    except Exception as error:
+        print(f"No se pudo consultar el NASA Exoplanet Archive: {error}")
+
+if exo is not None:
+    print(exo['pl_name', 'discoverymethod', 'pl_orbper', 'sy_dist'][:10])
+```
+
+```{python}
+#| label: fig-exoplanetas
+#| fig-cap: "Exoplanetas cercanos: período orbital vs radio, coloreados por método de descubrimiento"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Graficar período vs radio por método de descubrimiento
+# to_pandas() convierte la tabla y transforma valores faltantes en NaN
+# ─────────────────────────────────────────────────────────────────────────────
+
+import matplotlib.pyplot as plt
+
+if exo is not None:
+    df = exo.to_pandas()   # los valores enmascarados (faltantes) quedan como NaN
+
+    # Conteo por método de descubrimiento
+    print("Planetas por método de descubrimiento:")
+    print(df['discoverymethod'].value_counts().to_string())
+
+    fig, ax = plt.subplots(figsize=(7, 5))
+    for metodo, grupo in df.groupby('discoverymethod'):
+        ax.scatter(grupo['pl_orbper'], grupo['pl_rade'], s=25, label=metodo, alpha=0.8)
+    ax.set_xscale('log'); ax.set_yscale('log')
+    ax.axhline(1, color='green', ls=':', lw=1)             # radio de la Tierra
+    ax.axhline(11.2, color='orange', ls=':', lw=1)         # radio de Júpiter
+    ax.set_xlabel('Período orbital [días]')
+    ax.set_ylabel('Radio [radios terrestres]')
+    ax.set_title('Exoplanetas a menos de 30 pc')
+    ax.legend(fontsize=8)
+    plt.show()
+else:
+    print("Sin datos: ejecuta este módulo con conexión a internet.")
+```
+
+::: {.callout-tip}
+## ¿Por qué faltan radios?
+Los planetas descubiertos por **velocidad radial** solo tienen masa mínima,
+no radio: el método mide el "bamboleo" de la estrella, no la sombra del
+planeta. Solo los descubiertos por **tránsito** tienen radio medido.
+:::
+
+---
+
+## Gaia con ADQL (avanzado)
+
+El archivo de Gaia acepta consultas en **ADQL**, un SQL adaptado a la
+astronomía, con funciones para geometría en la esfera celeste. Este
+bloque no se ejecuta en el blog porque el servicio de Gaia puede tardar
+varios minutos; cópialo y pruébalo en tu computador.
+
+```{python}
+#| eval: false
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Las 20 estrellas más brillantes de Gaia DR3 a menos de 1° de las Pléyades
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astroquery.gaia import Gaia
+
+consulta = """
+SELECT TOP 20
+       source_id, ra, dec, parallax, phot_g_mean_mag, bp_rp
+FROM   gaiadr3.gaia_source
+WHERE  1 = CONTAINS(POINT('ICRS', ra, dec),
+                    CIRCLE('ICRS', 56.75, 24.12, 1.0))
+       AND parallax BETWEEN 6.5 AND 8.5
+ORDER  BY phot_g_mean_mag ASC
+"""
+
+trabajo = Gaia.launch_job(consulta)     # envía la consulta al servidor
+estrellas_gaia = trabajo.get_results()  # descarga el resultado como Table
+print(estrellas_gaia)
+```
+
+---
+
+## Ejercicio
+
+Usando la tabla `exo` de exoplanetas cercanos:
+
+1. Encuentra el planeta **más cercano** al Sol
+2. ¿Cuántos planetas se descubrieron **antes del año 2000**?
+3. ¿Cuál es el año con más descubrimientos?
+
+::: {.callout-tip collapse="true"}
+## Ver solución
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# SOLUCIÓN: preguntas sobre la tabla de exoplanetas
+# ─────────────────────────────────────────────────────────────────────────────
+
+if exo is not None:
+    df = exo.to_pandas()
+
+    # Paso 1: fila con la distancia mínima
+    mas_cercano = df.loc[df['sy_dist'].idxmin()]
+    print(f"Planeta más cercano: {mas_cercano['pl_name']} "
+          f"a {mas_cercano['sy_dist']:.2f} pc")
+
+    # Paso 2: descubiertos antes del 2000
+    antiguos = (df['disc_year'] < 2000).sum()
+    print(f"Descubiertos antes del 2000: {antiguos}")
+
+    # Paso 3: año con más descubrimientos
+    por_anio = df['disc_year'].value_counts()
+    print(f"Año récord: {int(por_anio.idxmax())} con {por_anio.max()} planetas")
+else:
+    print("Sin datos: ejecuta este módulo con conexión a internet.")
+```
+:::
+
+---
+
+## ¿Qué aprendiste en este módulo? {.seccion-aprendiste}
+
+- ✅ Qué servicios astronómicos existen y qué contienen
+- ✅ Consultar objetos por nombre y por región en Simbad
+- ✅ Descargar catálogos de VizieR eligiendo columnas
+- ✅ Filtrar miembros de un cúmulo por paralaje y hacer un diagrama HR
+- ✅ Consultar el NASA Exoplanet Archive con condiciones
+- ✅ Escribir consultas ADQL para Gaia
+- ✅ El patrón "consulta una vez y guarda en disco" para análisis reproducibles
+
+**Siguiente módulo →** [12 · Espectroscopía con specutils](../avanzado/12-espectroscopia.qmd)

@@ -1,66 +1,78 @@
 ---
-title: "AstroPy en Español"
-subtitle: "Astronomia computacional con Python, paso a paso"
+pagetitle: "AstroPy en Español"
 page-layout: full
 toc: false
+sidebar: false
+code-tools: false
 ---
 
-Bienvenido a este blog dedicado a aprender **Astropy** desde cero.
-No necesitas ser fisico ni matematico avanzado: solo tener nociones basicas
-de Python y mucha curiosidad por el universo.
+::: {.hero}
+[Astronomía computacional con Python]{.hero-kicker}
 
----
+[Aprende Astropy desde cero]{.hero-title}
 
-## Niveles de aprendizaje
+[Del primer `import` a un pipeline de reducción de datos: 17 módulos prácticos, con código comentado línea a línea y ejemplos que puedes ejecutar en tu computador.]{.hero-lead}
 
-:::: {.columns}
-
-::: {.column width="33%"}
-### Basico
-Los cimientos: unidades, tiempo, coordenadas y tablas.
-Aprende el "idioma" de Astropy antes de tocar datos reales.
-
-[Ir al nivel basico](posts/basico/01-introduccion.qmd)
+[Empezar por el módulo 01](posts/basico/01-introduccion.qmd){.btn .btn-primary .btn-lg}
+[Ver los módulos](#niveles){.btn .btn-outline-secondary .btn-lg}
 :::
 
-::: {.column width="33%"}
-### Intermedio
-Imagenes FITS, fotometria, visualizacion y consultas
-a catalogos astronomicos en linea.
+::: {.seccion-home #niveles}
+[Ruta de aprendizaje]{.seccion-kicker}
 
-[Ir al nivel intermedio](posts/intermedio/06-fits.qmd)
+::: {.niveles}
+::: {.nivel-card .nivel-basico}
+[Nivel 1 · 5 módulos]{.nivel-tag}
+
+**Básico**
+
+Unidades, tiempo, coordenadas y tablas: el idioma de Astropy antes de tocar datos reales.
+
+[Empezar →](posts/basico/01-introduccion.qmd)
 :::
 
-::: {.column width="33%"}
-### Avanzado
-Espectros, cosmologia, mecanica orbital y un pipeline
-completo de reduccion de datos.
+::: {.nivel-card .nivel-inter}
+[Nivel 2 · 6 módulos]{.nivel-tag}
 
-[Ir al nivel avanzado](posts/avanzado/12-espectroscopia.qmd)
+**Intermedio**
+
+Imágenes FITS, WCS, fotometría, visualización, estadística y catálogos en línea.
+
+[Empezar →](posts/intermedio/06-fits.qmd)
 :::
 
-::::
+::: {.nivel-card .nivel-avanzado}
+[Nivel 3 · 6 módulos]{.nivel-tag}
 
----
+**Avanzado**
 
-## Modulos disponibles
+Espectroscopía, cosmología, órbitas, exoplanetas y un pipeline completo de reducción.
 
-| Num | Titulo                         | Nivel       |
-|-----|--------------------------------|-------------|
-| 01  | Introduccion a Astropy         | Basico      |
-| 02  | Unidades y constantes          | Basico      |
-| 03  | Tiempo astronomico             | Basico      |
-| 04  | Coordenadas celestes           | Basico      |
-| 05  | Tablas astronomicas            | Basico      |
-| 06  | Archivos FITS                  | Intermedio  |
-| 07  | WCS: del pixel al cielo        | Intermedio  |
-| 08  | Fotometria de apertura         | Intermedio  |
-| 09  | Visualizacion astronomica      | Intermedio  |
-| 10  | Estadistica y modelado         | Intermedio  |
-| 11  | Catalogos en linea             | Intermedio  |
-| 12  | Espectroscopia                 | Avanzado    |
-| 13  | Cosmologia computacional       | Avanzado    |
-| 14  | Mecanica orbital               | Avanzado    |
-| 15  | Series temporales              | Avanzado    |
-| 16  | Extensiones propias            | Avanzado    |
-| 17  | Pipeline completo              | Avanzado    |
+[Empezar →](posts/avanzado/12-espectroscopia.qmd)
+:::
+:::
+:::
+
+::: {.seccion-home}
+[Lo que vas a construir]{.seccion-kicker}
+
+::: {.destacados}
+::: {.destacado}
+![](assets/images/destacado-estrella3d.png)
+
+**Una estrella en 3D** · modelo y residuos de su luz · [Módulo 08](posts/intermedio/08-fotometria.qmd)
+:::
+
+::: {.destacado}
+![](assets/images/destacado-marte.png)
+
+**El bucle de Marte** · movimiento retrógrado real · [Módulo 14](posts/avanzado/14-orbital.qmd)
+:::
+
+::: {.destacado}
+![](assets/images/destacado-exoplaneta.png)
+
+**Un exoplaneta** · detectado por su tránsito · [Módulo 15](posts/avanzado/15-series-temporales.qmd)
+:::
+:::
+:::

@@ -1,0 +1,13 @@
+# %ECSV 1.0
+# ---
+# datatype:
+# - {name: nombre, datatype: string}
+# - {name: magnitud_V, datatype: float64}
+# - {name: distancia_pc, unit: pc, datatype: float64}
+# schema: astropy-2.0
+nombre magnitud_V distancia_pc
+Sirio -1.46 2.64
+Canopus -0.72 95.1
+"Rigil Kent." -0.27 1.34
+Arcturus -0.05 11.26
+Vega 0.03 7.68

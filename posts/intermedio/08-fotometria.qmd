@@ -1,16 +1,748 @@
 ---
-title: "08 - Fotometria de apertura"
-description: "Proximo modulo en preparacion"
+title: "08 · Fotometría de apertura"
+description: "Mide el brillo de las estrellas en una imagen: detección de fuentes, aperturas, resta del fondo y magnitudes instrumentales con photutils"
+author: "Blog AstroPy en Español"
+date: "2026-11-01"
 categories: [intermedio]
 toc: true
+toc-depth: 3
+number-sections: true
 execute:
   echo: true
   warning: false
+  message: false
 ---
 
-<span class="badge-intermedio">Intermedio</span>
+<span class="badge-inter">🔭 Intermedio</span>
 
-::: {.callout-warning}
-## Modulo en construccion
-Este modulo esta siendo preparado. Vuelve pronto.
+## ¿Qué es la fotometría?
+
+**Fotometría** es medir cuánta luz nos llega de un objeto. Es la base de
+gran parte de la astronomía: con ella se descubren exoplanetas (la estrella
+se oscurece cuando pasa el planeta), se estudian estrellas variables y se
+miden distancias a galaxias.
+
+La técnica más usada es la **fotometría de apertura**:
+
+1. Dibujamos un círculo (la **apertura**) alrededor de la estrella
+2. Sumamos toda la luz que cae dentro
+3. Restamos la luz del **fondo del cielo**, medida en un anillo alrededor
+4. Convertimos el resultado en una **magnitud**
+
+```{python}
+#| label: fig-esquema-apertura
+#| fig-cap: "Izquierda: una estrella con la apertura (círculo ámbar) y el anillo de fondo (zona cian). Derecha: el perfil de brillo de la misma estrella; la apertura captura la estrella y el anillo mide solo el cielo"
+#| code-fold: true
+#| code-summary: "Ver el código del esquema"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Esquema de la fotometría de apertura con una estrella simulada
+# ─────────────────────────────────────────────────────────────────────────────
+
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.patches import Circle, Wedge
+
+# ── Una estrella gaussiana sobre un cielo con ruido ──────────────────────────
+rng = np.random.default_rng(1)
+tam = 41                                   # imagen de 41×41 píxeles
+yy, xx = np.mgrid[0:tam, 0:tam]
+cx = cy = tam // 2                         # la estrella está en el centro
+sigma = 2.0                                # ancho de la estrella (PSF)
+cielo = 100                                # nivel del fondo del cielo
+estrella = cielo + 900 * np.exp(-((xx - cx)**2 + (yy - cy)**2) / (2 * sigma**2))
+estrella = estrella + rng.normal(0, 8, estrella.shape)
+
+# Radios: apertura y anillo de fondo (en píxeles)
+r_ap, r_in, r_out = 6, 10, 15
+
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11, 4.8),
+                               gridspec_kw={'width_ratios': [1, 1.25]})
+
+# ── Panel izquierdo: la imagen con la apertura y el anillo ──────────────────
+ax1.imshow(estrella, origin='lower', cmap='magma', vmin=cielo - 20, vmax=500)
+
+# Anillo de fondo: una "cuña" de 360° entre r_in y r_out, semitransparente
+ax1.add_patch(Wedge((cx, cy), r_out, 0, 360, width=r_out - r_in,
+                    facecolor='C0', alpha=0.25, edgecolor='C0', lw=1.5))
+# Apertura: círculo alrededor de la estrella
+ax1.add_patch(Circle((cx, cy), r_ap, fill=False, edgecolor='C1', lw=2.5))
+
+# Etiquetas con flecha apuntando a cada zona
+ax1.annotate('Apertura\n(estrella + cielo)', xy=(cx + r_ap * 0.7, cy + r_ap * 0.7),
+             xytext=(cx + 9, cy + 17), color='C1', fontsize=10, fontweight='bold',
+             arrowprops=dict(arrowstyle='->', color='C1'))
+ax1.annotate('Anillo de fondo\n(solo cielo)', xy=(cx - 12, cy - 9),
+             xytext=(1, 1.5), color='C0', fontsize=10, fontweight='bold',
+             arrowprops=dict(arrowstyle='->', color='C0'))
+ax1.set_title('Lo que se ve en la imagen')
+ax1.set_xticks([]); ax1.set_yticks([])
+
+# ── Panel derecho: perfil de brillo a lo largo de una fila ──────────────────
+x_rel = np.arange(tam) - cx                       # distancia al centro (px)
+ax2.plot(x_rel, estrella[cy], 'o-', color='C7', ms=3, lw=1, label='Brillo de cada píxel')
+
+# Zonas sombreadas a ambos lados del centro
+for signo in (-1, 1):
+    ax2.axvspan(signo * r_in, signo * r_out, color='C0', alpha=0.2)
+ax2.axvspan(-r_ap, r_ap, color='C1', alpha=0.15)
+
+# Nivel del cielo y la luz de la estrella por encima de él
+ax2.axhline(cielo, color='C0', ls='--', lw=1.5)
+ax2.fill_between(x_rel, cielo, estrella[cy], where=np.abs(x_rel) <= r_ap,
+                 color='C1', alpha=0.45, label='Luz de la estrella (lo que medimos)')
+
+ax2.text(-3.3, 960, 'Apertura', color='C1', ha='center', fontweight='bold')
+ax2.text(-(r_in + r_out) / 2, 960, 'Anillo', color='C0', ha='center', fontweight='bold')
+ax2.text((r_in + r_out) / 2, 960, 'Anillo', color='C0', ha='center', fontweight='bold')
+ax2.text(-19.5, cielo + 25, 'Nivel del cielo', color='C0', fontsize=9)
+
+ax2.set_ylim(40, 1040)
+ax2.set_xlabel('Distancia al centro de la estrella [píxeles]')
+ax2.set_ylabel('Brillo [cuentas]')
+ax2.set_title('El mismo corte visto de perfil')
+ax2.legend(loc='center right', fontsize=8)
+
+plt.tight_layout()
+plt.show()
+```
+
+En palabras: **flujo de la estrella = (suma dentro de la apertura) − (brillo
+medio del cielo en el anillo × número de píxeles de la apertura)**. El espacio
+vacío entre la apertura y el anillo evita que la luz de las "alas" de la
+estrella contamine la medida del cielo.
+
+Para esto usamos **photutils**, una librería afiliada a Astropy.
+
+::: {.callout-note}
+## Requisitos previos
+- Módulos 06 (FITS) y 07 (WCS)
+- Instalar photutils: `pip install photutils`
 :::
+
+---
+
+## Preparar una imagen de prueba
+
+Fabricamos una imagen con 12 estrellas de brillo conocido. Así podremos
+comprobar al final si nuestras mediciones son correctas.
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Imagen sintética con estrellas de flujo CONOCIDO
+# Saber la respuesta correcta nos permite validar el método
+# ─────────────────────────────────────────────────────────────────────────────
+
+import numpy as np
+from astropy.table import Table
+
+rng = np.random.default_rng(seed=2026)
+
+ny, nx = 256, 256
+fondo_real = 200.0          # nivel del cielo en cuentas por píxel
+sigma_psf = 2.0             # ancho de las estrellas (PSF) en píxeles
+
+# Posiciones y flujos TOTALES aleatorios para 12 estrellas
+n_estrellas = 12
+verdad = Table({
+    'x'    : rng.uniform(20, nx - 20, n_estrellas),
+    'y'    : rng.uniform(20, ny - 20, n_estrellas),
+    'flujo': rng.uniform(2_000, 60_000, n_estrellas),   # cuentas totales
+})
+
+# Construimos la imagen: fondo + estrellas gaussianas
+yy, xx = np.mgrid[0:ny, 0:nx]
+imagen = np.full((ny, nx), fondo_real)
+for fila in verdad:
+    # Una gaussiana 2D normalizada: su integral es igual a 'flujo'
+    amplitud = fila['flujo'] / (2 * np.pi * sigma_psf**2)
+    imagen += amplitud * np.exp(-((xx - fila['x'])**2 + (yy - fila['y'])**2)
+                                / (2 * sigma_psf**2))
+
+# Ruido de Poisson (fotones) + ruido de lectura del detector
+imagen = rng.poisson(imagen).astype(float) + rng.normal(0, 5, (ny, nx))
+
+print(f"Imagen de {nx}×{ny} con {n_estrellas} estrellas")
+print(f"Fondo real: {fondo_real} cuentas/píxel")
+```
+
+```{python}
+#| label: fig-imagen-fot
+#| fig-cap: "Imagen de prueba para fotometría"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Visualizar la imagen con una escala que resalte las estrellas débiles
+# ─────────────────────────────────────────────────────────────────────────────
+
+import matplotlib.pyplot as plt
+from astropy.visualization import simple_norm
+
+# simple_norm con estiramiento 'sqrt' comprime los valores altos
+norma = simple_norm(imagen, 'sqrt', percent=99.5)
+
+fig, ax = plt.subplots(figsize=(6, 6))
+ax.imshow(imagen, origin='lower', cmap='Greys_r', norm=norma)
+ax.set_title('Imagen sintética')
+plt.show()
+```
+
+---
+
+## Paso 1: estadísticas del fondo
+
+Antes de buscar estrellas necesitamos saber cuánto vale el cielo y cuánto
+ruido tiene. La función `sigma_clipped_stats` calcula media, mediana y
+desviación estándar **ignorando los píxeles de las estrellas** (los descarta
+iterativamente por estar muy por encima del resto).
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Estadísticas robustas del fondo con recorte sigma
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy.stats import sigma_clipped_stats
+
+# sigma=3 → descarta píxeles a más de 3 desviaciones de la mediana
+media, mediana, desv = sigma_clipped_stats(imagen, sigma=3.0)
+
+print(f"Media del fondo   : {media:.2f}")
+print(f"Mediana del fondo : {mediana:.2f}   (valor real: {fondo_real})")
+print(f"Ruido del fondo   : {desv:.2f}")
+```
+
+---
+
+## Paso 2: detectar las estrellas
+
+`DAOStarFinder` busca manchas con forma de estrella que sobresalgan del
+fondo por encima de un umbral. Usamos el clásico criterio de **5 sigma**.
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Detección automática de estrellas con DAOStarFinder
+# ─────────────────────────────────────────────────────────────────────────────
+
+from photutils.detection import DAOStarFinder
+
+# fwhm: ancho a media altura de las estrellas ≈ 2.355 × sigma
+# threshold: brillo mínimo por encima del fondo para considerar una detección
+buscador = DAOStarFinder(fwhm=2.355 * sigma_psf, threshold=5 * desv)
+
+# Se le pasa la imagen con el fondo ya restado
+fuentes = buscador(imagen - mediana)
+
+print(f"Estrellas detectadas: {len(fuentes)}")
+
+# photutils 3.x renombró las columnas 'xcentroid' → 'x_centroid'.
+# Estas dos líneas eligen el nombre correcto según tu versión instalada.
+col_x = 'x_centroid' if 'x_centroid' in fuentes.colnames else 'xcentroid'
+col_y = 'y_centroid' if 'y_centroid' in fuentes.colnames else 'ycentroid'
+
+# Mostramos solo las columnas más útiles
+fuentes[col_x].info.format = '.2f'
+fuentes[col_y].info.format = '.2f'
+fuentes['peak'].info.format = '.1f'
+print(fuentes['id', col_x, col_y, 'peak'])
+```
+
+---
+
+## Paso 3: definir aperturas y anillos
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Crear una apertura circular y un anillo de fondo para cada estrella
+# ─────────────────────────────────────────────────────────────────────────────
+
+import numpy as np
+from photutils.aperture import CircularAperture, CircularAnnulus
+
+# Posiciones detectadas como pares (x, y)
+posiciones = np.transpose((fuentes[col_x], fuentes[col_y]))
+
+# Radio de apertura: ~3 veces sigma captura casi toda la luz de la estrella
+r_apertura = 3 * sigma_psf
+
+# Anillo de fondo: separado de la estrella para no medir su luz
+r_in, r_out = 4 * sigma_psf, 6 * sigma_psf
+
+aperturas = CircularAperture(posiciones, r=r_apertura)
+anillos   = CircularAnnulus(posiciones, r_in=r_in, r_out=r_out)
+
+print(f"Radio de apertura : {r_apertura} px")
+print(f"Anillo de fondo   : {r_in} – {r_out} px")
+```
+
+```{python}
+#| label: fig-aperturas
+#| fig-cap: "Aperturas (blanco) y anillos de fondo (rojo) sobre las estrellas detectadas"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Dibujar las aperturas sobre la imagen para verificar visualmente
+# ─────────────────────────────────────────────────────────────────────────────
+
+import matplotlib.pyplot as plt
+
+fig, ax = plt.subplots(figsize=(6, 6))
+ax.imshow(imagen, origin='lower', cmap='Greys_r', norm=norma)
+
+# .plot() dibuja cada círculo sobre los ejes indicados
+aperturas.plot(ax=ax, color='white', lw=1.2)
+anillos.plot(ax=ax, color='red', lw=0.8)
+
+ax.set_title('Aperturas y anillos de fondo')
+plt.show()
+```
+
+---
+
+## Paso 4: medir el flujo
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Fotometría: suma dentro de la apertura menos el fondo local
+# ─────────────────────────────────────────────────────────────────────────────
+
+from photutils.aperture import aperture_photometry, ApertureStats
+
+# 4a. Suma de cuentas dentro de cada apertura (estrella + cielo)
+tabla = aperture_photometry(imagen, aperturas)
+
+# 4b. Mediana del cielo en cada anillo, con recorte sigma por si
+#     una estrella vecina cae dentro del anillo
+from astropy.stats import SigmaClip
+stats_anillo = ApertureStats(imagen, anillos, sigma_clip=SigmaClip(sigma=3.0))
+fondo_por_pixel = stats_anillo.median
+
+# 4c. Fondo total dentro de la apertura = fondo por píxel × área de la apertura
+fondo_total = fondo_por_pixel * aperturas.area
+
+# 4d. Flujo neto de la estrella
+tabla['fondo_px']   = fondo_por_pixel
+tabla['flujo_neto'] = tabla['aperture_sum'] - fondo_total
+
+for col in ['aperture_sum', 'fondo_px', 'flujo_neto']:
+    tabla[col].info.format = '.1f'
+print(tabla['id', 'aperture_sum', 'fondo_px', 'flujo_neto'])
+```
+
+---
+
+## Paso 5: incertidumbre y magnitudes instrumentales
+
+La **magnitud** es una escala logarítmica inventada por los griegos:
+estrellas más brillantes tienen magnitudes **más pequeñas**.
+
+$$m_{inst} = -2.5 \log_{10}(\text{flujo})$$
+
+La relación señal/ruido (S/N) nos dice qué tan confiable es cada medición.
+Una S/N de 100 equivale a un error de ~0.01 magnitudes.
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Error de cada medición (ecuación simplificada del CCD) y magnitudes
+# ─────────────────────────────────────────────────────────────────────────────
+
+import numpy as np
+
+flujo = np.asarray(tabla['flujo_neto'])
+area  = aperturas.area
+
+# Varianza = ruido de la estrella (Poisson) + ruido del cielo en la apertura
+# (asumimos ganancia = 1 electrón por cuenta)
+varianza = flujo + area * desv**2
+error_flujo = np.sqrt(varianza)
+
+# Señal / ruido
+sn = flujo / error_flujo
+
+# Magnitud instrumental y su error  (σ_m ≈ 1.0857 / S/N)
+tabla['mag_inst'] = -2.5 * np.log10(flujo)
+tabla['err_mag']  = 1.0857 / sn
+tabla['S/N']      = sn
+
+for col in ['mag_inst', 'err_mag', 'S/N']:
+    tabla[col].info.format = '.3f' if col != 'S/N' else '.1f'
+print(tabla['id', 'flujo_neto', 'S/N', 'mag_inst', 'err_mag'])
+```
+
+---
+
+## Paso 6: validar contra la verdad
+
+Como fabricamos la imagen, sabemos el flujo real de cada estrella.
+Emparejamos cada detección con la estrella real más cercana.
+
+```{python}
+#| label: fig-validacion
+#| fig-cap: "Flujo medido vs flujo real: los puntos deben caer sobre la línea 1:1"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Comparar flujo medido vs flujo real
+# ─────────────────────────────────────────────────────────────────────────────
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+flujo_real = []
+for x_det, y_det in posiciones:
+    # Distancia de esta detección a cada estrella verdadera
+    d = np.hypot(verdad['x'] - x_det, verdad['y'] - y_det)
+    flujo_real.append(verdad['flujo'][np.argmin(d)])   # la más cercana
+flujo_real = np.array(flujo_real)
+
+# Fracción del flujo recuperado: una apertura de 3σ captura ~98.9 % de la luz
+fraccion = flujo / flujo_real
+print(f"Fracción del flujo recuperado: {np.median(fraccion):.3f} (teórico: 0.989)")
+
+fig, ax = plt.subplots(figsize=(5, 5))
+ax.errorbar(flujo_real, flujo, yerr=error_flujo, fmt='o', capsize=3)
+lim = [0, flujo_real.max() * 1.1]
+ax.plot(lim, lim, '--', color='C7', label='1:1')
+ax.set_xlabel('Flujo real (cuentas)')
+ax.set_ylabel('Flujo medido (cuentas)')
+ax.legend()
+plt.show()
+```
+
+::: {.callout-tip}
+## Corrección de apertura
+Una apertura finita nunca captura el 100 % de la luz (la PSF tiene "alas").
+En trabajo profesional se aplica una **corrección de apertura** midiendo
+estrellas brillantes con aperturas cada vez más grandes. Para fotometría
+**diferencial** (comparar una estrella con otras de la misma imagen, como
+en el módulo 17) este efecto se cancela.
+:::
+
+---
+
+## ¿Qué radio de apertura usar? Curva de crecimiento
+
+```{python}
+#| label: fig-curva-crecimiento
+#| fig-cap: "Curva de crecimiento: el flujo deja de crecer cuando la apertura contiene toda la estrella"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Medir la estrella más brillante con radios crecientes
+# ─────────────────────────────────────────────────────────────────────────────
+
+import numpy as np
+import matplotlib.pyplot as plt
+from photutils.aperture import CircularAperture, aperture_photometry
+
+# Posición de la estrella con mayor flujo
+i_max = np.argmax(flujo)
+pos = posiciones[i_max]
+
+radios = np.arange(1, 13, 0.5)
+flujos_r, sn_r = [], []
+for r in radios:
+    ap = CircularAperture(pos, r=r)
+    suma = aperture_photometry(imagen, ap)['aperture_sum'][0]
+    f = suma - mediana * ap.area                    # restamos fondo global
+    flujos_r.append(f)
+    sn_r.append(f / np.sqrt(f + ap.area * desv**2))
+
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(9, 3.5))
+ax1.plot(radios, flujos_r, 'o-')
+ax1.set_xlabel('Radio (px)'); ax1.set_ylabel('Flujo'); ax1.set_title('Curva de crecimiento')
+ax2.plot(radios, sn_r, 'o-', color='C1')
+ax2.set_xlabel('Radio (px)'); ax2.set_ylabel('S/N'); ax2.set_title('Señal / ruido')
+plt.tight_layout()
+plt.show()
+
+print(f"Radio con S/N máxima: {radios[np.argmax(sn_r)]} px")
+```
+
+Para estrellas brillantes conviene una apertura grande (capturar más luz);
+para estrellas débiles una más pequeña (meter menos ruido de cielo).
+
+---
+
+## La estrella en 3D: datos, modelo y residuos
+
+Una imagen es una función $f(x, y)$: para cada píxel hay un valor de
+brillo. Si usamos ese brillo como **altura**, una estrella se convierte en
+una "montaña" de luz. Verla en 3D ayuda a entender tres ideas clave:
+
+- La forma de la estrella es la **PSF** (*Point Spread Function*): cómo el
+  telescopio y la atmósfera reparten la luz de un punto
+- Esa forma se puede **modelar** con una función matemática (aquí, una gaussiana 2D)
+- Al restar el modelo a los datos quedan los **residuos**: si el modelo es
+  bueno, solo queda ruido; si es malo, aparece estructura
+
+### Paso 1: recortar la estrella más brillante
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Recortar una ventana pequeña alrededor de la estrella más brillante
+# ─────────────────────────────────────────────────────────────────────────────
+
+import numpy as np
+from astropy.nddata import Cutout2D
+
+# Índice de la estrella con mayor flujo y su posición (x, y)
+i_max = np.argmax(flujo)
+x_est, y_est = posiciones[i_max]
+
+# Cutout2D (módulo 06): ventana de 25×25 píxeles centrada en la estrella
+recorte = Cutout2D(imagen, position=(x_est, y_est), size=(25, 25))
+
+# Restamos el fondo del cielo para que la "montaña" arranque desde cero
+datos_3d = recorte.data - mediana
+
+# Malla de coordenadas (x, y) del recorte: una por cada píxel
+yy_r, xx_r = np.mgrid[0:datos_3d.shape[0], 0:datos_3d.shape[1]]
+
+print(f"Estrella en x = {x_est:.1f}, y = {y_est:.1f}")
+print(f"Tamaño del recorte: {datos_3d.shape}")
+print(f"Brillo máximo sobre el fondo: {datos_3d.max():.0f} cuentas")
+```
+
+### Paso 2: ajustar un modelo gaussiano 2D
+
+Usamos `astropy.modeling` (lo veremos a fondo en el módulo 10): una
+gaussiana 2D para la estrella más una constante para el fondo residual.
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Ajustar Gaussian2D + Const2D a la estrella recortada
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy.modeling import models, fitting
+from astropy.stats import gaussian_sigma_to_fwhm
+
+# Valores iniciales aproximados: centro del recorte, ancho ≈ 2 píxeles
+centro = (datos_3d.shape[1] - 1) / 2
+modelo_inicial = (models.Gaussian2D(amplitude=datos_3d.max(),
+                                    x_mean=centro, y_mean=centro,
+                                    x_stddev=2, y_stddev=2)
+                  + models.Const2D(amplitude=0))
+
+# Ajuste por mínimos cuadrados no lineal
+ajustador = fitting.TRFLSQFitter()
+modelo_estrella = ajustador(modelo_inicial, xx_r, yy_r, datos_3d)
+
+# Evaluar el modelo en la misma malla y calcular los residuos
+modelo_3d   = modelo_estrella(xx_r, yy_r)
+residuos_3d = datos_3d - modelo_3d
+
+g = modelo_estrella[0]                     # la componente gaussiana
+print(f"Amplitud ajustada : {g.amplitude.value:.0f} cuentas")
+print(f"Sigma x, y        : {g.x_stddev.value:.2f}, {g.y_stddev.value:.2f} px  (real: {sigma_psf})")
+print(f"FWHM              : {gaussian_sigma_to_fwhm * g.x_stddev.value:.2f} px")
+
+# ¿Los residuos son solo ruido? Comparamos su dispersión con el ruido esperado
+# Ruido esperado por píxel = Poisson (raíz de las cuentas) + ruido de lectura
+ruido_esperado = np.sqrt(modelo_3d + mediana + 5**2)
+chi2_red = np.sum((residuos_3d / ruido_esperado)**2) / (residuos_3d.size - 6)
+print(f"\nDispersión de los residuos : {np.std(residuos_3d):.1f} cuentas")
+print(f"χ² reducido                : {chi2_red:.2f}   (≈ 1 → residuos compatibles con ruido)")
+```
+
+### Paso 3: las tres superficies en 3D
+
+```{python}
+#| label: fig-estrella-3d
+#| fig-cap: "La estrella como superficie 3D: datos observados, modelo gaussiano y residuos (datos − modelo)"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Tres gráficos 3D lado a lado con matplotlib
+# projection='3d' convierte un eje normal en un eje tridimensional
+# ─────────────────────────────────────────────────────────────────────────────
+
+import matplotlib.pyplot as plt
+
+fig = plt.figure(figsize=(15, 5))
+
+# Misma escala vertical para datos y modelo, así se pueden comparar
+z_max = datos_3d.max() * 1.05
+
+paneles = [
+    ('Datos (estrella observada)', datos_3d,    'viridis', (-z_max * 0.05, z_max)),
+    ('Modelo gaussiano 2D',        modelo_3d,   'viridis', (-z_max * 0.05, z_max)),
+    ('Residuos = datos − modelo',  residuos_3d, 'coolwarm', None),
+]
+
+for k, (titulo, z, mapa, limites) in enumerate(paneles, start=1):
+    ax = fig.add_subplot(1, 3, k, projection='3d')
+
+    # plot_surface dibuja la superficie: x, y = posición del píxel, z = brillo
+    # rstride/cstride=1 → usar todos los píxeles (superficie más detallada)
+    ax.plot_surface(xx_r, yy_r, z, cmap=mapa, rstride=1, cstride=1,
+                    linewidth=0, antialiased=True)
+
+    if limites is not None:
+        ax.set_zlim(*limites)
+    else:
+        # Residuos: escala simétrica alrededor de cero para ver + y − por igual
+        r = np.abs(z).max()
+        ax.set_zlim(-r, r)
+
+    ax.set_title(titulo, fontsize=11)
+    ax.set_xlabel('x [px]'); ax.set_ylabel('y [px]'); ax.set_zlabel('Cuentas')
+    ax.view_init(elev=25, azim=-60)          # ángulo de la "cámara"
+
+plt.tight_layout()
+plt.show()
+```
+
+Fíjate en las escalas: la estrella alcanza miles de cuentas, mientras que
+los residuos oscilan apenas unas decenas hacia arriba y hacia abajo, **sin
+forma definida**. Eso es exactamente lo que queremos: el modelo capturó
+toda la estructura de la estrella y solo dejó ruido.
+
+::: {.callout-tip}
+## Cambia el punto de vista
+`ax.view_init(elev, azim)` controla la cámara: `elev` es la altura (0 =
+de perfil, 90 = desde arriba) y `azim` el giro alrededor del eje vertical.
+Prueba `view_init(elev=5, azim=0)` para ver el perfil de la estrella de lado.
+:::
+
+### ¿Cómo se ven los residuos de un modelo **malo**?
+
+Los residuos son la mejor herramienta de diagnóstico. Para verlo, forzamos
+un modelo con un ancho equivocado: una PSF demasiado estrecha.
+
+```{python}
+#| label: fig-residuos-malos
+#| fig-cap: "Residuos de un modelo correcto (izquierda) frente a un modelo con la PSF demasiado estrecha (derecha)"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Ajustar con el ancho FIJO en un valor incorrecto y comparar residuos
+# ─────────────────────────────────────────────────────────────────────────────
+
+import matplotlib.pyplot as plt
+
+# Copiamos el modelo inicial y fijamos sigma = 1.3 px (la real es 2.0)
+modelo_malo = modelo_inicial.copy()
+modelo_malo.x_stddev_0 = 1.3
+modelo_malo.y_stddev_0 = 1.3
+modelo_malo.x_stddev_0.fixed = True        # .fixed = True → no se ajusta
+modelo_malo.y_stddev_0.fixed = True
+
+ajuste_malo = ajustador(modelo_malo, xx_r, yy_r, datos_3d)
+residuos_malos = datos_3d - ajuste_malo(xx_r, yy_r)
+
+chi2_malo = np.sum((residuos_malos / ruido_esperado)**2) / (residuos_malos.size - 4)
+print(f"χ² reducido modelo correcto : {chi2_red:.2f}")
+print(f"χ² reducido modelo malo     : {chi2_malo:.1f}")
+
+fig = plt.figure(figsize=(11, 5))
+r = np.abs(residuos_malos).max()           # misma escala en ambos paneles
+for k, (titulo, z) in enumerate([('Modelo correcto', residuos_3d),
+                                 ('PSF demasiado estrecha', residuos_malos)], start=1):
+    ax = fig.add_subplot(1, 2, k, projection='3d')
+    ax.plot_surface(xx_r, yy_r, z, cmap='coolwarm', vmin=-r, vmax=r,
+                    rstride=1, cstride=1, linewidth=0)
+    ax.set_zlim(-r, r)
+    ax.set_title(f'Residuos: {titulo}', fontsize=11)
+    ax.set_xlabel('x [px]'); ax.set_ylabel('y [px]'); ax.set_zlabel('Cuentas')
+    ax.view_init(elev=25, azim=-60)
+plt.tight_layout()
+plt.show()
+```
+
+Con la PSF demasiado estrecha el modelo pone toda la luz en el centro: el
+residuo queda como un **pozo** en el centro rodeado de un **anillo** positivo
+(la luz de las "alas" que el modelo no explicó). Cuando veas un patrón así
+en tus residuos, sabes que el ancho del modelo está mal.
+
+### Versión interactiva (para girar con el ratón)
+
+Con la librería **plotly** las superficies se pueden rotar, acercar y
+explorar directamente en el navegador. Quarto las inserta en el blog
+automáticamente. Requiere instalarla: `pip install plotly`.
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Superficies 3D interactivas con plotly
+# Si plotly no está instalado, el bloque muestra un aviso y no falla
+# ─────────────────────────────────────────────────────────────────────────────
+
+try:
+    import plotly.graph_objects as go
+    from plotly.subplots import make_subplots
+
+    # Tres paneles de tipo 'surface' (superficie 3D) en una fila
+    fig = make_subplots(rows=1, cols=3,
+                        specs=[[{'type': 'surface'}] * 3],
+                        subplot_titles=('Datos', 'Modelo', 'Residuos'))
+
+    # go.Surface recibe la matriz z (brillo); x e y son los índices de píxel
+    fig.add_trace(go.Surface(z=datos_3d, colorscale='Viridis', showscale=False), row=1, col=1)
+    fig.add_trace(go.Surface(z=modelo_3d, colorscale='Viridis', showscale=False), row=1, col=2)
+    fig.add_trace(go.Surface(z=residuos_3d, colorscale='RdBu_r', showscale=False,
+                             cmid=0), row=1, col=3)    # cmid=0 → blanco en cero
+
+    # Misma escala vertical para datos y modelo
+    rango_z = dict(range=[0, float(datos_3d.max()) * 1.05])
+    # template='plotly_dark' → colores para el modo oscuro del blog
+    # paper_bgcolor transparente → el gráfico toma el fondo de la página
+    fig.update_layout(height=450, margin=dict(l=0, r=0, t=40, b=0),
+                      template='plotly_dark', paper_bgcolor='rgba(0,0,0,0)',
+                      scene=dict(zaxis=rango_z), scene2=dict(zaxis=rango_z))
+    fig.show()
+
+except ImportError:
+    print("Instala plotly para ver la versión interactiva:  pip install plotly")
+```
+
+---
+
+## Ejercicio
+
+Repite la fotometría usando **dos radios de apertura distintos**
+(`2 * sigma_psf` y `4 * sigma_psf`) y compara:
+
+1. ¿Cuál recupera más flujo de las estrellas?
+2. ¿Cuál da mejor S/N para la estrella **más débil**?
+
+::: {.callout-tip collapse="true"}
+## Ver solución
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# SOLUCIÓN: comparar dos radios de apertura
+# ─────────────────────────────────────────────────────────────────────────────
+
+import numpy as np
+from photutils.aperture import CircularAperture, aperture_photometry, ApertureStats
+from astropy.stats import SigmaClip
+
+def fotometria(radio):
+    """Devuelve flujo neto y S/N para todas las estrellas con un radio dado."""
+    ap = CircularAperture(posiciones, r=radio)
+    suma = aperture_photometry(imagen, ap)['aperture_sum']
+    fondo = ApertureStats(imagen, anillos, sigma_clip=SigmaClip(3.0)).median
+    f = np.asarray(suma - fondo * ap.area)
+    return f, f / np.sqrt(f + ap.area * desv**2)
+
+f_peq, sn_peq = fotometria(2 * sigma_psf)
+f_gra, sn_gra = fotometria(4 * sigma_psf)
+
+i_debil = np.argmin(f_gra)   # índice de la estrella más débil
+
+print(f"Flujo total recuperado (r=2σ): {f_peq.sum():,.0f}")
+print(f"Flujo total recuperado (r=4σ): {f_gra.sum():,.0f}")
+print(f"\nEstrella más débil:")
+print(f"  S/N con r=2σ : {sn_peq[i_debil]:.1f}")
+print(f"  S/N con r=4σ : {sn_gra[i_debil]:.1f}")
+print("\n→ La apertura grande recupera más luz; la pequeña suele dar")
+print("  mejor S/N en estrellas débiles porque incluye menos ruido de cielo.")
+```
+:::
+
+---
+
+## ¿Qué aprendiste en este módulo? {.seccion-aprendiste}
+
+- ✅ El principio de la fotometría de apertura
+- ✅ Estimar el fondo con `sigma_clipped_stats`
+- ✅ Detectar estrellas con `DAOStarFinder`
+- ✅ Crear aperturas y anillos con `CircularAperture` y `CircularAnnulus`
+- ✅ Medir flujos con `aperture_photometry` y restar el fondo local
+- ✅ Calcular S/N, magnitudes instrumentales y sus errores
+- ✅ Elegir el radio de apertura con la curva de crecimiento
+
+**Siguiente módulo →** [09 · Visualización astronómica](09-visualizacion.qmd)

@@ -1,16 +1,520 @@
 ---
-title: "17 - Pipeline completo de reduccion"
-description: "Proximo modulo en preparacion"
+title: "17 · Pipeline completo de reducción"
+description: "Proyecto integrador: de las imágenes crudas de una noche de observación a la curva de luz y el período de una estrella variable, usando todo lo aprendido en el blog"
+author: "Blog AstroPy en Español"
+date: "2026-11-01"
 categories: [avanzado]
 toc: true
+toc-depth: 3
+number-sections: true
 execute:
   echo: true
   warning: false
+  message: false
 ---
 
-<span class="badge-avanzado">Avanzado</span>
+<span class="badge-avanzado">🚀 Avanzado</span>
 
-::: {.callout-warning}
-## Modulo en construccion
-Este modulo esta siendo preparado. Vuelve pronto.
+## El proyecto
+
+Este módulo une todo el blog en un solo proyecto realista. Partimos de lo
+que entrega una cámara CCD tras una noche de observación —**imágenes
+crudas**— y terminamos con un resultado científico: la **curva de luz y el
+período** de una estrella variable tipo δ Scuti.
+
+```
+ Imágenes crudas ──► Calibración ──► Fotometría ──► Fotometría ──► Análisis
+ (bias, flats,       (master bias,   de apertura    diferencial    (período)
+  ciencia)            master flat)    en cada imagen
+     M06                M06, M10        M08            M08, M10       M15
+```
+
+| Módulo usado | Para qué |
+|---|---|
+| 03 · Tiempo | Tiempos de cada exposición |
+| 05 · Tablas | Organizar las mediciones |
+| 06 · FITS | Leer y escribir imágenes con encabezados |
+| 08 · Fotometría | Medir el brillo de las estrellas |
+| 10 · Estadística | Combinar imágenes con recorte sigma |
+| 15 · Series temporales | Encontrar el período |
+
+::: {.callout-note}
+## Requisitos previos
+- Haber recorrido los niveles básico e intermedio
+- `photutils` instalado
 :::
+
+---
+
+## Las imágenes de calibración, explicadas
+
+Una imagen cruda no es "la luz del cielo". Contiene además:
+
+- **Bias**: un nivel electrónico que el detector suma a todos los píxeles,
+  incluso sin luz y con exposición de cero segundos.
+- **Respuesta no uniforme (flat)**: cada píxel tiene una sensibilidad algo
+  distinta, el telescopio oscurece las esquinas (viñeteo) y las motas de
+  polvo hacen "donas" de sombra.
+
+La calibración estándar es:
+
+$$\text{imagen calibrada} = \frac{\text{cruda} - \text{master bias}}{\text{master flat normalizado}}$$
+
+::: {.callout-tip}
+## ¿Y los darks?
+Las cámaras sin refrigeración acumulan **corriente oscura** (señal térmica).
+Se corrige restando un *master dark* tomado con el mismo tiempo de exposición
+y temperatura. Las cámaras enfriadas de este proyecto simulado tienen
+corriente oscura despreciable, así que la omitimos.
+:::
+
+---
+
+## Paso 0: simular la noche de observación
+
+Este bloque **fabrica** los archivos FITS que un observatorio entregaría.
+En un proyecto real te saltarías este paso: ya tendrías los archivos.
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# SIMULACIÓN de una noche de observación (en un proyecto real, ya tienes
+# estos archivos). Generamos bias, flats e imágenes de ciencia como FITS.
+# ─────────────────────────────────────────────────────────────────────────────
+
+import os
+import numpy as np
+from astropy.io import fits
+from astropy.time import Time
+import astropy.units as u
+
+rng = np.random.default_rng(17)
+carpeta = 'noche_simulada'
+os.makedirs(carpeta, exist_ok=True)
+
+ny, nx = 100, 100
+yy, xx = np.mgrid[0:ny, 0:nx]
+
+# ── Propiedades "reales" del detector (desconocidas para el pipeline) ────────
+bias_real = 1000 + 0.3 * xx + rng.normal(0, 2, (ny, nx))     # nivel + gradiente
+ruido_lectura = 8.0                                           # en cuentas
+vineteo = 1 - 0.25 * ((xx - 50)**2 + (yy - 50)**2) / 50**2    # esquinas oscuras
+pixel_a_pixel = rng.normal(1, 0.02, (ny, nx))                 # sensibilidad ±2 %
+polvo = 1 - 0.12 * np.exp(-((np.hypot(xx - 70, yy - 30) - 6) / 2)**2)  # "dona"
+flat_real = vineteo * pixel_a_pixel * polvo
+
+def guardar(nombre, datos, tipo, exptime, fecha):
+    """Escribe un FITS con las claves de encabezado típicas de un observatorio."""
+    hdr = fits.Header()
+    hdr['IMAGETYP'] = (tipo, 'Tipo de imagen')
+    hdr['EXPTIME']  = (exptime, 'Tiempo de exposicion [s]')
+    hdr['DATE-OBS'] = (fecha.isot, 'Inicio de la exposicion (UTC)')
+    fits.writeto(os.path.join(carpeta, nombre), datos.astype(np.float32),
+                 header=hdr, overwrite=True)
+
+t_inicio = Time('2026-03-20T22:00:00', scale='utc')
+
+# ── 15 imágenes de bias (0 s, sin luz) ───────────────────────────────────────
+for i in range(15):
+    guardar(f'bias_{i:02d}.fits', bias_real + rng.normal(0, ruido_lectura, (ny, nx)),
+            'BIAS', 0.0, t_inicio - 2 * u.hour + i * u.min)
+
+# ── 10 flats (pantalla iluminada uniformemente, ~20 000 cuentas) ─────────────
+for i in range(10):
+    luz = rng.poisson(20_000 * flat_real)
+    guardar(f'flat_{i:02d}.fits', bias_real + luz + rng.normal(0, ruido_lectura, (ny, nx)),
+            'FLAT', 2.0, t_inicio - 1 * u.hour + i * u.min)
+
+# ── 60 imágenes de ciencia: una variable δ Scuti y 4 estrellas de comparación ─
+estrellas = {          # nombre: (x, y, flujo total por exposición)
+    'objetivo': (45, 55, 40_000),
+    'comp1':    (20, 25, 30_000),
+    'comp2':    (75, 70, 55_000),
+    'comp3':    (25, 80, 25_000),
+    'comp4':    (80, 20, 45_000),
+}
+periodo_real = 0.0612 * u.day          # ≈ 1.47 horas
+amplitud_real = 0.12                   # magnitudes
+
+n_ciencia = 60
+for i in range(n_ciencia):
+    t_obs = t_inicio + i * 5 * u.min                   # una imagen cada 5 min
+    horas = (t_obs - t_inicio).to_value(u.hour)
+
+    # Nube que pasa hacia las 2.5 h + pequeñas variaciones de transparencia
+    transparencia = (1 - 0.35 * np.exp(-((horas - 2.5) / 0.4)**2)) * rng.normal(1, 0.015)
+    seeing = rng.uniform(1.8, 2.6)                     # sigma de la PSF en píxeles
+    dx, dy = 0.04 * i + rng.normal(0, 0.3), -0.03 * i + rng.normal(0, 0.3)  # deriva
+
+    cielo = np.full((ny, nx), 150.0)
+    for nombre, (x0, y0, f) in estrellas.items():
+        if nombre == 'objetivo':                      # la variable pulsa
+            fase = ((t_obs - t_inicio) / periodo_real).decompose().value
+            f = f * 10 ** (-0.4 * amplitud_real * np.sin(2 * np.pi * fase))
+        amp = f / (2 * np.pi * seeing**2)
+        cielo += amp * np.exp(-((xx - x0 - dx)**2 + (yy - y0 - dy)**2) / (2 * seeing**2))
+
+    luz = rng.poisson(cielo * transparencia * flat_real)
+    guardar(f'ciencia_{i:03d}.fits', bias_real + luz + rng.normal(0, ruido_lectura, (ny, nx)),
+            'LIGHT', 60.0, t_obs)
+
+print(f"Archivos generados en '{carpeta}/': {len(os.listdir(carpeta))}")
+```
+
+---
+
+## Paso 1: organizar los archivos
+
+Lo primero en cualquier pipeline es **clasificar** los archivos leyendo sus
+encabezados, no confiando en el nombre del archivo.
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Leer el encabezado de cada FITS y armar una tabla de inventario
+# ─────────────────────────────────────────────────────────────────────────────
+
+import glob
+from astropy.io import fits
+from astropy.table import Table
+
+archivos = sorted(glob.glob(os.path.join(carpeta, '*.fits')))
+
+inventario = Table(names=['archivo', 'tipo', 'exptime', 'fecha'],
+                   dtype=[str, str, float, str])
+for ruta in archivos:
+    h = fits.getheader(ruta)
+    inventario.add_row([ruta, h['IMAGETYP'], h['EXPTIME'], h['DATE-OBS']])
+
+# Resumen: cuántos archivos hay de cada tipo
+for tipo in ['BIAS', 'FLAT', 'LIGHT']:
+    n = (inventario['tipo'] == tipo).sum()
+    print(f"{tipo:<6}: {n} archivos")
+
+def cargar(tipo):
+    """Devuelve un cubo 3D (n_imagenes, y, x) con todas las imágenes de un tipo."""
+    rutas = inventario['archivo'][inventario['tipo'] == tipo]
+    return np.array([fits.getdata(r) for r in rutas], dtype=float)
+```
+
+---
+
+## Paso 2: master bias
+
+Combinamos los 15 bias con la **mediana recortada** (módulo 10). Así el
+ruido de lectura baja y cualquier rayo cósmico desaparece.
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Master bias: combinación píxel a píxel con recorte sigma a lo largo del eje 0
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy.stats import sigma_clip
+
+cubo_bias = cargar('BIAS')                       # forma (15, 100, 100)
+
+# axis=0 → para cada píxel se recortan los valores atípicos entre las 15 imágenes
+recortado = sigma_clip(cubo_bias, sigma=3, axis=0)
+master_bias = np.ma.median(recortado, axis=0).filled(np.nan)
+
+print(f"Ruido en un bias individual : {np.std(cubo_bias[0] - master_bias):.2f} cuentas")
+print(f"Nivel medio del master bias : {np.mean(master_bias):.1f} cuentas")
+
+# Diferencia con el bias "verdadero" que usamos al simular (solo posible aquí)
+print(f"Error del master bias       : {np.std(master_bias - bias_real):.2f} cuentas")
+```
+
+---
+
+## Paso 3: master flat
+
+```{python}
+#| label: fig-master-flat
+#| fig-cap: "Master flat normalizado: se ven el viñeteo (esquinas oscuras) y la mota de polvo"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Master flat: restar bias, normalizar cada flat, combinar, normalizar
+# ─────────────────────────────────────────────────────────────────────────────
+
+import matplotlib.pyplot as plt
+
+cubo_flat = cargar('FLAT') - master_bias          # quitar el bias a cada flat
+
+# Normalizar cada flat por su mediana (la lámpara pudo variar entre tomas)
+medianas = np.median(cubo_flat, axis=(1, 2))
+cubo_flat = cubo_flat / medianas[:, None, None]
+
+master_flat = np.ma.median(sigma_clip(cubo_flat, sigma=3, axis=0), axis=0).filled(np.nan)
+master_flat /= np.median(master_flat)             # normalizado: mediana = 1
+
+print(f"Rango del master flat: {master_flat.min():.3f} – {master_flat.max():.3f}")
+
+fig, ax = plt.subplots(figsize=(5, 4.5))
+im = ax.imshow(master_flat, origin='lower', cmap='gray')
+fig.colorbar(im, ax=ax, label='Respuesta relativa')
+ax.set_title('Master flat')
+plt.show()
+```
+
+---
+
+## Paso 4: calibrar las imágenes de ciencia
+
+```{python}
+#| label: fig-calibracion
+#| fig-cap: "Imagen cruda (izquierda) y calibrada (derecha) de la misma exposición"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# (cruda − bias) / flat para las 60 imágenes de ciencia
+# ─────────────────────────────────────────────────────────────────────────────
+
+import matplotlib.pyplot as plt
+from astropy.visualization import simple_norm
+
+cubo_ciencia = cargar('LIGHT')
+calibradas = (cubo_ciencia - master_bias) / master_flat
+
+# Tiempos de observación: centro de cada exposición
+filas_ciencia = inventario[inventario['tipo'] == 'LIGHT']
+tiempos = Time(list(filas_ciencia['fecha'])) + filas_ciencia['exptime'] / 2 * u.s
+
+fig, ejes = plt.subplots(1, 2, figsize=(10, 4.5))
+for ax, img, tit in zip(ejes, [cubo_ciencia[0], calibradas[0]], ['Cruda', 'Calibrada']):
+    ax.imshow(img, origin='lower', cmap='gray', norm=simple_norm(img, 'sqrt', percent=99.5))
+    ax.set_title(tit)
+plt.show()
+```
+
+---
+
+## Paso 5: fotometría en cada imagen
+
+El telescopio deriva un poco durante la noche, así que en cada imagen
+**recalculamos el centro** de cada estrella partiendo de su posición en
+la imagen anterior.
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Fotometría de apertura (módulo 08) sobre las 60 imágenes calibradas
+# ─────────────────────────────────────────────────────────────────────────────
+
+from photutils.centroids import centroid_sources, centroid_com
+from photutils.aperture import (CircularAperture, CircularAnnulus,
+                                aperture_photometry, ApertureStats)
+from astropy.stats import SigmaClip
+
+nombres = list(estrellas.keys())
+# Posiciones iniciales aproximadas (en un caso real: las identificas en la 1.ª imagen)
+x_act = np.array([estrellas[n][0] for n in nombres], dtype=float)
+y_act = np.array([estrellas[n][1] for n in nombres], dtype=float)
+
+r_ap, r_in, r_out = 6, 10, 15          # radios en píxeles
+resultados = {n: [] for n in nombres}
+posiciones_x = []
+
+for img in calibradas:
+    # Recentrar: centro de masa de la luz en una caja de 11×11 alrededor de cada estrella
+    x_act, y_act = centroid_sources(img, x_act, y_act, box_size=11,
+                                    centroid_func=centroid_com)
+    posiciones_x.append(x_act[0])
+    pos = np.transpose([x_act, y_act])
+
+    ap = CircularAperture(pos, r=r_ap)
+    an = CircularAnnulus(pos, r_in=r_in, r_out=r_out)
+    suma = aperture_photometry(img, ap)['aperture_sum']
+    fondo = ApertureStats(img, an, sigma_clip=SigmaClip(sigma=3)).median
+    neto = np.asarray(suma - fondo * ap.area)
+
+    for n, f in zip(nombres, neto):
+        resultados[n].append(f)
+
+# Tabla final: una columna de flujo por estrella
+fotometria = Table({'tiempo': tiempos, **{f'flujo_{n}': resultados[n] for n in nombres}})
+for n in nombres:
+    fotometria[f'flujo_{n}'].info.format = '.0f'      # mostrar sin decimales
+print(f"Deriva del telescopio en x durante la noche: {posiciones_x[-1] - posiciones_x[0]:.1f} px")
+print(fotometria[:5])
+```
+
+---
+
+## Paso 6: fotometría diferencial
+
+La nube que pasó a las ~2.5 h afectó a **todas** las estrellas por igual.
+Si comparamos la variable con estrellas cercanas **estables**, ese efecto
+se cancela:
+
+$$\Delta m = m_{objetivo} - m_{comparación}$$
+
+Usamos como comparación el **promedio de las 4 estrellas** (un "conjunto"
+o *ensemble*), que es más estable que una sola.
+
+```{python}
+#| label: fig-diferencial
+#| fig-cap: "Arriba: flujo crudo (la nube domina). Abajo: fotometría diferencial (aparece la pulsación)"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Magnitudes instrumentales y magnitud diferencial respecto al ensemble
+# ─────────────────────────────────────────────────────────────────────────────
+
+import matplotlib.pyplot as plt
+
+def a_mag(flujo):
+    """Magnitud instrumental a partir del flujo."""
+    return -2.5 * np.log10(np.asarray(flujo))
+
+m_obj = a_mag(fotometria['flujo_objetivo'])
+comparaciones = ['comp1', 'comp2', 'comp3', 'comp4']
+
+# Ensemble: sumar el flujo de todas las comparaciones (pondera a las brillantes)
+flujo_ensemble = sum(np.asarray(fotometria[f'flujo_{c}']) for c in comparaciones)
+m_ens = a_mag(flujo_ensemble)
+
+fotometria['dmag'] = m_obj - m_ens
+fotometria['dmag'] -= np.median(fotometria['dmag'])    # centrar en 0
+
+# Control de calidad: una comparación contra otra debería ser una línea plana
+control = a_mag(fotometria['flujo_comp1']) - a_mag(fotometria['flujo_comp2'])
+print(f"Dispersión comp1 − comp2 (precisión alcanzada): {np.std(control) * 1000:.1f} milimag")
+
+horas = (tiempos - tiempos[0]).to_value(u.hour)
+fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(9, 6), sharex=True)
+ax1.plot(horas, fotometria['flujo_objetivo'] / np.median(fotometria['flujo_objetivo']),
+         'o-', ms=3, label='Objetivo')
+ax1.plot(horas, flujo_ensemble / np.median(flujo_ensemble), 's-', ms=3, label='Ensemble')
+ax1.set_ylabel('Flujo relativo'); ax1.legend(); ax1.set_title('Fotometría cruda')
+
+ax2.plot(horas, fotometria['dmag'], 'o', ms=4, color='C3')
+ax2.plot(horas, control - np.median(control) + 0.25, '.', ms=3, color='gray',
+         label='Control comp1−comp2 (desplazado)')
+ax2.invert_yaxis()
+ax2.set_xlabel('Horas desde el inicio'); ax2.set_ylabel('Δ magnitud')
+ax2.set_title('Fotometría diferencial'); ax2.legend()
+plt.tight_layout()
+plt.show()
+```
+
+---
+
+## Paso 7: el período
+
+```{python}
+#| label: fig-periodo-final
+#| fig-cap: "Periodograma y curva de luz doblada de la δ Scuti"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Lomb–Scargle (módulo 15) sobre la magnitud diferencial
+# ─────────────────────────────────────────────────────────────────────────────
+
+import matplotlib.pyplot as plt
+from astropy.timeseries import LombScargle
+
+t_d = (tiempos - tiempos[0]).to_value(u.day)
+ls = LombScargle(t_d, fotometria['dmag'])
+frec, pot = ls.autopower(minimum_frequency=2, maximum_frequency=50, samples_per_peak=50)
+
+f_mejor = frec[np.argmax(pot)]
+P = (1 / f_mejor) * u.day
+
+print(f"Período medido : {P.to(u.hour):.3f}  ({P:.4f})")
+print(f"Período real   : {periodo_real.to(u.hour):.3f}")
+print(f"Amplitud ≈ {np.ptp(ls.model(np.linspace(0, P.value, 200), f_mejor)) / 2:.3f} mag "
+      f"(real: {amplitud_real})")
+
+fase = (t_d * f_mejor) % 1
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11, 3.8))
+ax1.plot(1 / frec * 24, pot)
+ax1.set_xscale('log'); ax1.set_xlabel('Período [horas]'); ax1.set_ylabel('Potencia')
+ax2.plot(fase, fotometria['dmag'], 'o', ms=4)
+ax2.plot(fase + 1, fotometria['dmag'], 'o', ms=4, color='C0')
+ax2.invert_yaxis(); ax2.set_xlabel('Fase'); ax2.set_ylabel('Δ magnitud')
+plt.tight_layout()
+plt.show()
+```
+
+¡El pipeline recupera el período y la amplitud a partir de imágenes crudas,
+a pesar de la nube, la deriva del telescopio, el viñeteo y el polvo!
+
+---
+
+## Paso 8: guardar los resultados
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Guardar la tabla de fotometría con metadatos para que sea reproducible
+# ─────────────────────────────────────────────────────────────────────────────
+
+salida = fotometria.copy()
+salida['tiempo_jd'] = salida['tiempo'].jd       # fecha juliana (formato estándar)
+salida.remove_column('tiempo')
+
+# Metadatos: quedan grabados en el encabezado del archivo
+salida.meta['OBJETO'] = 'Variable delta Scuti (simulada)'
+salida.meta['PERIODO_H'] = round(P.to_value(u.hour), 4)
+salida.meta['APERTURA_PX'] = r_ap
+salida.meta['COMPARACIONES'] = ', '.join(comparaciones)
+
+salida.write('curva_de_luz.ecsv', overwrite=True)
+print("Resultados guardados en 'curva_de_luz.ecsv'")
+print(f"Columnas: {salida.colnames}")
+```
+
+::: {.callout-tip}
+## Para tu repositorio de GitHub
+Este módulo genera unos 85 archivos FITS en la carpeta `noche_simulada/`.
+Agrega `noche_simulada/` y `*.fits` a tu `.gitignore` para no subirlos.
+:::
+
+---
+
+## Ejercicio
+
+¿Todas las estrellas de comparación son igual de buenas?
+
+1. Calcula, para cada estrella de comparación, la dispersión de su
+   magnitud diferencial respecto al ensemble **de las otras tres**
+2. La de mayor dispersión es la "peor" comparación
+3. ¿Qué relación ves entre la dispersión y el brillo de cada estrella?
+
+::: {.callout-tip collapse="true"}
+## Ver solución
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# SOLUCIÓN: calidad de cada estrella de comparación
+# ─────────────────────────────────────────────────────────────────────────────
+
+print(f"{'Estrella':<8} {'Flujo medio':>12} {'Dispersión [mmag]':>18}")
+for c in comparaciones:
+    # Ensemble con las OTRAS tres comparaciones
+    otras = [o for o in comparaciones if o != c]
+    f_otras = sum(np.asarray(fotometria[f'flujo_{o}']) for o in otras)
+
+    dm = a_mag(fotometria[f'flujo_{c}']) - a_mag(f_otras)
+    print(f"{c:<8} {np.mean(fotometria[f'flujo_{c}']):>12.0f} {np.std(dm) * 1000:>18.1f}")
+
+print("\n→ Las estrellas más débiles muestran mayor dispersión: tienen menos")
+print("  fotones, así que su ruido de Poisson relativo es mayor (S/N ∝ √flujo).")
+```
+:::
+
+---
+
+## ¡Felicitaciones! {.seccion-aprendiste}
+
+Completaste los 17 módulos. En este proyecto final:
+
+- ✅ Organizaste archivos FITS a partir de sus encabezados
+- ✅ Construiste master bias y master flat con combinación robusta
+- ✅ Calibraste imágenes de ciencia
+- ✅ Seguiste estrellas con deriva del telescopio usando centroides
+- ✅ Hiciste fotometría de apertura en 60 imágenes
+- ✅ Eliminaste el efecto de las nubes con fotometría diferencial
+- ✅ Encontraste el período de una estrella variable
+- ✅ Guardaste resultados reproducibles con metadatos
+
+**Próximos pasos:** prueba este pipeline con imágenes reales de tu propio
+telescopio o descargadas de un archivo público, y comparte tus curvas de
+luz con la [AAVSO](https://www.aavso.org) (Asociación Americana de
+Observadores de Estrellas Variables), donde los aficionados contribuyen
+datos a la investigación profesional.
+
+**← Volver al inicio:** [Página principal](../../index.qmd)

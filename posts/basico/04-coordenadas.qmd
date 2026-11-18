@@ -1,16 +1,466 @@
 ---
-title: "04 - Coordenadas celestes con SkyCoord"
-description: "Proximo modulo en preparacion"
+title: "04 · Coordenadas celestes con SkyCoord"
+description: "Aprende a representar posiciones en el cielo, transformar entre sistemas de coordenadas y calcular distancias angulares con astropy.coordinates"
+author: "Blog AstroPy en Español"
+date: "2025-05-28"
 categories: [basico]
 toc: true
+toc-depth: 3
+number-sections: true
 execute:
   echo: true
   warning: false
+  message: false
 ---
 
-<span class="badge-basico">Basico</span>
+<span class="badge-basico">🌱 Básico</span>
 
-::: {.callout-warning}
-## Modulo en construccion
-Este modulo esta siendo preparado. Vuelve pronto.
+## ¿Cómo ubicamos objetos en el cielo?
+
+Imagina que quieres decirle a alguien exactamente dónde mirar para ver
+una estrella. No puedes decir "al norte" porque el cielo gira. Necesitas
+un sistema de coordenadas fijo respecto a las estrellas, igual que la
+latitud y longitud fijan una posición en la Tierra.
+
+En astronomía existen varios sistemas de coordenadas según el problema
+que se quiera resolver. `astropy.coordinates` y su clase principal
+`SkyCoord` manejan todos estos sistemas y las transformaciones entre ellos
+con pocas líneas de código.
+
+::: {.callout-note}
+## Requisitos previos
+- Módulos 01, 02 y 03 completados
+- Astropy instalada: `pip install astropy`
 :::
+
+---
+
+## El sistema ecuatorial: Ascensión Recta y Declinación
+
+El sistema más usado en astronomía moderna es el **sistema ecuatorial**.
+Funciona como la latitud y longitud de la Tierra proyectadas al cielo:
+
+- **Declinación (Dec):** equivale a la latitud. Va de −90° (polo sur
+  celeste) a +90° (polo norte celeste)
+- **Ascensión Recta (AR o RA):** equivale a la longitud. Va de 0h a 24h
+  (se mide en horas, minutos y segundos)
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Crear una posición en el cielo con SkyCoord
+# Sistema ecuatorial ICRS (el estándar astronómico actual)
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy.coordinates import SkyCoord
+import astropy.units as u
+
+# Posición de Betelgeuse (la estrella roja del hombro de Orión)
+# ra  = ascensión recta  en grados
+# dec = declinación      en grados
+# frame='icrs' es el sistema de referencia inercial celeste estándar
+betelgeuse = SkyCoord(
+    ra=88.7929 * u.degree,
+    dec=7.4071 * u.degree,
+    frame='icrs'
+)
+
+print("Posición de Betelgeuse (α Orionis):")
+print(f"  RA  (grados)    : {betelgeuse.ra:.4f}")
+print(f"  Dec (grados)    : {betelgeuse.dec:.4f}")
+
+# También se puede expresar en horas:minutos:segundos (formato clásico)
+print(f"  RA  (h:m:s)     : {betelgeuse.ra.to_string(unit=u.hour, sep=':')}")
+print(f"  Dec (d:m:s)     : {betelgeuse.dec.to_string(sep=':')}")
+```
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# SkyCoord también acepta coordenadas en formato de cadena de texto
+# Muy útil para copiar coordenadas directamente de catálogos o Simbad
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy.coordinates import SkyCoord
+import astropy.units as u
+
+# Formato en horas:minutos:segundos y grados:arcominutos:arcosegundos
+andromeda = SkyCoord(
+    '00h42m44.3s',    # ascensión recta de M31 (Galaxia de Andrómeda)
+    '+41d16m9s',      # declinación de M31
+    frame='icrs'
+)
+
+# Formato en grados decimales directamente como string
+orion_nebula = SkyCoord('83.8221d', '-5.3911d', frame='icrs')
+
+print("Galaxia de Andrómeda (M31):")
+print(f"  RA  : {andromeda.ra.to_string(unit=u.hour)}")
+print(f"  Dec : {andromeda.dec.to_string()}")
+
+print("\nNebulosa de Orión (M42):")
+print(f"  RA  : {orion_nebula.ra.to_string(unit=u.hour)}")
+print(f"  Dec : {orion_nebula.dec.to_string()}")
+```
+
+---
+
+## Sistemas de coordenadas alternativos
+
+### Coordenadas galácticas
+
+El sistema galáctico mide la posición respecto al plano de la Vía Láctea.
+Es muy usado en estudios de estructura galáctica.
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Sistema de coordenadas galácticas
+# l = longitud galáctica (0° a 360°, el centro galáctico está en l=0°)
+# b = latitud galáctica  (-90° a +90°, el plano está en b=0°)
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy.coordinates import SkyCoord
+import astropy.units as u
+
+# Centro galáctico en coordenadas ecuatoriales
+centro_galactico = SkyCoord(
+    ra=266.4051 * u.degree,
+    dec=-28.936 * u.degree,
+    frame='icrs'
+)
+
+# Convertir a coordenadas galácticas con .galactic
+en_gal = centro_galactico.galactic
+
+print("Centro de la Vía Láctea (Sagitario A*):")
+print(f"  RA / Dec  →  {centro_galactico.ra:.2f}, {centro_galactico.dec:.2f}")
+print(f"  l / b     →  {en_gal.l:.4f}, {en_gal.b:.4f}")
+print()
+
+# La longitud galáctica del centro debe estar cerca de 0°
+# y la latitud galáctica cerca de 0° también (está en el plano)
+
+# Ejemplo: posición del cúmulo globular M13 en Hércules
+m13 = SkyCoord(ra=250.4236 * u.degree, dec=36.4597 * u.degree, frame='icrs')
+m13_gal = m13.galactic
+
+print("Cúmulo globular M13 (Hércules):")
+print(f"  RA / Dec  →  {m13.ra:.2f}, {m13.dec:.2f}")
+print(f"  l / b     →  {m13_gal.l:.2f}, {m13_gal.b:.2f}")
+print(f"  (latitud galáctica alta → objeto fuera del plano galáctico)")
+```
+
+### Coordenadas eclípticas
+
+El sistema eclíptico mide la posición respecto al plano de la órbita de
+la Tierra. Es útil para objetos del Sistema Solar.
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Sistema de coordenadas eclípticas
+# lon = longitud eclíptica (0° a 360°)
+# lat = latitud eclíptica  (-90° a +90°)
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy.coordinates import SkyCoord, GeocentricMeanEcliptic
+from astropy.time import Time
+import astropy.units as u
+
+# Necesitamos una época de referencia para las coordenadas eclípticas
+epoca = Time('J2000')    # estándar: 1 de enero del año 2000 al mediodía
+
+# Posición de Júpiter (aproximada para el año 2000)
+jupiter = SkyCoord(
+    ra=19.8961 * u.degree,
+    dec= 1.5699 * u.degree,
+    frame='icrs'
+)
+
+# Convertir a eclípticas
+jupiter_ecl = jupiter.transform_to(GeocentricMeanEcliptic(equinox=epoca))
+
+print("Júpiter en distintos sistemas (epoch J2000):")
+print(f"  RA / Dec          →  {jupiter.ra:.2f}, {jupiter.dec:.2f}")
+print(f"  Lon / Lat ecl.    →  {jupiter_ecl.lon:.2f}, {jupiter_ecl.lat:.2f}")
+print(f"  (latitud eclíptica baja → objeto cerca del plano eclíptico)")
+```
+
+---
+
+## Transformaciones entre sistemas
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# SkyCoord transforma entre sistemas de coordenadas automáticamente
+# Solo hay que llamar al atributo del sistema de destino
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy.coordinates import SkyCoord
+import astropy.units as u
+
+# Vega: la estrella más brillante de la constelación de Lyra
+vega = SkyCoord(
+    ra=279.2347 * u.degree,
+    dec=38.7836 * u.degree,
+    frame='icrs'
+)
+
+print("Vega (α Lyrae) en tres sistemas de coordenadas:")
+print()
+
+# Sistema ecuatorial (el de entrada)
+print(f"  Ecuatorial (ICRS):")
+print(f"    RA  = {vega.ra.to_string(unit=u.hour)}")
+print(f"    Dec = {vega.dec.to_string()}")
+
+# Sistema galáctico
+vega_gal = vega.galactic
+print(f"\n  Galáctico:")
+print(f"    l   = {vega_gal.l:.4f}")
+print(f"    b   = {vega_gal.b:.4f}")
+
+# Sistema altacimutal (horizontal) requiere ubicación y tiempo — lo vemos abajo
+```
+
+---
+
+## Coordenadas horizontales: Altitud y Acimut
+
+El sistema horizontal (Altitud–Acimut) describe dónde está un objeto
+*para un observador en un lugar y momento específicos*. Es el más
+intuitivo: altitud es cuánto está sobre el horizonte y acimut es la
+dirección (como una brújula).
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Para convertir a coordenadas horizontales necesitamos:
+#   1. La posición del observador en la Tierra (latitud, longitud)
+#   2. El momento exacto de la observación
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy.coordinates import SkyCoord, EarthLocation, AltAz
+from astropy.time import Time
+import astropy.units as u
+
+# Paso 1: definir la ubicación del observatorio
+# Usamos el Observatorio de La Silla (Chile) como ejemplo
+la_silla = EarthLocation(
+    lat=-29.2563 * u.degree,   # latitud: sur es negativo
+    lon=-70.7380 * u.degree,   # longitud: oeste es negativo
+    height=2400 * u.m          # altitud sobre el nivel del mar
+)
+
+# Paso 2: definir el momento de la observación
+tiempo_obs = Time('2024-07-01 23:00:00', format='iso', scale='utc')
+
+# Paso 3: crear el marco de referencia AltAz para ese lugar y momento
+marco_altaz = AltAz(obstime=tiempo_obs, location=la_silla)
+
+# Paso 4: convertir la posición de la estrella a coordenadas horizontales
+scorpius_antares = SkyCoord(
+    ra=247.3519 * u.degree,    # Antares, estrella principal de Escorpión
+    dec=-26.4320 * u.degree,
+    frame='icrs'
+)
+
+antares_altaz = scorpius_antares.transform_to(marco_altaz)
+
+print("Antares (α Scorpii) desde La Silla el 2024-07-01 a las 23:00 UTC:")
+print(f"  Altitud  : {antares_altaz.alt:.2f}")
+print(f"  Acimut   : {antares_altaz.az:.2f}")
+
+# Interpretar el resultado
+if antares_altaz.alt > 0 * u.degree:
+    print(f"  → Visible sobre el horizonte ✓")
+else:
+    print(f"  → Por debajo del horizonte ✗")
+```
+
+---
+
+## Distancia angular entre dos objetos
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# separation() calcula la distancia angular entre dos objetos en el cielo
+# Es el arco del gran círculo que los une
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy.coordinates import SkyCoord
+import astropy.units as u
+
+# Las dos estrellas más brillantes del cielo nocturno
+sirio = SkyCoord(
+    ra=101.2872 * u.degree,
+    dec=-16.7161 * u.degree,
+    frame='icrs'
+)
+
+canopus = SkyCoord(
+    ra=95.9880 * u.degree,
+    dec=-52.6957 * u.degree,
+    frame='icrs'
+)
+
+# separation() devuelve la distancia angular entre los dos objetos
+separacion = sirio.separation(canopus)
+
+print("Distancia angular entre las dos estrellas más brillantes:")
+print(f"  Sirio   : RA={sirio.ra:.2f}, Dec={sirio.dec:.2f}")
+print(f"  Canopus : RA={canopus.ra:.2f}, Dec={canopus.dec:.2f}")
+print(f"  Separación angular : {separacion:.4f}")
+print(f"  En arcominutos     : {separacion.to(u.arcmin):.2f}")
+```
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Aplicación: buscar cuál estrella de una lista está más cerca de un objeto
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy.coordinates import SkyCoord
+import astropy.units as u
+
+# Objeto de referencia: Nebulosa del Cangrejo (M1, remanente de supernova)
+m1 = SkyCoord(ra=83.6331 * u.degree, dec=22.0145 * u.degree, frame='icrs')
+
+# Lista de estrellas brillantes cercanas (con sus coordenadas)
+nombres = ['Betelgeuse', 'Aldebarán', 'Rigel', 'Capella']
+estrellas = SkyCoord(
+    ra  = [88.7929, 68.9802, 78.6345, 79.1723] * u.degree,
+    dec = [ 7.4071, 16.5093, -8.2016, 45.9980] * u.degree,
+    frame='icrs'
+)
+
+# Calcular la separación de M1 a cada estrella de la lista
+separaciones = m1.separation(estrellas)
+
+print("Distancia angular de M1 (Nebulosa del Cangrejo) a estrellas cercanas:")
+for nombre, sep in zip(nombres, separaciones):
+    print(f"  {nombre:<12} : {sep:.2f}")
+
+# Encontrar la más cercana
+idx_mas_cercana = separaciones.argmin()
+print(f"\n  Estrella más cercana: {nombres[idx_mas_cercana]}")
+print(f"  Separación          : {separaciones[idx_mas_cercana]:.2f}")
+```
+
+---
+
+## Buscar un objeto por nombre con `get_icrs_coordinates`
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# SkyCoord.from_name() resuelve el nombre de un objeto astronómico
+# consultando la base de datos Simbad en línea
+# (requiere conexión a internet)
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy.coordinates import SkyCoord
+
+# Resolver el nombre del objeto → obtener sus coordenadas automáticamente
+try:
+    m31 = SkyCoord.from_name('M31')          # Galaxia de Andrómeda
+    m42 = SkyCoord.from_name('M42')          # Nebulosa de Orión
+    m87 = SkyCoord.from_name('M87')          # Galaxia con el agujero negro fotografiado
+
+    print("Coordenadas obtenidas automáticamente desde Simbad:")
+    print(f"  M31 (Andrómeda) : RA={m31.ra:.4f}, Dec={m31.dec:.4f}")
+    print(f"  M42 (Orión)     : RA={m42.ra:.4f}, Dec={m42.dec:.4f}")
+    print(f"  M87             : RA={m87.ra:.4f}, Dec={m87.dec:.4f}")
+
+    # Separación entre M31 y M87
+    sep = m31.separation(m87)
+    print(f"\n  Separación M31 - M87 : {sep:.2f}")
+
+except Exception as e:
+    # Si no hay conexión a internet, mostramos el error sin detener el blog
+    print(f"Sin conexión a internet: {e}")
+    print("(Este bloque requiere acceso a Simbad en línea)")
+```
+
+---
+
+## Tabla de referencia: sistemas de coordenadas
+
+| Sistema | Frame en Astropy | Ejes | Uso típico |
+|---|---|---|---|
+| Ecuatorial (ICRS) | `'icrs'` | RA, Dec | Catálogos, posición de estrellas |
+| Galáctico | `'galactic'` | l, b | Estructura de la Vía Láctea |
+| Eclíptico | `GeocentricMeanEcliptic` | lon, lat | Objetos del Sistema Solar |
+| Horizontal | `AltAz` | alt, az | Observación desde un lugar y hora |
+| FK5 | `'fk5'` | RA, Dec | Catálogos antiguos (J1950, J2000) |
+
+---
+
+## Ejercicio
+
+El telescopio ALMA está ubicado en el Llano de Chajnantor, Chile, a estas
+coordenadas: latitud **−23.029°**, longitud **−67.755°**, altitud **5058 m**.
+
+Usando `astropy.coordinates`:
+
+1. Crea la ubicación del observatorio ALMA con `EarthLocation`
+2. Elige una fecha y hora de observación nocturna cualquiera
+3. Calcula si **Sagitario A\*** (el agujero negro central de la Vía Láctea,
+   RA=266.4051°, Dec=−28.936°) es visible desde ALMA en ese momento
+4. Muestra su altitud y acimut
+
+::: {.callout-tip collapse="true"}
+## Ver solución
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# SOLUCIÓN: visibilidad de Sagitario A* desde ALMA
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy.coordinates import SkyCoord, EarthLocation, AltAz
+from astropy.time import Time
+import astropy.units as u
+
+# Paso 1: ubicación del observatorio ALMA
+alma = EarthLocation(
+    lat=-23.029 * u.degree,
+    lon=-67.755 * u.degree,
+    height=5058 * u.m
+)
+
+# Paso 2: momento de observación (noche austral)
+tiempo = Time('2024-06-15 03:00:00', format='iso', scale='utc')
+
+# Paso 3: crear el marco AltAz para ALMA en ese momento
+marco = AltAz(obstime=tiempo, location=alma)
+
+# Posición de Sagitario A* (centro de la Vía Láctea)
+sgr_a = SkyCoord(
+    ra=266.4051 * u.degree,
+    dec=-28.936 * u.degree,
+    frame='icrs'
+)
+
+# Transformar a coordenadas horizontales
+sgr_a_altaz = sgr_a.transform_to(marco)
+
+print("Sagitario A* desde ALMA el 2024-06-15 a las 03:00 UTC:")
+print(f"  Altitud  : {sgr_a_altaz.alt:.2f}")
+print(f"  Acimut   : {sgr_a_altaz.az:.2f}")
+
+if sgr_a_altaz.alt > 0 * u.degree:
+    print(f"  → ¡Visible! Está sobre el horizonte ✓")
+    if sgr_a_altaz.alt > 30 * u.degree:
+        print(f"  → Buenas condiciones de observación (alt > 30°) ✓")
+else:
+    print(f"  → No visible, por debajo del horizonte ✗")
+```
+:::
+
+---
+
+## ¿Qué aprendiste en este módulo? {.seccion-aprendiste}
+
+- ✅ Crear posiciones en el cielo con `SkyCoord` en formato grados y h:m:s
+- ✅ El sistema ecuatorial: Ascensión Recta y Declinación
+- ✅ Transformar a coordenadas galácticas con `.galactic`
+- ✅ Transformar a coordenadas eclípticas con `GeocentricMeanEcliptic`
+- ✅ Calcular coordenadas horizontales (Altitud/Acimut) con `AltAz` y `EarthLocation`
+- ✅ Medir la distancia angular entre objetos con `.separation()`
+- ✅ Resolver nombres de objetos a coordenadas con `SkyCoord.from_name()`
+
+**Siguiente módulo →** [05 · Tablas astronómicas con `astropy.table`](05-tablas.qmd)

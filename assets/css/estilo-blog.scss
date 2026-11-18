@@ -1,86 +1,221 @@
 /*-- scss:defaults --*/
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Variables base del blog
-// Quarto las usa para sobreescribir los valores del tema (cosmo / darkly)
+// estilo-blog.scss · Tema "Observatorio nocturno"
+// Modo oscuro azul noche con acentos cian (enlaces) y ámbar (detalles)
+// Para cambiar un color basta con editar la variable correspondiente aquí
 // ─────────────────────────────────────────────────────────────────────────────
 
-// Tipografía
-$font-family-sans-serif: 'Inter', 'Segoe UI', system-ui, sans-serif;
-$headings-font-weight:   600;
+// Fuentes desde Google Fonts: Inter (texto), Space Grotesk (títulos),
+// JetBrains Mono (código)
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
 
-// Colores de acento por nivel de dificultad
-$color-basico:    #1D9E75;   // teal   — nivel básico
-$color-inter:     #378ADD;   // azul   — nivel intermedio
-$color-avanzado:  #7F77DD;   // morado — nivel avanzado
+$font-family-sans-serif: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+$font-family-monospace: "JetBrains Mono", Consolas, monospace;
+$headings-font-family: "Space Grotesk", "Inter", sans-serif;
+$headings-font-weight: 600;
+
+// Paleta principal
+$body-bg: #0b1622;             // fondo de la página (azul noche)
+$body-color: #cdd7e1;          // texto normal
+$headings-color: #f1f5f9;      // títulos
+$primary: #48a9c2;             // botones principales (derivado de #489fb5)
+$link-color: #6cc3d8;          // enlaces
+$secondary: #94a3b8;
+$border-color: #1f3347;
+
+// Barra superior, menú lateral y pie de página
+$navbar-bg: #07101a;
+$navbar-fg: #cbd5e1;
+$navbar-hl: #f4b860;           // ámbar: página activa en la barra superior
+$sidebar-bg: #0e1c2b;
+$sidebar-fg: #a9b8c7;
+$sidebar-hl: #f4b860;          // ámbar: módulo activo en el menú lateral
+$footer-bg: #07101a;
+$footer-fg: #94a3b8;
+
+// Código en línea (dentro de títulos, párrafos, listas, tablas e índice)
+$code-bg: #13263a;
+$code-color: #f4b860;
+
+// Bloques de código (panel más claro que la página)
+$code-block-bg: #13283f;
+$code-block-border-left: #f4b860;
+
+// Bloques de salida (panel más oscuro que la página, tipo terminal)
+$salida-bg: #050c14;
+$salida-texto: #bfe3ec;
+$salida-borde: #6cc3d8;
+
+// Variables propias (usadas en las reglas de abajo)
+$acento: #f4b860;              // ámbar para etiquetas y detalles
+$texto-suave: #9fb0c1;         // texto secundario
+$borde: #1f3347;
+$tarjeta: #0f1f30;             // fondo de tarjetas y figuras
+
+// Colores de los tres niveles
+$color-basico: #1D9E75;
+$color-inter: #378ADD;
+$color-avanzado: #7F77DD;
 
 /*-- scss:rules --*/
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Badges de nivel (aparecen al inicio de cada módulo)
-// Uso en el .qmd:  <span class="badge-basico">🌱 Básico</span>
-// ─────────────────────────────────────────────────────────────────────────────
+// ─── Menú lateral ────────────────────────────────────────────────────────────
+// Títulos de sección ("NIVEL 1 · BÁSICO") en mayúsculas pequeñas
+.sidebar-item-section > .sidebar-item-container .sidebar-item-text {
+  text-transform: uppercase;
+  font-size: .72rem;
+  letter-spacing: .08em;
+  font-weight: 700;
+  color: #6b8299;
+}
+.sidebar-link.active { font-weight: 600; }
 
-.badge-basico {
-  background-color: $color-basico;
-  color: white;
+// ─── Títulos de las páginas ──────────────────────────────────────────────────
+h1.title { font-family: $headings-font-family; letter-spacing: -.01em; }
+
+// ─── Código ──────────────────────────────────────────────────────────────────
+// Bloque de CÓDIGO: panel azul claro con etiqueta y borde ámbar
+div.sourceCode {
+  position: relative;
+  border: 1px solid #24425f;
+  border-left: 3px solid $code-block-border-left;
+  border-radius: 8px;
+  background-color: $code-block-bg;
+  margin-left: 0;            // Quarto lo desplaza a la izquierda: lo alineamos con la salida
+  margin-bottom: 0;
+}
+div.sourceCode::before {
+  content: "Código";
+  display: block;
+  padding: .45rem .9rem 0;
+  font-family: $font-family-sans-serif;
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: $code-block-border-left;
+}
+div.sourceCode pre.sourceCode { background-color: transparent; border: none; margin-bottom: 0; }
+
+// Bloque de SALIDA: panel oscuro tipo terminal con etiqueta y borde cian
+.cell-output-stdout, .cell-output-stderr {
+  background-color: $salida-bg;
+  border: 1px solid #16293b;
+  border-left: 3px solid $salida-borde;
+  border-radius: 8px;
+  margin-top: .5rem;
+  margin-bottom: 1.2rem;
+}
+.cell-output-stdout::before, .cell-output-stderr::before {
+  content: "Salida";
+  display: block;
+  padding: .45rem .9rem 0;
+  font-family: $font-family-sans-serif;
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: $salida-borde;
+}
+.cell-output-stdout pre, .cell-output-stderr pre {
+  background-color: transparent;
+  border: none;
+  margin: 0;
+  padding: .35rem .9rem .7rem;
+}
+.cell-output-stdout pre code, .cell-output-stderr pre code {
+  color: $salida-texto;
+  background: transparent !important;
+}
+// Las salidas de texto plano (sin celda) mantienen su aspecto
+.cell { margin-bottom: 1.4rem; }
+// Comentarios del código más claros (el estilo "nord" los deja muy tenues)
+code span.co { color: #8fa7bd; font-style: italic; }
+// Código en línea en cualquier parte (texto, títulos, tablas, índice lateral)
+:not(pre) > code:not(.sourceCode) {
+  color: $code-color !important;
+  background-color: $code-bg !important;
+  padding: .1em .35em;
   border-radius: 4px;
-  padding: 2px 8px;
-  font-size: 0.78em;
+}
+// En los títulos el código conserva el tamaño del título
+h1, h2, h3, h4 { code { font-size: .85em; } }
+
+// ─── Figuras: marco suave para integrarlas con la página ────────────────────
+// max-width: 100% evita que las figuras anchas se salgan de la columna
+.cell-output-display img, figure img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  border: 1px solid $borde;
 }
 
-.badge-inter {
-  background-color: $color-inter;
-  color: white;
-  border-radius: 4px;
-  padding: 2px 8px;
-  font-size: 0.78em;
+// ─── Botón secundario legible sobre fondo oscuro ────────────────────────────
+.btn-outline-secondary { color: #cbd5e1; border-color: #334b63; }
+.btn-outline-secondary:hover { background: #1a3044; color: #fff; }
+
+// ─── Página de inicio ────────────────────────────────────────────────────────
+.hero { padding: 4rem 0 2.5rem; max-width: 780px; }
+.hero-kicker, .seccion-kicker {
+  display: block; text-transform: uppercase; letter-spacing: .12em;
+  font-size: .78rem; font-weight: 600; color: $acento; margin-bottom: .8rem;
+}
+.hero-title {
+  display: block; font-family: $headings-font-family; font-size: 3.1rem;
+  line-height: 1.08; font-weight: 700; color: $headings-color; margin-bottom: 1.1rem;
+}
+.hero-lead { display: block; font-size: 1.2rem; line-height: 1.6; color: $texto-suave; margin-bottom: 1.8rem; }
+// En celulares el título principal se reduce para no ocupar toda la pantalla
+@media (max-width: 576px) {
+  .hero { padding-top: 2rem; }
+  .hero-title { font-size: 2.2rem; }
+  .hero-lead { font-size: 1.05rem; }
+}
+.hero .btn { margin: 0 .5rem .5rem 0; border-radius: 8px; font-weight: 600; font-size: 1rem; padding: .7rem 1.3rem; }
+.seccion-home { margin: 2.5rem 0 1rem; }
+
+// Tarjetas de los tres niveles
+.niveles { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem; }
+.nivel-card {
+  background: $tarjeta;
+  border: 1px solid $borde;
+  border-top: 4px solid var(--c);      // franja superior con el color del nivel
+  border-radius: 12px;
+  padding: 1.4rem 1.5rem 1.1rem;
+  p { margin-bottom: .6rem; color: $texto-suave; }
+  strong { display: block; font-family: $headings-font-family; font-size: 1.45rem; color: $headings-color; margin-top: .2rem; }
+  a { font-weight: 600; text-decoration: none; color: var(--c); }
+}
+.nivel-basico { --c: #{$color-basico}; }
+.nivel-inter { --c: #{$color-inter}; }
+.nivel-avanzado { --c: #{$color-avanzado}; }
+.nivel-tag { font-size: .75rem; font-weight: 600; text-transform: uppercase; letter-spacing: .07em; color: var(--c); }
+
+// Galería "Lo que vas a construir"
+.destacados { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem; }
+.destacado {
+  p { font-size: .95rem; color: $texto-suave; }
+  img {
+    width: 100%; aspect-ratio: 16 / 10; object-fit: cover;
+    border-radius: 10px; border: 1px solid $borde; background: $tarjeta; margin-bottom: .6rem;
+  }
 }
 
-.badge-avanzado {
-  background-color: $color-avanzado;
-  color: white;
-  border-radius: 4px;
-  padding: 2px 8px;
-  font-size: 0.78em;
+// ─── Etiquetas de nivel al inicio de cada módulo ────────────────────────────
+.badge-basico, .badge-inter, .badge-avanzado {
+  display: inline-block; font-size: .75rem; font-weight: 600; letter-spacing: .04em;
+  padding: .2rem .65rem; border-radius: 999px; color: #fff;
 }
+.badge-basico { background: $color-basico; }
+.badge-inter { background: $color-inter; }
+.badge-avanzado { background: $color-avanzado; }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Bloques callout con los colores del blog
-// ─────────────────────────────────────────────────────────────────────────────
-
-.callout-tip     { border-left-color: $color-basico   !important; }
-.callout-note    { border-left-color: $color-inter    !important; }
-.callout-warning { border-left-color: $color-avanzado !important; }
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Código: fuente monoespaciada más cómoda para leer
-// ─────────────────────────────────────────────────────────────────────────────
-
-code, pre {
-  font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
-  font-size: 0.88em;
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Tabla de contenidos lateral
-// ─────────────────────────────────────────────────────────────────────────────
-
-#TOC {
-  border-left: 2px solid rgba(0, 0, 0, 0.08);
-  padding-left: 1rem;
-  font-size: 0.88em;
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Sección de cierre "¿Qué aprendiste?"
-// Uso en el .qmd:  ## Título {.seccion-aprendiste}
-// ─────────────────────────────────────────────────────────────────────────────
-
+// ─── Sección de cierre "¿Qué aprendiste?" ────────────────────────────────────
 .seccion-aprendiste {
-  background: rgba(29, 158, 117, 0.08);
-  border-left: 3px solid $color-basico;
-  border-radius: 0 6px 6px 0;
+  border-left: 4px solid $acento;
+  background: rgba(244, 184, 96, .06);
+  border-radius: 0 8px 8px 0;
   padding: 1rem 1.2rem;
   margin-top: 2rem;
 }

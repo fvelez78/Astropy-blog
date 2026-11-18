@@ -1,16 +1,398 @@
 ---
-title: "13 - Cosmologia computacional"
-description: "Proximo modulo en preparacion"
+title: "13 · Cosmología computacional"
+description: "Calcula distancias, edades y tiempos en un universo en expansión con astropy.cosmology: modelos ΛCDM, Planck 2018, z_at_value y el diagrama de Hubble"
+author: "Blog AstroPy en Español"
+date: "2026-11-01"
 categories: [avanzado]
 toc: true
+toc-depth: 3
+number-sections: true
 execute:
   echo: true
   warning: false
+  message: false
 ---
 
-<span class="badge-avanzado">Avanzado</span>
+<span class="badge-avanzado">🚀 Avanzado</span>
 
-::: {.callout-warning}
-## Modulo en construccion
-Este modulo esta siendo preparado. Vuelve pronto.
+## ¿Por qué "distancia" es complicado en cosmología?
+
+En la vida cotidiana la distancia es una sola. En un universo que **se
+expande**, la pregunta *"¿a qué distancia está esta galaxia?"* tiene varias
+respuestas correctas, según qué se quiera medir:
+
+| Distancia | Pregunta que responde |
+|---|---|
+| **Comóvil** | ¿A qué distancia está *hoy* la galaxia? |
+| **De luminosidad** $d_L$ | ¿Qué distancia explica el brillo que vemos? (supernovas) |
+| **Diametral angular** $d_A$ | ¿Qué distancia explica el tamaño aparente? |
+| **Tiempo de viaje de la luz** | ¿Hace cuánto salió la luz que vemos? |
+
+Todas dependen del **modelo cosmológico**: cuánta materia y energía oscura
+hay, y la constante de Hubble $H_0$. El submódulo `astropy.cosmology`
+hace estos cálculos (integrales nada triviales) en una línea.
+
+::: {.callout-note}
+## Requisitos previos
+- Módulos 02 (unidades) y 03 (tiempo)
+- En el módulo 01 vimos que `H0` **no está** en `astropy.constants`: aquí es donde vive
 :::
+
+---
+
+## Los modelos cosmológicos incluidos
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Astropy trae los modelos medidos por las grandes misiones
+# Planck18 = resultados finales del satélite Planck (2018)
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy.cosmology import Planck18, WMAP9
+
+cosmo = Planck18     # modelo que usaremos en todo el módulo
+
+print(f"Modelo           : {cosmo.name}")
+print(f"H0               : {cosmo.H0}")                 # constante de Hubble
+print(f"Ω materia (Om0)  : {cosmo.Om0:.4f}")            # materia (oscura + bariónica)
+print(f"Ω energía oscura : {cosmo.Ode0:.4f}")           # constante cosmológica Λ
+print(f"Ω bariones (Ob0) : {cosmo.Ob0:.4f}")            # materia "normal"
+print(f"T del fondo CMB  : {cosmo.Tcmb0}")
+print(f"Edad del universo: {cosmo.age(0):.3f}")         # edad hoy (z = 0)
+
+print(f"\nComparación con WMAP9: H0 = {WMAP9.H0}, edad = {WMAP9.age(0):.3f}")
+```
+
+::: {.callout-tip}
+## La "tensión de Hubble"
+Planck (fondo cósmico de microondas) mide $H_0 \approx 67.7$ km/s/Mpc,
+pero las supernovas cercanas dan $H_0 \approx 73$. Esta discrepancia es uno
+de los grandes problemas abiertos de la cosmología actual.
+:::
+
+### Crear un modelo propio
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# FlatLambdaCDM: universo plano con materia + constante cosmológica
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy.cosmology import FlatLambdaCDM
+import astropy.units as u
+
+# Modelo "de libro de texto" con números redondos
+cosmo_simple = FlatLambdaCDM(H0=70 * u.km / u.s / u.Mpc, Om0=0.3, name='Didáctico')
+
+# Un universo sin energía oscura (como se creía antes de 1998)
+cosmo_sin_lambda = FlatLambdaCDM(H0=70 * u.km / u.s / u.Mpc, Om0=1.0, name='Solo materia')
+
+for c in [cosmo_simple, cosmo_sin_lambda]:
+    print(f"{c.name:<14}: edad = {c.age(0):.2f}")
+```
+
+¡Un universo sin energía oscura sería **más joven** que algunas estrellas
+viejas! Esta fue una de las pistas que llevaron al descubrimiento de la
+energía oscura.
+
+---
+
+## Distancias para un corrimiento al rojo
+
+En el módulo 12 medimos $z = 0.0185$ para una galaxia. Veamos qué
+significa eso, junto con objetos más lejanos.
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Las distintas distancias para varios corrimientos al rojo
+# ─────────────────────────────────────────────────────────────────────────────
+
+import numpy as np
+from astropy.table import Table
+
+objetos = {
+    'Galaxia del módulo 12': 0.0185,
+    'Cúmulo de Coma'       : 0.0231,
+    'Cuásar 3C 273'        : 0.158,
+    'Galaxia típica (z=1)' : 1.0,
+    'Galaxia lejana JWST'  : 10.0,
+}
+
+z = np.array(list(objetos.values()))
+
+tabla = Table({
+    'objeto'    : list(objetos.keys()),
+    'z'         : z,
+    'd_comovil' : cosmo.comoving_distance(z).to(u.Mpc).round(1),
+    'd_lum'     : cosmo.luminosity_distance(z).to(u.Mpc).round(1),
+    'd_ang'     : cosmo.angular_diameter_distance(z).to(u.Mpc).round(1),
+    't_viaje'   : cosmo.lookback_time(z).to(u.Gyr).round(3),
+})
+print(tabla)
+```
+
+Fíjate en dos curiosidades:
+
+- A $z = 10$ la distancia de luminosidad es **enorme** (> 100 000 Mpc): el
+  objeto se ve mucho más débil de lo que su distancia "real" sugiere.
+- La distancia diametral angular **disminuye** a z grande: una galaxia muy
+  lejana se ve *más grande* que una a z ≈ 1,6. ¡El universo actúa como una lente!
+
+```{python}
+#| label: fig-distancias
+#| fig-cap: "Las distintas distancias cosmológicas en función del corrimiento al rojo"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Graficar las distancias en función de z
+# ─────────────────────────────────────────────────────────────────────────────
+
+import matplotlib.pyplot as plt
+from astropy import constants as const
+
+z_grid = np.logspace(-2, 1.3, 300)      # de z = 0.01 a z = 20
+
+fig, ax = plt.subplots(figsize=(8, 5))
+ax.plot(z_grid, cosmo.luminosity_distance(z_grid).to(u.Gpc), label='Luminosidad $d_L$')
+ax.plot(z_grid, cosmo.comoving_distance(z_grid).to(u.Gpc), label='Comóvil')
+ax.plot(z_grid, cosmo.angular_diameter_distance(z_grid).to(u.Gpc), label='Diametral angular $d_A$')
+# Tiempo de viaje de la luz × velocidad de la luz = "distancia de viaje"
+ax.plot(z_grid, (cosmo.lookback_time(z_grid) * const.c).to(u.Gpc),
+        label='Viaje de la luz × c', ls='--')
+ax.set_xscale('log'); ax.set_yscale('log')
+ax.set_xlabel('Corrimiento al rojo z')
+ax.set_ylabel('Distancia [Gpc]')
+ax.legend()
+ax.grid(alpha=0.3, which='both')
+plt.show()
+```
+
+---
+
+## Tiempos cósmicos
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Edad del universo en cada época y tiempo transcurrido desde entonces
+# ─────────────────────────────────────────────────────────────────────────────
+
+eventos = {
+    'Fondo cósmico de microondas': 1089,
+    'Primeras galaxias'          : 15,
+    'Pico de formación estelar'  : 2,
+    'Formación del Sol'          : 0.43,
+}
+
+print(f"{'Evento':<30} {'z':>7} {'Edad del universo':>19} {'Hace':>12}")
+for nombre, zz in eventos.items():
+    edad = cosmo.age(zz)               # edad del universo en ese momento
+    hace = cosmo.lookback_time(zz)     # cuánto tiempo hace de eso
+    # Elegimos la unidad más legible según el tamaño del número
+    if edad < 1 * u.Myr:
+        edad_txt = f"{edad.to(u.kyr):.0f}"       # miles de años
+    elif edad < 1 * u.Gyr:
+        edad_txt = f"{edad.to(u.Myr):.0f}"       # millones de años
+    else:
+        edad_txt = f"{edad.to(u.Gyr):.2f}"       # miles de millones de años
+    print(f"{nombre:<30} {zz:>7} {edad_txt:>19} {hace.to(u.Gyr):>12.2f}")
+```
+
+Esta es la forma correcta de hacer la "línea de tiempo cósmica" que en el
+módulo 03 tuvimos que simplificar: `astropy.time.Time` no sirve para miles
+de millones de años, pero `astropy.cosmology` sí.
+
+---
+
+## El camino inverso: `z_at_value`
+
+¿Qué corrimiento al rojo corresponde a una edad o distancia dada? Hay que
+invertir la función numéricamente. `z_at_value` lo hace por nosotros.
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Encontrar z a partir de una edad, un tiempo de viaje o una distancia
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy.cosmology import z_at_value
+
+# z_at_value devuelve una cantidad con unidad 'redshift'; usamos .value
+# para mostrar solo el número
+
+# ¿A qué z el universo tenía 1000 millones de años?
+z_1gyr = z_at_value(cosmo.age, 1 * u.Gyr)
+print(f"El universo tenía 1 Gyr a z = {z_1gyr.value:.3f}")
+
+# ¿A qué z la luz viajó durante 4 570 millones de años (la edad del Sol)?
+z_sol = z_at_value(cosmo.lookback_time, 4.57 * u.Gyr)
+print(f"La luz que salió cuando se formó el Sol viene de z = {z_sol.value:.3f}")
+
+# ¿A qué z está una galaxia con distancia de luminosidad de 1 Gpc?
+z_1gpc = z_at_value(cosmo.luminosity_distance, 1 * u.Gpc)
+print(f"d_L = 1 Gpc corresponde a z = {z_1gpc.value:.3f}")
+```
+
+---
+
+## Tamaños y brillos
+
+### Escala angular
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# ¿Cuántos kiloparsecs abarca 1 segundo de arco a cada z?
+# Útil para pasar el tamaño aparente de una galaxia a su tamaño real
+# ─────────────────────────────────────────────────────────────────────────────
+
+for zz in [0.0185, 0.1, 0.5, 1.0, 1.6, 3.0, 10.0]:
+    escala = cosmo.kpc_proper_per_arcmin(zz).to(u.kpc / u.arcsec)
+    print(f"z = {zz:>6}:  1 arcsec = {escala:.2f}")
+
+# Ejemplo: una galaxia de 12 arcsec de diámetro a z = 0.0185
+tam = (12 * u.arcsec * cosmo.kpc_proper_per_arcmin(0.0185)).to(u.kpc)
+print(f"\nGalaxia de 12″ a z = 0.0185 → diámetro real ≈ {tam:.1f}")
+```
+
+### Módulo de distancia
+
+$$\mu = m - M = 5 \log_{10}\left(\frac{d_L}{10\,\text{pc}}\right)$$
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# El módulo de distancia convierte magnitudes aparentes en absolutas
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Una supernova Ia tiene magnitud absoluta pico M ≈ -19.3 (vela estándar)
+M_snia = -19.3
+
+for zz in [0.01, 0.1, 0.5, 1.0]:
+    mu = cosmo.distmod(zz)                 # módulo de distancia en magnitudes
+    m = M_snia + mu.value                  # magnitud aparente esperada
+    print(f"z = {zz:<5} μ = {mu:.2f}  → SN Ia aparente: m = {m:.1f}")
+```
+
+---
+
+## Aplicación: el diagrama de Hubble
+
+En 1998 dos equipos midieron supernovas Ia lejanas y descubrieron que
+eran **más débiles** de lo esperado en un universo sin energía oscura:
+la expansión se está **acelerando** (Premio Nobel 2011). Lo reproducimos
+con datos simulados.
+
+```{python}
+#| label: fig-hubble
+#| fig-cap: "Diagrama de Hubble con supernovas simuladas y tres modelos cosmológicos"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Simular supernovas en el universo Planck18 y compararlas con dos modelos
+# ─────────────────────────────────────────────────────────────────────────────
+
+import numpy as np
+import matplotlib.pyplot as plt
+from astropy.cosmology import FlatLambdaCDM
+
+rng = np.random.default_rng(1998)
+
+# 60 supernovas con z entre 0.01 y 1.4
+z_sn = np.sort(rng.uniform(0.01, 1.4, 60))
+err_mu = 0.15                                          # error típico en magnitudes
+mu_sn = cosmo.distmod(z_sn).value + rng.normal(0, err_mu, z_sn.size)
+
+# Modelos a comparar (todos con el mismo H0)
+modelos = {
+    'Planck18 (ΛCDM)'      : cosmo,
+    'Solo materia (Ω_m=1)' : FlatLambdaCDM(H0=cosmo.H0, Om0=1.0),
+    'Casi solo energía oscura (Ω_m=0.01)': FlatLambdaCDM(H0=cosmo.H0, Om0=0.01),
+}
+
+z_lin = np.linspace(0.01, 1.5, 200)
+fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 7), sharex=True,
+                               gridspec_kw={'height_ratios': [2, 1]})
+
+# Panel superior: módulo de distancia vs z
+ax1.errorbar(z_sn, mu_sn, yerr=err_mu, fmt='o', ms=4, color='C7', alpha=0.6, label='SN Ia simuladas')
+for nombre, m in modelos.items():
+    ax1.plot(z_lin, m.distmod(z_lin), label=nombre)
+ax1.set_ylabel('Módulo de distancia μ')
+ax1.legend()
+
+# Panel inferior: diferencia respecto al modelo "solo materia"
+referencia = modelos['Solo materia (Ω_m=1)']
+ax2.errorbar(z_sn, mu_sn - referencia.distmod(z_sn).value, yerr=err_mu,
+             fmt='o', ms=4, color='C7', alpha=0.6)
+for nombre, m in modelos.items():
+    ax2.plot(z_lin, m.distmod(z_lin).value - referencia.distmod(z_lin).value)
+ax2.axhline(0, color='gray', lw=0.5)
+ax2.set_xlabel('Corrimiento al rojo z')
+ax2.set_ylabel('Δμ vs solo materia')
+plt.tight_layout()
+plt.show()
+```
+
+Las supernovas quedan **por encima** de la curva de "solo materia"
+(Δμ > 0): están más lejos de lo esperado → la expansión se acelera.
+
+---
+
+## Ejercicio
+
+Ajusta el valor de $\Omega_m$ a las supernovas simuladas:
+
+1. Prueba valores de `Om0` entre 0.05 y 1.0 en un universo plano
+2. Para cada uno calcula $\chi^2 = \sum \left(\frac{\mu_{obs} - \mu_{modelo}}{\sigma}\right)^2$
+3. ¿Qué valor de $\Omega_m$ minimiza $\chi^2$? ¿Coincide con Planck18?
+
+::: {.callout-tip collapse="true"}
+## Ver solución
+
+```{python}
+#| label: fig-chi2-om
+#| fig-cap: "χ² en función de Ω_m: el mínimo indica el mejor ajuste"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# SOLUCIÓN: barrido de Ω_m y mínimo de χ²
+# ─────────────────────────────────────────────────────────────────────────────
+
+import numpy as np
+import matplotlib.pyplot as plt
+from astropy.cosmology import FlatLambdaCDM
+
+# Paso 1: rejilla de valores de Ω_m
+om_valores = np.linspace(0.05, 1.0, 96)
+
+# Paso 2: χ² para cada modelo
+chi2 = []
+for om in om_valores:
+    modelo = FlatLambdaCDM(H0=cosmo.H0, Om0=om)
+    residuo = (mu_sn - modelo.distmod(z_sn).value) / err_mu
+    chi2.append(np.sum(residuo**2))
+chi2 = np.array(chi2)
+
+# Paso 3: el mínimo y un intervalo aproximado de 1σ (Δχ² = 1)
+om_mejor = om_valores[np.argmin(chi2)]
+dentro = om_valores[chi2 < chi2.min() + 1]
+print(f"Mejor Ω_m = {om_mejor:.3f}  (1σ: {dentro.min():.2f} – {dentro.max():.2f})")
+print(f"Planck18  = {cosmo.Om0:.3f}")
+
+fig, ax = plt.subplots(figsize=(6, 4))
+ax.plot(om_valores, chi2 - chi2.min())
+ax.axvline(cosmo.Om0, color='C3', ls='--', label='Planck18')
+ax.axhline(1, color='gray', ls=':', label='Δχ² = 1')
+ax.set_ylim(0, 20)
+ax.set_xlabel('$\\Omega_m$'); ax.set_ylabel('$\\Delta\\chi^2$')
+ax.legend()
+plt.show()
+```
+:::
+
+---
+
+## ¿Qué aprendiste en este módulo? {.seccion-aprendiste}
+
+- ✅ Usar los modelos cosmológicos incluidos (`Planck18`, `WMAP9`)
+- ✅ Crear modelos propios con `FlatLambdaCDM`
+- ✅ Las diferentes distancias: comóvil, de luminosidad y diametral angular
+- ✅ Calcular la edad del universo y el tiempo de viaje de la luz para cualquier z
+- ✅ Invertir funciones con `z_at_value`
+- ✅ Escala angular (kpc/arcsec) y módulo de distancia
+- ✅ Reproducir el diagrama de Hubble que reveló la energía oscura
+
+**Siguiente módulo →** [14 · Mecánica orbital y efemérides](14-orbital.qmd)

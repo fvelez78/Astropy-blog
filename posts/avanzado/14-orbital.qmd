@@ -1,16 +1,461 @@
 ---
-title: "14 - Mecanica orbital y efemerides"
-description: "Proximo modulo en preparacion"
+title: "14 · Mecánica orbital y efemérides"
+description: "Calcula dónde están el Sol, la Luna y los planetas en cualquier fecha, planifica una noche de observación, reproduce el movimiento retrógrado de Marte y resuelve la ecuación de Kepler"
+author: "Blog AstroPy en Español"
+date: "2026-11-01"
 categories: [avanzado]
 toc: true
+toc-depth: 3
+number-sections: true
 execute:
   echo: true
   warning: false
+  message: false
 ---
 
-<span class="badge-avanzado">Avanzado</span>
+<span class="badge-avanzado">🚀 Avanzado</span>
+
+## Efemérides: el horario del Sistema Solar
+
+Una **efeméride** es una tabla con la posición de un cuerpo celeste a lo
+largo del tiempo. Antes se publicaban en libros; hoy las calculamos con
+Python a partir de modelos muy precisos del Sistema Solar.
+
+Astropy incluye:
+
+- **`get_body`**: posición del Sol, la Luna y los planetas vistos desde la
+  Tierra (o desde un observatorio concreto)
+- **`get_body_barycentric`**: posición en el espacio respecto al centro de
+  masa del Sistema Solar
+- Toda la maquinaria de `SkyCoord`, `AltAz` y `Time` de los módulos 03 y 04
+
+::: {.callout-note}
+## Requisitos previos
+- Módulos 03 (tiempo) y 04 (coordenadas)
+- Sin instalaciones extra: usamos la efeméride integrada (`builtin`) de Astropy
+:::
+
+::: {.callout-tip}
+## Más precisión
+La efeméride integrada tiene una precisión de segundos de arco, suficiente
+para observar. Para trabajo profesional instala `pip install jplephem` y usa
+`solar_system_ephemeris.set('de440')`, que descarga los modelos del JPL de la NASA.
+:::
 
 ::: {.callout-warning}
-## Modulo en construccion
-Este modulo esta siendo preparado. Vuelve pronto.
+## Tablas de rotación de la Tierra (IERS)
+La rotación de la Tierra no es perfectamente regular: el Servicio
+Internacional de Rotación Terrestre (IERS) la mide y publica tablas que
+Astropy descarga de internet para calcular alturas y acimuts con precisión.
+Si no hay conexión y las tablas incluidas quedaron viejas, Astropy se detiene
+con un error. La línea `iers.conf.auto_max_age = None` del primer bloque le
+permite seguir con las tablas que tenga: la diferencia es de fracciones de
+segundo de arco, irrelevante para planificar una observación.
 :::
+
+---
+
+## ¿Dónde están los planetas hoy?
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Posición de los planetas vistos desde la Tierra en una fecha dada
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy.time import Time
+from astropy.coordinates import get_body, get_constellation, solar_system_ephemeris
+import astropy.units as u
+
+solar_system_ephemeris.set('builtin')        # efeméride integrada (sin descargas)
+
+# Permitir tablas de rotación terrestre (IERS) desactualizadas si no hay internet
+# (ver el recuadro de advertencia de arriba)
+from astropy.utils import iers
+iers.conf.auto_max_age = None
+
+fecha = Time('2026-11-15 00:00:00', scale='utc')
+
+print(f"Posiciones geocéntricas para {fecha.iso[:10]}:\n")
+print(f"{'Cuerpo':<9} {'RA':>12} {'Dec':>12} {'Distancia':>14}  Constelación")
+for cuerpo in ['sun', 'moon', 'mercury', 'venus', 'mars', 'jupiter', 'saturn']:
+    pos = get_body(cuerpo, fecha)                      # SkyCoord con distancia
+    # La distancia de la Luna se lee mejor en km; el resto en UA
+    dist = pos.distance.to(u.km) if cuerpo == 'moon' else pos.distance.to(u.au)
+    print(f"{cuerpo.capitalize():<9} "
+          f"{pos.ra.to_string(unit=u.hour, precision=0):>12} "
+          f"{pos.dec.to_string(precision=0):>12} "
+          f"{dist:>14.3f}  {get_constellation(pos)}")
+```
+
+`get_constellation()` nos dice en qué constelación aparece cada cuerpo:
+los planetas siempre están en las constelaciones del zodíaco (y Ofiuco),
+porque orbitan cerca del plano de la eclíptica.
+
+---
+
+## Planificar una noche de observación
+
+Calculamos la altura sobre el horizonte de varios cuerpos durante una
+noche, desde el **Observatorio del Teide** (Tenerife, España).
+
+```{python}
+#| label: fig-noche
+#| fig-cap: "Altura de la Luna y los planetas durante la noche. Las franjas grises marcan el crepúsculo"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Curvas de altura durante una noche
+# ─────────────────────────────────────────────────────────────────────────────
+
+import numpy as np
+import matplotlib.pyplot as plt
+from astropy.coordinates import EarthLocation, AltAz, get_body
+from astropy.time import Time
+import astropy.units as u
+
+# Ubicación del observatorio
+teide = EarthLocation(lat=28.3009 * u.deg, lon=-16.5110 * u.deg, height=2390 * u.m)
+
+# Tiempos: de 17:00 a 08:00 UTC cada 10 minutos (Tenerife está en UTC+0 en invierno)
+inicio = Time('2026-11-15 17:00:00', scale='utc')
+tiempos = inicio + np.linspace(0, 15, 91) * u.hour
+
+# Marco horizontal para TODOS los tiempos a la vez
+marco = AltAz(obstime=tiempos, location=teide)
+
+# Altura del Sol: define la noche y los crepúsculos
+alt_sol = get_body('sun', tiempos).transform_to(marco).alt
+
+fig, ax = plt.subplots(figsize=(10, 5))
+horas = (tiempos - inicio).to(u.hour).value + 17         # eje x en horas UTC
+
+for cuerpo, color in [('moon', 'gray'), ('mars', 'C3'),
+                      ('jupiter', 'C1'), ('saturn', 'C2')]:
+    alt = get_body(cuerpo, tiempos, location=teide).transform_to(marco).alt
+    ax.plot(horas, alt.deg, color=color, lw=2, label=cuerpo.capitalize())
+
+# Sombrear: día (Sol > -0.8°), crepúsculo (-0.8° a -18°), noche (< -18°)
+ax.fill_between(horas, 0, 90, where=alt_sol.deg > -0.8, color='gold', alpha=0.25, label='Día')
+ax.fill_between(horas, 0, 90, where=(alt_sol.deg < -0.8) & (alt_sol.deg > -18),
+                color='gray', alpha=0.25, label='Crepúsculo')
+
+ax.axhline(30, color='C7', ls=':', lw=1)                   # altura mínima recomendada
+ax.set_ylim(0, 90); ax.set_xlim(horas[0], horas[-1])
+ax.set_xticks(range(17, 33, 2))
+ax.set_xticklabels([f"{h % 24:02d}h" for h in range(17, 33, 2)])
+ax.set_xlabel('Hora UTC'); ax.set_ylabel('Altura [°]')
+ax.set_title('Noche del 15 al 16 de noviembre de 2026 – Observatorio del Teide')
+ax.legend(loc='upper right', fontsize=8, ncol=2)
+plt.show()
+```
+
+¿Por qué las curvas de Marte y Júpiter casi coinciden? Porque esa noche
+están en **conjunción**: ambos aparecen en Leo separados por poco más de un
+grado. Puedes comprobarlo con `get_body('mars', t).separation(get_body('jupiter', t))`.
+
+### Hora de la puesta del Sol y del inicio de la noche
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Encontrar cuándo el Sol cruza ciertas alturas
+# Buscamos el primer instante en que la altura pasa por debajo del umbral
+# ─────────────────────────────────────────────────────────────────────────────
+
+import numpy as np
+
+# Rejilla más fina (cada minuto) para mayor precisión
+t_fino = inicio + np.linspace(0, 15, 15 * 60 + 1) * u.hour
+alt_fino = get_body('sun', t_fino).transform_to(AltAz(obstime=t_fino, location=teide)).alt.deg
+
+def primer_cruce_bajando(alturas, umbral):
+    """Índice del primer elemento donde la altura pasa de > umbral a ≤ umbral."""
+    cruces = np.where((alturas[:-1] > umbral) & (alturas[1:] <= umbral))[0]
+    return cruces[0] + 1 if len(cruces) else None
+
+eventos = {
+    'Puesta del Sol'               : -0.833,   # refracción + radio solar
+    'Fin del crepúsculo civil'     : -6,
+    'Fin del crepúsculo náutico'   : -12,
+    'Inicio de la noche astronómica': -18,
+}
+for nombre, umbral in eventos.items():
+    i = primer_cruce_bajando(alt_fino, umbral)
+    print(f"{nombre:<32}: {t_fino[i].iso[11:16]} UTC")
+```
+
+---
+
+## La fase de la Luna
+
+```{python}
+#| label: fig-fases
+#| fig-cap: "Fracción iluminada de la Luna durante noviembre de 2026"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Fracción iluminada a partir de la elongación (ángulo Sol–Tierra–Luna)
+# ─────────────────────────────────────────────────────────────────────────────
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+dias = Time('2026-11-01') + np.arange(0, 30, 0.25) * u.day
+sol  = get_body('sun', dias)
+luna = get_body('moon', dias)
+
+# Elongación: separación angular entre el Sol y la Luna vista desde la Tierra
+elongacion = sol.separation(luna)
+
+# Aproximación: fracción iluminada = (1 − cos(elongación)) / 2
+iluminada = (1 - np.cos(elongacion.radian)) / 2
+
+fig, ax = plt.subplots(figsize=(9, 3.5))
+ax.plot(dias.datetime, iluminada * 100)
+ax.set_ylabel('% iluminado'); ax.set_ylim(0, 100)
+ax.set_title('Fase lunar – noviembre 2026')
+fig.autofmt_xdate()
+plt.show()
+
+i_llena = np.argmax(iluminada); i_nueva = np.argmin(iluminada)
+print(f"Luna llena ≈ {dias[i_llena].iso[:16]} UTC")
+print(f"Luna nueva ≈ {dias[i_nueva].iso[:16]} UTC")
+```
+
+::: {.callout-tip}
+## Planificar astrofotografía
+Para fotografiar nebulosas y galaxias débiles conviene la **Luna nueva**;
+para planetas y la propia Luna, la fase no importa tanto. Combinando este
+bloque con el anterior puedes armar un calendario de observación.
+:::
+
+---
+
+## El movimiento retrógrado de Marte
+
+Visto desde la Tierra, Marte a veces parece **retroceder** en el cielo.
+No es que Marte cambie de dirección: es la Tierra adelantándolo en su
+órbita interior, como cuando adelantamos un auto en la autopista.
+
+```{python}
+#| label: fig-retrogrado
+#| fig-cap: "Trayectoria de Marte en el cielo entre octubre de 2026 y julio de 2027"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Posición diaria de Marte en coordenadas eclípticas durante 9 meses
+# ─────────────────────────────────────────────────────────────────────────────
+
+import numpy as np
+import matplotlib.pyplot as plt
+from astropy.coordinates import GeocentricTrueEcliptic
+
+dias = Time('2026-10-01') + np.arange(0, 273) * u.day
+marte = get_body('mars', dias).transform_to(GeocentricTrueEcliptic(equinox=dias))
+
+lon = marte.lon.wrap_at(360 * u.deg).deg     # longitud eclíptica
+lat = marte.lat.deg                          # latitud eclíptica
+
+# Detectar el tramo retrógrado: la longitud DISMINUYE día a día
+retro = np.diff(lon) < 0
+print(f"Marte retrógrado del {dias[1:][retro][0].iso[:10]} al {dias[1:][retro][-1].iso[:10]}")
+
+fig, ax = plt.subplots(figsize=(9, 4))
+sc = ax.scatter(lon, lat, c=np.arange(len(dias)), cmap='plasma', s=8)
+ax.invert_xaxis()                      # en el cielo el este queda a la izquierda
+cbar = fig.colorbar(sc, ax=ax)
+cbar.set_label('Días desde el 1 oct 2026')
+ax.set_xlabel('Longitud eclíptica [°]'); ax.set_ylabel('Latitud eclíptica [°]')
+ax.set_title('El "bucle" retrógrado de Marte')
+plt.show()
+```
+
+### La explicación desde arriba
+
+```{python}
+#| label: fig-orbitas
+#| fig-cap: "Órbitas de la Tierra y Marte vistas desde el polo norte de la eclíptica; las líneas unen las posiciones del mismo día"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Posiciones en el espacio (baricéntricas) de la Tierra y Marte
+# ─────────────────────────────────────────────────────────────────────────────
+
+import matplotlib.pyplot as plt
+from astropy.coordinates import get_body_barycentric
+
+tierra = get_body_barycentric('earth', dias)       # vector cartesiano (x, y, z)
+marte_xyz = get_body_barycentric('mars', dias)
+
+fig, ax = plt.subplots(figsize=(6, 6))
+ax.plot(tierra.x.to(u.au), tierra.y.to(u.au), 'C0', label='Tierra')
+ax.plot(marte_xyz.x.to(u.au), marte_xyz.y.to(u.au), 'C3', label='Marte')
+
+# Líneas de visión Tierra → Marte cada 20 días
+for i in range(0, len(dias), 20):
+    ax.plot([tierra.x[i].to_value(u.au), marte_xyz.x[i].to_value(u.au)],
+            [tierra.y[i].to_value(u.au), marte_xyz.y[i].to_value(u.au)],
+            color='gray', lw=0.6, alpha=0.7)
+
+ax.plot(0, 0, 'o', color='gold', ms=14, label='Sol')
+ax.set_aspect('equal')
+ax.set_xlabel('x [UA]'); ax.set_ylabel('y [UA]')
+ax.legend()
+plt.show()
+
+# Distancia mínima Tierra–Marte en el período (cerca de la oposición)
+dist = get_body('mars', dias).distance.to(u.au)
+print(f"Máximo acercamiento: {dist.min():.3f} el {dias[np.argmin(dist)].iso[:10]}")
+```
+
+Las líneas de visión "se cruzan" justo cuando la Tierra adelanta a Marte:
+ese es el tramo retrógrado, centrado en la **oposición**.
+
+---
+
+## Las leyes de Kepler con unidades
+
+### Tercera ley: período y tamaño de la órbita
+
+$$P^2 = \frac{4\pi^2}{G M_\odot}\, a^3$$
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Período orbital a partir del semieje mayor (y viceversa)
+# ─────────────────────────────────────────────────────────────────────────────
+
+import numpy as np
+from astropy import constants as const
+
+def periodo(a, M=const.M_sun):
+    """Tercera ley de Kepler: período a partir del semieje mayor."""
+    return (2 * np.pi * np.sqrt(a**3 / (const.G * M))).to(u.yr)
+
+cuerpos = {'Tierra': 1.000, 'Marte': 1.524, 'Júpiter': 5.203,
+           'Halley': 17.83, 'Sedna': 506}
+for nombre, a in cuerpos.items():
+    print(f"{nombre:<8} a = {a:>7.2f} UA  →  P = {periodo(a * u.au):>9.2f}")
+
+# También funciona para exoplanetas: planeta a 0.05 UA de una estrella de 0.8 M☉
+print(f"\nJúpiter caliente: P = {periodo(0.05 * u.au, 0.8 * const.M_sun).to(u.day):.2f}")
+```
+
+### Ecuación de Kepler: dónde está un cuerpo en su órbita
+
+Para una órbita elíptica, la posición en el tiempo se obtiene resolviendo
+la **ecuación de Kepler**, que no tiene solución algebraica:
+
+$$M = E - e \sin E$$
+
+donde $M$ (anomalía media) crece uniformemente con el tiempo y $E$
+(anomalía excéntrica) da la posición. La resolvemos con el método de Newton.
+
+```{python}
+#| label: fig-halley
+#| fig-cap: "Órbita del cometa Halley con su posición cada 2 años"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Propagar la órbita del cometa Halley resolviendo la ecuación de Kepler
+# ─────────────────────────────────────────────────────────────────────────────
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+def resolver_kepler(M, e, tolerancia=1e-12):
+    """Resuelve M = E - e·sin(E) para E con el método de Newton-Raphson."""
+    E = np.where(e < 0.8, M, np.pi)              # valor inicial recomendado
+    for _ in range(100):
+        delta = (E - e * np.sin(E) - M) / (1 - e * np.cos(E))
+        E = E - delta
+        if np.all(np.abs(delta) < tolerancia):
+            break
+    return E
+
+# Elementos orbitales del Halley
+a = 17.83 * u.au        # semieje mayor
+e = 0.967               # excentricidad (muy alargada)
+P = periodo(a)          # período con la tercera ley
+perihelio = Time('1986-02-09')
+
+# Posiciones cada 2 años durante una órbita completa
+t = perihelio + np.arange(0, P.to_value(u.yr), 2) * u.yr
+M = 2 * np.pi * ((t - perihelio) / P).decompose().value   # anomalía media
+E = resolver_kepler(M % (2 * np.pi), e)
+
+# Coordenadas en el plano de la órbita (Sol en el foco)
+x = a * (np.cos(E) - e)
+y = a * np.sqrt(1 - e**2) * np.sin(E)
+r = np.hypot(x, y)
+
+# Órbita completa para dibujar la elipse
+E_lin = np.linspace(0, 2 * np.pi, 400)
+fig, ax = plt.subplots(figsize=(9, 4))
+ax.plot(a * (np.cos(E_lin) - e), a * np.sqrt(1 - e**2) * np.sin(E_lin), 'gray', lw=1)
+ax.scatter(x, y, c='C0', s=25, zorder=3)
+for ti, xi, yi in zip(t[::5], x[::5], y[::5]):
+    ax.annotate(ti.iso[:4], (xi.value, yi.value), fontsize=8, xytext=(3, 5),
+                textcoords='offset points')
+ax.plot(0, 0, 'o', color='gold', ms=10)
+ax.set_aspect('equal'); ax.set_xlabel('x [UA]'); ax.set_ylabel('y [UA]')
+ax.set_title(f'Cometa Halley: P = {P:.1f}, e = {e}')
+plt.show()
+
+print(f"Distancia en el perihelio: {a * (1 - e):.2f}")
+print(f"Distancia en el afelio   : {a * (1 + e):.1f}")
+```
+
+Los puntos están muy juntos cerca del afelio y muy separados cerca del Sol:
+es la **segunda ley de Kepler** (áreas iguales en tiempos iguales). El
+Halley pasa décadas lejos y solo unos meses cerca del Sol.
+
+---
+
+## Ejercicio
+
+La **oposición** de Marte ocurre cuando la Tierra queda entre el Sol y
+Marte: la elongación Sol–Marte es ~180°. Es el mejor momento para observarlo.
+
+1. Calcula la elongación (separación Sol–Marte) para cada día entre
+   2026-06-01 y 2028-06-01
+2. Encuentra la fecha de la oposición (elongación máxima)
+3. Ese día, ¿a qué distancia está Marte y en qué constelación aparece?
+
+::: {.callout-tip collapse="true"}
+## Ver solución
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# SOLUCIÓN: próxima oposición de Marte
+# ─────────────────────────────────────────────────────────────────────────────
+
+import numpy as np
+
+# Paso 1: rejilla diaria de dos años
+dias = Time('2026-06-01') + np.arange(0, 731) * u.day
+sol   = get_body('sun', dias)
+marte = get_body('mars', dias)
+elong = sol.separation(marte).deg
+
+# Paso 2: el día de elongación máxima
+i = np.argmax(elong)
+print(f"Oposición de Marte: {dias[i].iso[:10]} (elongación {elong[i]:.1f}°)")
+
+# Paso 3: distancia y constelación ese día
+print(f"Distancia a la Tierra: {marte[i].distance.to(u.au):.3f}")
+print(f"                     = {marte[i].distance.to(u.km):.3e}")
+print(f"Constelación         : {get_constellation(marte[i])}")
+
+# ¿Por qué la elongación no llega exactamente a 180°? Porque la órbita de
+# Marte está inclinada ~1.85° respecto a la de la Tierra: en la oposición
+# Marte suele quedar un poco por encima o por debajo de la línea Sol–Tierra.
+```
+:::
+
+---
+
+## ¿Qué aprendiste en este módulo? {.seccion-aprendiste}
+
+- ✅ Obtener posiciones del Sol, la Luna y los planetas con `get_body`
+- ✅ Saber en qué constelación está un objeto con `get_constellation`
+- ✅ Calcular curvas de altura y horarios de crepúsculo para un observatorio
+- ✅ Estimar la fase lunar a partir de la elongación
+- ✅ Reproducir el movimiento retrógrado de Marte y explicarlo con `get_body_barycentric`
+- ✅ Aplicar la tercera ley de Kepler con unidades
+- ✅ Resolver la ecuación de Kepler para propagar una órbita
+
+**Siguiente módulo →** [15 · Series temporales astronómicas](15-series-temporales.qmd)

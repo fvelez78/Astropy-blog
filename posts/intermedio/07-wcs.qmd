@@ -1,16 +1,346 @@
 ---
-title: "07 - WCS del pixel al cielo"
-description: "Proximo modulo en preparacion"
+title: "07 · WCS: del píxel al cielo"
+description: "Aprende qué es el World Coordinate System y cómo convertir posiciones en píxeles a coordenadas celestes (y viceversa) con astropy.wcs"
+author: "Blog AstroPy en Español"
+date: "2026-11-01"
 categories: [intermedio]
 toc: true
+toc-depth: 3
+number-sections: true
 execute:
   echo: true
   warning: false
+  message: false
 ---
 
-<span class="badge-intermedio">Intermedio</span>
+<span class="badge-inter">🔭 Intermedio</span>
+
+## El problema: una imagen no sabe dónde está
+
+En el módulo 06 trabajamos con una imagen como un simple arreglo de
+números. Pero un astrónomo necesita saber: *"¿qué estrella es la que está
+en el píxel (90, 110)?"*. Para eso hace falta un "mapa" que traduzca:
+
+$$\text{píxel } (x, y) \;\longleftrightarrow\; \text{cielo } (\alpha, \delta)$$
+
+Ese mapa se llama **WCS** (*World Coordinate System*) y vive en el
+encabezado del FITS, en un conjunto de claves estándar. Con `astropy.wcs`
+leemos esas claves y hacemos las conversiones automáticamente.
+
+::: {.callout-note}
+## Requisitos previos
+- Módulo 04 (coordenadas con `SkyCoord`)
+- Módulo 06 (archivos FITS)
+:::
+
+---
+
+## Las claves del WCS en el encabezado
+
+Un WCS celeste básico se describe con estas claves:
+
+| Clave | Significado | Ejemplo |
+|---|---|---|
+| `CTYPE1`, `CTYPE2` | Tipo de coordenada y proyección | `RA---TAN`, `DEC--TAN` |
+| `CRVAL1`, `CRVAL2` | Coordenada del cielo del píxel de referencia (grados) | `83.82`, `-5.39` |
+| `CRPIX1`, `CRPIX2` | Píxel de referencia (¡cuenta desde 1!) | `100.5`, `100.5` |
+| `CDELT1`, `CDELT2` | Tamaño del píxel en grados | `-0.0002778`, `0.0002778` |
+| `CUNIT1`, `CUNIT2` | Unidades | `deg` |
+
+El sufijo `TAN` indica la **proyección gnomónica (tangente)**: la forma de
+"aplanar" un trozo de la esfera celeste sobre el plano del detector. Es la
+que usan casi todas las cámaras CCD.
+
+::: {.callout-tip}
+## ¿Por qué CDELT1 es negativo?
+En el cielo, la ascensión recta **crece hacia el este**, que en una imagen
+con el norte arriba queda **a la izquierda**. Por eso el paso en RA suele ser
+negativo: al avanzar a la derecha en x, la RA disminuye.
+:::
+
+---
+
+## Crear un WCS desde cero
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Construir un WCS para una imagen de 200×200 píxeles centrada en M42
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy.wcs import WCS
+
+# naxis=2 → WCS para una imagen de 2 dimensiones
+w = WCS(naxis=2)
+
+# Píxel de referencia: el centro de la imagen (convención FITS, base 1)
+w.wcs.crpix = [100.5, 100.5]
+
+# Coordenadas del cielo en ese píxel: Nebulosa de Orión (RA, Dec en grados)
+w.wcs.crval = [83.8221, -5.3911]
+
+# Escala: 1 segundo de arco por píxel = 1/3600 grados
+# RA negativo porque crece hacia la izquierda (este)
+w.wcs.cdelt = [-1/3600, 1/3600]
+
+# Proyección tangente para RA y Dec
+w.wcs.ctype = ["RA---TAN", "DEC--TAN"]
+
+# Mostrar un resumen del WCS
+print(w)
+```
+
+---
+
+## Convertir píxel → cielo
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# pixel_to_world() recibe (x, y) en convención numpy (base 0)
+# y devuelve un objeto SkyCoord listo para usar
+# ─────────────────────────────────────────────────────────────────────────────
+
+import astropy.units as u
+
+# Centro de la imagen (base 0): 99.5, 99.5 equivale a 100.5 en base FITS
+centro = w.pixel_to_world(99.5, 99.5)
+print(f"Centro de la imagen   : {centro.to_string('hmsdms', precision=2)}")
+
+# Esquina inferior izquierda (píxel 0, 0)
+esquina = w.pixel_to_world(0, 0)
+print(f"Esquina inferior izq. : {esquina.to_string('hmsdms', precision=2)}")
+
+# Distancia angular entre el centro y la esquina (módulo 04)
+print(f"Separación            : {centro.separation(esquina).to(u.arcsec):.1f}")
+```
 
 ::: {.callout-warning}
-## Modulo en construccion
-Este modulo esta siendo preparado. Vuelve pronto.
+## Base 0 vs base 1
+`pixel_to_world()` y `world_to_pixel()` usan **base 0** (como numpy),
+mientras que `CRPIX` en el encabezado usa **base 1** (como FITS). Astropy
+hace la traducción internamente: tú solo usa índices de numpy.
 :::
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# También funciona con muchos píxeles a la vez (arreglos)
+# ─────────────────────────────────────────────────────────────────────────────
+
+import numpy as np
+
+# Posiciones de las 5 estrellas de la imagen sintética del módulo 06
+x_estrellas = np.array([50, 120, 160, 90, 30])
+y_estrellas = np.array([60, 140, 40, 110, 170])
+
+# Una sola llamada convierte todas las posiciones
+coords = w.pixel_to_world(x_estrellas, y_estrellas)
+
+for i, c in enumerate(coords, start=1):
+    print(f"Estrella {i}: RA = {c.ra.deg:.5f}°,  Dec = {c.dec.deg:.5f}°")
+```
+
+---
+
+## Convertir cielo → píxel
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# world_to_pixel() responde: ¿en qué píxel cae esta coordenada del cielo?
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy.coordinates import SkyCoord
+import astropy.units as u
+
+# Posición aproximada de θ¹ Ori C, la estrella principal del Trapecio
+trapecio = SkyCoord('05h35m16.46s', '-05d23m22.8s', frame='icrs')
+
+x, y = w.world_to_pixel(trapecio)
+print(f"El Trapecio cae en el píxel x = {x:.1f}, y = {y:.1f}")
+
+# ¿Está dentro de la imagen de 200×200?
+dentro = (0 <= x < 200) and (0 <= y < 200)
+print(f"¿Dentro de la imagen? {'Sí ✓' if dentro else 'No ✗'}")
+```
+
+---
+
+## El WCS en un archivo FITS
+
+### Guardar el WCS en el encabezado
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Crear una imagen sintética y guardarla con su WCS en el encabezado
+# ─────────────────────────────────────────────────────────────────────────────
+
+import numpy as np
+from astropy.io import fits
+
+# Imagen sintética: fondo + ruido + estrellas (igual que en el módulo 06)
+rng = np.random.default_rng(seed=7)
+imagen = 100 + rng.normal(0, 5, (200, 200))
+yy, xx = np.mgrid[0:200, 0:200]
+for x0, y0, b in zip(x_estrellas, y_estrellas, [800, 1500, 600, 2500, 400]):
+    imagen += b * np.exp(-((xx - x0)**2 + (yy - y0)**2) / (2 * 2.5**2))
+
+# w.to_header() convierte el WCS en claves de encabezado FITS
+encabezado = w.to_header()
+encabezado['OBJECT'] = 'M42 simulado'
+
+fits.writeto('m42_con_wcs.fits', imagen.astype(np.float32),
+             header=encabezado, overwrite=True)
+
+print("Claves WCS escritas en el encabezado:")
+print(repr(encabezado))
+```
+
+### Leer el WCS desde un FITS
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Lo habitual con datos reales: leer el WCS directamente del encabezado
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy.io import fits
+from astropy.wcs import WCS
+
+datos, hdr = fits.getdata('m42_con_wcs.fits', header=True)
+
+# Basta con pasar el encabezado a WCS()
+w_leido = WCS(hdr)
+
+# Comprobamos que funciona igual que el original
+c = w_leido.pixel_to_world(90, 110)
+print(f"Píxel (90, 110) → {c.to_string('hmsdms', precision=2)}")
+```
+
+---
+
+## Información útil del WCS
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Escala de píxel, huella (footprint) y tamaño del campo de visión
+# ─────────────────────────────────────────────────────────────────────────────
+
+from astropy.wcs.utils import proj_plane_pixel_scales
+import astropy.units as u
+
+# Escala en grados/píxel para cada eje → convertimos a arcsec/píxel
+escalas = proj_plane_pixel_scales(w_leido) * u.deg
+print(f"Escala de píxel: {escalas.to(u.arcsec)} por píxel")
+
+# Campo de visión = número de píxeles × escala
+ny, nx = datos.shape
+campo_x = (nx * escalas[0]).to(u.arcmin)
+campo_y = (ny * escalas[1]).to(u.arcmin)
+print(f"Campo de visión: {campo_x:.2f} × {campo_y:.2f}")
+
+# Footprint: coordenadas (RA, Dec) de las 4 esquinas de la imagen
+esquinas = w_leido.calc_footprint()
+print("\nEsquinas de la imagen (RA, Dec en grados):")
+for ra, dec in esquinas:
+    print(f"  ({ra:.5f}, {dec:.5f})")
+```
+
+---
+
+## Aplicación práctica: escala de una cámara real
+
+La escala de píxel de un telescopio con cámara se calcula con:
+
+$$\text{escala}\;[''/\text{px}] = 206.265 \times \frac{\text{tamaño de píxel}\;[\mu m]}{\text{distancia focal}\;[mm]}$$
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# Calcular la escala de píxel y construir el WCS de un equipo real
+# Ejemplo: telescopio de 800 mm de focal + cámara con píxeles de 3.76 µm
+# ─────────────────────────────────────────────────────────────────────────────
+
+import astropy.units as u
+from astropy.wcs import WCS
+
+focal      = 800 * u.mm       # distancia focal del telescopio
+tam_pixel  = 3.76 * u.um      # tamaño físico del píxel del sensor
+n_x, n_y   = 6248, 4176       # resolución del sensor
+
+# 206265 es el número de segundos de arco en un radián
+escala = (206265 * u.arcsec * (tam_pixel / focal).decompose())
+print(f"Escala de píxel   : {escala:.3f} por píxel")
+
+# Campo de visión total
+print(f"Campo de visión   : {(n_x * escala).to(u.deg):.2f} × {(n_y * escala).to(u.deg):.2f}")
+
+# WCS de ese equipo apuntando a la Galaxia de Andrómeda (M31)
+w_equipo = WCS(naxis=2)
+w_equipo.wcs.crpix = [n_x / 2 + 0.5, n_y / 2 + 0.5]
+w_equipo.wcs.crval = [10.6847, 41.2690]
+s = escala.to(u.deg).value
+w_equipo.wcs.cdelt = [-s, s]
+w_equipo.wcs.ctype = ["RA---TAN", "DEC--TAN"]
+
+centro = w_equipo.pixel_to_world(n_x / 2, n_y / 2)
+print(f"Centro de la toma : {centro.to_string('hmsdms', precision=2)}")
+```
+
+::: {.callout-tip}
+## WCS de tus propias fotos
+Si haces astrofotografía, servicios como [astrometry.net](https://nova.astrometry.net)
+analizan tu imagen, reconocen las estrellas y te devuelven un FITS con el
+WCS ya incluido (*plate solving*). Después lo lees con `WCS(header)`.
+:::
+
+---
+
+## Ejercicio
+
+Usando el archivo `m42_con_wcs.fits`:
+
+1. Lee la imagen y su WCS
+2. Encuentra el píxel más brillante con `np.unravel_index(np.argmax(datos), datos.shape)`
+3. Convierte esa posición a coordenadas celestes
+4. Calcula a cuántos arcosegundos está del centro de la imagen
+
+::: {.callout-tip collapse="true"}
+## Ver solución
+
+```{python}
+# ─────────────────────────────────────────────────────────────────────────────
+# SOLUCIÓN: coordenadas del píxel más brillante
+# ─────────────────────────────────────────────────────────────────────────────
+
+import numpy as np
+import astropy.units as u
+from astropy.io import fits
+from astropy.wcs import WCS
+
+# Paso 1: leer imagen y WCS
+datos, hdr = fits.getdata('m42_con_wcs.fits', header=True)
+w = WCS(hdr)
+
+# Paso 2: índice del máximo → unravel_index devuelve (fila, columna) = (y, x)
+y_max, x_max = np.unravel_index(np.argmax(datos), datos.shape)
+print(f"Píxel más brillante: x = {x_max}, y = {y_max}")
+
+# Paso 3: convertir a cielo (pixel_to_world recibe x, y)
+coord_max = w.pixel_to_world(x_max, y_max)
+print(f"Coordenadas        : {coord_max.to_string('hmsdms', precision=2)}")
+
+# Paso 4: distancia al centro de la imagen
+centro = w.pixel_to_world(datos.shape[1] / 2 - 0.5, datos.shape[0] / 2 - 0.5)
+print(f"Distancia al centro: {coord_max.separation(centro).to(u.arcsec):.1f}")
+```
+:::
+
+---
+
+## ¿Qué aprendiste en este módulo? {.seccion-aprendiste}
+
+- ✅ Qué es el WCS y qué claves lo definen (`CTYPE`, `CRVAL`, `CRPIX`, `CDELT`)
+- ✅ Crear un WCS desde cero con `astropy.wcs.WCS`
+- ✅ Convertir píxel → cielo con `pixel_to_world()`
+- ✅ Convertir cielo → píxel con `world_to_pixel()`
+- ✅ Guardar y leer el WCS en encabezados FITS
+- ✅ Calcular escala de píxel, campo de visión y huella de la imagen
+- ✅ Las diferencias entre base 0 (numpy) y base 1 (FITS)
+
+**Siguiente módulo →** [08 · Fotometría de apertura](08-fotometria.qmd)
