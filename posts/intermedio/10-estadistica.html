@@ -1,14 +1,15 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
 
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.9.37">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="description" content="Proximo modulo en preparacion">
+<meta name="author" content="Blog AstroPy en Español">
+<meta name="description" content="Herramientas estadísticas para datos astronómicos: estimadores robustos, sigma clipping, bootstrap, histogramas inteligentes y ajuste de modelos con astropy.stats y astropy.modeling">
 
-<title>10 - Estadistica y modelado – AstroPy en Español</title>
+<title>10 · Estadística y modelado – AstroPy en Español</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -69,6 +70,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../">
+<link href="../../posts/intermedio/11-catalogos.html" rel="next">
+<link href="../../posts/intermedio/09-visualizacion.html" rel="prev">
 <link href="../../assets/logos/favicon.ico" rel="icon">
 <script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -76,14 +79,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-acf12a64177840b8d86f2d4f01b2e9fb.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-23bbe8b5e4efc1e257f6d59dce478b08.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-acf12a64177840b8d86f2d4f01b2e9fb.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-46c2da4921da100f2e8b760b91ba26ad.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-13f4910f51bb414f8177eb12ee348383.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../../site_libs/bootstrap/bootstrap-dark-c414a890e2011809a78d515def34b275.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../../site_libs/bootstrap/bootstrap-13f4910f51bb414f8177eb12ee348383.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-815cd9e140545d7958d81bc583beecec.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -98,187 +97,54 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   ],
   "show-item-context": false,
   "language": {
-    "search-no-results-text": "No results",
-    "search-matching-documents-text": "matching documents",
-    "search-copy-link-title": "Copy link to search",
-    "search-hide-matches-text": "Hide additional matches",
-    "search-more-match-text": "more match in this document",
-    "search-more-matches-text": "more matches in this document",
-    "search-clear-button-title": "Clear",
+    "search-no-results-text": "No se han encontrado resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
     "search-text-placeholder": "",
-    "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit",
-    "search-label": "Search"
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
   }
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
-<body class="nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
-    const toggleBodyColorMode = (bsSheetEl) => {
-      const mode = bsSheetEl.getAttribute("data-mode");
-      const bodyEl = window.document.querySelector("body");
-      if (mode === "dark") {
-        bodyEl.classList.add("quarto-dark");
-        bodyEl.classList.remove("quarto-light");
-      } else {
-        bodyEl.classList.add("quarto-light");
-        bodyEl.classList.remove("quarto-dark");
-      }
-    }
-    const toggleBodyColorPrimary = () => {
-      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
-      if (bsSheetEl) {
-        toggleBodyColorMode(bsSheetEl);
-      }
-    }
-    const setColorSchemeToggle = (alternate) => {
-      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
-      for (let i=0; i < toggles.length; i++) {
-        const toggle = toggles[i];
-        if (toggle) {
-          if (alternate) {
-            toggle.classList.add("alternate");
-          } else {
-            toggle.classList.remove("alternate");
-          }
-        }
-      }
-    };
-    const toggleColorMode = (alternate) => {
-      // Switch the stylesheets
-      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
-      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
-      manageTransitions('#quarto-margin-sidebar .nav-link', false);
-      if (alternate) {
-        // note: dark is layered on light, we don't disable primary!
-        enableStylesheet(alternateStylesheets);
-        for (const sheetNode of alternateStylesheets) {
-          if (sheetNode.id === "quarto-bootstrap") {
-            toggleBodyColorMode(sheetNode);
-          }
-        }
-      } else {
-        disableStylesheet(alternateStylesheets);
-        enableStylesheet(primaryStylesheets)
-        toggleBodyColorPrimary();
-      }
-      manageTransitions('#quarto-margin-sidebar .nav-link', true);
-      // Switch the toggles
-      setColorSchemeToggle(alternate)
-      // Hack to workaround the fact that safari doesn't
-      // properly recolor the scrollbar when toggling (#1455)
-      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
-        manageTransitions("body", false);
-        window.scrollTo(0, 1);
-        setTimeout(() => {
-          window.scrollTo(0, 0);
-          manageTransitions("body", true);
-        }, 40);
-      }
-    }
-    const disableStylesheet = (stylesheets) => {
-      for (let i=0; i < stylesheets.length; i++) {
-        const stylesheet = stylesheets[i];
-        stylesheet.rel = 'disabled-stylesheet';
-      }
-    }
-    const enableStylesheet = (stylesheets) => {
-      for (let i=0; i < stylesheets.length; i++) {
-        const stylesheet = stylesheets[i];
-        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
-          stylesheet.rel = 'stylesheet';
-        }
-      }
-    }
-    const manageTransitions = (selector, allowTransitions) => {
-      const els = window.document.querySelectorAll(selector);
-      for (let i=0; i < els.length; i++) {
-        const el = els[i];
-        if (allowTransitions) {
-          el.classList.remove('notransition');
-        } else {
-          el.classList.add('notransition');
-        }
-      }
-    }
-    const isFileUrl = () => {
-      return window.location.protocol === 'file:';
-    }
-    const hasAlternateSentinel = () => {
-      let styleSentinel = getColorSchemeSentinel();
-      if (styleSentinel !== null) {
-        return styleSentinel === "alternate";
-      } else {
-        return false;
-      }
-    }
-    const setStyleSentinel = (alternate) => {
-      const value = alternate ? "alternate" : "default";
-      if (!isFileUrl()) {
-        window.localStorage.setItem("quarto-color-scheme", value);
-      } else {
-        localAlternateSentinel = value;
-      }
-    }
-    const getColorSchemeSentinel = () => {
-      if (!isFileUrl()) {
-        const storageValue = window.localStorage.getItem("quarto-color-scheme");
-        return storageValue != null ? storageValue : localAlternateSentinel;
-      } else {
-        return localAlternateSentinel;
-      }
-    }
-    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
-      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
-      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
-      let newTheme = '';
-      if(authorPrefersDark) {
-        newTheme = isAlternate ? baseTheme : alternateTheme;
-      } else {
-        newTheme = isAlternate ? alternateTheme : baseTheme;
-      }
-      const changeGiscusTheme = () => {
-        // From: https://github.com/giscus/giscus/issues/336
-        const sendMessage = (message) => {
-          const iframe = document.querySelector('iframe.giscus-frame');
-          if (!iframe) return;
-          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
-        }
-        sendMessage({
-          setConfig: {
-            theme: newTheme
-          }
-        });
-      }
-      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
-      if (isGiscussLoaded) {
-        changeGiscusTheme();
-      }
-    };
-    const authorPrefersDark = false;
-    const darkModeDefault = authorPrefersDark;
-      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
-      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
-    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
-    // Dark / light mode switch
-    window.quartoToggleColorScheme = () => {
-      // Read the current dark / light value
-      let toAlternate = !hasAlternateSentinel();
-      toggleColorMode(toAlternate);
-      setStyleSentinel(toAlternate);
-      toggleGiscusIfUsed(toAlternate, darkModeDefault);
-      window.dispatchEvent(new Event('resize'));
-    };
-    // Switch to dark mode if need be
-    if (hasAlternateSentinel()) {
-      toggleColorMode(true);
-    } else {
-      toggleColorMode(false);
-    }
-  </script>
+<body class="nav-sidebar docked nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -289,105 +155,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <span class="navbar-title">AstroPy en Español</span>
     </a>
   </div>
-            <div id="quarto-search" class="" title="Search"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+            <div id="quarto-search" class="" title="Buscar"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Navegación de palanca" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../../index.html"> 
-<span class="menu-text">Inicio</span></a>
+    <a class="nav-link active" href="../../posts/basico/01-introduccion.html" aria-current="page"> 
+<span class="menu-text">Módulos</span></a>
   </li>  
-  <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-basico" role="link" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">Basico</span>
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-basico">    
-        <li>
-    <a class="dropdown-item" href="../../posts/basico/01-introduccion.html">
- <span class="dropdown-text">01 - Introduccion a Astropy</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/basico/02-unidades.html">
- <span class="dropdown-text">02 - Unidades y constantes</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/basico/03-tiempo.html">
- <span class="dropdown-text">03 - Tiempo astronomico</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/basico/04-coordenadas.html">
- <span class="dropdown-text">04 - Coordenadas celestes</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/basico/05-tablas.html">
- <span class="dropdown-text">05 - Tablas astronomicas</span></a>
-  </li>  
-    </ul>
-  </li>
-  <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-intermedio" role="link" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">Intermedio</span>
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-intermedio">    
-        <li>
-    <a class="dropdown-item" href="../../posts/intermedio/06-fits.html">
- <span class="dropdown-text">06 - Archivos FITS</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/intermedio/07-wcs.html">
- <span class="dropdown-text">07 - WCS del pixel al cielo</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/intermedio/08-fotometria.html">
- <span class="dropdown-text">08 - Fotometria de apertura</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/intermedio/09-visualizacion.html">
- <span class="dropdown-text">09 - Visualizacion astronomica</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/intermedio/10-estadistica.html">
- <span class="dropdown-text">10 - Estadistica y modelado</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/intermedio/11-catalogos.html">
- <span class="dropdown-text">11 - Catalogos en linea</span></a>
-  </li>  
-    </ul>
-  </li>
-  <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-avanzado" role="link" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">Avanzado</span>
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-avanzado">    
-        <li>
-    <a class="dropdown-item" href="../../posts/avanzado/12-espectroscopia.html">
- <span class="dropdown-text">12 - Espectroscopia</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/avanzado/13-cosmologia.html">
- <span class="dropdown-text">13 - Cosmologia computacional</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/avanzado/14-orbital.html">
- <span class="dropdown-text">14 - Mecanica orbital</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/avanzado/15-series-temporales.html">
- <span class="dropdown-text">15 - Series temporales</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/avanzado/16-extensiones.html">
- <span class="dropdown-text">16 - Extensiones propias</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/avanzado/17-pipeline.html">
- <span class="dropdown-text">17 - Pipeline completo</span></a>
-  </li>  
-    </ul>
-  </li>
   <li class="nav-item">
     <a class="nav-link" href="../../sobre.html"> 
 <span class="menu-text">Sobre el blog</span></a>
@@ -395,32 +172,216 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/tu-usuario/astropy-blog"> <i class="bi bi-github" role="img" aria-label="GitHub">
+    <a class="nav-link" href="https://github.com/fvelez78/astropy-blog"> <i class="bi bi-github" role="img" aria-label="GitHub">
 </i> 
 <span class="menu-text"></span></a>
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
-  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
 </div>
       </div> <!-- /container-fluid -->
     </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../posts/intermedio/06-fits.html">Nivel 2 · Intermedio</a></li><li class="breadcrumb-item"><a href="../../posts/intermedio/10-estadistica.html">10 · Estadística y modelado</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Buscar" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
 </header>
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Buscar"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Inicio</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Nivel 1 · Básico</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/basico/01-introduccion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">01 · ¿Qué es Astropy y por qué usarlo?</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/basico/02-unidades.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">02 · Unidades y constantes físicas</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/basico/03-tiempo.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">03 · Tiempo astronómico con astropy.time</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/basico/04-coordenadas.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">04 · Coordenadas celestes con SkyCoord</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/basico/05-tablas.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">05 · Tablas astronómicas con astropy.table</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Nivel 2 · Intermedio</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/intermedio/06-fits.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">06 · Lectura y manipulación de archivos FITS</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/intermedio/07-wcs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">07 · WCS: del píxel al cielo</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/intermedio/08-fotometria.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">08 · Fotometría de apertura</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/intermedio/09-visualizacion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">09 · Visualización astronómica</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/intermedio/10-estadistica.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">10 · Estadística y modelado</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/intermedio/11-catalogos.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">11 · Consultas a catálogos en línea</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Nivel 3 · Avanzado</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/avanzado/12-espectroscopia.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">12 · Espectroscopía con specutils</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/avanzado/13-cosmologia.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">13 · Cosmología computacional</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/avanzado/14-orbital.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">14 · Mecánica orbital y efemérides</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/avanzado/15-series-temporales.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">15 · Series temporales astronómicas</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/avanzado/16-extensiones.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">16 · Extensiones y modelos propios</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/avanzado/17-pipeline.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">17 · Pipeline completo de reducción</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">En esta página</h2>
+   
+  <ul>
+  <li><a href="#datos-astronómicos-ruidosos-y-con-intrusos" id="toc-datos-astronómicos-ruidosos-y-con-intrusos" class="nav-link active" data-scroll-target="#datos-astronómicos-ruidosos-y-con-intrusos"><span class="header-section-number">1</span> Datos astronómicos: ruidosos y con “intrusos”</a></li>
+  <li><a href="#estimadores-robustos" id="toc-estimadores-robustos" class="nav-link" data-scroll-target="#estimadores-robustos"><span class="header-section-number">2</span> Estimadores robustos</a></li>
+  <li><a href="#recorte-sigma-sigma-clipping" id="toc-recorte-sigma-sigma-clipping" class="nav-link" data-scroll-target="#recorte-sigma-sigma-clipping"><span class="header-section-number">3</span> Recorte sigma (<em>sigma clipping</em>)</a></li>
+  <li><a href="#histogramas-con-bins-inteligentes" id="toc-histogramas-con-bins-inteligentes" class="nav-link" data-scroll-target="#histogramas-con-bins-inteligentes"><span class="header-section-number">4</span> Histogramas con bins inteligentes</a></li>
+  <li><a href="#bootstrap-incertidumbre-sin-fórmulas" id="toc-bootstrap-incertidumbre-sin-fórmulas" class="nav-link" data-scroll-target="#bootstrap-incertidumbre-sin-fórmulas"><span class="header-section-number">5</span> Bootstrap: incertidumbre sin fórmulas</a></li>
+  <li><a href="#conteos-de-fotones-intervalos-de-poisson" id="toc-conteos-de-fotones-intervalos-de-poisson" class="nav-link" data-scroll-target="#conteos-de-fotones-intervalos-de-poisson"><span class="header-section-number">6</span> Conteos de fotones: intervalos de Poisson</a></li>
+  <li><a href="#astropy.modeling-ajustar-modelos-a-datos" id="toc-astropy.modeling-ajustar-modelos-a-datos" class="nav-link" data-scroll-target="#astropy.modeling-ajustar-modelos-a-datos"><span class="header-section-number">7</span> <code>astropy.modeling</code>: ajustar modelos a datos</a>
+  <ul class="collapse">
+  <li><a href="#ajuste-de-una-gaussiana-línea-de-emisión" id="toc-ajuste-de-una-gaussiana-línea-de-emisión" class="nav-link" data-scroll-target="#ajuste-de-una-gaussiana-línea-de-emisión"><span class="header-section-number">7.1</span> Ajuste de una gaussiana: línea de emisión</a></li>
+  <li><a href="#calidad-del-ajuste-chi-cuadrado-reducido" id="toc-calidad-del-ajuste-chi-cuadrado-reducido" class="nav-link" data-scroll-target="#calidad-del-ajuste-chi-cuadrado-reducido"><span class="header-section-number">7.2</span> Calidad del ajuste: chi-cuadrado reducido</a></li>
+  <li><a href="#ajuste-2d-el-perfil-de-una-estrella" id="toc-ajuste-2d-el-perfil-de-una-estrella" class="nav-link" data-scroll-target="#ajuste-2d-el-perfil-de-una-estrella"><span class="header-section-number">7.3</span> Ajuste 2D: el perfil de una estrella</a></li>
+  </ul></li>
+  <li><a href="#modelos-disponibles" id="toc-modelos-disponibles" class="nav-link" data-scroll-target="#modelos-disponibles"><span class="header-section-number">8</span> Modelos disponibles</a></li>
+  <li><a href="#ejercicio" id="toc-ejercicio" class="nav-link" data-scroll-target="#ejercicio"><span class="header-section-number">9</span> Ejercicio</a></li>
+  <li><a href="#qué-aprendiste-en-este-módulo" id="toc-qué-aprendiste-en-este-módulo" class="nav-link" data-scroll-target="#qué-aprendiste-en-este-módulo"><span class="header-section-number">10</span> ¿Qué aprendiste en este módulo?</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../posts/intermedio/06-fits.html">Nivel 2 · Intermedio</a></li><li class="breadcrumb-item"><a href="../../posts/intermedio/10-estadistica.html">10 · Estadística y modelado</a></li></ol></nav>
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title">10 - Estadistica y modelado</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<div class="quarto-title-block"><div><h1 class="title">10 · Estadística y modelado</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Código</button></div></div>
   <div class="quarto-categories">
     <div class="quarto-category">intermedio</div>
   </div>
@@ -428,14 +389,26 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <div>
   <div class="description">
-    Proximo modulo en preparacion
+    Herramientas estadísticas para datos astronómicos: estimadores robustos, sigma clipping, bootstrap, histogramas inteligentes y ajuste de modelos con astropy.stats y astropy.modeling
   </div>
 </div>
 
 
 <div class="quarto-title-meta">
 
+    <div>
+    <div class="quarto-title-meta-heading">Autor/a</div>
+    <div class="quarto-title-meta-contents">
+             <p>Blog AstroPy en Español </p>
+          </div>
+  </div>
     
+    <div>
+    <div class="quarto-title-meta-heading">Fecha de publicación</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">1 de noviembre de 2026</p>
+    </div>
+  </div>
   
     
   </div>
@@ -445,41 +418,539 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p><span class="badge-intermedio">Intermedio</span></p>
+<p><span class="badge-inter">🔭 Intermedio</span></p>
+<section id="datos-astronómicos-ruidosos-y-con-intrusos" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="datos-astronómicos-ruidosos-y-con-intrusos"><span class="header-section-number">1</span> Datos astronómicos: ruidosos y con “intrusos”</h2>
+<p>Los datos astronómicos casi nunca son limpios. En una imagen hay rayos cósmicos, píxeles calientes, satélites que cruzan el campo. En un catálogo hay estrellas mal medidas. Si calculamos un <strong>promedio</strong> simple, un solo valor extremo lo arruina.</p>
+<p>En este módulo veremos dos submódulos:</p>
+<ul>
+<li><strong><code>astropy.stats</code></strong>: estimadores robustos, recorte sigma, bootstrap, intervalos de confianza para conteos de fotones</li>
+<li><strong><code>astropy.modeling</code></strong>: definir modelos (gaussianas, polinomios, perfiles) y ajustarlos a los datos</li>
+</ul>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Requisitos previos
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>Módulos 01 al 08</li>
+<li>Conocer qué son media, mediana y desviación estándar</li>
+</ul>
+</div>
+</div>
+<hr>
+</section>
+<section id="estimadores-robustos" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="estimadores-robustos"><span class="header-section-number">2</span> Estimadores robustos</h2>
+<div id="582ce572" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Comparar estimadores clásicos y robustos cuando hay valores atípicos</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.stats <span class="im">import</span> mad_std, biweight_location, biweight_scale</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> np.random.default_rng(seed<span class="op">=</span><span class="dv">10</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 1000 mediciones del fondo del cielo: valor real 100, ruido 5</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>fondo <span class="op">=</span> rng.normal(<span class="dv">100</span>, <span class="dv">5</span>, <span class="dv">1000</span>)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Contaminamos el 3 % con rayos cósmicos (valores enormes)</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>n_malos <span class="op">=</span> <span class="dv">30</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>fondo[:n_malos] <span class="op">=</span> rng.uniform(<span class="dv">500</span>, <span class="dv">3000</span>, n_malos)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"              Centro      Dispersión"</span>)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Clásico   :  </span><span class="sc">{</span>np<span class="sc">.</span>mean(fondo)<span class="sc">:8.2f}</span><span class="ss">    </span><span class="sc">{</span>np<span class="sc">.</span>std(fondo)<span class="sc">:8.2f}</span><span class="ss">   (media, desv. estándar)"</span>)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Mediana   :  </span><span class="sc">{</span>np<span class="sc">.</span>median(fondo)<span class="sc">:8.2f}</span><span class="ss">    </span><span class="sc">{</span>mad_std(fondo)<span class="sc">:8.2f}</span><span class="ss">   (mediana, MAD escalada)"</span>)</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Biweight  :  </span><span class="sc">{</span>biweight_location(fondo)<span class="sc">:8.2f}</span><span class="ss">    </span><span class="sc">{</span>biweight_scale(fondo)<span class="sc">:8.2f}</span><span class="ss">"</span>)</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Verdad    :    100.00        5.00"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>              Centro      Dispersión
+Clásico   :    145.88      293.12   (media, desv. estándar)
+Mediana   :     99.94        5.08   (mediana, MAD escalada)
+Biweight  :     99.78        5.10
+Verdad    :    100.00        5.00</code></pre>
+</div>
+</div>
+<ul>
+<li><strong><code>mad_std</code></strong>: desviación absoluta mediana, multiplicada por 1.4826 para que equivalga a la desviación estándar cuando los datos son normales.</li>
+<li><strong>Biweight</strong>: estimador de Tukey, combina la robustez de la mediana con la eficiencia de la media. Muy usado en cúmulos de galaxias.</li>
+</ul>
+<hr>
+</section>
+<section id="recorte-sigma-sigma-clipping" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="recorte-sigma-sigma-clipping"><span class="header-section-number">3</span> Recorte sigma (<em>sigma clipping</em>)</h2>
+<p>El recorte sigma es un procedimiento iterativo:</p>
+<ol type="1">
+<li>Calcula el centro (mediana) y la dispersión</li>
+<li>Descarta los puntos a más de N sigmas del centro</li>
+<li>Repite hasta que no se descarte nada</li>
+</ol>
+<div id="313313e2" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># sigma_clip devuelve un arreglo enmascarado: los valores rechazados</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># quedan "ocultos" pero no se borran</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.stats <span class="im">import</span> sigma_clip, sigma_clipped_stats</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>recortado <span class="op">=</span> sigma_clip(fondo, sigma<span class="op">=</span><span class="dv">3</span>, maxiters<span class="op">=</span><span class="dv">10</span>)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Puntos originales    : </span><span class="sc">{</span><span class="bu">len</span>(fondo)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Puntos rechazados    : </span><span class="sc">{</span>recortado<span class="sc">.</span>mask<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Media tras el recorte: </span><span class="sc">{</span>recortado<span class="sc">.</span>mean()<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Desv. tras el recorte: </span><span class="sc">{</span>recortado<span class="sc">.</span>std()<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Atajo: las tres estadísticas en una línea (lo usamos en el módulo 08)</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>media, mediana, desv <span class="op">=</span> sigma_clipped_stats(fondo, sigma<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">sigma_clipped_stats → media=</span><span class="sc">{</span>media<span class="sc">:.2f}</span><span class="ss">, mediana=</span><span class="sc">{</span>mediana<span class="sc">:.2f}</span><span class="ss">, desv=</span><span class="sc">{</span>desv<span class="sc">:.2f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Puntos originales    : 1000
+Puntos rechazados    : 33
+Media tras el recorte: 99.74
+Desv. tras el recorte: 4.92
+
+sigma_clipped_stats → media=99.74, mediana=99.73, desv=4.92</code></pre>
+</div>
+</div>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Warning</span>Modulo en construccion
+<span class="screen-reader-only">Advertencia</span>No recortes a ciegas
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Este modulo esta siendo preparado. Vuelve pronto.</p>
+<p>El recorte sigma asume que los datos “buenos” son aproximadamente normales. Si tu distribución es asimétrica (por ejemplo, magnitudes de galaxias) puedes eliminar datos válidos. Siempre mira un histograma primero.</p>
 </div>
 </div>
+<hr>
+</section>
+<section id="histogramas-con-bins-inteligentes" class="level2" data-number="4">
+<h2 data-number="4" class="anchored" data-anchor-id="histogramas-con-bins-inteligentes"><span class="header-section-number">4</span> Histogramas con bins inteligentes</h2>
+<p>¿Cuántos intervalos (<em>bins</em>) usar en un histograma? Muy pocos ocultan estructura; demasiados muestran ruido. <code>astropy.visualization.hist</code> ofrece reglas automáticas.</p>
+<div id="cell-fig-histogramas" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Comparar reglas de binning sobre una distribución con dos picos</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.visualization <span class="im">import</span> hist   <span class="co"># versión mejorada de plt.hist</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> np.random.default_rng(<span class="dv">3</span>)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Ejemplo: velocidades radiales de dos grupos de estrellas superpuestos</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>vel <span class="op">=</span> np.concatenate([rng.normal(<span class="op">-</span><span class="dv">20</span>, <span class="dv">8</span>, <span class="dv">600</span>), rng.normal(<span class="dv">15</span>, <span class="dv">4</span>, <span class="dv">250</span>)])</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>reglas <span class="op">=</span> [<span class="st">'scott'</span>, <span class="st">'freedman'</span>, <span class="st">'knuth'</span>, <span class="st">'blocks'</span>]</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>fig, ejes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">4</span>, figsize<span class="op">=</span>(<span class="dv">13</span>, <span class="dv">3</span>), sharey<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> ax, regla <span class="kw">in</span> <span class="bu">zip</span>(ejes, reglas):</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># density=True normaliza el área a 1 para comparar formas</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    hist(vel, bins<span class="op">=</span>regla, ax<span class="op">=</span>ax, histtype<span class="op">=</span><span class="st">'stepfilled'</span>, alpha<span class="op">=</span><span class="fl">0.6</span>, density<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    ax.set_title(<span class="ss">f"bins='</span><span class="sc">{</span>regla<span class="sc">}</span><span class="ss">'"</span>)</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    ax.set_xlabel(<span class="st">'Velocidad [km/s]'</span>)</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div id="fig-histogramas" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-histogramas-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="10-estadistica_files/figure-html/fig-histogramas-output-1.png" width="1230" height="278" class="figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-histogramas-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;1: El mismo conjunto de datos con cuatro reglas para elegir los bins
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><code>knuth</code> y <code>blocks</code> (<em>Bayesian Blocks</em>) se basan en estadística bayesiana; <code>blocks</code> usa bins de <strong>ancho variable</strong>, ideal para detectar cambios bruscos.</p>
+<hr>
+</section>
+<section id="bootstrap-incertidumbre-sin-fórmulas" class="level2" data-number="5">
+<h2 data-number="5" class="anchored" data-anchor-id="bootstrap-incertidumbre-sin-fórmulas"><span class="header-section-number">5</span> Bootstrap: incertidumbre sin fórmulas</h2>
+<p>¿Cuál es el error de la mediana? No hay una fórmula sencilla. El <strong>bootstrap</strong> lo estima remuestreando los datos con reemplazo muchas veces.</p>
+<div id="a3bdca2f" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimar el error de la mediana con bootstrap</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.stats <span class="im">import</span> bootstrap</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> np.random.default_rng(<span class="dv">5</span>)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 40 mediciones del período de una estrella variable (días), con un atípico</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>periodos <span class="op">=</span> np.append(rng.normal(<span class="fl">5.37</span>, <span class="fl">0.08</span>, <span class="dv">39</span>), <span class="fl">6.9</span>)</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="co"># bootstrap usa el generador aleatorio global de numpy:</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="co"># fijamos su semilla para obtener siempre el mismo resultado</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">1</span>)</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="co"># bootstrap genera 'bootnum' remuestreos y aplica 'bootfunc' a cada uno</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>medianas <span class="op">=</span> bootstrap(periodos, bootnum<span class="op">=</span><span class="dv">5000</span>, bootfunc<span class="op">=</span>np.median)</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Intervalo de confianza del 68 % (equivalente a ±1σ)</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>bajo, alto <span class="op">=</span> np.percentile(medianas, [<span class="dv">16</span>, <span class="dv">84</span>])</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Mediana de los datos : </span><span class="sc">{</span>np<span class="sc">.</span>median(periodos)<span class="sc">:.3f}</span><span class="ss"> días"</span>)</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Error (bootstrap)    : ±</span><span class="sc">{</span>np<span class="sc">.</span>std(medianas)<span class="sc">:.3f}</span><span class="ss"> días"</span>)</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Intervalo 68 %       : [</span><span class="sc">{</span>bajo<span class="sc">:.3f}</span><span class="ss">, </span><span class="sc">{</span>alto<span class="sc">:.3f}</span><span class="ss">]"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Mediana de los datos : 5.348 días
+Error (bootstrap)    : ±0.015 días
+Intervalo 68 %       : [5.328, 5.360]</code></pre>
+</div>
+</div>
+<hr>
+</section>
+<section id="conteos-de-fotones-intervalos-de-poisson" class="level2" data-number="6">
+<h2 data-number="6" class="anchored" data-anchor-id="conteos-de-fotones-intervalos-de-poisson"><span class="header-section-number">6</span> Conteos de fotones: intervalos de Poisson</h2>
+<p>Cuando detectamos <strong>pocos</strong> fotones (rayos X, rayos gamma, neutrinos), la aproximación <span class="math inline">\(\sqrt{N}\)</span> falla. <code>poisson_conf_interval</code> da intervalos exactos.</p>
+<div id="ecf89c2a" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Intervalos de confianza para conteos pequeños</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.stats <span class="im">import</span> poisson_conf_interval</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>conteos <span class="op">=</span> np.array([<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">10</span>, <span class="dv">100</span>])</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 'frequentist-confidence' → intervalo de Garwood (estándar en astrofísica)</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>inferior, superior <span class="op">=</span> poisson_conf_interval(conteos, interval<span class="op">=</span><span class="st">'frequentist-confidence'</span>)</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span><span class="st">'N'</span><span class="sc">:&gt;5}</span><span class="ss"> </span><span class="sc">{</span><span class="st">'√N simple'</span><span class="sc">:&gt;16}</span><span class="ss"> </span><span class="sc">{</span><span class="st">'Poisson exacto'</span><span class="sc">:&gt;18}</span><span class="ss">"</span>)</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> n, lo, hi <span class="kw">in</span> <span class="bu">zip</span>(conteos, inferior, superior):</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>n<span class="sc">:&gt;5}</span><span class="ss"> </span><span class="sc">{</span><span class="ss">f'[</span><span class="sc">{</span>n <span class="op">-</span> np<span class="sc">.</span>sqrt(n)<span class="sc">:.2f}</span><span class="ss">, </span><span class="sc">{</span>n <span class="op">+</span> np<span class="sc">.</span>sqrt(n)<span class="sc">:.2f}</span><span class="ss">]'</span><span class="sc">:&gt;16}</span><span class="ss"> </span><span class="sc">{</span><span class="ss">f'[</span><span class="sc">{</span>lo<span class="sc">:.2f}</span><span class="ss">, </span><span class="sc">{</span>hi<span class="sc">:.2f}</span><span class="ss">]'</span><span class="sc">:&gt;18}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    N        √N simple     Poisson exacto
+    0     [0.00, 0.00]       [0.00, 1.84]
+    1     [0.00, 2.00]       [0.17, 3.30]
+    3     [1.27, 4.73]       [1.37, 5.92]
+   10    [6.84, 13.16]      [6.89, 14.27]
+  100  [90.00, 110.00]    [90.02, 111.03]</code></pre>
+</div>
+</div>
+<p>Con 0 fotones, <span class="math inline">\(\sqrt{N}\)</span> dice “0 ± 0” (absurdo); Poisson dice que el valor real podría ser hasta 1.84.</p>
+<hr>
+</section>
+<section id="astropy.modeling-ajustar-modelos-a-datos" class="level2" data-number="7">
+<h2 data-number="7" class="anchored" data-anchor-id="astropy.modeling-ajustar-modelos-a-datos"><span class="header-section-number">7</span> <code>astropy.modeling</code>: ajustar modelos a datos</h2>
+<p>El flujo de trabajo siempre tiene tres pasos:</p>
+<ol type="1">
+<li><strong>Crear un modelo</strong> con valores iniciales aproximados</li>
+<li><strong>Elegir un ajustador</strong> (<em>fitter</em>)</li>
+<li><strong>Ajustar</strong>: <code>modelo_ajustado = ajustador(modelo, x, y)</code></li>
+</ol>
+<section id="ajuste-de-una-gaussiana-línea-de-emisión" class="level3" data-number="7.1">
+<h3 data-number="7.1" class="anchored" data-anchor-id="ajuste-de-una-gaussiana-línea-de-emisión"><span class="header-section-number">7.1</span> Ajuste de una gaussiana: línea de emisión</h3>
+<div id="cell-fig-ajuste-gauss" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Ajustar una línea espectral: gaussiana + continuo lineal</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.modeling <span class="im">import</span> models, fitting</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> np.random.default_rng(<span class="dv">11</span>)</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Datos simulados: línea H-alfa (6563 Å) sobre un continuo inclinado</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.linspace(<span class="dv">6520</span>, <span class="dv">6610</span>, <span class="dv">180</span>)                           <span class="co"># longitud de onda [Å]</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>y_real <span class="op">=</span> <span class="dv">50</span> <span class="op">+</span> <span class="fl">0.05</span> <span class="op">*</span> (x <span class="op">-</span> <span class="dv">6563</span>) <span class="op">+</span> <span class="dv">120</span> <span class="op">*</span> np.exp(<span class="op">-</span><span class="fl">0.5</span> <span class="op">*</span> ((x <span class="op">-</span> <span class="fl">6563.8</span>) <span class="op">/</span> <span class="fl">3.2</span>)<span class="op">**</span><span class="dv">2</span>)</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>errores <span class="op">=</span> np.full_like(x, <span class="fl">6.0</span>)</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> y_real <span class="op">+</span> rng.normal(<span class="dv">0</span>, errores)</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="co"># PASO 1: modelo compuesto → gaussiana + recta (se suman con +)</span></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>modelo_inicial <span class="op">=</span> (models.Gaussian1D(amplitude<span class="op">=</span><span class="dv">100</span>, mean<span class="op">=</span><span class="dv">6560</span>, stddev<span class="op">=</span><span class="dv">5</span>)</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>                  <span class="op">+</span> models.Linear1D(slope<span class="op">=</span><span class="dv">0</span>, intercept<span class="op">=</span><span class="dv">40</span>))</span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a><span class="co"># PASO 2: ajustador de mínimos cuadrados no lineal</span></span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a><span class="co"># calc_uncertainties=True calcula los errores de cada parámetro</span></span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>ajustador <span class="op">=</span> fitting.TRFLSQFitter(calc_uncertainties<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a><span class="co"># PASO 3: ajustar (weights = 1/error para un ajuste ponderado)</span></span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>modelo <span class="op">=</span> ajustador(modelo_inicial, x, y, weights<span class="op">=</span><span class="dv">1</span> <span class="op">/</span> errores)</span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Resultados: los parámetros de la parte 0 (gaussiana) llevan sufijo _0</span></span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>g <span class="op">=</span> modelo[<span class="dv">0</span>]   <span class="co"># componente gaussiana</span></span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Centro de la línea : </span><span class="sc">{</span>g<span class="sc">.</span>mean<span class="sc">.</span>value<span class="sc">:.2f}</span><span class="ss"> ± </span><span class="sc">{</span>g<span class="sc">.</span>mean<span class="sc">.</span>std<span class="sc">:.2f}</span><span class="ss"> Å"</span>)</span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Ancho (sigma)      : </span><span class="sc">{</span>g<span class="sc">.</span>stddev<span class="sc">.</span>value<span class="sc">:.2f}</span><span class="ss"> ± </span><span class="sc">{</span>g<span class="sc">.</span>stddev<span class="sc">.</span>std<span class="sc">:.2f}</span><span class="ss"> Å"</span>)</span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Amplitud           : </span><span class="sc">{</span>g<span class="sc">.</span>amplitude<span class="sc">.</span>value<span class="sc">:.1f}</span><span class="ss"> ± </span><span class="sc">{</span>g<span class="sc">.</span>amplitude<span class="sc">.</span>std<span class="sc">:.1f}</span><span class="ss">"</span>)</span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"FWHM               : </span><span class="sc">{</span>g<span class="sc">.</span>fwhm<span class="sc">:.2f}</span><span class="ss"> Å"</span>)</span>
+<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">4</span>))</span>
+<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a>ax.errorbar(x, y, yerr<span class="op">=</span>errores, fmt<span class="op">=</span><span class="st">'.'</span>, color<span class="op">=</span><span class="st">'gray'</span>, alpha<span class="op">=</span><span class="fl">0.5</span>, label<span class="op">=</span><span class="st">'Datos'</span>)</span>
+<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a>ax.plot(x, modelo(x), <span class="st">'C3'</span>, lw<span class="op">=</span><span class="dv">2</span>, label<span class="op">=</span><span class="st">'Modelo ajustado'</span>)</span>
+<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a>ax.plot(x, modelo[<span class="dv">1</span>](x), <span class="st">'C0--'</span>, label<span class="op">=</span><span class="st">'Continuo'</span>)</span>
+<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">'Longitud de onda [Å]'</span>)</span>
+<span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">'Flujo'</span>)</span>
+<span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
+<span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Centro de la línea : 6563.81 ± 0.07 Å
+Ancho (sigma)      : 3.25 ± 0.07 Å
+Amplitud           : 119.6 ± 2.2
+FWHM               : 7.65 Å</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div id="fig-ajuste-gauss" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-ajuste-gauss-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="10-estadistica_files/figure-html/fig-ajuste-gauss-output-2.png" width="667" height="358" class="figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ajuste-gauss-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;2: Ajuste de una gaussiana más un continuo lineal a una línea de emisión
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="calidad-del-ajuste-chi-cuadrado-reducido" class="level3" data-number="7.2">
+<h3 data-number="7.2" class="anchored" data-anchor-id="calidad-del-ajuste-chi-cuadrado-reducido"><span class="header-section-number">7.2</span> Calidad del ajuste: chi-cuadrado reducido</h3>
+<div id="056abd01" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co"># χ² reducido ≈ 1 indica que el modelo describe los datos dentro de los errores</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>residuos <span class="op">=</span> (y <span class="op">-</span> modelo(x)) <span class="op">/</span> errores</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>n_param  <span class="op">=</span> <span class="bu">len</span>(modelo.parameters)              <span class="co"># 5 parámetros libres</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>gl       <span class="op">=</span> <span class="bu">len</span>(x) <span class="op">-</span> n_param                    <span class="co"># grados de libertad</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>chi2_red <span class="op">=</span> np.<span class="bu">sum</span>(residuos<span class="op">**</span><span class="dv">2</span>) <span class="op">/</span> gl</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"χ² reducido = </span><span class="sc">{</span>chi2_red<span class="sc">:.2f}</span><span class="ss">  (grados de libertad: </span><span class="sc">{</span>gl<span class="sc">}</span><span class="ss">)"</span>)</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="fl">0.7</span> <span class="op">&lt;</span> chi2_red <span class="op">&lt;</span> <span class="fl">1.3</span>:</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"→ Ajuste consistente con los errores ✓"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>χ² reducido = 0.86  (grados de libertad: 175)
+→ Ajuste consistente con los errores ✓</code></pre>
+</div>
+</div>
+</section>
+<section id="ajuste-2d-el-perfil-de-una-estrella" class="level3" data-number="7.3">
+<h3 data-number="7.3" class="anchored" data-anchor-id="ajuste-2d-el-perfil-de-una-estrella"><span class="header-section-number">7.3</span> Ajuste 2D: el perfil de una estrella</h3>
+<div id="cell-fig-ajuste-2d" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Gaussian2D: medir posición, ancho y elongación de una estrella</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co"># El FWHM de las estrellas mide el "seeing" (turbulencia de la atmósfera)</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.modeling <span class="im">import</span> models, fitting</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.stats <span class="im">import</span> gaussian_sigma_to_fwhm</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> np.random.default_rng(<span class="dv">12</span>)</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>yy, xx <span class="op">=</span> np.mgrid[<span class="dv">0</span>:<span class="dv">31</span>, <span class="dv">0</span>:<span class="dv">31</span>]</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Estrella real: ligeramente elongada (viento movió el telescopio)</span></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>real <span class="op">=</span> models.Gaussian2D(amplitude<span class="op">=</span><span class="dv">900</span>, x_mean<span class="op">=</span><span class="fl">15.3</span>, y_mean<span class="op">=</span><span class="fl">14.6</span>,</span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>                         x_stddev<span class="op">=</span><span class="fl">2.1</span>, y_stddev<span class="op">=</span><span class="fl">2.7</span>, theta<span class="op">=</span><span class="fl">0.4</span>)</span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>datos <span class="op">=</span> real(xx, yy) <span class="op">+</span> <span class="dv">20</span> <span class="op">+</span> rng.normal(<span class="dv">0</span>, <span class="dv">8</span>, xx.shape)</span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Modelo: gaussiana 2D + fondo constante</span></span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>inicial <span class="op">=</span> (models.Gaussian2D(amplitude<span class="op">=</span>datos.<span class="bu">max</span>(), x_mean<span class="op">=</span><span class="dv">15</span>, y_mean<span class="op">=</span><span class="dv">15</span>,</span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>                             x_stddev<span class="op">=</span><span class="dv">2</span>, y_stddev<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>           <span class="op">+</span> models.Const2D(amplitude<span class="op">=</span>np.median(datos)))</span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>ajuste <span class="op">=</span> fitting.TRFLSQFitter()(inicial, xx, yy, datos)</span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a>g <span class="op">=</span> ajuste[<span class="dv">0</span>]</span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a>fwhm_x <span class="op">=</span> gaussian_sigma_to_fwhm <span class="op">*</span> g.x_stddev.value</span>
+<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a>fwhm_y <span class="op">=</span> gaussian_sigma_to_fwhm <span class="op">*</span> g.y_stddev.value</span>
+<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Centro     : (</span><span class="sc">{</span>g<span class="sc">.</span>x_mean<span class="sc">.</span>value<span class="sc">:.2f}</span><span class="ss">, </span><span class="sc">{</span>g<span class="sc">.</span>y_mean<span class="sc">.</span>value<span class="sc">:.2f}</span><span class="ss">)"</span>)</span>
+<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"FWHM x, y  : </span><span class="sc">{</span>fwhm_x<span class="sc">:.2f}</span><span class="ss">, </span><span class="sc">{</span>fwhm_y<span class="sc">:.2f}</span><span class="ss"> px"</span>)</span>
+<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Elongación : </span><span class="sc">{</span><span class="bu">max</span>(fwhm_x, fwhm_y) <span class="op">/</span> <span class="bu">min</span>(fwhm_x, fwhm_y)<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a>fig, ejes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">3</span>, figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="fl">3.2</span>))</span>
+<span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> ax, img, tit <span class="kw">in</span> <span class="bu">zip</span>(ejes, [datos, ajuste(xx, yy), datos <span class="op">-</span> ajuste(xx, yy)],</span>
+<span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a>                        [<span class="st">'Datos'</span>, <span class="st">'Modelo'</span>, <span class="st">'Residuos'</span>]):</span>
+<span id="cb14-35"><a href="#cb14-35" aria-hidden="true" tabindex="-1"></a>    ax.imshow(img, origin<span class="op">=</span><span class="st">'lower'</span>, cmap<span class="op">=</span><span class="st">'viridis'</span>)</span>
+<span id="cb14-36"><a href="#cb14-36" aria-hidden="true" tabindex="-1"></a>    ax.set_title(tit)</span>
+<span id="cb14-37"><a href="#cb14-37" aria-hidden="true" tabindex="-1"></a>    ax.set_xticks([])<span class="op">;</span> ax.set_yticks([])</span>
+<span id="cb14-38"><a href="#cb14-38" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb14-39"><a href="#cb14-39" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Centro     : (15.31, 14.60)
+FWHM x, y  : 4.98, 6.37 px
+Elongación : 1.28</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div id="fig-ajuste-2d" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-ajuste-2d-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="10-estadistica_files/figure-html/fig-ajuste-2d-output-2.png" width="917" height="306" class="figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ajuste-2d-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;3: Datos, modelo y residuos del ajuste gaussiano 2D a una estrella
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Los residuos deben parecer <strong>ruido sin estructura</strong>. Si se ve un patrón (un anillo, una mancha), el modelo no es adecuado.</p>
+<hr>
+</section>
+</section>
+<section id="modelos-disponibles" class="level2" data-number="8">
+<h2 data-number="8" class="anchored" data-anchor-id="modelos-disponibles"><span class="header-section-number">8</span> Modelos disponibles</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Modelo</th>
+<th>Uso típico</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Gaussian1D</code>, <code>Gaussian2D</code></td>
+<td>Líneas espectrales, perfiles estelares</td>
+</tr>
+<tr class="even">
+<td><code>Lorentz1D</code>, <code>Voigt1D</code></td>
+<td>Líneas con alas anchas</td>
+</tr>
+<tr class="odd">
+<td><code>Moffat2D</code></td>
+<td>PSF estelar realista (mejor que gaussiana)</td>
+</tr>
+<tr class="even">
+<td><code>Polynomial1D</code>, <code>Chebyshev1D</code></td>
+<td>Continuos, calibraciones</td>
+</tr>
+<tr class="odd">
+<td><code>PowerLaw1D</code>, <code>BrokenPowerLaw1D</code></td>
+<td>Espectros de rayos X, funciones de masa</td>
+</tr>
+<tr class="even">
+<td><code>Sersic1D</code>, <code>Sersic2D</code></td>
+<td>Perfiles de brillo de galaxias</td>
+</tr>
+<tr class="odd">
+<td><code>BlackBody</code></td>
+<td>Emisión térmica de estrellas</td>
+</tr>
+</tbody>
+</table>
+<p>En el módulo 16 aprenderemos a <strong>crear modelos propios</strong>.</p>
+<hr>
+</section>
+<section id="ejercicio" class="level2" data-number="9">
+<h2 data-number="9" class="anchored" data-anchor-id="ejercicio"><span class="header-section-number">9</span> Ejercicio</h2>
+<p>Una galaxia elíptica sigue un perfil de <strong>Sérsic</strong>. Con los datos simulados de abajo:</p>
+<ol type="1">
+<li>Ajusta un modelo <code>Sersic1D</code> (valores iniciales: <code>amplitude=10</code>, <code>r_eff=5</code>, <code>n=2</code>)</li>
+<li>Reporta el radio efectivo <code>r_eff</code> y el índice <code>n</code> con sus errores</li>
+<li>¿Es una elíptica (n ≈ 4) o un disco (n ≈ 1)?</li>
+</ol>
+<div id="4765b909" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Datos del ejercicio: perfil de brillo radial de una galaxia</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.modeling <span class="im">import</span> models</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> np.random.default_rng(<span class="dv">99</span>)</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>radio <span class="op">=</span> np.linspace(<span class="fl">0.5</span>, <span class="dv">30</span>, <span class="dv">60</span>)                               <span class="co"># arcsec</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>brillo_real <span class="op">=</span> models.Sersic1D(amplitude<span class="op">=</span><span class="dv">8</span>, r_eff<span class="op">=</span><span class="dv">7</span>, n<span class="op">=</span><span class="dv">4</span>)(radio)</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>err_brillo <span class="op">=</span> <span class="fl">0.05</span> <span class="op">*</span> brillo_real <span class="op">+</span> <span class="fl">0.05</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>brillo <span class="op">=</span> brillo_real <span class="op">+</span> rng.normal(<span class="dv">0</span>, err_brillo)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Ver solución
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div id="cell-fig-sersic" class="cell" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="co"># SOLUCIÓN: ajuste de un perfil de Sérsic</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.modeling <span class="im">import</span> models, fitting</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Paso 1: modelo inicial y ajuste ponderado</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>inicial <span class="op">=</span> models.Sersic1D(amplitude<span class="op">=</span><span class="dv">10</span>, r_eff<span class="op">=</span><span class="dv">5</span>, n<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>ajustador <span class="op">=</span> fitting.TRFLSQFitter(calc_uncertainties<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>sersic <span class="op">=</span> ajustador(inicial, radio, brillo, weights<span class="op">=</span><span class="dv">1</span> <span class="op">/</span> err_brillo)</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Paso 2: resultados con errores</span></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"r_eff = </span><span class="sc">{</span>sersic<span class="sc">.</span>r_eff<span class="sc">.</span>value<span class="sc">:.2f}</span><span class="ss"> ± </span><span class="sc">{</span>sersic<span class="sc">.</span>r_eff<span class="sc">.</span>std<span class="sc">:.2f}</span><span class="ss"> arcsec"</span>)</span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"n     = </span><span class="sc">{</span>sersic<span class="sc">.</span>n<span class="sc">.</span>value<span class="sc">:.2f}</span><span class="ss"> ± </span><span class="sc">{</span>sersic<span class="sc">.</span>n<span class="sc">.</span>std<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Paso 3: interpretación</span></span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>tipo <span class="op">=</span> <span class="st">'elíptica (de Vaucouleurs)'</span> <span class="cf">if</span> sersic.n.value <span class="op">&gt;</span> <span class="fl">2.5</span> <span class="cf">else</span> <span class="st">'disco (exponencial)'</span></span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"→ Perfil compatible con una galaxia </span><span class="sc">{</span>tipo<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="dv">4</span>))</span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>ax.errorbar(radio, brillo, yerr<span class="op">=</span>err_brillo, fmt<span class="op">=</span><span class="st">'o'</span>, ms<span class="op">=</span><span class="dv">3</span>, label<span class="op">=</span><span class="st">'Datos'</span>)</span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a>ax.plot(radio, sersic(radio), <span class="st">'C3'</span>, label<span class="op">=</span><span class="ss">f'Sérsic n=</span><span class="sc">{</span>sersic<span class="sc">.</span>n<span class="sc">.</span>value<span class="sc">:.1f}</span><span class="ss">'</span>)</span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a>ax.set_yscale(<span class="st">'log'</span>)</span>
+<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">'Radio [arcsec]'</span>)<span class="op">;</span> ax.set_ylabel(<span class="st">'Brillo superficial'</span>)</span>
+<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
+<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>r_eff = 7.12 ± 0.20 arcsec
+n     = 3.97 ± 0.17
+→ Perfil compatible con una galaxia elíptica (de Vaucouleurs)</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div id="fig-sersic" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-sersic-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="10-estadistica_files/figure-html/fig-sersic-output-2.png" width="524" height="356" class="figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-sersic-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;4: Ajuste de Sérsic al perfil radial (escala logarítmica)
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</section>
+<section id="qué-aprendiste-en-este-módulo" class="level2 seccion-aprendiste" data-number="10">
+<h2 class="seccion-aprendiste anchored" data-number="10" data-anchor-id="qué-aprendiste-en-este-módulo"><span class="header-section-number">10</span> ¿Qué aprendiste en este módulo?</h2>
+<ul>
+<li>✅ Estimadores robustos: mediana, <code>mad_std</code>, biweight</li>
+<li>✅ Recorte sigma con <code>sigma_clip</code> y <code>sigma_clipped_stats</code></li>
+<li>✅ Elegir bins con <code>scott</code>, <code>freedman</code>, <code>knuth</code> y <code>blocks</code></li>
+<li>✅ Estimar incertidumbres con <code>bootstrap</code></li>
+<li>✅ Intervalos de confianza para conteos con <code>poisson_conf_interval</code></li>
+<li>✅ Ajustar modelos 1D y 2D con <code>astropy.modeling</code> y obtener errores</li>
+<li>✅ Evaluar el ajuste con χ² reducido y residuos</li>
+</ul>
+<p><strong>Siguiente módulo →</strong> <a href="../../posts/intermedio/11-catalogos.html">11 · Consultas a catálogos en línea</a></p>
 
 
 <!-- -->
 
+</section>
 
-</main> <!-- /main -->
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Volver arriba</a></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
-    // Ensure there is a toggle, if there isn't float one in the top right
-    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
-      const a = window.document.createElement('a');
-      a.classList.add('top-right');
-      a.classList.add('quarto-color-scheme-toggle');
-      a.href = "";
-      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
-      const i = window.document.createElement("i");
-      i.classList.add('bi');
-      a.appendChild(i);
-      window.document.body.appendChild(a);
-    }
-    setColorSchemeToggle(hasAlternateSentinel())
     const icon = "";
     const anchorJS = new window.AnchorJS();
     anchorJS.options = {
@@ -503,12 +974,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       // flash "checked"
       button.classList.add('code-copy-button-checked');
       var currentTitle = button.getAttribute("title");
-      button.setAttribute("title", "Copied!");
+      button.setAttribute("title", "Copiado");
       let tooltip;
       if (window.bootstrap) {
         button.setAttribute("data-bs-toggle", "tooltip");
         button.setAttribute("data-bs-placement", "left");
-        button.setAttribute("data-bs-title", "Copied!");
+        button.setAttribute("data-bs-title", "Copiado");
         tooltip = new bootstrap.Tooltip(button, 
           { trigger: "manual", 
             customClass: "code-copy-button-tooltip",
@@ -602,7 +1073,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/fvelez78\.github\.io\/astropy-blog\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
@@ -928,35 +1399,457 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       }
     }
   });
-  </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "10 - Estadistica y modelado"</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="an">description:</span><span class="co"> "Proximo modulo en preparacion"</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="an">categories:</span><span class="co"> [intermedio]</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="an">toc:</span><span class="co"> true</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co">  echo: true</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">  warning: false</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">span</span><span class="ot"> class</span><span class="op">=</span><span class="st">"badge-intermedio"</span><span class="dt">&gt;</span>Intermedio<span class="dt">&lt;/</span><span class="kw">span</span><span class="dt">&gt;</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>::: {.callout-warning}</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">## Modulo en construccion</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>Este modulo esta siendo preparado. Vuelve pronto.</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>:::</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../../posts/intermedio/09-visualizacion.html" class="pagination-link" aria-label="09 · Visualización astronómica">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">09 · Visualización astronómica</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../../posts/intermedio/11-catalogos.html" class="pagination-link" aria-label="11 · Consultas a catálogos en línea">
+        <span class="nav-page-text">11 · Consultas a catálogos en línea</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Ejecutar el código</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "10 · Estadística y modelado"</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="an">description:</span><span class="co"> "Herramientas estadísticas para datos astronómicos: estimadores robustos, sigma clipping, bootstrap, histogramas inteligentes y ajuste de modelos con astropy.stats y astropy.modeling"</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span><span class="co"> "Blog AstroPy en Español"</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> "2026-11-01"</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="an">categories:</span><span class="co"> [intermedio]</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="an">toc:</span><span class="co"> true</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="an">toc-depth:</span><span class="co"> 3</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="an">number-sections:</span><span class="co"> true</span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a><span class="co">  echo: true</span></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a><span class="co">  warning: false</span></span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a><span class="co">  message: false</span></span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">span</span><span class="ot"> class</span><span class="op">=</span><span class="st">"badge-inter"</span><span class="dt">&gt;</span>🔭 Intermedio<span class="dt">&lt;/</span><span class="kw">span</span><span class="dt">&gt;</span></span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a><span class="fu">## Datos astronómicos: ruidosos y con "intrusos"</span></span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>Los datos astronómicos casi nunca son limpios. En una imagen hay rayos</span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a>cósmicos, píxeles calientes, satélites que cruzan el campo. En un catálogo</span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a>hay estrellas mal medidas. Si calculamos un **promedio** simple, un solo</span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a>valor extremo lo arruina.</span>
+<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a>En este módulo veremos dos submódulos:</span>
+<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**`astropy.stats`**: estimadores robustos, recorte sigma, bootstrap,</span>
+<span id="cb19-28"><a href="#cb19-28" aria-hidden="true" tabindex="-1"></a>  intervalos de confianza para conteos de fotones</span>
+<span id="cb19-29"><a href="#cb19-29" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**`astropy.modeling`**: definir modelos (gaussianas, polinomios, perfiles)</span>
+<span id="cb19-30"><a href="#cb19-30" aria-hidden="true" tabindex="-1"></a>  y ajustarlos a los datos</span>
+<span id="cb19-31"><a href="#cb19-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-32"><a href="#cb19-32" aria-hidden="true" tabindex="-1"></a>::: {.callout-note}</span>
+<span id="cb19-33"><a href="#cb19-33" aria-hidden="true" tabindex="-1"></a><span class="fu">## Requisitos previos</span></span>
+<span id="cb19-34"><a href="#cb19-34" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Módulos 01 al 08</span>
+<span id="cb19-35"><a href="#cb19-35" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Conocer qué son media, mediana y desviación estándar</span>
+<span id="cb19-36"><a href="#cb19-36" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb19-37"><a href="#cb19-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-38"><a href="#cb19-38" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb19-39"><a href="#cb19-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-40"><a href="#cb19-40" aria-hidden="true" tabindex="-1"></a><span class="fu">## Estimadores robustos</span></span>
+<span id="cb19-41"><a href="#cb19-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-44"><a href="#cb19-44" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb19-45"><a href="#cb19-45" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-46"><a href="#cb19-46" aria-hidden="true" tabindex="-1"></a><span class="co"># Comparar estimadores clásicos y robustos cuando hay valores atípicos</span></span>
+<span id="cb19-47"><a href="#cb19-47" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-48"><a href="#cb19-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-49"><a href="#cb19-49" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb19-50"><a href="#cb19-50" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.stats <span class="im">import</span> mad_std, biweight_location, biweight_scale</span>
+<span id="cb19-51"><a href="#cb19-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-52"><a href="#cb19-52" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> np.random.default_rng(seed<span class="op">=</span><span class="dv">10</span>)</span>
+<span id="cb19-53"><a href="#cb19-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-54"><a href="#cb19-54" aria-hidden="true" tabindex="-1"></a><span class="co"># 1000 mediciones del fondo del cielo: valor real 100, ruido 5</span></span>
+<span id="cb19-55"><a href="#cb19-55" aria-hidden="true" tabindex="-1"></a>fondo <span class="op">=</span> rng.normal(<span class="dv">100</span>, <span class="dv">5</span>, <span class="dv">1000</span>)</span>
+<span id="cb19-56"><a href="#cb19-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-57"><a href="#cb19-57" aria-hidden="true" tabindex="-1"></a><span class="co"># Contaminamos el 3 % con rayos cósmicos (valores enormes)</span></span>
+<span id="cb19-58"><a href="#cb19-58" aria-hidden="true" tabindex="-1"></a>n_malos <span class="op">=</span> <span class="dv">30</span></span>
+<span id="cb19-59"><a href="#cb19-59" aria-hidden="true" tabindex="-1"></a>fondo[:n_malos] <span class="op">=</span> rng.uniform(<span class="dv">500</span>, <span class="dv">3000</span>, n_malos)</span>
+<span id="cb19-60"><a href="#cb19-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-61"><a href="#cb19-61" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"              Centro      Dispersión"</span>)</span>
+<span id="cb19-62"><a href="#cb19-62" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Clásico   :  </span><span class="sc">{</span>np<span class="sc">.</span>mean(fondo)<span class="sc">:8.2f}</span><span class="ss">    </span><span class="sc">{</span>np<span class="sc">.</span>std(fondo)<span class="sc">:8.2f}</span><span class="ss">   (media, desv. estándar)"</span>)</span>
+<span id="cb19-63"><a href="#cb19-63" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Mediana   :  </span><span class="sc">{</span>np<span class="sc">.</span>median(fondo)<span class="sc">:8.2f}</span><span class="ss">    </span><span class="sc">{</span>mad_std(fondo)<span class="sc">:8.2f}</span><span class="ss">   (mediana, MAD escalada)"</span>)</span>
+<span id="cb19-64"><a href="#cb19-64" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Biweight  :  </span><span class="sc">{</span>biweight_location(fondo)<span class="sc">:8.2f}</span><span class="ss">    </span><span class="sc">{</span>biweight_scale(fondo)<span class="sc">:8.2f}</span><span class="ss">"</span>)</span>
+<span id="cb19-65"><a href="#cb19-65" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Verdad    :    100.00        5.00"</span>)</span>
+<span id="cb19-66"><a href="#cb19-66" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-67"><a href="#cb19-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-68"><a href="#cb19-68" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**`mad_std`**: desviación absoluta mediana, multiplicada por 1.4826 para</span>
+<span id="cb19-69"><a href="#cb19-69" aria-hidden="true" tabindex="-1"></a>  que equivalga a la desviación estándar cuando los datos son normales.</span>
+<span id="cb19-70"><a href="#cb19-70" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Biweight**: estimador de Tukey, combina la robustez de la mediana con</span>
+<span id="cb19-71"><a href="#cb19-71" aria-hidden="true" tabindex="-1"></a>  la eficiencia de la media. Muy usado en cúmulos de galaxias.</span>
+<span id="cb19-72"><a href="#cb19-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-73"><a href="#cb19-73" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb19-74"><a href="#cb19-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-75"><a href="#cb19-75" aria-hidden="true" tabindex="-1"></a><span class="fu">## Recorte sigma (*sigma clipping*)</span></span>
+<span id="cb19-76"><a href="#cb19-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-77"><a href="#cb19-77" aria-hidden="true" tabindex="-1"></a>El recorte sigma es un procedimiento iterativo:</span>
+<span id="cb19-78"><a href="#cb19-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-79"><a href="#cb19-79" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Calcula el centro (mediana) y la dispersión</span>
+<span id="cb19-80"><a href="#cb19-80" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Descarta los puntos a más de N sigmas del centro</span>
+<span id="cb19-81"><a href="#cb19-81" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Repite hasta que no se descarte nada</span>
+<span id="cb19-82"><a href="#cb19-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-85"><a href="#cb19-85" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb19-86"><a href="#cb19-86" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-87"><a href="#cb19-87" aria-hidden="true" tabindex="-1"></a><span class="co"># sigma_clip devuelve un arreglo enmascarado: los valores rechazados</span></span>
+<span id="cb19-88"><a href="#cb19-88" aria-hidden="true" tabindex="-1"></a><span class="co"># quedan "ocultos" pero no se borran</span></span>
+<span id="cb19-89"><a href="#cb19-89" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-90"><a href="#cb19-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-91"><a href="#cb19-91" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.stats <span class="im">import</span> sigma_clip, sigma_clipped_stats</span>
+<span id="cb19-92"><a href="#cb19-92" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb19-93"><a href="#cb19-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-94"><a href="#cb19-94" aria-hidden="true" tabindex="-1"></a>recortado <span class="op">=</span> sigma_clip(fondo, sigma<span class="op">=</span><span class="dv">3</span>, maxiters<span class="op">=</span><span class="dv">10</span>)</span>
+<span id="cb19-95"><a href="#cb19-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-96"><a href="#cb19-96" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Puntos originales    : </span><span class="sc">{</span><span class="bu">len</span>(fondo)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb19-97"><a href="#cb19-97" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Puntos rechazados    : </span><span class="sc">{</span>recortado<span class="sc">.</span>mask<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb19-98"><a href="#cb19-98" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Media tras el recorte: </span><span class="sc">{</span>recortado<span class="sc">.</span>mean()<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb19-99"><a href="#cb19-99" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Desv. tras el recorte: </span><span class="sc">{</span>recortado<span class="sc">.</span>std()<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb19-100"><a href="#cb19-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-101"><a href="#cb19-101" aria-hidden="true" tabindex="-1"></a><span class="co"># Atajo: las tres estadísticas en una línea (lo usamos en el módulo 08)</span></span>
+<span id="cb19-102"><a href="#cb19-102" aria-hidden="true" tabindex="-1"></a>media, mediana, desv <span class="op">=</span> sigma_clipped_stats(fondo, sigma<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb19-103"><a href="#cb19-103" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">sigma_clipped_stats → media=</span><span class="sc">{</span>media<span class="sc">:.2f}</span><span class="ss">, mediana=</span><span class="sc">{</span>mediana<span class="sc">:.2f}</span><span class="ss">, desv=</span><span class="sc">{</span>desv<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb19-104"><a href="#cb19-104" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-105"><a href="#cb19-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-106"><a href="#cb19-106" aria-hidden="true" tabindex="-1"></a>::: {.callout-warning}</span>
+<span id="cb19-107"><a href="#cb19-107" aria-hidden="true" tabindex="-1"></a><span class="fu">## No recortes a ciegas</span></span>
+<span id="cb19-108"><a href="#cb19-108" aria-hidden="true" tabindex="-1"></a>El recorte sigma asume que los datos "buenos" son aproximadamente normales.</span>
+<span id="cb19-109"><a href="#cb19-109" aria-hidden="true" tabindex="-1"></a>Si tu distribución es asimétrica (por ejemplo, magnitudes de galaxias)</span>
+<span id="cb19-110"><a href="#cb19-110" aria-hidden="true" tabindex="-1"></a>puedes eliminar datos válidos. Siempre mira un histograma primero.</span>
+<span id="cb19-111"><a href="#cb19-111" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb19-112"><a href="#cb19-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-113"><a href="#cb19-113" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb19-114"><a href="#cb19-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-115"><a href="#cb19-115" aria-hidden="true" tabindex="-1"></a><span class="fu">## Histogramas con bins inteligentes</span></span>
+<span id="cb19-116"><a href="#cb19-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-117"><a href="#cb19-117" aria-hidden="true" tabindex="-1"></a>¿Cuántos intervalos (*bins*) usar en un histograma? Muy pocos ocultan</span>
+<span id="cb19-118"><a href="#cb19-118" aria-hidden="true" tabindex="-1"></a>estructura; demasiados muestran ruido. <span class="in">`astropy.visualization.hist`</span></span>
+<span id="cb19-119"><a href="#cb19-119" aria-hidden="true" tabindex="-1"></a>ofrece reglas automáticas.</span>
+<span id="cb19-120"><a href="#cb19-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-123"><a href="#cb19-123" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb19-124"><a href="#cb19-124" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-histogramas</span></span>
+<span id="cb19-125"><a href="#cb19-125" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "El mismo conjunto de datos con cuatro reglas para elegir los bins"</span></span>
+<span id="cb19-126"><a href="#cb19-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-127"><a href="#cb19-127" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-128"><a href="#cb19-128" aria-hidden="true" tabindex="-1"></a><span class="co"># Comparar reglas de binning sobre una distribución con dos picos</span></span>
+<span id="cb19-129"><a href="#cb19-129" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-130"><a href="#cb19-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-131"><a href="#cb19-131" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb19-132"><a href="#cb19-132" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb19-133"><a href="#cb19-133" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.visualization <span class="im">import</span> hist   <span class="co"># versión mejorada de plt.hist</span></span>
+<span id="cb19-134"><a href="#cb19-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-135"><a href="#cb19-135" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> np.random.default_rng(<span class="dv">3</span>)</span>
+<span id="cb19-136"><a href="#cb19-136" aria-hidden="true" tabindex="-1"></a><span class="co"># Ejemplo: velocidades radiales de dos grupos de estrellas superpuestos</span></span>
+<span id="cb19-137"><a href="#cb19-137" aria-hidden="true" tabindex="-1"></a>vel <span class="op">=</span> np.concatenate([rng.normal(<span class="op">-</span><span class="dv">20</span>, <span class="dv">8</span>, <span class="dv">600</span>), rng.normal(<span class="dv">15</span>, <span class="dv">4</span>, <span class="dv">250</span>)])</span>
+<span id="cb19-138"><a href="#cb19-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-139"><a href="#cb19-139" aria-hidden="true" tabindex="-1"></a>reglas <span class="op">=</span> [<span class="st">'scott'</span>, <span class="st">'freedman'</span>, <span class="st">'knuth'</span>, <span class="st">'blocks'</span>]</span>
+<span id="cb19-140"><a href="#cb19-140" aria-hidden="true" tabindex="-1"></a>fig, ejes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">4</span>, figsize<span class="op">=</span>(<span class="dv">13</span>, <span class="dv">3</span>), sharey<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb19-141"><a href="#cb19-141" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> ax, regla <span class="kw">in</span> <span class="bu">zip</span>(ejes, reglas):</span>
+<span id="cb19-142"><a href="#cb19-142" aria-hidden="true" tabindex="-1"></a>    <span class="co"># density=True normaliza el área a 1 para comparar formas</span></span>
+<span id="cb19-143"><a href="#cb19-143" aria-hidden="true" tabindex="-1"></a>    hist(vel, bins<span class="op">=</span>regla, ax<span class="op">=</span>ax, histtype<span class="op">=</span><span class="st">'stepfilled'</span>, alpha<span class="op">=</span><span class="fl">0.6</span>, density<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb19-144"><a href="#cb19-144" aria-hidden="true" tabindex="-1"></a>    ax.set_title(<span class="ss">f"bins='</span><span class="sc">{</span>regla<span class="sc">}</span><span class="ss">'"</span>)</span>
+<span id="cb19-145"><a href="#cb19-145" aria-hidden="true" tabindex="-1"></a>    ax.set_xlabel(<span class="st">'Velocidad [km/s]'</span>)</span>
+<span id="cb19-146"><a href="#cb19-146" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb19-147"><a href="#cb19-147" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb19-148"><a href="#cb19-148" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-149"><a href="#cb19-149" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-150"><a href="#cb19-150" aria-hidden="true" tabindex="-1"></a><span class="in">`knuth`</span> y <span class="in">`blocks`</span> (*Bayesian Blocks*) se basan en estadística bayesiana;</span>
+<span id="cb19-151"><a href="#cb19-151" aria-hidden="true" tabindex="-1"></a><span class="in">`blocks`</span> usa bins de **ancho variable**, ideal para detectar cambios bruscos.</span>
+<span id="cb19-152"><a href="#cb19-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-153"><a href="#cb19-153" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb19-154"><a href="#cb19-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-155"><a href="#cb19-155" aria-hidden="true" tabindex="-1"></a><span class="fu">## Bootstrap: incertidumbre sin fórmulas</span></span>
+<span id="cb19-156"><a href="#cb19-156" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-157"><a href="#cb19-157" aria-hidden="true" tabindex="-1"></a>¿Cuál es el error de la mediana? No hay una fórmula sencilla. El</span>
+<span id="cb19-158"><a href="#cb19-158" aria-hidden="true" tabindex="-1"></a>**bootstrap** lo estima remuestreando los datos con reemplazo muchas veces.</span>
+<span id="cb19-159"><a href="#cb19-159" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-162"><a href="#cb19-162" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb19-163"><a href="#cb19-163" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-164"><a href="#cb19-164" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimar el error de la mediana con bootstrap</span></span>
+<span id="cb19-165"><a href="#cb19-165" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-166"><a href="#cb19-166" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-167"><a href="#cb19-167" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb19-168"><a href="#cb19-168" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.stats <span class="im">import</span> bootstrap</span>
+<span id="cb19-169"><a href="#cb19-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-170"><a href="#cb19-170" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> np.random.default_rng(<span class="dv">5</span>)</span>
+<span id="cb19-171"><a href="#cb19-171" aria-hidden="true" tabindex="-1"></a><span class="co"># 40 mediciones del período de una estrella variable (días), con un atípico</span></span>
+<span id="cb19-172"><a href="#cb19-172" aria-hidden="true" tabindex="-1"></a>periodos <span class="op">=</span> np.append(rng.normal(<span class="fl">5.37</span>, <span class="fl">0.08</span>, <span class="dv">39</span>), <span class="fl">6.9</span>)</span>
+<span id="cb19-173"><a href="#cb19-173" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-174"><a href="#cb19-174" aria-hidden="true" tabindex="-1"></a><span class="co"># bootstrap usa el generador aleatorio global de numpy:</span></span>
+<span id="cb19-175"><a href="#cb19-175" aria-hidden="true" tabindex="-1"></a><span class="co"># fijamos su semilla para obtener siempre el mismo resultado</span></span>
+<span id="cb19-176"><a href="#cb19-176" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">1</span>)</span>
+<span id="cb19-177"><a href="#cb19-177" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-178"><a href="#cb19-178" aria-hidden="true" tabindex="-1"></a><span class="co"># bootstrap genera 'bootnum' remuestreos y aplica 'bootfunc' a cada uno</span></span>
+<span id="cb19-179"><a href="#cb19-179" aria-hidden="true" tabindex="-1"></a>medianas <span class="op">=</span> bootstrap(periodos, bootnum<span class="op">=</span><span class="dv">5000</span>, bootfunc<span class="op">=</span>np.median)</span>
+<span id="cb19-180"><a href="#cb19-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-181"><a href="#cb19-181" aria-hidden="true" tabindex="-1"></a><span class="co"># Intervalo de confianza del 68 % (equivalente a ±1σ)</span></span>
+<span id="cb19-182"><a href="#cb19-182" aria-hidden="true" tabindex="-1"></a>bajo, alto <span class="op">=</span> np.percentile(medianas, [<span class="dv">16</span>, <span class="dv">84</span>])</span>
+<span id="cb19-183"><a href="#cb19-183" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-184"><a href="#cb19-184" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Mediana de los datos : </span><span class="sc">{</span>np<span class="sc">.</span>median(periodos)<span class="sc">:.3f}</span><span class="ss"> días"</span>)</span>
+<span id="cb19-185"><a href="#cb19-185" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Error (bootstrap)    : ±</span><span class="sc">{</span>np<span class="sc">.</span>std(medianas)<span class="sc">:.3f}</span><span class="ss"> días"</span>)</span>
+<span id="cb19-186"><a href="#cb19-186" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Intervalo 68 %       : [</span><span class="sc">{</span>bajo<span class="sc">:.3f}</span><span class="ss">, </span><span class="sc">{</span>alto<span class="sc">:.3f}</span><span class="ss">]"</span>)</span>
+<span id="cb19-187"><a href="#cb19-187" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-188"><a href="#cb19-188" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-189"><a href="#cb19-189" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb19-190"><a href="#cb19-190" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-191"><a href="#cb19-191" aria-hidden="true" tabindex="-1"></a><span class="fu">## Conteos de fotones: intervalos de Poisson</span></span>
+<span id="cb19-192"><a href="#cb19-192" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-193"><a href="#cb19-193" aria-hidden="true" tabindex="-1"></a>Cuando detectamos **pocos** fotones (rayos X, rayos gamma, neutrinos), la</span>
+<span id="cb19-194"><a href="#cb19-194" aria-hidden="true" tabindex="-1"></a>aproximación $\sqrt{N}$ falla. <span class="in">`poisson_conf_interval`</span> da intervalos exactos.</span>
+<span id="cb19-195"><a href="#cb19-195" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-198"><a href="#cb19-198" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb19-199"><a href="#cb19-199" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-200"><a href="#cb19-200" aria-hidden="true" tabindex="-1"></a><span class="co"># Intervalos de confianza para conteos pequeños</span></span>
+<span id="cb19-201"><a href="#cb19-201" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-202"><a href="#cb19-202" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-203"><a href="#cb19-203" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb19-204"><a href="#cb19-204" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.stats <span class="im">import</span> poisson_conf_interval</span>
+<span id="cb19-205"><a href="#cb19-205" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-206"><a href="#cb19-206" aria-hidden="true" tabindex="-1"></a>conteos <span class="op">=</span> np.array([<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">10</span>, <span class="dv">100</span>])</span>
+<span id="cb19-207"><a href="#cb19-207" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-208"><a href="#cb19-208" aria-hidden="true" tabindex="-1"></a><span class="co"># 'frequentist-confidence' → intervalo de Garwood (estándar en astrofísica)</span></span>
+<span id="cb19-209"><a href="#cb19-209" aria-hidden="true" tabindex="-1"></a>inferior, superior <span class="op">=</span> poisson_conf_interval(conteos, interval<span class="op">=</span><span class="st">'frequentist-confidence'</span>)</span>
+<span id="cb19-210"><a href="#cb19-210" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-211"><a href="#cb19-211" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span><span class="st">'N'</span><span class="sc">:&gt;5}</span><span class="ss"> </span><span class="sc">{</span><span class="st">'√N simple'</span><span class="sc">:&gt;16}</span><span class="ss"> </span><span class="sc">{</span><span class="st">'Poisson exacto'</span><span class="sc">:&gt;18}</span><span class="ss">"</span>)</span>
+<span id="cb19-212"><a href="#cb19-212" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> n, lo, hi <span class="kw">in</span> <span class="bu">zip</span>(conteos, inferior, superior):</span>
+<span id="cb19-213"><a href="#cb19-213" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>n<span class="sc">:&gt;5}</span><span class="ss"> </span><span class="sc">{</span><span class="ss">f'[</span><span class="sc">{</span>n <span class="op">-</span> np<span class="sc">.</span>sqrt(n)<span class="sc">:.2f}</span><span class="ss">, </span><span class="sc">{</span>n <span class="op">+</span> np<span class="sc">.</span>sqrt(n)<span class="sc">:.2f}</span><span class="ss">]'</span><span class="sc">:&gt;16}</span><span class="ss"> </span><span class="sc">{</span><span class="ss">f'[</span><span class="sc">{</span>lo<span class="sc">:.2f}</span><span class="ss">, </span><span class="sc">{</span>hi<span class="sc">:.2f}</span><span class="ss">]'</span><span class="sc">:&gt;18}</span><span class="ss">"</span>)</span>
+<span id="cb19-214"><a href="#cb19-214" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-215"><a href="#cb19-215" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-216"><a href="#cb19-216" aria-hidden="true" tabindex="-1"></a>Con 0 fotones, $\sqrt{N}$ dice "0 ± 0" (absurdo); Poisson dice que el valor</span>
+<span id="cb19-217"><a href="#cb19-217" aria-hidden="true" tabindex="-1"></a>real podría ser hasta 1.84.</span>
+<span id="cb19-218"><a href="#cb19-218" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-219"><a href="#cb19-219" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb19-220"><a href="#cb19-220" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-221"><a href="#cb19-221" aria-hidden="true" tabindex="-1"></a><span class="fu">## `astropy.modeling`: ajustar modelos a datos</span></span>
+<span id="cb19-222"><a href="#cb19-222" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-223"><a href="#cb19-223" aria-hidden="true" tabindex="-1"></a>El flujo de trabajo siempre tiene tres pasos:</span>
+<span id="cb19-224"><a href="#cb19-224" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-225"><a href="#cb19-225" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Crear un modelo** con valores iniciales aproximados</span>
+<span id="cb19-226"><a href="#cb19-226" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Elegir un ajustador** (*fitter*)</span>
+<span id="cb19-227"><a href="#cb19-227" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Ajustar**: <span class="in">`modelo_ajustado = ajustador(modelo, x, y)`</span></span>
+<span id="cb19-228"><a href="#cb19-228" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-229"><a href="#cb19-229" aria-hidden="true" tabindex="-1"></a><span class="fu">### Ajuste de una gaussiana: línea de emisión</span></span>
+<span id="cb19-230"><a href="#cb19-230" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-233"><a href="#cb19-233" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb19-234"><a href="#cb19-234" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-ajuste-gauss</span></span>
+<span id="cb19-235"><a href="#cb19-235" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Ajuste de una gaussiana más un continuo lineal a una línea de emisión"</span></span>
+<span id="cb19-236"><a href="#cb19-236" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-237"><a href="#cb19-237" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-238"><a href="#cb19-238" aria-hidden="true" tabindex="-1"></a><span class="co"># Ajustar una línea espectral: gaussiana + continuo lineal</span></span>
+<span id="cb19-239"><a href="#cb19-239" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-240"><a href="#cb19-240" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-241"><a href="#cb19-241" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb19-242"><a href="#cb19-242" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb19-243"><a href="#cb19-243" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.modeling <span class="im">import</span> models, fitting</span>
+<span id="cb19-244"><a href="#cb19-244" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-245"><a href="#cb19-245" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> np.random.default_rng(<span class="dv">11</span>)</span>
+<span id="cb19-246"><a href="#cb19-246" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-247"><a href="#cb19-247" aria-hidden="true" tabindex="-1"></a><span class="co"># Datos simulados: línea H-alfa (6563 Å) sobre un continuo inclinado</span></span>
+<span id="cb19-248"><a href="#cb19-248" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.linspace(<span class="dv">6520</span>, <span class="dv">6610</span>, <span class="dv">180</span>)                           <span class="co"># longitud de onda [Å]</span></span>
+<span id="cb19-249"><a href="#cb19-249" aria-hidden="true" tabindex="-1"></a>y_real <span class="op">=</span> <span class="dv">50</span> <span class="op">+</span> <span class="fl">0.05</span> <span class="op">*</span> (x <span class="op">-</span> <span class="dv">6563</span>) <span class="op">+</span> <span class="dv">120</span> <span class="op">*</span> np.exp(<span class="op">-</span><span class="fl">0.5</span> <span class="op">*</span> ((x <span class="op">-</span> <span class="fl">6563.8</span>) <span class="op">/</span> <span class="fl">3.2</span>)<span class="op">**</span><span class="dv">2</span>)</span>
+<span id="cb19-250"><a href="#cb19-250" aria-hidden="true" tabindex="-1"></a>errores <span class="op">=</span> np.full_like(x, <span class="fl">6.0</span>)</span>
+<span id="cb19-251"><a href="#cb19-251" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> y_real <span class="op">+</span> rng.normal(<span class="dv">0</span>, errores)</span>
+<span id="cb19-252"><a href="#cb19-252" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-253"><a href="#cb19-253" aria-hidden="true" tabindex="-1"></a><span class="co"># PASO 1: modelo compuesto → gaussiana + recta (se suman con +)</span></span>
+<span id="cb19-254"><a href="#cb19-254" aria-hidden="true" tabindex="-1"></a>modelo_inicial <span class="op">=</span> (models.Gaussian1D(amplitude<span class="op">=</span><span class="dv">100</span>, mean<span class="op">=</span><span class="dv">6560</span>, stddev<span class="op">=</span><span class="dv">5</span>)</span>
+<span id="cb19-255"><a href="#cb19-255" aria-hidden="true" tabindex="-1"></a>                  <span class="op">+</span> models.Linear1D(slope<span class="op">=</span><span class="dv">0</span>, intercept<span class="op">=</span><span class="dv">40</span>))</span>
+<span id="cb19-256"><a href="#cb19-256" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-257"><a href="#cb19-257" aria-hidden="true" tabindex="-1"></a><span class="co"># PASO 2: ajustador de mínimos cuadrados no lineal</span></span>
+<span id="cb19-258"><a href="#cb19-258" aria-hidden="true" tabindex="-1"></a><span class="co"># calc_uncertainties=True calcula los errores de cada parámetro</span></span>
+<span id="cb19-259"><a href="#cb19-259" aria-hidden="true" tabindex="-1"></a>ajustador <span class="op">=</span> fitting.TRFLSQFitter(calc_uncertainties<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb19-260"><a href="#cb19-260" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-261"><a href="#cb19-261" aria-hidden="true" tabindex="-1"></a><span class="co"># PASO 3: ajustar (weights = 1/error para un ajuste ponderado)</span></span>
+<span id="cb19-262"><a href="#cb19-262" aria-hidden="true" tabindex="-1"></a>modelo <span class="op">=</span> ajustador(modelo_inicial, x, y, weights<span class="op">=</span><span class="dv">1</span> <span class="op">/</span> errores)</span>
+<span id="cb19-263"><a href="#cb19-263" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-264"><a href="#cb19-264" aria-hidden="true" tabindex="-1"></a><span class="co"># Resultados: los parámetros de la parte 0 (gaussiana) llevan sufijo _0</span></span>
+<span id="cb19-265"><a href="#cb19-265" aria-hidden="true" tabindex="-1"></a>g <span class="op">=</span> modelo[<span class="dv">0</span>]   <span class="co"># componente gaussiana</span></span>
+<span id="cb19-266"><a href="#cb19-266" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Centro de la línea : </span><span class="sc">{</span>g<span class="sc">.</span>mean<span class="sc">.</span>value<span class="sc">:.2f}</span><span class="ss"> ± </span><span class="sc">{</span>g<span class="sc">.</span>mean<span class="sc">.</span>std<span class="sc">:.2f}</span><span class="ss"> Å"</span>)</span>
+<span id="cb19-267"><a href="#cb19-267" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Ancho (sigma)      : </span><span class="sc">{</span>g<span class="sc">.</span>stddev<span class="sc">.</span>value<span class="sc">:.2f}</span><span class="ss"> ± </span><span class="sc">{</span>g<span class="sc">.</span>stddev<span class="sc">.</span>std<span class="sc">:.2f}</span><span class="ss"> Å"</span>)</span>
+<span id="cb19-268"><a href="#cb19-268" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Amplitud           : </span><span class="sc">{</span>g<span class="sc">.</span>amplitude<span class="sc">.</span>value<span class="sc">:.1f}</span><span class="ss"> ± </span><span class="sc">{</span>g<span class="sc">.</span>amplitude<span class="sc">.</span>std<span class="sc">:.1f}</span><span class="ss">"</span>)</span>
+<span id="cb19-269"><a href="#cb19-269" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"FWHM               : </span><span class="sc">{</span>g<span class="sc">.</span>fwhm<span class="sc">:.2f}</span><span class="ss"> Å"</span>)</span>
+<span id="cb19-270"><a href="#cb19-270" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-271"><a href="#cb19-271" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">4</span>))</span>
+<span id="cb19-272"><a href="#cb19-272" aria-hidden="true" tabindex="-1"></a>ax.errorbar(x, y, yerr<span class="op">=</span>errores, fmt<span class="op">=</span><span class="st">'.'</span>, color<span class="op">=</span><span class="st">'gray'</span>, alpha<span class="op">=</span><span class="fl">0.5</span>, label<span class="op">=</span><span class="st">'Datos'</span>)</span>
+<span id="cb19-273"><a href="#cb19-273" aria-hidden="true" tabindex="-1"></a>ax.plot(x, modelo(x), <span class="st">'C3'</span>, lw<span class="op">=</span><span class="dv">2</span>, label<span class="op">=</span><span class="st">'Modelo ajustado'</span>)</span>
+<span id="cb19-274"><a href="#cb19-274" aria-hidden="true" tabindex="-1"></a>ax.plot(x, modelo[<span class="dv">1</span>](x), <span class="st">'C0--'</span>, label<span class="op">=</span><span class="st">'Continuo'</span>)</span>
+<span id="cb19-275"><a href="#cb19-275" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">'Longitud de onda [Å]'</span>)</span>
+<span id="cb19-276"><a href="#cb19-276" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">'Flujo'</span>)</span>
+<span id="cb19-277"><a href="#cb19-277" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
+<span id="cb19-278"><a href="#cb19-278" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb19-279"><a href="#cb19-279" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-280"><a href="#cb19-280" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-281"><a href="#cb19-281" aria-hidden="true" tabindex="-1"></a><span class="fu">### Calidad del ajuste: chi-cuadrado reducido</span></span>
+<span id="cb19-282"><a href="#cb19-282" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-285"><a href="#cb19-285" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb19-286"><a href="#cb19-286" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-287"><a href="#cb19-287" aria-hidden="true" tabindex="-1"></a><span class="co"># χ² reducido ≈ 1 indica que el modelo describe los datos dentro de los errores</span></span>
+<span id="cb19-288"><a href="#cb19-288" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-289"><a href="#cb19-289" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-290"><a href="#cb19-290" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb19-291"><a href="#cb19-291" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-292"><a href="#cb19-292" aria-hidden="true" tabindex="-1"></a>residuos <span class="op">=</span> (y <span class="op">-</span> modelo(x)) <span class="op">/</span> errores</span>
+<span id="cb19-293"><a href="#cb19-293" aria-hidden="true" tabindex="-1"></a>n_param  <span class="op">=</span> <span class="bu">len</span>(modelo.parameters)              <span class="co"># 5 parámetros libres</span></span>
+<span id="cb19-294"><a href="#cb19-294" aria-hidden="true" tabindex="-1"></a>gl       <span class="op">=</span> <span class="bu">len</span>(x) <span class="op">-</span> n_param                    <span class="co"># grados de libertad</span></span>
+<span id="cb19-295"><a href="#cb19-295" aria-hidden="true" tabindex="-1"></a>chi2_red <span class="op">=</span> np.<span class="bu">sum</span>(residuos<span class="op">**</span><span class="dv">2</span>) <span class="op">/</span> gl</span>
+<span id="cb19-296"><a href="#cb19-296" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-297"><a href="#cb19-297" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"χ² reducido = </span><span class="sc">{</span>chi2_red<span class="sc">:.2f}</span><span class="ss">  (grados de libertad: </span><span class="sc">{</span>gl<span class="sc">}</span><span class="ss">)"</span>)</span>
+<span id="cb19-298"><a href="#cb19-298" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="fl">0.7</span> <span class="op">&lt;</span> chi2_red <span class="op">&lt;</span> <span class="fl">1.3</span>:</span>
+<span id="cb19-299"><a href="#cb19-299" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"→ Ajuste consistente con los errores ✓"</span>)</span>
+<span id="cb19-300"><a href="#cb19-300" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-301"><a href="#cb19-301" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-302"><a href="#cb19-302" aria-hidden="true" tabindex="-1"></a><span class="fu">### Ajuste 2D: el perfil de una estrella</span></span>
+<span id="cb19-303"><a href="#cb19-303" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-306"><a href="#cb19-306" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb19-307"><a href="#cb19-307" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-ajuste-2d</span></span>
+<span id="cb19-308"><a href="#cb19-308" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Datos, modelo y residuos del ajuste gaussiano 2D a una estrella"</span></span>
+<span id="cb19-309"><a href="#cb19-309" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-310"><a href="#cb19-310" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-311"><a href="#cb19-311" aria-hidden="true" tabindex="-1"></a><span class="co"># Gaussian2D: medir posición, ancho y elongación de una estrella</span></span>
+<span id="cb19-312"><a href="#cb19-312" aria-hidden="true" tabindex="-1"></a><span class="co"># El FWHM de las estrellas mide el "seeing" (turbulencia de la atmósfera)</span></span>
+<span id="cb19-313"><a href="#cb19-313" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-314"><a href="#cb19-314" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-315"><a href="#cb19-315" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb19-316"><a href="#cb19-316" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb19-317"><a href="#cb19-317" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.modeling <span class="im">import</span> models, fitting</span>
+<span id="cb19-318"><a href="#cb19-318" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.stats <span class="im">import</span> gaussian_sigma_to_fwhm</span>
+<span id="cb19-319"><a href="#cb19-319" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-320"><a href="#cb19-320" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> np.random.default_rng(<span class="dv">12</span>)</span>
+<span id="cb19-321"><a href="#cb19-321" aria-hidden="true" tabindex="-1"></a>yy, xx <span class="op">=</span> np.mgrid[<span class="dv">0</span>:<span class="dv">31</span>, <span class="dv">0</span>:<span class="dv">31</span>]</span>
+<span id="cb19-322"><a href="#cb19-322" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-323"><a href="#cb19-323" aria-hidden="true" tabindex="-1"></a><span class="co"># Estrella real: ligeramente elongada (viento movió el telescopio)</span></span>
+<span id="cb19-324"><a href="#cb19-324" aria-hidden="true" tabindex="-1"></a>real <span class="op">=</span> models.Gaussian2D(amplitude<span class="op">=</span><span class="dv">900</span>, x_mean<span class="op">=</span><span class="fl">15.3</span>, y_mean<span class="op">=</span><span class="fl">14.6</span>,</span>
+<span id="cb19-325"><a href="#cb19-325" aria-hidden="true" tabindex="-1"></a>                         x_stddev<span class="op">=</span><span class="fl">2.1</span>, y_stddev<span class="op">=</span><span class="fl">2.7</span>, theta<span class="op">=</span><span class="fl">0.4</span>)</span>
+<span id="cb19-326"><a href="#cb19-326" aria-hidden="true" tabindex="-1"></a>datos <span class="op">=</span> real(xx, yy) <span class="op">+</span> <span class="dv">20</span> <span class="op">+</span> rng.normal(<span class="dv">0</span>, <span class="dv">8</span>, xx.shape)</span>
+<span id="cb19-327"><a href="#cb19-327" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-328"><a href="#cb19-328" aria-hidden="true" tabindex="-1"></a><span class="co"># Modelo: gaussiana 2D + fondo constante</span></span>
+<span id="cb19-329"><a href="#cb19-329" aria-hidden="true" tabindex="-1"></a>inicial <span class="op">=</span> (models.Gaussian2D(amplitude<span class="op">=</span>datos.<span class="bu">max</span>(), x_mean<span class="op">=</span><span class="dv">15</span>, y_mean<span class="op">=</span><span class="dv">15</span>,</span>
+<span id="cb19-330"><a href="#cb19-330" aria-hidden="true" tabindex="-1"></a>                             x_stddev<span class="op">=</span><span class="dv">2</span>, y_stddev<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb19-331"><a href="#cb19-331" aria-hidden="true" tabindex="-1"></a>           <span class="op">+</span> models.Const2D(amplitude<span class="op">=</span>np.median(datos)))</span>
+<span id="cb19-332"><a href="#cb19-332" aria-hidden="true" tabindex="-1"></a>ajuste <span class="op">=</span> fitting.TRFLSQFitter()(inicial, xx, yy, datos)</span>
+<span id="cb19-333"><a href="#cb19-333" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-334"><a href="#cb19-334" aria-hidden="true" tabindex="-1"></a>g <span class="op">=</span> ajuste[<span class="dv">0</span>]</span>
+<span id="cb19-335"><a href="#cb19-335" aria-hidden="true" tabindex="-1"></a>fwhm_x <span class="op">=</span> gaussian_sigma_to_fwhm <span class="op">*</span> g.x_stddev.value</span>
+<span id="cb19-336"><a href="#cb19-336" aria-hidden="true" tabindex="-1"></a>fwhm_y <span class="op">=</span> gaussian_sigma_to_fwhm <span class="op">*</span> g.y_stddev.value</span>
+<span id="cb19-337"><a href="#cb19-337" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Centro     : (</span><span class="sc">{</span>g<span class="sc">.</span>x_mean<span class="sc">.</span>value<span class="sc">:.2f}</span><span class="ss">, </span><span class="sc">{</span>g<span class="sc">.</span>y_mean<span class="sc">.</span>value<span class="sc">:.2f}</span><span class="ss">)"</span>)</span>
+<span id="cb19-338"><a href="#cb19-338" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"FWHM x, y  : </span><span class="sc">{</span>fwhm_x<span class="sc">:.2f}</span><span class="ss">, </span><span class="sc">{</span>fwhm_y<span class="sc">:.2f}</span><span class="ss"> px"</span>)</span>
+<span id="cb19-339"><a href="#cb19-339" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Elongación : </span><span class="sc">{</span><span class="bu">max</span>(fwhm_x, fwhm_y) <span class="op">/</span> <span class="bu">min</span>(fwhm_x, fwhm_y)<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb19-340"><a href="#cb19-340" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-341"><a href="#cb19-341" aria-hidden="true" tabindex="-1"></a>fig, ejes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">3</span>, figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="fl">3.2</span>))</span>
+<span id="cb19-342"><a href="#cb19-342" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> ax, img, tit <span class="kw">in</span> <span class="bu">zip</span>(ejes, [datos, ajuste(xx, yy), datos <span class="op">-</span> ajuste(xx, yy)],</span>
+<span id="cb19-343"><a href="#cb19-343" aria-hidden="true" tabindex="-1"></a>                        [<span class="st">'Datos'</span>, <span class="st">'Modelo'</span>, <span class="st">'Residuos'</span>]):</span>
+<span id="cb19-344"><a href="#cb19-344" aria-hidden="true" tabindex="-1"></a>    ax.imshow(img, origin<span class="op">=</span><span class="st">'lower'</span>, cmap<span class="op">=</span><span class="st">'viridis'</span>)</span>
+<span id="cb19-345"><a href="#cb19-345" aria-hidden="true" tabindex="-1"></a>    ax.set_title(tit)</span>
+<span id="cb19-346"><a href="#cb19-346" aria-hidden="true" tabindex="-1"></a>    ax.set_xticks([])<span class="op">;</span> ax.set_yticks([])</span>
+<span id="cb19-347"><a href="#cb19-347" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb19-348"><a href="#cb19-348" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb19-349"><a href="#cb19-349" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-350"><a href="#cb19-350" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-351"><a href="#cb19-351" aria-hidden="true" tabindex="-1"></a>Los residuos deben parecer **ruido sin estructura**. Si se ve un patrón</span>
+<span id="cb19-352"><a href="#cb19-352" aria-hidden="true" tabindex="-1"></a>(un anillo, una mancha), el modelo no es adecuado.</span>
+<span id="cb19-353"><a href="#cb19-353" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-354"><a href="#cb19-354" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb19-355"><a href="#cb19-355" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-356"><a href="#cb19-356" aria-hidden="true" tabindex="-1"></a><span class="fu">## Modelos disponibles</span></span>
+<span id="cb19-357"><a href="#cb19-357" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-358"><a href="#cb19-358" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Modelo <span class="pp">|</span> Uso típico <span class="pp">|</span></span>
+<span id="cb19-359"><a href="#cb19-359" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|</span></span>
+<span id="cb19-360"><a href="#cb19-360" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`Gaussian1D`</span>, <span class="in">`Gaussian2D`</span> <span class="pp">|</span> Líneas espectrales, perfiles estelares <span class="pp">|</span></span>
+<span id="cb19-361"><a href="#cb19-361" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`Lorentz1D`</span>, <span class="in">`Voigt1D`</span> <span class="pp">|</span> Líneas con alas anchas <span class="pp">|</span></span>
+<span id="cb19-362"><a href="#cb19-362" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`Moffat2D`</span> <span class="pp">|</span> PSF estelar realista (mejor que gaussiana) <span class="pp">|</span></span>
+<span id="cb19-363"><a href="#cb19-363" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`Polynomial1D`</span>, <span class="in">`Chebyshev1D`</span> <span class="pp">|</span> Continuos, calibraciones <span class="pp">|</span></span>
+<span id="cb19-364"><a href="#cb19-364" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`PowerLaw1D`</span>, <span class="in">`BrokenPowerLaw1D`</span> <span class="pp">|</span> Espectros de rayos X, funciones de masa <span class="pp">|</span></span>
+<span id="cb19-365"><a href="#cb19-365" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`Sersic1D`</span>, <span class="in">`Sersic2D`</span> <span class="pp">|</span> Perfiles de brillo de galaxias <span class="pp">|</span></span>
+<span id="cb19-366"><a href="#cb19-366" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`BlackBody`</span> <span class="pp">|</span> Emisión térmica de estrellas <span class="pp">|</span></span>
+<span id="cb19-367"><a href="#cb19-367" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-368"><a href="#cb19-368" aria-hidden="true" tabindex="-1"></a>En el módulo 16 aprenderemos a **crear modelos propios**.</span>
+<span id="cb19-369"><a href="#cb19-369" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-370"><a href="#cb19-370" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb19-371"><a href="#cb19-371" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-372"><a href="#cb19-372" aria-hidden="true" tabindex="-1"></a><span class="fu">## Ejercicio</span></span>
+<span id="cb19-373"><a href="#cb19-373" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-374"><a href="#cb19-374" aria-hidden="true" tabindex="-1"></a>Una galaxia elíptica sigue un perfil de **Sérsic**. Con los datos</span>
+<span id="cb19-375"><a href="#cb19-375" aria-hidden="true" tabindex="-1"></a>simulados de abajo:</span>
+<span id="cb19-376"><a href="#cb19-376" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-377"><a href="#cb19-377" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Ajusta un modelo <span class="in">`Sersic1D`</span> (valores iniciales: <span class="in">`amplitude=10`</span>, <span class="in">`r_eff=5`</span>, <span class="in">`n=2`</span>)</span>
+<span id="cb19-378"><a href="#cb19-378" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Reporta el radio efectivo <span class="in">`r_eff`</span> y el índice <span class="in">`n`</span> con sus errores</span>
+<span id="cb19-379"><a href="#cb19-379" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>¿Es una elíptica (n ≈ 4) o un disco (n ≈ 1)?</span>
+<span id="cb19-380"><a href="#cb19-380" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-383"><a href="#cb19-383" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb19-384"><a href="#cb19-384" aria-hidden="true" tabindex="-1"></a><span class="co"># Datos del ejercicio: perfil de brillo radial de una galaxia</span></span>
+<span id="cb19-385"><a href="#cb19-385" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb19-386"><a href="#cb19-386" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.modeling <span class="im">import</span> models</span>
+<span id="cb19-387"><a href="#cb19-387" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> np.random.default_rng(<span class="dv">99</span>)</span>
+<span id="cb19-388"><a href="#cb19-388" aria-hidden="true" tabindex="-1"></a>radio <span class="op">=</span> np.linspace(<span class="fl">0.5</span>, <span class="dv">30</span>, <span class="dv">60</span>)                               <span class="co"># arcsec</span></span>
+<span id="cb19-389"><a href="#cb19-389" aria-hidden="true" tabindex="-1"></a>brillo_real <span class="op">=</span> models.Sersic1D(amplitude<span class="op">=</span><span class="dv">8</span>, r_eff<span class="op">=</span><span class="dv">7</span>, n<span class="op">=</span><span class="dv">4</span>)(radio)</span>
+<span id="cb19-390"><a href="#cb19-390" aria-hidden="true" tabindex="-1"></a>err_brillo <span class="op">=</span> <span class="fl">0.05</span> <span class="op">*</span> brillo_real <span class="op">+</span> <span class="fl">0.05</span></span>
+<span id="cb19-391"><a href="#cb19-391" aria-hidden="true" tabindex="-1"></a>brillo <span class="op">=</span> brillo_real <span class="op">+</span> rng.normal(<span class="dv">0</span>, err_brillo)</span>
+<span id="cb19-392"><a href="#cb19-392" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-393"><a href="#cb19-393" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-394"><a href="#cb19-394" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip collapse="true"}</span>
+<span id="cb19-395"><a href="#cb19-395" aria-hidden="true" tabindex="-1"></a><span class="fu">## Ver solución</span></span>
+<span id="cb19-396"><a href="#cb19-396" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-399"><a href="#cb19-399" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb19-400"><a href="#cb19-400" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-sersic</span></span>
+<span id="cb19-401"><a href="#cb19-401" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Ajuste de Sérsic al perfil radial (escala logarítmica)"</span></span>
+<span id="cb19-402"><a href="#cb19-402" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-403"><a href="#cb19-403" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-404"><a href="#cb19-404" aria-hidden="true" tabindex="-1"></a><span class="co"># SOLUCIÓN: ajuste de un perfil de Sérsic</span></span>
+<span id="cb19-405"><a href="#cb19-405" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-406"><a href="#cb19-406" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-407"><a href="#cb19-407" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb19-408"><a href="#cb19-408" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.modeling <span class="im">import</span> models, fitting</span>
+<span id="cb19-409"><a href="#cb19-409" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-410"><a href="#cb19-410" aria-hidden="true" tabindex="-1"></a><span class="co"># Paso 1: modelo inicial y ajuste ponderado</span></span>
+<span id="cb19-411"><a href="#cb19-411" aria-hidden="true" tabindex="-1"></a>inicial <span class="op">=</span> models.Sersic1D(amplitude<span class="op">=</span><span class="dv">10</span>, r_eff<span class="op">=</span><span class="dv">5</span>, n<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb19-412"><a href="#cb19-412" aria-hidden="true" tabindex="-1"></a>ajustador <span class="op">=</span> fitting.TRFLSQFitter(calc_uncertainties<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb19-413"><a href="#cb19-413" aria-hidden="true" tabindex="-1"></a>sersic <span class="op">=</span> ajustador(inicial, radio, brillo, weights<span class="op">=</span><span class="dv">1</span> <span class="op">/</span> err_brillo)</span>
+<span id="cb19-414"><a href="#cb19-414" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-415"><a href="#cb19-415" aria-hidden="true" tabindex="-1"></a><span class="co"># Paso 2: resultados con errores</span></span>
+<span id="cb19-416"><a href="#cb19-416" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"r_eff = </span><span class="sc">{</span>sersic<span class="sc">.</span>r_eff<span class="sc">.</span>value<span class="sc">:.2f}</span><span class="ss"> ± </span><span class="sc">{</span>sersic<span class="sc">.</span>r_eff<span class="sc">.</span>std<span class="sc">:.2f}</span><span class="ss"> arcsec"</span>)</span>
+<span id="cb19-417"><a href="#cb19-417" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"n     = </span><span class="sc">{</span>sersic<span class="sc">.</span>n<span class="sc">.</span>value<span class="sc">:.2f}</span><span class="ss"> ± </span><span class="sc">{</span>sersic<span class="sc">.</span>n<span class="sc">.</span>std<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb19-418"><a href="#cb19-418" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-419"><a href="#cb19-419" aria-hidden="true" tabindex="-1"></a><span class="co"># Paso 3: interpretación</span></span>
+<span id="cb19-420"><a href="#cb19-420" aria-hidden="true" tabindex="-1"></a>tipo <span class="op">=</span> <span class="st">'elíptica (de Vaucouleurs)'</span> <span class="cf">if</span> sersic.n.value <span class="op">&gt;</span> <span class="fl">2.5</span> <span class="cf">else</span> <span class="st">'disco (exponencial)'</span></span>
+<span id="cb19-421"><a href="#cb19-421" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"→ Perfil compatible con una galaxia </span><span class="sc">{</span>tipo<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb19-422"><a href="#cb19-422" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-423"><a href="#cb19-423" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="dv">4</span>))</span>
+<span id="cb19-424"><a href="#cb19-424" aria-hidden="true" tabindex="-1"></a>ax.errorbar(radio, brillo, yerr<span class="op">=</span>err_brillo, fmt<span class="op">=</span><span class="st">'o'</span>, ms<span class="op">=</span><span class="dv">3</span>, label<span class="op">=</span><span class="st">'Datos'</span>)</span>
+<span id="cb19-425"><a href="#cb19-425" aria-hidden="true" tabindex="-1"></a>ax.plot(radio, sersic(radio), <span class="st">'C3'</span>, label<span class="op">=</span><span class="ss">f'Sérsic n=</span><span class="sc">{</span>sersic<span class="sc">.</span>n<span class="sc">.</span>value<span class="sc">:.1f}</span><span class="ss">'</span>)</span>
+<span id="cb19-426"><a href="#cb19-426" aria-hidden="true" tabindex="-1"></a>ax.set_yscale(<span class="st">'log'</span>)</span>
+<span id="cb19-427"><a href="#cb19-427" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">'Radio [arcsec]'</span>)<span class="op">;</span> ax.set_ylabel(<span class="st">'Brillo superficial'</span>)</span>
+<span id="cb19-428"><a href="#cb19-428" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
+<span id="cb19-429"><a href="#cb19-429" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb19-430"><a href="#cb19-430" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-431"><a href="#cb19-431" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb19-432"><a href="#cb19-432" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-433"><a href="#cb19-433" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb19-434"><a href="#cb19-434" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-435"><a href="#cb19-435" aria-hidden="true" tabindex="-1"></a><span class="fu">## ¿Qué aprendiste en este módulo? {.seccion-aprendiste}</span></span>
+<span id="cb19-436"><a href="#cb19-436" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-437"><a href="#cb19-437" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Estimadores robustos: mediana, <span class="in">`mad_std`</span>, biweight</span>
+<span id="cb19-438"><a href="#cb19-438" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Recorte sigma con <span class="in">`sigma_clip`</span> y <span class="in">`sigma_clipped_stats`</span></span>
+<span id="cb19-439"><a href="#cb19-439" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Elegir bins con <span class="in">`scott`</span>, <span class="in">`freedman`</span>, <span class="in">`knuth`</span> y <span class="in">`blocks`</span></span>
+<span id="cb19-440"><a href="#cb19-440" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Estimar incertidumbres con <span class="in">`bootstrap`</span></span>
+<span id="cb19-441"><a href="#cb19-441" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Intervalos de confianza para conteos con <span class="in">`poisson_conf_interval`</span></span>
+<span id="cb19-442"><a href="#cb19-442" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Ajustar modelos 1D y 2D con <span class="in">`astropy.modeling`</span> y obtener errores</span>
+<span id="cb19-443"><a href="#cb19-443" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Evaluar el ajuste con χ² reducido y residuos</span>
+<span id="cb19-444"><a href="#cb19-444" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-445"><a href="#cb19-445" aria-hidden="true" tabindex="-1"></a>**Siguiente módulo →** <span class="co">[</span><span class="ot">11 · Consultas a catálogos en línea</span><span class="co">](11-catalogos.qmd)</span></span>
+</code></pre></div><button title="Copiar al portapapeles" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<p>Blog hecho con Quarto</p>
+<p>AstroPy en Español · Blog de astronomía computacional</p>
 </div>   
     <div class="nav-footer-center">
       &nbsp;
     </div>
     <div class="nav-footer-right">
-<p>Datos: Astropy Project</p>
+<p>Hecho con <a href="https://quarto.org">Quarto</a> y <a href="https://www.astropy.org">Astropy</a></p>
 </div>
   </div>
 </footer>

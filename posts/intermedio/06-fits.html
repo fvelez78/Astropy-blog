@@ -1,14 +1,15 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
 
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.9.37">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="description" content="Proximo modulo en preparacion">
+<meta name="author" content="Blog AstroPy en Español">
+<meta name="description" content="Aprende la estructura de un archivo FITS (HDU, encabezados, imágenes y tablas) y cómo leerlo, modificarlo y escribirlo con astropy.io.fits">
 
-<title>06 - Lectura y manipulacion de FITS – AstroPy en Español</title>
+<title>06 · Lectura y manipulación de archivos FITS – AstroPy en Español</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -69,6 +70,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../">
+<link href="../../posts/intermedio/07-wcs.html" rel="next">
+<link href="../../posts/basico/05-tablas.html" rel="prev">
 <link href="../../assets/logos/favicon.ico" rel="icon">
 <script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -76,14 +79,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-acf12a64177840b8d86f2d4f01b2e9fb.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-23bbe8b5e4efc1e257f6d59dce478b08.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-acf12a64177840b8d86f2d4f01b2e9fb.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-46c2da4921da100f2e8b760b91ba26ad.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-13f4910f51bb414f8177eb12ee348383.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../../site_libs/bootstrap/bootstrap-dark-c414a890e2011809a78d515def34b275.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../../site_libs/bootstrap/bootstrap-13f4910f51bb414f8177eb12ee348383.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-815cd9e140545d7958d81bc583beecec.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -98,17 +97,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   ],
   "show-item-context": false,
   "language": {
-    "search-no-results-text": "No results",
-    "search-matching-documents-text": "matching documents",
-    "search-copy-link-title": "Copy link to search",
-    "search-hide-matches-text": "Hide additional matches",
-    "search-more-match-text": "more match in this document",
-    "search-more-matches-text": "more matches in this document",
-    "search-clear-button-title": "Clear",
+    "search-no-results-text": "No se han encontrado resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
     "search-text-placeholder": "",
-    "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit",
-    "search-label": "Search"
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
   }
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
@@ -116,169 +115,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </head>
 
-<body class="nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
-    const toggleBodyColorMode = (bsSheetEl) => {
-      const mode = bsSheetEl.getAttribute("data-mode");
-      const bodyEl = window.document.querySelector("body");
-      if (mode === "dark") {
-        bodyEl.classList.add("quarto-dark");
-        bodyEl.classList.remove("quarto-light");
-      } else {
-        bodyEl.classList.add("quarto-light");
-        bodyEl.classList.remove("quarto-dark");
-      }
-    }
-    const toggleBodyColorPrimary = () => {
-      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
-      if (bsSheetEl) {
-        toggleBodyColorMode(bsSheetEl);
-      }
-    }
-    const setColorSchemeToggle = (alternate) => {
-      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
-      for (let i=0; i < toggles.length; i++) {
-        const toggle = toggles[i];
-        if (toggle) {
-          if (alternate) {
-            toggle.classList.add("alternate");
-          } else {
-            toggle.classList.remove("alternate");
-          }
-        }
-      }
-    };
-    const toggleColorMode = (alternate) => {
-      // Switch the stylesheets
-      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
-      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
-      manageTransitions('#quarto-margin-sidebar .nav-link', false);
-      if (alternate) {
-        // note: dark is layered on light, we don't disable primary!
-        enableStylesheet(alternateStylesheets);
-        for (const sheetNode of alternateStylesheets) {
-          if (sheetNode.id === "quarto-bootstrap") {
-            toggleBodyColorMode(sheetNode);
-          }
-        }
-      } else {
-        disableStylesheet(alternateStylesheets);
-        enableStylesheet(primaryStylesheets)
-        toggleBodyColorPrimary();
-      }
-      manageTransitions('#quarto-margin-sidebar .nav-link', true);
-      // Switch the toggles
-      setColorSchemeToggle(alternate)
-      // Hack to workaround the fact that safari doesn't
-      // properly recolor the scrollbar when toggling (#1455)
-      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
-        manageTransitions("body", false);
-        window.scrollTo(0, 1);
-        setTimeout(() => {
-          window.scrollTo(0, 0);
-          manageTransitions("body", true);
-        }, 40);
-      }
-    }
-    const disableStylesheet = (stylesheets) => {
-      for (let i=0; i < stylesheets.length; i++) {
-        const stylesheet = stylesheets[i];
-        stylesheet.rel = 'disabled-stylesheet';
-      }
-    }
-    const enableStylesheet = (stylesheets) => {
-      for (let i=0; i < stylesheets.length; i++) {
-        const stylesheet = stylesheets[i];
-        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
-          stylesheet.rel = 'stylesheet';
-        }
-      }
-    }
-    const manageTransitions = (selector, allowTransitions) => {
-      const els = window.document.querySelectorAll(selector);
-      for (let i=0; i < els.length; i++) {
-        const el = els[i];
-        if (allowTransitions) {
-          el.classList.remove('notransition');
-        } else {
-          el.classList.add('notransition');
-        }
-      }
-    }
-    const isFileUrl = () => {
-      return window.location.protocol === 'file:';
-    }
-    const hasAlternateSentinel = () => {
-      let styleSentinel = getColorSchemeSentinel();
-      if (styleSentinel !== null) {
-        return styleSentinel === "alternate";
-      } else {
-        return false;
-      }
-    }
-    const setStyleSentinel = (alternate) => {
-      const value = alternate ? "alternate" : "default";
-      if (!isFileUrl()) {
-        window.localStorage.setItem("quarto-color-scheme", value);
-      } else {
-        localAlternateSentinel = value;
-      }
-    }
-    const getColorSchemeSentinel = () => {
-      if (!isFileUrl()) {
-        const storageValue = window.localStorage.getItem("quarto-color-scheme");
-        return storageValue != null ? storageValue : localAlternateSentinel;
-      } else {
-        return localAlternateSentinel;
-      }
-    }
-    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
-      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
-      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
-      let newTheme = '';
-      if(authorPrefersDark) {
-        newTheme = isAlternate ? baseTheme : alternateTheme;
-      } else {
-        newTheme = isAlternate ? alternateTheme : baseTheme;
-      }
-      const changeGiscusTheme = () => {
-        // From: https://github.com/giscus/giscus/issues/336
-        const sendMessage = (message) => {
-          const iframe = document.querySelector('iframe.giscus-frame');
-          if (!iframe) return;
-          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
-        }
-        sendMessage({
-          setConfig: {
-            theme: newTheme
-          }
-        });
-      }
-      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
-      if (isGiscussLoaded) {
-        changeGiscusTheme();
-      }
-    };
-    const authorPrefersDark = false;
-    const darkModeDefault = authorPrefersDark;
-      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
-      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
-    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
-    // Dark / light mode switch
-    window.quartoToggleColorScheme = () => {
-      // Read the current dark / light value
-      let toAlternate = !hasAlternateSentinel();
-      toggleColorMode(toAlternate);
-      setStyleSentinel(toAlternate);
-      toggleGiscusIfUsed(toAlternate, darkModeDefault);
-      window.dispatchEvent(new Event('resize'));
-    };
-    // Switch to dark mode if need be
-    if (hasAlternateSentinel()) {
-      toggleColorMode(true);
-    } else {
-      toggleColorMode(false);
-    }
-  </script>
+<body class="nav-sidebar docked nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -289,105 +126,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <span class="navbar-title">AstroPy en Español</span>
     </a>
   </div>
-            <div id="quarto-search" class="" title="Search"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+            <div id="quarto-search" class="" title="Buscar"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Navegación de palanca" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../../index.html"> 
-<span class="menu-text">Inicio</span></a>
+    <a class="nav-link active" href="../../posts/basico/01-introduccion.html" aria-current="page"> 
+<span class="menu-text">Módulos</span></a>
   </li>  
-  <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-basico" role="link" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">Basico</span>
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-basico">    
-        <li>
-    <a class="dropdown-item" href="../../posts/basico/01-introduccion.html">
- <span class="dropdown-text">01 - Introduccion a Astropy</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/basico/02-unidades.html">
- <span class="dropdown-text">02 - Unidades y constantes</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/basico/03-tiempo.html">
- <span class="dropdown-text">03 - Tiempo astronomico</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/basico/04-coordenadas.html">
- <span class="dropdown-text">04 - Coordenadas celestes</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/basico/05-tablas.html">
- <span class="dropdown-text">05 - Tablas astronomicas</span></a>
-  </li>  
-    </ul>
-  </li>
-  <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-intermedio" role="link" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">Intermedio</span>
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-intermedio">    
-        <li>
-    <a class="dropdown-item" href="../../posts/intermedio/06-fits.html">
- <span class="dropdown-text">06 - Archivos FITS</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/intermedio/07-wcs.html">
- <span class="dropdown-text">07 - WCS del pixel al cielo</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/intermedio/08-fotometria.html">
- <span class="dropdown-text">08 - Fotometria de apertura</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/intermedio/09-visualizacion.html">
- <span class="dropdown-text">09 - Visualizacion astronomica</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/intermedio/10-estadistica.html">
- <span class="dropdown-text">10 - Estadistica y modelado</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/intermedio/11-catalogos.html">
- <span class="dropdown-text">11 - Catalogos en linea</span></a>
-  </li>  
-    </ul>
-  </li>
-  <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-avanzado" role="link" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">Avanzado</span>
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-avanzado">    
-        <li>
-    <a class="dropdown-item" href="../../posts/avanzado/12-espectroscopia.html">
- <span class="dropdown-text">12 - Espectroscopia</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/avanzado/13-cosmologia.html">
- <span class="dropdown-text">13 - Cosmologia computacional</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/avanzado/14-orbital.html">
- <span class="dropdown-text">14 - Mecanica orbital</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/avanzado/15-series-temporales.html">
- <span class="dropdown-text">15 - Series temporales</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/avanzado/16-extensiones.html">
- <span class="dropdown-text">16 - Extensiones propias</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/avanzado/17-pipeline.html">
- <span class="dropdown-text">17 - Pipeline completo</span></a>
-  </li>  
-    </ul>
-  </li>
   <li class="nav-item">
     <a class="nav-link" href="../../sobre.html"> 
 <span class="menu-text">Sobre el blog</span></a>
@@ -395,32 +143,221 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/tu-usuario/astropy-blog"> <i class="bi bi-github" role="img" aria-label="GitHub">
+    <a class="nav-link" href="https://github.com/fvelez78/astropy-blog"> <i class="bi bi-github" role="img" aria-label="GitHub">
 </i> 
 <span class="menu-text"></span></a>
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
-  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
 </div>
       </div> <!-- /container-fluid -->
     </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../posts/intermedio/06-fits.html">Nivel 2 · Intermedio</a></li><li class="breadcrumb-item"><a href="../../posts/intermedio/06-fits.html">06 · Lectura y manipulación de archivos FITS</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Buscar" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
 </header>
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Buscar"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Inicio</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Nivel 1 · Básico</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/basico/01-introduccion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">01 · ¿Qué es Astropy y por qué usarlo?</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/basico/02-unidades.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">02 · Unidades y constantes físicas</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/basico/03-tiempo.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">03 · Tiempo astronómico con astropy.time</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/basico/04-coordenadas.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">04 · Coordenadas celestes con SkyCoord</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/basico/05-tablas.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">05 · Tablas astronómicas con astropy.table</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Nivel 2 · Intermedio</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/intermedio/06-fits.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">06 · Lectura y manipulación de archivos FITS</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/intermedio/07-wcs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">07 · WCS: del píxel al cielo</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/intermedio/08-fotometria.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">08 · Fotometría de apertura</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/intermedio/09-visualizacion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">09 · Visualización astronómica</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/intermedio/10-estadistica.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">10 · Estadística y modelado</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/intermedio/11-catalogos.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">11 · Consultas a catálogos en línea</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Nivel 3 · Avanzado</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/avanzado/12-espectroscopia.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">12 · Espectroscopía con specutils</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/avanzado/13-cosmologia.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">13 · Cosmología computacional</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/avanzado/14-orbital.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">14 · Mecánica orbital y efemérides</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/avanzado/15-series-temporales.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">15 · Series temporales astronómicas</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/avanzado/16-extensiones.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">16 · Extensiones y modelos propios</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/avanzado/17-pipeline.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">17 · Pipeline completo de reducción</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">En esta página</h2>
+   
+  <ul>
+  <li><a href="#qué-es-un-archivo-fits" id="toc-qué-es-un-archivo-fits" class="nav-link active" data-scroll-target="#qué-es-un-archivo-fits"><span class="header-section-number">1</span> ¿Qué es un archivo FITS?</a></li>
+  <li><a href="#crear-una-imagen-astronómica-sintética" id="toc-crear-una-imagen-astronómica-sintética" class="nav-link" data-scroll-target="#crear-una-imagen-astronómica-sintética"><span class="header-section-number">2</span> Crear una imagen astronómica sintética</a></li>
+  <li><a href="#escribir-un-archivo-fits" id="toc-escribir-un-archivo-fits" class="nav-link" data-scroll-target="#escribir-un-archivo-fits"><span class="header-section-number">3</span> Escribir un archivo FITS</a></li>
+  <li><a href="#abrir-y-explorar-un-archivo-fits" id="toc-abrir-y-explorar-un-archivo-fits" class="nav-link" data-scroll-target="#abrir-y-explorar-un-archivo-fits"><span class="header-section-number">4</span> Abrir y explorar un archivo FITS</a>
+  <ul class="collapse">
+  <li><a href="#ver-la-estructura-con-info" id="toc-ver-la-estructura-con-info" class="nav-link" data-scroll-target="#ver-la-estructura-con-info"><span class="header-section-number">4.1</span> Ver la estructura con <code>info()</code></a></li>
+  <li><a href="#leer-el-encabezado" id="toc-leer-el-encabezado" class="nav-link" data-scroll-target="#leer-el-encabezado"><span class="header-section-number">4.2</span> Leer el encabezado</a></li>
+  <li><a href="#leer-los-datos" id="toc-leer-los-datos" class="nav-link" data-scroll-target="#leer-los-datos"><span class="header-section-number">4.3</span> Leer los datos</a></li>
+  <li><a href="#visualizar-la-imagen" id="toc-visualizar-la-imagen" class="nav-link" data-scroll-target="#visualizar-la-imagen"><span class="header-section-number">4.4</span> Visualizar la imagen</a></li>
+  </ul></li>
+  <li><a href="#modificar-un-archivo-fits" id="toc-modificar-un-archivo-fits" class="nav-link" data-scroll-target="#modificar-un-archivo-fits"><span class="header-section-number">5</span> Modificar un archivo FITS</a>
+  <ul class="collapse">
+  <li><a href="#editar-el-encabezado" id="toc-editar-el-encabezado" class="nav-link" data-scroll-target="#editar-el-encabezado"><span class="header-section-number">5.1</span> Editar el encabezado</a></li>
+  <li><a href="#operar-sobre-los-datos-y-guardar-una-versión-nueva" id="toc-operar-sobre-los-datos-y-guardar-una-versión-nueva" class="nav-link" data-scroll-target="#operar-sobre-los-datos-y-guardar-una-versión-nueva"><span class="header-section-number">5.2</span> Operar sobre los datos y guardar una versión nueva</a></li>
+  </ul></li>
+  <li><a href="#archivos-fits-con-varias-extensiones" id="toc-archivos-fits-con-varias-extensiones" class="nav-link" data-scroll-target="#archivos-fits-con-varias-extensiones"><span class="header-section-number">6</span> Archivos FITS con varias extensiones</a></li>
+  <li><a href="#recortar-una-región-cutout" id="toc-recortar-una-región-cutout" class="nav-link" data-scroll-target="#recortar-una-región-cutout"><span class="header-section-number">7</span> Recortar una región (cutout)</a></li>
+  <li><a href="#abrir-un-fits-real" id="toc-abrir-un-fits-real" class="nav-link" data-scroll-target="#abrir-un-fits-real"><span class="header-section-number">8</span> Abrir un FITS real</a></li>
+  <li><a href="#ejercicio" id="toc-ejercicio" class="nav-link" data-scroll-target="#ejercicio"><span class="header-section-number">9</span> Ejercicio</a></li>
+  <li><a href="#qué-aprendiste-en-este-módulo" id="toc-qué-aprendiste-en-este-módulo" class="nav-link" data-scroll-target="#qué-aprendiste-en-este-módulo"><span class="header-section-number">10</span> ¿Qué aprendiste en este módulo?</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../posts/intermedio/06-fits.html">Nivel 2 · Intermedio</a></li><li class="breadcrumb-item"><a href="../../posts/intermedio/06-fits.html">06 · Lectura y manipulación de archivos FITS</a></li></ol></nav>
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title">06 - Lectura y manipulacion de FITS</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<div class="quarto-title-block"><div><h1 class="title">06 · Lectura y manipulación de archivos FITS</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Código</button></div></div>
   <div class="quarto-categories">
     <div class="quarto-category">intermedio</div>
   </div>
@@ -428,14 +365,26 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <div>
   <div class="description">
-    Proximo modulo en preparacion
+    Aprende la estructura de un archivo FITS (HDU, encabezados, imágenes y tablas) y cómo leerlo, modificarlo y escribirlo con astropy.io.fits
   </div>
 </div>
 
 
 <div class="quarto-title-meta">
 
+    <div>
+    <div class="quarto-title-meta-heading">Autor/a</div>
+    <div class="quarto-title-meta-contents">
+             <p>Blog AstroPy en Español </p>
+          </div>
+  </div>
     
+    <div>
+    <div class="quarto-title-meta-heading">Fecha de publicación</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">1 de noviembre de 2026</p>
+    </div>
+  </div>
   
     
   </div>
@@ -445,41 +394,641 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p><span class="badge-intermedio">Intermedio</span></p>
+<p><span class="badge-inter">🔭 Intermedio</span></p>
+<section id="qué-es-un-archivo-fits" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="qué-es-un-archivo-fits"><span class="header-section-number">1</span> ¿Qué es un archivo FITS?</h2>
+<p><strong>FITS</strong> (<em>Flexible Image Transport System</em>) es el formato estándar de la astronomía desde 1981. Casi todo lo que sale de un telescopio profesional —imágenes del Hubble, espectros del SDSS, catálogos de Gaia— viene en FITS.</p>
+<p>Un archivo FITS es como una carpeta con varios “compartimentos” llamados <strong>HDU</strong> (<em>Header Data Unit</em>). Cada HDU tiene dos partes:</p>
+<ul>
+<li><strong>Encabezado (header):</strong> texto con metadatos en formato <code>CLAVE = valor / comentario</code> (telescopio, fecha, tiempo de exposición, filtro…)</li>
+<li><strong>Datos (data):</strong> una imagen (arreglo 2D), un cubo de datos (3D) o una tabla</li>
+</ul>
+<pre><code>archivo.fits
+├── HDU 0 (Primario)  → encabezado + imagen
+├── HDU 1 (Extensión) → encabezado + tabla
+└── HDU 2 (Extensión) → encabezado + otra imagen</code></pre>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Requisitos previos
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>Módulos 01 al 05 completados (especialmente el 05 de tablas)</li>
+<li><code>numpy</code>, <code>matplotlib</code> y <code>astropy</code> instalados</li>
+</ul>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Sobre los datos de este módulo
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Para que puedas ejecutar todo sin descargar nada, <strong>fabricamos nuestra propia imagen FITS</strong> con estrellas simuladas. Al final verás cómo abrir archivos reales descargados de archivos públicos.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="crear-una-imagen-astronómica-sintética" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="crear-una-imagen-astronómica-sintética"><span class="header-section-number">2</span> Crear una imagen astronómica sintética</h2>
+<p>Primero construimos una imagen de 200×200 píxeles con ruido de fondo y algunas “estrellas” (manchas con forma de campana gaussiana).</p>
+<div id="84ac0918" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Fabricar una imagen sintética con estrellas</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Simula lo que entrega una cámara CCD: fondo del cielo + ruido + estrellas</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Fijamos la semilla aleatoria para que el resultado sea siempre el mismo</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> np.random.default_rng(seed<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Tamaño de la imagen en píxeles</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>ny, nx <span class="op">=</span> <span class="dv">200</span>, <span class="dv">200</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Fondo del cielo: valor constante de 100 cuentas + ruido gaussiano</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>imagen <span class="op">=</span> <span class="dv">100</span> <span class="op">+</span> rng.normal(loc<span class="op">=</span><span class="dv">0</span>, scale<span class="op">=</span><span class="dv">5</span>, size<span class="op">=</span>(ny, nx))</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Creamos una malla de coordenadas (x, y) para dibujar las estrellas</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>y, x <span class="op">=</span> np.mgrid[<span class="dv">0</span>:ny, <span class="dv">0</span>:nx]</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Lista de estrellas: (posición x, posición y, brillo máximo)</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>estrellas <span class="op">=</span> [(<span class="dv">50</span>, <span class="dv">60</span>, <span class="dv">800</span>), (<span class="dv">120</span>, <span class="dv">140</span>, <span class="dv">1500</span>), (<span class="dv">160</span>, <span class="dv">40</span>, <span class="dv">600</span>),</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>             (<span class="dv">90</span>, <span class="dv">110</span>, <span class="dv">2500</span>), (<span class="dv">30</span>, <span class="dv">170</span>, <span class="dv">400</span>)]</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>sigma <span class="op">=</span> <span class="fl">2.5</span>   <span class="co"># "ancho" de cada estrella en píxeles (depende del seeing)</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Sumamos una gaussiana 2D por cada estrella</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> x0, y0, brillo <span class="kw">in</span> estrellas:</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>    imagen <span class="op">+=</span> brillo <span class="op">*</span> np.exp(<span class="op">-</span>((x <span class="op">-</span> x0)<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> (y <span class="op">-</span> y0)<span class="op">**</span><span class="dv">2</span>) <span class="op">/</span> (<span class="dv">2</span> <span class="op">*</span> sigma<span class="op">**</span><span class="dv">2</span>))</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a><span class="co"># Convertimos a float32: es el tipo de dato habitual en imágenes FITS</span></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>imagen <span class="op">=</span> imagen.astype(np.float32)</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Forma de la imagen : </span><span class="sc">{</span>imagen<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Valor mínimo       : </span><span class="sc">{</span>imagen<span class="sc">.</span><span class="bu">min</span>()<span class="sc">:.1f}</span><span class="ss">"</span>)</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Valor máximo       : </span><span class="sc">{</span>imagen<span class="sc">.</span><span class="bu">max</span>()<span class="sc">:.1f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Forma de la imagen : (200, 200)
+Valor mínimo       : 78.1
+Valor máximo       : 2601.3</code></pre>
+</div>
+</div>
+<hr>
+</section>
+<section id="escribir-un-archivo-fits" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="escribir-un-archivo-fits"><span class="header-section-number">3</span> Escribir un archivo FITS</h2>
+<div id="8051cf7b" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Guardar la imagen en un archivo FITS con un encabezado informativo</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.io <span class="im">import</span> fits</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co"># PrimaryHDU es el primer compartimento obligatorio de todo FITS</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>hdu_primario <span class="op">=</span> fits.PrimaryHDU(data<span class="op">=</span>imagen)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Agregamos metadatos al encabezado: header['CLAVE'] = (valor, 'comentario')</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Las claves tienen máximo 8 caracteres y se escriben en MAYÚSCULAS</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>hdu_primario.header[<span class="st">'TELESCOP'</span>] <span class="op">=</span> (<span class="st">'Simulado'</span>, <span class="st">'Telescopio usado'</span>)</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>hdu_primario.header[<span class="st">'INSTRUME'</span>] <span class="op">=</span> (<span class="st">'CCD-200'</span>, <span class="st">'Camara'</span>)</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>hdu_primario.header[<span class="st">'OBJECT'</span>]   <span class="op">=</span> (<span class="st">'Campo de prueba'</span>, <span class="st">'Objeto observado'</span>)</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>hdu_primario.header[<span class="st">'EXPTIME'</span>]  <span class="op">=</span> (<span class="fl">60.0</span>, <span class="st">'Tiempo de exposicion [s]'</span>)</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>hdu_primario.header[<span class="st">'FILTER'</span>]   <span class="op">=</span> (<span class="st">'V'</span>, <span class="st">'Filtro fotometrico'</span>)</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>hdu_primario.header[<span class="st">'DATE-OBS'</span>] <span class="op">=</span> (<span class="st">'2026-03-15T03:20:00'</span>, <span class="st">'Inicio de la observacion (UTC)'</span>)</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="co"># IMPORTANTE: el estándar FITS solo admite caracteres ASCII en el encabezado.</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Por eso escribimos 'Camara' y 'exposicion' SIN tilde: con tildes, Astropy</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="co"># lanza un ValueError.</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="co"># writeto() escribe el archivo; overwrite=True reemplaza si ya existe</span></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>hdu_primario.writeto(<span class="st">'imagen_sintetica.fits'</span>, overwrite<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Archivo 'imagen_sintetica.fits' creado ✓"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Archivo 'imagen_sintetica.fits' creado ✓</code></pre>
+</div>
+</div>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Warning</span>Modulo en construccion
+<span class="screen-reader-only">Advertencia</span>Sin tildes ni eñes en el encabezado
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Este modulo esta siendo preparado. Vuelve pronto.</p>
+<p>El formato FITS nació en 1981 y su encabezado solo acepta texto <strong>ASCII</strong>. Palabras como <code>Cámara</code> u <code>observación</code> provocan un error. Escríbelas sin tilde (<code>Camara</code>, <code>observacion</code>). Los <strong>datos</strong> no tienen esta restricción.</p>
 </div>
 </div>
+<hr>
+</section>
+<section id="abrir-y-explorar-un-archivo-fits" class="level2" data-number="4">
+<h2 data-number="4" class="anchored" data-anchor-id="abrir-y-explorar-un-archivo-fits"><span class="header-section-number">4</span> Abrir y explorar un archivo FITS</h2>
+<section id="ver-la-estructura-con-info" class="level3" data-number="4.1">
+<h3 data-number="4.1" class="anchored" data-anchor-id="ver-la-estructura-con-info"><span class="header-section-number">4.1</span> Ver la estructura con <code>info()</code></h3>
+<div id="24e01619" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Abrir un FITS y mostrar sus HDU</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Usamos 'with' para que el archivo se cierre solo al terminar el bloque</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.io <span class="im">import</span> fits</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> fits.<span class="bu">open</span>(<span class="st">'imagen_sintetica.fits'</span>) <span class="im">as</span> hdul:   <span class="co"># hdul = lista de HDUs</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    hdul.info()                                     <span class="co"># resumen de la estructura</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Filename: imagen_sintetica.fits
+No.    Name      Ver    Type      Cards   Dimensions   Format
+  0  PRIMARY       1 PrimaryHDU      12   (200, 200)   float32   </code></pre>
+</div>
+</div>
+<p>La salida muestra: número de HDU, nombre, tipo, número de tarjetas del encabezado, dimensiones y tipo de dato.</p>
+</section>
+<section id="leer-el-encabezado" class="level3" data-number="4.2">
+<h3 data-number="4.2" class="anchored" data-anchor-id="leer-el-encabezado"><span class="header-section-number">4.2</span> Leer el encabezado</h3>
+<div id="0cc6a4b5" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Leer el encabezado y acceder a valores individuales</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.io <span class="im">import</span> fits</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> fits.<span class="bu">open</span>(<span class="st">'imagen_sintetica.fits'</span>) <span class="im">as</span> hdul:</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    encabezado <span class="op">=</span> hdul[<span class="dv">0</span>].header   <span class="co"># encabezado del HDU primario (índice 0)</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Acceder a una clave igual que en un diccionario de Python</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Objeto       : </span><span class="sc">{</span>encabezado[<span class="st">'OBJECT'</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Exposición   : </span><span class="sc">{</span>encabezado[<span class="st">'EXPTIME'</span>]<span class="sc">}</span><span class="ss"> s"</span>)</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Filtro       : </span><span class="sc">{</span>encabezado[<span class="st">'FILTER'</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Los comentarios se consultan con .comments</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Comentario de EXPTIME: </span><span class="sc">{</span>encabezado<span class="sc">.</span>comments[<span class="st">'EXPTIME'</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Claves que Astropy genera automáticamente al escribir</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">NAXIS  (dimensiones) : </span><span class="sc">{</span>encabezado[<span class="st">'NAXIS'</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"NAXIS1 (ancho, x)    : </span><span class="sc">{</span>encabezado[<span class="st">'NAXIS1'</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"NAXIS2 (alto,  y)    : </span><span class="sc">{</span>encabezado[<span class="st">'NAXIS2'</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"BITPIX (tipo dato)   : </span><span class="sc">{</span>encabezado[<span class="st">'BITPIX'</span>]<span class="sc">}</span><span class="ss">  (-32 = float32)"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Objeto       : Campo de prueba
+Exposición   : 60.0 s
+Filtro       : V
+Comentario de EXPTIME: Tiempo de exposicion [s]
+
+NAXIS  (dimensiones) : 2
+NAXIS1 (ancho, x)    : 200
+NAXIS2 (alto,  y)    : 200
+BITPIX (tipo dato)   : -32  (-32 = float32)</code></pre>
+</div>
+</div>
+<div id="2ef64380" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Mostrar el encabezado completo tal como se ve en el archivo</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># repr() lo presenta en el formato clásico de "tarjetas" de 80 caracteres</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.io <span class="im">import</span> fits</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>encabezado <span class="op">=</span> fits.getheader(<span class="st">'imagen_sintetica.fits'</span>)   <span class="co"># atajo: lee solo el header</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">repr</span>(encabezado))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>SIMPLE  =                    T / conforms to FITS standard                      
+BITPIX  =                  -32 / array data type                                
+NAXIS   =                    2 / number of array dimensions                     
+NAXIS1  =                  200                                                  
+NAXIS2  =                  200                                                  
+EXTEND  =                    T                                                  
+TELESCOP= 'Simulado'           / Telescopio usado                               
+INSTRUME= 'CCD-200 '           / Camara                                         
+OBJECT  = 'Campo de prueba'    / Objeto observado                               
+EXPTIME =                 60.0 / Tiempo de exposicion [s]                       
+FILTER  = 'V       '           / Filtro fotometrico                             
+DATE-OBS= '2026-03-15T03:20:00' / Inicio de la observacion (UTC)                </code></pre>
+</div>
+</div>
+</section>
+<section id="leer-los-datos" class="level3" data-number="4.3">
+<h3 data-number="4.3" class="anchored" data-anchor-id="leer-los-datos"><span class="header-section-number">4.3</span> Leer los datos</h3>
+<div id="7add9fd7" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Dos formas de obtener los datos de la imagen</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.io <span class="im">import</span> fits</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Forma 1: abriendo el archivo (útil si también necesitas el encabezado)</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> fits.<span class="bu">open</span>(<span class="st">'imagen_sintetica.fits'</span>) <span class="im">as</span> hdul:</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    datos <span class="op">=</span> hdul[<span class="dv">0</span>].data.copy()   <span class="co"># .copy() para conservarlos tras cerrar el archivo</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Forma 2: atajo directo cuando solo quieres los datos</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>datos_rapido <span class="op">=</span> fits.getdata(<span class="st">'imagen_sintetica.fits'</span>)</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Los datos son un arreglo de numpy normal</span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Tipo de objeto : </span><span class="sc">{</span><span class="bu">type</span>(datos)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Forma          : </span><span class="sc">{</span>datos<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">   (filas=y, columnas=x)"</span>)</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Mediana        : </span><span class="sc">{</span>np<span class="sc">.</span>median(datos)<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a><span class="co"># ¡OJO! numpy indexa [fila, columna] = [y, x]</span></span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Valor en x=90, y=110 (centro de una estrella): </span><span class="sc">{</span>datos[<span class="dv">110</span>, <span class="dv">90</span>]<span class="sc">:.1f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Tipo de objeto : &lt;class 'numpy.ndarray'&gt;
+Forma          : (200, 200)   (filas=y, columnas=x)
+Mediana        : 100.17
+Valor en x=90, y=110 (centro de una estrella): 2601.3</code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Advertencia</span>Orden de los ejes: [y, x]
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>En numpy el primer índice es la <strong>fila (y)</strong> y el segundo la <strong>columna (x)</strong>. Además, FITS cuenta los píxeles desde 1 y numpy desde 0. Es la fuente de error más común al trabajar con imágenes astronómicas.</p>
+</div>
+</div>
+</section>
+<section id="visualizar-la-imagen" class="level3" data-number="4.4">
+<h3 data-number="4.4" class="anchored" data-anchor-id="visualizar-la-imagen"><span class="header-section-number">4.4</span> Visualizar la imagen</h3>
+<div id="cell-fig-imagen-fits" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Mostrar la imagen con matplotlib</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.io <span class="im">import</span> fits</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>datos <span class="op">=</span> fits.getdata(<span class="st">'imagen_sintetica.fits'</span>)</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="dv">5</span>))</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="co"># origin='lower' pone el píxel (0,0) abajo a la izquierda, como en astronomía</span></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a><span class="co"># vmin/vmax recortan el rango de colores para que se vean las estrellas débiles</span></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>im <span class="op">=</span> ax.imshow(datos, origin<span class="op">=</span><span class="st">'lower'</span>, cmap<span class="op">=</span><span class="st">'gray'</span>, vmin<span class="op">=</span><span class="dv">90</span>, vmax<span class="op">=</span><span class="dv">300</span>)</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>fig.colorbar(im, ax<span class="op">=</span>ax, label<span class="op">=</span><span class="st">'Cuentas (ADU)'</span>)</span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">'x [píxel]'</span>)</span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">'y [píxel]'</span>)</span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Imagen sintética'</span>)</span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div id="fig-imagen-fits" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-imagen-fits-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="06-fits_files/figure-html/fig-imagen-fits-output-1.png" width="524" height="439" class="figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-imagen-fits-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;1: Imagen sintética leída desde el archivo FITS
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="modificar-un-archivo-fits" class="level2" data-number="5">
+<h2 data-number="5" class="anchored" data-anchor-id="modificar-un-archivo-fits"><span class="header-section-number">5</span> Modificar un archivo FITS</h2>
+<section id="editar-el-encabezado" class="level3" data-number="5.1">
+<h3 data-number="5.1" class="anchored" data-anchor-id="editar-el-encabezado"><span class="header-section-number">5.1</span> Editar el encabezado</h3>
+<div id="a618b17d" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Agregar, cambiar y borrar claves del encabezado</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co"># mode='update' permite guardar los cambios en el mismo archivo</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.io <span class="im">import</span> fits</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> fits.<span class="bu">open</span>(<span class="st">'imagen_sintetica.fits'</span>, mode<span class="op">=</span><span class="st">'update'</span>) <span class="im">as</span> hdul:</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    hdr <span class="op">=</span> hdul[<span class="dv">0</span>].header</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>    hdr[<span class="st">'OBSERVER'</span>] <span class="op">=</span> (<span class="st">'Blog AstroPy'</span>, <span class="st">'Nombre del observador'</span>)   <span class="co"># agregar</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>    hdr[<span class="st">'EXPTIME'</span>]  <span class="op">=</span> <span class="fl">120.0</span>                                        <span class="co"># cambiar valor</span></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>    hdr.add_history(<span class="st">'Exposicion corregida a 120 s'</span>)                <span class="co"># registro HISTORY</span></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>    hdr.add_comment(<span class="st">'Archivo de practica del modulo 06'</span>)          <span class="co"># línea COMMENT</span></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Borrar una clave (si existe)</span></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="st">'INSTRUME'</span> <span class="kw">in</span> hdr:</span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>        <span class="kw">del</span> hdr[<span class="st">'INSTRUME'</span>]</span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Al salir del 'with' los cambios se escriben en el disco</span></span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Verificamos</span></span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>hdr <span class="op">=</span> fits.getheader(<span class="st">'imagen_sintetica.fits'</span>)</span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"OBSERVER : </span><span class="sc">{</span>hdr[<span class="st">'OBSERVER'</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"EXPTIME  : </span><span class="sc">{</span>hdr[<span class="st">'EXPTIME'</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"INSTRUME presente: </span><span class="sc">{</span><span class="st">'INSTRUME'</span> <span class="kw">in</span> hdr<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"HISTORY  : </span><span class="sc">{</span>hdr[<span class="st">'HISTORY'</span>]<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>OBSERVER : Blog AstroPy
+EXPTIME  : 120.0
+INSTRUME presente: False
+HISTORY  : Exposicion corregida a 120 s</code></pre>
+</div>
+</div>
+</section>
+<section id="operar-sobre-los-datos-y-guardar-una-versión-nueva" class="level3" data-number="5.2">
+<h3 data-number="5.2" class="anchored" data-anchor-id="operar-sobre-los-datos-y-guardar-una-versión-nueva"><span class="header-section-number">5.2</span> Operar sobre los datos y guardar una versión nueva</h3>
+<div id="a3b52216" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Restar el fondo del cielo y guardar en un archivo nuevo</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Buena práctica: NUNCA sobrescribir los datos crudos originales</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.io <span class="im">import</span> fits</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>datos, hdr <span class="op">=</span> fits.getdata(<span class="st">'imagen_sintetica.fits'</span>, header<span class="op">=</span><span class="va">True</span>)  <span class="co"># datos + header</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimamos el fondo con la mediana (robusta ante las estrellas brillantes)</span></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>fondo <span class="op">=</span> np.median(datos)</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>datos_sin_fondo <span class="op">=</span> datos <span class="op">-</span> fondo</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Normalizamos por el tiempo de exposición → cuentas por segundo</span></span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>datos_por_segundo <span class="op">=</span> datos_sin_fondo <span class="op">/</span> hdr[<span class="st">'EXPTIME'</span>]</span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Actualizamos el encabezado para documentar lo que hicimos</span></span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>hdr[<span class="st">'BUNIT'</span>] <span class="op">=</span> (<span class="st">'ADU/s'</span>, <span class="st">'Unidad de los datos'</span>)</span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>hdr.add_history(<span class="ss">f'Fondo de </span><span class="sc">{</span>fondo<span class="sc">:.2f}</span><span class="ss"> ADU restado (mediana)'</span>)</span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>hdr.add_history(<span class="st">'Datos divididos por EXPTIME'</span>)</span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a>fits.writeto(<span class="st">'imagen_procesada.fits'</span>, datos_por_segundo.astype(np.float32),</span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a>             header<span class="op">=</span>hdr, overwrite<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Fondo restado       : </span><span class="sc">{</span>fondo<span class="sc">:.2f}</span><span class="ss"> ADU"</span>)</span>
+<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Nuevo valor máximo  : </span><span class="sc">{</span>datos_por_segundo<span class="sc">.</span><span class="bu">max</span>()<span class="sc">:.2f}</span><span class="ss"> ADU/s"</span>)</span>
+<span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Guardado en 'imagen_procesada.fits' ✓"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Fondo restado       : 100.17 ADU
+Nuevo valor máximo  : 20.84 ADU/s
+Guardado en 'imagen_procesada.fits' ✓</code></pre>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="archivos-fits-con-varias-extensiones" class="level2" data-number="6">
+<h2 data-number="6" class="anchored" data-anchor-id="archivos-fits-con-varias-extensiones"><span class="header-section-number">6</span> Archivos FITS con varias extensiones</h2>
+<p>Muchos FITS reales combinan imágenes y tablas. Construyamos uno con tres HDU: la imagen, un mapa de errores y una tabla con el catálogo de estrellas.</p>
+<div id="aa5b7a4f" class="cell" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Crear un FITS con varias extensiones (multi-extensión)</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.io <span class="im">import</span> fits</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.table <span class="im">import</span> Table</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>datos <span class="op">=</span> fits.getdata(<span class="st">'imagen_sintetica.fits'</span>)</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a><span class="co"># HDU 0: primario (la imagen)</span></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>primario <span class="op">=</span> fits.PrimaryHDU(data<span class="op">=</span>datos)</span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>primario.header[<span class="st">'OBJECT'</span>] <span class="op">=</span> <span class="st">'Campo de prueba'</span></span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a><span class="co"># HDU 1: imagen de errores (raíz cuadrada de las cuentas = ruido de Poisson)</span></span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>errores <span class="op">=</span> fits.ImageHDU(data<span class="op">=</span>np.sqrt(np.<span class="bu">abs</span>(datos)).astype(np.float32), name<span class="op">=</span><span class="st">'ERROR'</span>)</span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a><span class="co"># HDU 2: tabla con las posiciones y brillos de las estrellas que creamos</span></span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>catalogo <span class="op">=</span> Table({</span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>    <span class="st">'id'</span>    : [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>],</span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a>    <span class="st">'x'</span>     : [<span class="dv">50</span>, <span class="dv">120</span>, <span class="dv">160</span>, <span class="dv">90</span>, <span class="dv">30</span>],</span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a>    <span class="st">'y'</span>     : [<span class="dv">60</span>, <span class="dv">140</span>, <span class="dv">40</span>, <span class="dv">110</span>, <span class="dv">170</span>],</span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a>    <span class="st">'brillo'</span>: [<span class="dv">800</span>, <span class="dv">1500</span>, <span class="dv">600</span>, <span class="dv">2500</span>, <span class="dv">400</span>],</span>
+<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a>tabla_hdu <span class="op">=</span> fits.BinTableHDU(catalogo, name<span class="op">=</span><span class="st">'CATALOGO'</span>)   <span class="co"># tabla binaria FITS</span></span>
+<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Juntamos todo en una HDUList y lo guardamos</span></span>
+<span id="cb19-28"><a href="#cb19-28" aria-hidden="true" tabindex="-1"></a>hdul <span class="op">=</span> fits.HDUList([primario, errores, tabla_hdu])</span>
+<span id="cb19-29"><a href="#cb19-29" aria-hidden="true" tabindex="-1"></a>hdul.writeto(<span class="st">'campo_multiext.fits'</span>, overwrite<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb19-30"><a href="#cb19-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-31"><a href="#cb19-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Revisamos la estructura</span></span>
+<span id="cb19-32"><a href="#cb19-32" aria-hidden="true" tabindex="-1"></a>fits.info(<span class="st">'campo_multiext.fits'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Filename: campo_multiext.fits
+No.    Name      Ver    Type      Cards   Dimensions   Format
+  0  PRIMARY       1 PrimaryHDU       7   (200, 200)   float32   
+  1  ERROR         1 ImageHDU         8   (200, 200)   float32   
+  2  CATALOGO      1 BinTableHDU     17   5R x 4C   [K, K, K, K]   </code></pre>
+</div>
+</div>
+<div id="c64a12cf" class="cell" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Acceder a cada extensión por índice o por nombre</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.io <span class="im">import</span> fits</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.table <span class="im">import</span> Table</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> fits.<span class="bu">open</span>(<span class="st">'campo_multiext.fits'</span>) <span class="im">as</span> hdul:</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Por nombre (más legible y no depende del orden)</span></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>    errores <span class="op">=</span> hdul[<span class="st">'ERROR'</span>].data</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Mapa de error: forma </span><span class="sc">{</span>errores<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">, mediana </span><span class="sc">{</span>errores<span class="sc">.</span>mean()<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Las tablas FITS se leen directamente como Table de Astropy (módulo 05)</span></span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>cat <span class="op">=</span> Table.read(<span class="st">'campo_multiext.fits'</span>, hdu<span class="op">=</span><span class="st">'CATALOGO'</span>)</span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Catálogo leído desde la extensión CATALOGO:"</span>)</span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(cat)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Mapa de error: forma (200, 200), mediana 10.16
+
+Catálogo leído desde la extensión CATALOGO:
+ id  x   y  brillo
+--- --- --- ------
+  1  50  60    800
+  2 120 140   1500
+  3 160  40    600
+  4  90 110   2500
+  5  30 170    400</code></pre>
+</div>
+</div>
+<hr>
+</section>
+<section id="recortar-una-región-cutout" class="level2" data-number="7">
+<h2 data-number="7" class="anchored" data-anchor-id="recortar-una-región-cutout"><span class="header-section-number">7</span> Recortar una región (cutout)</h2>
+<div id="cell-fig-cutout" class="cell" data-execution_count="12">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Cutout2D extrae una subimagen alrededor de una posición</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.nddata <span class="im">import</span> Cutout2D</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.io <span class="im">import</span> fits</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>datos <span class="op">=</span> fits.getdata(<span class="st">'imagen_sintetica.fits'</span>)</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a><span class="co"># position=(x, y) — ¡aquí el orden SÍ es (x, y)!</span></span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a><span class="co"># size=(alto, ancho) en píxeles</span></span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>recorte <span class="op">=</span> Cutout2D(datos, position<span class="op">=</span>(<span class="dv">90</span>, <span class="dv">110</span>), size<span class="op">=</span>(<span class="dv">30</span>, <span class="dv">30</span>))</span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Forma del recorte                : </span><span class="sc">{</span>recorte<span class="sc">.</span>data<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Esquina inferior izq. en original: </span><span class="sc">{</span>recorte<span class="sc">.</span>origin_original<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">4</span>, <span class="dv">4</span>))</span>
+<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a>ax.imshow(recorte.data, origin<span class="op">=</span><span class="st">'lower'</span>, cmap<span class="op">=</span><span class="st">'magma'</span>)</span>
+<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Recorte alrededor de la estrella 4'</span>)</span>
+<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Forma del recorte                : (30, 30)
+Esquina inferior izq. en original: (75, 95)</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div id="fig-cutout" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-cutout-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="06-fits_files/figure-html/fig-cutout-output-2.png" width="341" height="357" class="figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-cutout-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;2: Recorte de 30×30 píxeles alrededor de la estrella más brillante
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<hr>
+</section>
+<section id="abrir-un-fits-real" class="level2" data-number="8">
+<h2 data-number="8" class="anchored" data-anchor-id="abrir-un-fits-real"><span class="header-section-number">8</span> Abrir un FITS real</h2>
+<p>Cuando trabajes con datos reales el procedimiento es idéntico. Algunos archivos públicos de donde descargar FITS gratis:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Archivo</th>
+<th>Qué ofrece</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a href="https://archive.stsci.edu">MAST</a></td>
+<td>Hubble, JWST, TESS, Kepler</td>
+</tr>
+<tr class="even">
+<td><a href="https://skyserver.sdss.org">SDSS SkyServer</a></td>
+<td>Imágenes y espectros del Sloan</td>
+</tr>
+<tr class="odd">
+<td><a href="https://archive.eso.org">ESO Archive</a></td>
+<td>Telescopios del Observatorio Europeo Austral</td>
+</tr>
+<tr class="even">
+<td><a href="https://skyview.gsfc.nasa.gov">SkyView (NASA)</a></td>
+<td>Recortes de casi cualquier zona del cielo</td>
+</tr>
+</tbody>
+</table>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Ejemplo (no se ejecuta en el blog): abrir un FITS remoto directamente por URL</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="co"># use_fsspec=True permite leer solo la parte necesaria sin descargar todo</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.io <span class="im">import</span> fits</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>url <span class="op">=</span> <span class="st">"https://ruta/a/un/archivo.fits"</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> fits.<span class="bu">open</span>(url, use_fsspec<span class="op">=</span><span class="va">True</span>) <span class="im">as</span> hdul:</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>    hdul.info()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Archivos grandes
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Por defecto <code>fits.open()</code> usa <em>memory mapping</em>: no carga toda la imagen en la RAM, solo lo que vas leyendo. Por eso puedes abrir archivos de varios GB sin problemas.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="ejercicio" class="level2" data-number="9">
+<h2 data-number="9" class="anchored" data-anchor-id="ejercicio"><span class="header-section-number">9</span> Ejercicio</h2>
+<p>Usando el archivo <code>campo_multiext.fits</code> creado en este módulo:</p>
+<ol type="1">
+<li>Lee la extensión <code>CATALOGO</code> como tabla</li>
+<li>Para cada estrella, mide el valor del píxel central en la imagen (HDU 0)</li>
+<li>Agrega una columna <code>pico_medido</code> a la tabla y guárdala en un FITS nuevo llamado <code>catalogo_medido.fits</code></li>
+</ol>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Ver solución
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div id="96078fd9" class="cell" data-execution_count="13">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="co"># SOLUCIÓN: medir el pico de cada estrella del catálogo</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.io <span class="im">import</span> fits</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.table <span class="im">import</span> Table</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Paso 1: leer la tabla y la imagen</span></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>cat    <span class="op">=</span> Table.read(<span class="st">'campo_multiext.fits'</span>, hdu<span class="op">=</span><span class="st">'CATALOGO'</span>)</span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>imagen <span class="op">=</span> fits.getdata(<span class="st">'campo_multiext.fits'</span>, ext<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Paso 2: valor del píxel central de cada estrella (recuerda: [y, x])</span></span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>picos <span class="op">=</span> [imagen[fila[<span class="st">'y'</span>], fila[<span class="st">'x'</span>]] <span class="cf">for</span> fila <span class="kw">in</span> cat]</span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Paso 3: agregar la columna y guardar</span></span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a>cat[<span class="st">'pico_medido'</span>] <span class="op">=</span> picos</span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a>cat.write(<span class="st">'catalogo_medido.fits'</span>, overwrite<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(cat)</span>
+<span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Guardado en 'catalogo_medido.fits' ✓"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> id  x   y  brillo pico_medido
+--- --- --- ------ -----------
+  1  50  60    800   893.61914
+  2 120 140   1500   1598.4485
+  3 160  40    600    697.1277
+  4  90 110   2500   2601.3164
+  5  30 170    400   499.18613
+
+Guardado en 'catalogo_medido.fits' ✓</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</section>
+<section id="qué-aprendiste-en-este-módulo" class="level2 seccion-aprendiste" data-number="10">
+<h2 class="seccion-aprendiste anchored" data-number="10" data-anchor-id="qué-aprendiste-en-este-módulo"><span class="header-section-number">10</span> ¿Qué aprendiste en este módulo?</h2>
+<ul>
+<li>✅ La estructura de un FITS: HDU, encabezado y datos</li>
+<li>✅ Crear y escribir archivos FITS con <code>PrimaryHDU</code> y <code>writeto()</code></li>
+<li>✅ Explorar archivos con <code>fits.info()</code>, <code>getheader()</code> y <code>getdata()</code></li>
+<li>✅ Editar encabezados con <code>mode='update'</code>, <code>HISTORY</code> y <code>COMMENT</code></li>
+<li>✅ Crear archivos multi-extensión con imágenes y tablas</li>
+<li>✅ Recortar regiones con <code>Cutout2D</code></li>
+<li>✅ La trampa del orden de ejes <code>[y, x]</code></li>
+</ul>
+<p><strong>Siguiente módulo →</strong> <a href="../../posts/intermedio/07-wcs.html">07 · WCS: del píxel al cielo</a></p>
 
 
 <!-- -->
 
+</section>
 
-</main> <!-- /main -->
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Volver arriba</a></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
-    // Ensure there is a toggle, if there isn't float one in the top right
-    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
-      const a = window.document.createElement('a');
-      a.classList.add('top-right');
-      a.classList.add('quarto-color-scheme-toggle');
-      a.href = "";
-      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
-      const i = window.document.createElement("i");
-      i.classList.add('bi');
-      a.appendChild(i);
-      window.document.body.appendChild(a);
-    }
-    setColorSchemeToggle(hasAlternateSentinel())
     const icon = "";
     const anchorJS = new window.AnchorJS();
     anchorJS.options = {
@@ -503,12 +1052,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       // flash "checked"
       button.classList.add('code-copy-button-checked');
       var currentTitle = button.getAttribute("title");
-      button.setAttribute("title", "Copied!");
+      button.setAttribute("title", "Copiado");
       let tooltip;
       if (window.bootstrap) {
         button.setAttribute("data-bs-toggle", "tooltip");
         button.setAttribute("data-bs-placement", "left");
-        button.setAttribute("data-bs-title", "Copied!");
+        button.setAttribute("data-bs-title", "Copiado");
         tooltip = new bootstrap.Tooltip(button, 
           { trigger: "manual", 
             customClass: "code-copy-button-tooltip",
@@ -602,7 +1151,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/fvelez78\.github\.io\/astropy-blog\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
@@ -928,35 +1477,529 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       }
     }
   });
-  </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "06 - Lectura y manipulacion de FITS"</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="an">description:</span><span class="co"> "Proximo modulo en preparacion"</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="an">categories:</span><span class="co"> [intermedio]</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="an">toc:</span><span class="co"> true</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co">  echo: true</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">  warning: false</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">span</span><span class="ot"> class</span><span class="op">=</span><span class="st">"badge-intermedio"</span><span class="dt">&gt;</span>Intermedio<span class="dt">&lt;/</span><span class="kw">span</span><span class="dt">&gt;</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>::: {.callout-warning}</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">## Modulo en construccion</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>Este modulo esta siendo preparado. Vuelve pronto.</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>:::</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../../posts/basico/05-tablas.html" class="pagination-link" aria-label="05 · Tablas astronómicas con astropy.table">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">05 · Tablas astronómicas con astropy.table</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../../posts/intermedio/07-wcs.html" class="pagination-link" aria-label="07 · WCS: del píxel al cielo">
+        <span class="nav-page-text">07 · WCS: del píxel al cielo</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Ejecutar el código</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "06 · Lectura y manipulación de archivos FITS"</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="an">description:</span><span class="co"> "Aprende la estructura de un archivo FITS (HDU, encabezados, imágenes y tablas) y cómo leerlo, modificarlo y escribirlo con astropy.io.fits"</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span><span class="co"> "Blog AstroPy en Español"</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> "2026-11-01"</span></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a><span class="an">categories:</span><span class="co"> [intermedio]</span></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a><span class="an">toc:</span><span class="co"> true</span></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a><span class="an">toc-depth:</span><span class="co"> 3</span></span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a><span class="an">number-sections:</span><span class="co"> true</span></span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a><span class="co">  echo: true</span></span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a><span class="co">  warning: false</span></span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a><span class="co">  message: false</span></span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">span</span><span class="ot"> class</span><span class="op">=</span><span class="st">"badge-inter"</span><span class="dt">&gt;</span>🔭 Intermedio<span class="dt">&lt;/</span><span class="kw">span</span><span class="dt">&gt;</span></span>
+<span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a><span class="fu">## ¿Qué es un archivo FITS?</span></span>
+<span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a>**FITS** (*Flexible Image Transport System*) es el formato estándar de la</span>
+<span id="cb28-21"><a href="#cb28-21" aria-hidden="true" tabindex="-1"></a>astronomía desde 1981. Casi todo lo que sale de un telescopio profesional</span>
+<span id="cb28-22"><a href="#cb28-22" aria-hidden="true" tabindex="-1"></a>—imágenes del Hubble, espectros del SDSS, catálogos de Gaia— viene en FITS.</span>
+<span id="cb28-23"><a href="#cb28-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-24"><a href="#cb28-24" aria-hidden="true" tabindex="-1"></a>Un archivo FITS es como una carpeta con varios "compartimentos" llamados</span>
+<span id="cb28-25"><a href="#cb28-25" aria-hidden="true" tabindex="-1"></a>**HDU** (*Header Data Unit*). Cada HDU tiene dos partes:</span>
+<span id="cb28-26"><a href="#cb28-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-27"><a href="#cb28-27" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Encabezado (header):** texto con metadatos en formato <span class="in">`CLAVE = valor / comentario`</span></span>
+<span id="cb28-28"><a href="#cb28-28" aria-hidden="true" tabindex="-1"></a>  (telescopio, fecha, tiempo de exposición, filtro...)</span>
+<span id="cb28-29"><a href="#cb28-29" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Datos (data):** una imagen (arreglo 2D), un cubo de datos (3D) o una tabla</span>
+<span id="cb28-30"><a href="#cb28-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-31"><a href="#cb28-31" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb28-32"><a href="#cb28-32" aria-hidden="true" tabindex="-1"></a><span class="in">archivo.fits</span></span>
+<span id="cb28-33"><a href="#cb28-33" aria-hidden="true" tabindex="-1"></a><span class="in">├── HDU 0 (Primario)  → encabezado + imagen</span></span>
+<span id="cb28-34"><a href="#cb28-34" aria-hidden="true" tabindex="-1"></a><span class="in">├── HDU 1 (Extensión) → encabezado + tabla</span></span>
+<span id="cb28-35"><a href="#cb28-35" aria-hidden="true" tabindex="-1"></a><span class="in">└── HDU 2 (Extensión) → encabezado + otra imagen</span></span>
+<span id="cb28-36"><a href="#cb28-36" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb28-37"><a href="#cb28-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-38"><a href="#cb28-38" aria-hidden="true" tabindex="-1"></a>::: {.callout-note}</span>
+<span id="cb28-39"><a href="#cb28-39" aria-hidden="true" tabindex="-1"></a><span class="fu">## Requisitos previos</span></span>
+<span id="cb28-40"><a href="#cb28-40" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Módulos 01 al 05 completados (especialmente el 05 de tablas)</span>
+<span id="cb28-41"><a href="#cb28-41" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`numpy`</span>, <span class="in">`matplotlib`</span> y <span class="in">`astropy`</span> instalados</span>
+<span id="cb28-42"><a href="#cb28-42" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb28-43"><a href="#cb28-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-44"><a href="#cb28-44" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip}</span>
+<span id="cb28-45"><a href="#cb28-45" aria-hidden="true" tabindex="-1"></a><span class="fu">## Sobre los datos de este módulo</span></span>
+<span id="cb28-46"><a href="#cb28-46" aria-hidden="true" tabindex="-1"></a>Para que puedas ejecutar todo sin descargar nada, **fabricamos nuestra propia</span>
+<span id="cb28-47"><a href="#cb28-47" aria-hidden="true" tabindex="-1"></a>imagen FITS** con estrellas simuladas. Al final verás cómo abrir archivos</span>
+<span id="cb28-48"><a href="#cb28-48" aria-hidden="true" tabindex="-1"></a>reales descargados de archivos públicos.</span>
+<span id="cb28-49"><a href="#cb28-49" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb28-50"><a href="#cb28-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-51"><a href="#cb28-51" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb28-52"><a href="#cb28-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-53"><a href="#cb28-53" aria-hidden="true" tabindex="-1"></a><span class="fu">## Crear una imagen astronómica sintética</span></span>
+<span id="cb28-54"><a href="#cb28-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-55"><a href="#cb28-55" aria-hidden="true" tabindex="-1"></a>Primero construimos una imagen de 200×200 píxeles con ruido de fondo y</span>
+<span id="cb28-56"><a href="#cb28-56" aria-hidden="true" tabindex="-1"></a>algunas "estrellas" (manchas con forma de campana gaussiana).</span>
+<span id="cb28-57"><a href="#cb28-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-60"><a href="#cb28-60" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb28-61"><a href="#cb28-61" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb28-62"><a href="#cb28-62" aria-hidden="true" tabindex="-1"></a><span class="co"># Fabricar una imagen sintética con estrellas</span></span>
+<span id="cb28-63"><a href="#cb28-63" aria-hidden="true" tabindex="-1"></a><span class="co"># Simula lo que entrega una cámara CCD: fondo del cielo + ruido + estrellas</span></span>
+<span id="cb28-64"><a href="#cb28-64" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb28-65"><a href="#cb28-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-66"><a href="#cb28-66" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb28-67"><a href="#cb28-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-68"><a href="#cb28-68" aria-hidden="true" tabindex="-1"></a><span class="co"># Fijamos la semilla aleatoria para que el resultado sea siempre el mismo</span></span>
+<span id="cb28-69"><a href="#cb28-69" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> np.random.default_rng(seed<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb28-70"><a href="#cb28-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-71"><a href="#cb28-71" aria-hidden="true" tabindex="-1"></a><span class="co"># Tamaño de la imagen en píxeles</span></span>
+<span id="cb28-72"><a href="#cb28-72" aria-hidden="true" tabindex="-1"></a>ny, nx <span class="op">=</span> <span class="dv">200</span>, <span class="dv">200</span></span>
+<span id="cb28-73"><a href="#cb28-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-74"><a href="#cb28-74" aria-hidden="true" tabindex="-1"></a><span class="co"># Fondo del cielo: valor constante de 100 cuentas + ruido gaussiano</span></span>
+<span id="cb28-75"><a href="#cb28-75" aria-hidden="true" tabindex="-1"></a>imagen <span class="op">=</span> <span class="dv">100</span> <span class="op">+</span> rng.normal(loc<span class="op">=</span><span class="dv">0</span>, scale<span class="op">=</span><span class="dv">5</span>, size<span class="op">=</span>(ny, nx))</span>
+<span id="cb28-76"><a href="#cb28-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-77"><a href="#cb28-77" aria-hidden="true" tabindex="-1"></a><span class="co"># Creamos una malla de coordenadas (x, y) para dibujar las estrellas</span></span>
+<span id="cb28-78"><a href="#cb28-78" aria-hidden="true" tabindex="-1"></a>y, x <span class="op">=</span> np.mgrid[<span class="dv">0</span>:ny, <span class="dv">0</span>:nx]</span>
+<span id="cb28-79"><a href="#cb28-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-80"><a href="#cb28-80" aria-hidden="true" tabindex="-1"></a><span class="co"># Lista de estrellas: (posición x, posición y, brillo máximo)</span></span>
+<span id="cb28-81"><a href="#cb28-81" aria-hidden="true" tabindex="-1"></a>estrellas <span class="op">=</span> [(<span class="dv">50</span>, <span class="dv">60</span>, <span class="dv">800</span>), (<span class="dv">120</span>, <span class="dv">140</span>, <span class="dv">1500</span>), (<span class="dv">160</span>, <span class="dv">40</span>, <span class="dv">600</span>),</span>
+<span id="cb28-82"><a href="#cb28-82" aria-hidden="true" tabindex="-1"></a>             (<span class="dv">90</span>, <span class="dv">110</span>, <span class="dv">2500</span>), (<span class="dv">30</span>, <span class="dv">170</span>, <span class="dv">400</span>)]</span>
+<span id="cb28-83"><a href="#cb28-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-84"><a href="#cb28-84" aria-hidden="true" tabindex="-1"></a>sigma <span class="op">=</span> <span class="fl">2.5</span>   <span class="co"># "ancho" de cada estrella en píxeles (depende del seeing)</span></span>
+<span id="cb28-85"><a href="#cb28-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-86"><a href="#cb28-86" aria-hidden="true" tabindex="-1"></a><span class="co"># Sumamos una gaussiana 2D por cada estrella</span></span>
+<span id="cb28-87"><a href="#cb28-87" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> x0, y0, brillo <span class="kw">in</span> estrellas:</span>
+<span id="cb28-88"><a href="#cb28-88" aria-hidden="true" tabindex="-1"></a>    imagen <span class="op">+=</span> brillo <span class="op">*</span> np.exp(<span class="op">-</span>((x <span class="op">-</span> x0)<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> (y <span class="op">-</span> y0)<span class="op">**</span><span class="dv">2</span>) <span class="op">/</span> (<span class="dv">2</span> <span class="op">*</span> sigma<span class="op">**</span><span class="dv">2</span>))</span>
+<span id="cb28-89"><a href="#cb28-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-90"><a href="#cb28-90" aria-hidden="true" tabindex="-1"></a><span class="co"># Convertimos a float32: es el tipo de dato habitual en imágenes FITS</span></span>
+<span id="cb28-91"><a href="#cb28-91" aria-hidden="true" tabindex="-1"></a>imagen <span class="op">=</span> imagen.astype(np.float32)</span>
+<span id="cb28-92"><a href="#cb28-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-93"><a href="#cb28-93" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Forma de la imagen : </span><span class="sc">{</span>imagen<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb28-94"><a href="#cb28-94" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Valor mínimo       : </span><span class="sc">{</span>imagen<span class="sc">.</span><span class="bu">min</span>()<span class="sc">:.1f}</span><span class="ss">"</span>)</span>
+<span id="cb28-95"><a href="#cb28-95" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Valor máximo       : </span><span class="sc">{</span>imagen<span class="sc">.</span><span class="bu">max</span>()<span class="sc">:.1f}</span><span class="ss">"</span>)</span>
+<span id="cb28-96"><a href="#cb28-96" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb28-97"><a href="#cb28-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-98"><a href="#cb28-98" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb28-99"><a href="#cb28-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-100"><a href="#cb28-100" aria-hidden="true" tabindex="-1"></a><span class="fu">## Escribir un archivo FITS</span></span>
+<span id="cb28-101"><a href="#cb28-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-104"><a href="#cb28-104" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb28-105"><a href="#cb28-105" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb28-106"><a href="#cb28-106" aria-hidden="true" tabindex="-1"></a><span class="co"># Guardar la imagen en un archivo FITS con un encabezado informativo</span></span>
+<span id="cb28-107"><a href="#cb28-107" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb28-108"><a href="#cb28-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-109"><a href="#cb28-109" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.io <span class="im">import</span> fits</span>
+<span id="cb28-110"><a href="#cb28-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-111"><a href="#cb28-111" aria-hidden="true" tabindex="-1"></a><span class="co"># PrimaryHDU es el primer compartimento obligatorio de todo FITS</span></span>
+<span id="cb28-112"><a href="#cb28-112" aria-hidden="true" tabindex="-1"></a>hdu_primario <span class="op">=</span> fits.PrimaryHDU(data<span class="op">=</span>imagen)</span>
+<span id="cb28-113"><a href="#cb28-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-114"><a href="#cb28-114" aria-hidden="true" tabindex="-1"></a><span class="co"># Agregamos metadatos al encabezado: header['CLAVE'] = (valor, 'comentario')</span></span>
+<span id="cb28-115"><a href="#cb28-115" aria-hidden="true" tabindex="-1"></a><span class="co"># Las claves tienen máximo 8 caracteres y se escriben en MAYÚSCULAS</span></span>
+<span id="cb28-116"><a href="#cb28-116" aria-hidden="true" tabindex="-1"></a>hdu_primario.header[<span class="st">'TELESCOP'</span>] <span class="op">=</span> (<span class="st">'Simulado'</span>, <span class="st">'Telescopio usado'</span>)</span>
+<span id="cb28-117"><a href="#cb28-117" aria-hidden="true" tabindex="-1"></a>hdu_primario.header[<span class="st">'INSTRUME'</span>] <span class="op">=</span> (<span class="st">'CCD-200'</span>, <span class="st">'Camara'</span>)</span>
+<span id="cb28-118"><a href="#cb28-118" aria-hidden="true" tabindex="-1"></a>hdu_primario.header[<span class="st">'OBJECT'</span>]   <span class="op">=</span> (<span class="st">'Campo de prueba'</span>, <span class="st">'Objeto observado'</span>)</span>
+<span id="cb28-119"><a href="#cb28-119" aria-hidden="true" tabindex="-1"></a>hdu_primario.header[<span class="st">'EXPTIME'</span>]  <span class="op">=</span> (<span class="fl">60.0</span>, <span class="st">'Tiempo de exposicion [s]'</span>)</span>
+<span id="cb28-120"><a href="#cb28-120" aria-hidden="true" tabindex="-1"></a>hdu_primario.header[<span class="st">'FILTER'</span>]   <span class="op">=</span> (<span class="st">'V'</span>, <span class="st">'Filtro fotometrico'</span>)</span>
+<span id="cb28-121"><a href="#cb28-121" aria-hidden="true" tabindex="-1"></a>hdu_primario.header[<span class="st">'DATE-OBS'</span>] <span class="op">=</span> (<span class="st">'2026-03-15T03:20:00'</span>, <span class="st">'Inicio de la observacion (UTC)'</span>)</span>
+<span id="cb28-122"><a href="#cb28-122" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-123"><a href="#cb28-123" aria-hidden="true" tabindex="-1"></a><span class="co"># IMPORTANTE: el estándar FITS solo admite caracteres ASCII en el encabezado.</span></span>
+<span id="cb28-124"><a href="#cb28-124" aria-hidden="true" tabindex="-1"></a><span class="co"># Por eso escribimos 'Camara' y 'exposicion' SIN tilde: con tildes, Astropy</span></span>
+<span id="cb28-125"><a href="#cb28-125" aria-hidden="true" tabindex="-1"></a><span class="co"># lanza un ValueError.</span></span>
+<span id="cb28-126"><a href="#cb28-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-127"><a href="#cb28-127" aria-hidden="true" tabindex="-1"></a><span class="co"># writeto() escribe el archivo; overwrite=True reemplaza si ya existe</span></span>
+<span id="cb28-128"><a href="#cb28-128" aria-hidden="true" tabindex="-1"></a>hdu_primario.writeto(<span class="st">'imagen_sintetica.fits'</span>, overwrite<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb28-129"><a href="#cb28-129" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Archivo 'imagen_sintetica.fits' creado ✓"</span>)</span>
+<span id="cb28-130"><a href="#cb28-130" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb28-131"><a href="#cb28-131" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-132"><a href="#cb28-132" aria-hidden="true" tabindex="-1"></a>::: {.callout-warning}</span>
+<span id="cb28-133"><a href="#cb28-133" aria-hidden="true" tabindex="-1"></a><span class="fu">## Sin tildes ni eñes en el encabezado</span></span>
+<span id="cb28-134"><a href="#cb28-134" aria-hidden="true" tabindex="-1"></a>El formato FITS nació en 1981 y su encabezado solo acepta texto **ASCII**.</span>
+<span id="cb28-135"><a href="#cb28-135" aria-hidden="true" tabindex="-1"></a>Palabras como <span class="in">`Cámara`</span> u <span class="in">`observación`</span> provocan un error. Escríbelas sin</span>
+<span id="cb28-136"><a href="#cb28-136" aria-hidden="true" tabindex="-1"></a>tilde (<span class="in">`Camara`</span>, <span class="in">`observacion`</span>). Los **datos** no tienen esta restricción.</span>
+<span id="cb28-137"><a href="#cb28-137" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb28-138"><a href="#cb28-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-139"><a href="#cb28-139" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb28-140"><a href="#cb28-140" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-141"><a href="#cb28-141" aria-hidden="true" tabindex="-1"></a><span class="fu">## Abrir y explorar un archivo FITS</span></span>
+<span id="cb28-142"><a href="#cb28-142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-143"><a href="#cb28-143" aria-hidden="true" tabindex="-1"></a><span class="fu">### Ver la estructura con `info()`</span></span>
+<span id="cb28-144"><a href="#cb28-144" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-147"><a href="#cb28-147" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb28-148"><a href="#cb28-148" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb28-149"><a href="#cb28-149" aria-hidden="true" tabindex="-1"></a><span class="co"># Abrir un FITS y mostrar sus HDU</span></span>
+<span id="cb28-150"><a href="#cb28-150" aria-hidden="true" tabindex="-1"></a><span class="co"># Usamos 'with' para que el archivo se cierre solo al terminar el bloque</span></span>
+<span id="cb28-151"><a href="#cb28-151" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb28-152"><a href="#cb28-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-153"><a href="#cb28-153" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.io <span class="im">import</span> fits</span>
+<span id="cb28-154"><a href="#cb28-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-155"><a href="#cb28-155" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> fits.<span class="bu">open</span>(<span class="st">'imagen_sintetica.fits'</span>) <span class="im">as</span> hdul:   <span class="co"># hdul = lista de HDUs</span></span>
+<span id="cb28-156"><a href="#cb28-156" aria-hidden="true" tabindex="-1"></a>    hdul.info()                                     <span class="co"># resumen de la estructura</span></span>
+<span id="cb28-157"><a href="#cb28-157" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb28-158"><a href="#cb28-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-159"><a href="#cb28-159" aria-hidden="true" tabindex="-1"></a>La salida muestra: número de HDU, nombre, tipo, número de tarjetas del</span>
+<span id="cb28-160"><a href="#cb28-160" aria-hidden="true" tabindex="-1"></a>encabezado, dimensiones y tipo de dato.</span>
+<span id="cb28-161"><a href="#cb28-161" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-162"><a href="#cb28-162" aria-hidden="true" tabindex="-1"></a><span class="fu">### Leer el encabezado</span></span>
+<span id="cb28-163"><a href="#cb28-163" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-166"><a href="#cb28-166" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb28-167"><a href="#cb28-167" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb28-168"><a href="#cb28-168" aria-hidden="true" tabindex="-1"></a><span class="co"># Leer el encabezado y acceder a valores individuales</span></span>
+<span id="cb28-169"><a href="#cb28-169" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb28-170"><a href="#cb28-170" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-171"><a href="#cb28-171" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.io <span class="im">import</span> fits</span>
+<span id="cb28-172"><a href="#cb28-172" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-173"><a href="#cb28-173" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> fits.<span class="bu">open</span>(<span class="st">'imagen_sintetica.fits'</span>) <span class="im">as</span> hdul:</span>
+<span id="cb28-174"><a href="#cb28-174" aria-hidden="true" tabindex="-1"></a>    encabezado <span class="op">=</span> hdul[<span class="dv">0</span>].header   <span class="co"># encabezado del HDU primario (índice 0)</span></span>
+<span id="cb28-175"><a href="#cb28-175" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-176"><a href="#cb28-176" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Acceder a una clave igual que en un diccionario de Python</span></span>
+<span id="cb28-177"><a href="#cb28-177" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Objeto       : </span><span class="sc">{</span>encabezado[<span class="st">'OBJECT'</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb28-178"><a href="#cb28-178" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Exposición   : </span><span class="sc">{</span>encabezado[<span class="st">'EXPTIME'</span>]<span class="sc">}</span><span class="ss"> s"</span>)</span>
+<span id="cb28-179"><a href="#cb28-179" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Filtro       : </span><span class="sc">{</span>encabezado[<span class="st">'FILTER'</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb28-180"><a href="#cb28-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-181"><a href="#cb28-181" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Los comentarios se consultan con .comments</span></span>
+<span id="cb28-182"><a href="#cb28-182" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Comentario de EXPTIME: </span><span class="sc">{</span>encabezado<span class="sc">.</span>comments[<span class="st">'EXPTIME'</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb28-183"><a href="#cb28-183" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-184"><a href="#cb28-184" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Claves que Astropy genera automáticamente al escribir</span></span>
+<span id="cb28-185"><a href="#cb28-185" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">NAXIS  (dimensiones) : </span><span class="sc">{</span>encabezado[<span class="st">'NAXIS'</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb28-186"><a href="#cb28-186" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"NAXIS1 (ancho, x)    : </span><span class="sc">{</span>encabezado[<span class="st">'NAXIS1'</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb28-187"><a href="#cb28-187" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"NAXIS2 (alto,  y)    : </span><span class="sc">{</span>encabezado[<span class="st">'NAXIS2'</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb28-188"><a href="#cb28-188" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"BITPIX (tipo dato)   : </span><span class="sc">{</span>encabezado[<span class="st">'BITPIX'</span>]<span class="sc">}</span><span class="ss">  (-32 = float32)"</span>)</span>
+<span id="cb28-189"><a href="#cb28-189" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb28-190"><a href="#cb28-190" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-193"><a href="#cb28-193" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb28-194"><a href="#cb28-194" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb28-195"><a href="#cb28-195" aria-hidden="true" tabindex="-1"></a><span class="co"># Mostrar el encabezado completo tal como se ve en el archivo</span></span>
+<span id="cb28-196"><a href="#cb28-196" aria-hidden="true" tabindex="-1"></a><span class="co"># repr() lo presenta en el formato clásico de "tarjetas" de 80 caracteres</span></span>
+<span id="cb28-197"><a href="#cb28-197" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb28-198"><a href="#cb28-198" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-199"><a href="#cb28-199" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.io <span class="im">import</span> fits</span>
+<span id="cb28-200"><a href="#cb28-200" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-201"><a href="#cb28-201" aria-hidden="true" tabindex="-1"></a>encabezado <span class="op">=</span> fits.getheader(<span class="st">'imagen_sintetica.fits'</span>)   <span class="co"># atajo: lee solo el header</span></span>
+<span id="cb28-202"><a href="#cb28-202" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">repr</span>(encabezado))</span>
+<span id="cb28-203"><a href="#cb28-203" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb28-204"><a href="#cb28-204" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-205"><a href="#cb28-205" aria-hidden="true" tabindex="-1"></a><span class="fu">### Leer los datos</span></span>
+<span id="cb28-206"><a href="#cb28-206" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-209"><a href="#cb28-209" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb28-210"><a href="#cb28-210" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb28-211"><a href="#cb28-211" aria-hidden="true" tabindex="-1"></a><span class="co"># Dos formas de obtener los datos de la imagen</span></span>
+<span id="cb28-212"><a href="#cb28-212" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb28-213"><a href="#cb28-213" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-214"><a href="#cb28-214" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.io <span class="im">import</span> fits</span>
+<span id="cb28-215"><a href="#cb28-215" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb28-216"><a href="#cb28-216" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-217"><a href="#cb28-217" aria-hidden="true" tabindex="-1"></a><span class="co"># Forma 1: abriendo el archivo (útil si también necesitas el encabezado)</span></span>
+<span id="cb28-218"><a href="#cb28-218" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> fits.<span class="bu">open</span>(<span class="st">'imagen_sintetica.fits'</span>) <span class="im">as</span> hdul:</span>
+<span id="cb28-219"><a href="#cb28-219" aria-hidden="true" tabindex="-1"></a>    datos <span class="op">=</span> hdul[<span class="dv">0</span>].data.copy()   <span class="co"># .copy() para conservarlos tras cerrar el archivo</span></span>
+<span id="cb28-220"><a href="#cb28-220" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-221"><a href="#cb28-221" aria-hidden="true" tabindex="-1"></a><span class="co"># Forma 2: atajo directo cuando solo quieres los datos</span></span>
+<span id="cb28-222"><a href="#cb28-222" aria-hidden="true" tabindex="-1"></a>datos_rapido <span class="op">=</span> fits.getdata(<span class="st">'imagen_sintetica.fits'</span>)</span>
+<span id="cb28-223"><a href="#cb28-223" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-224"><a href="#cb28-224" aria-hidden="true" tabindex="-1"></a><span class="co"># Los datos son un arreglo de numpy normal</span></span>
+<span id="cb28-225"><a href="#cb28-225" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Tipo de objeto : </span><span class="sc">{</span><span class="bu">type</span>(datos)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb28-226"><a href="#cb28-226" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Forma          : </span><span class="sc">{</span>datos<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">   (filas=y, columnas=x)"</span>)</span>
+<span id="cb28-227"><a href="#cb28-227" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Mediana        : </span><span class="sc">{</span>np<span class="sc">.</span>median(datos)<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb28-228"><a href="#cb28-228" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-229"><a href="#cb28-229" aria-hidden="true" tabindex="-1"></a><span class="co"># ¡OJO! numpy indexa [fila, columna] = [y, x]</span></span>
+<span id="cb28-230"><a href="#cb28-230" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Valor en x=90, y=110 (centro de una estrella): </span><span class="sc">{</span>datos[<span class="dv">110</span>, <span class="dv">90</span>]<span class="sc">:.1f}</span><span class="ss">"</span>)</span>
+<span id="cb28-231"><a href="#cb28-231" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb28-232"><a href="#cb28-232" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-233"><a href="#cb28-233" aria-hidden="true" tabindex="-1"></a>::: {.callout-warning}</span>
+<span id="cb28-234"><a href="#cb28-234" aria-hidden="true" tabindex="-1"></a><span class="fu">## Orden de los ejes: [y, x]</span></span>
+<span id="cb28-235"><a href="#cb28-235" aria-hidden="true" tabindex="-1"></a>En numpy el primer índice es la **fila (y)** y el segundo la **columna (x)**.</span>
+<span id="cb28-236"><a href="#cb28-236" aria-hidden="true" tabindex="-1"></a>Además, FITS cuenta los píxeles desde 1 y numpy desde 0. Es la fuente de</span>
+<span id="cb28-237"><a href="#cb28-237" aria-hidden="true" tabindex="-1"></a>error más común al trabajar con imágenes astronómicas.</span>
+<span id="cb28-238"><a href="#cb28-238" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb28-239"><a href="#cb28-239" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-240"><a href="#cb28-240" aria-hidden="true" tabindex="-1"></a><span class="fu">### Visualizar la imagen</span></span>
+<span id="cb28-241"><a href="#cb28-241" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-244"><a href="#cb28-244" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb28-245"><a href="#cb28-245" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-imagen-fits</span></span>
+<span id="cb28-246"><a href="#cb28-246" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Imagen sintética leída desde el archivo FITS"</span></span>
+<span id="cb28-247"><a href="#cb28-247" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-248"><a href="#cb28-248" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb28-249"><a href="#cb28-249" aria-hidden="true" tabindex="-1"></a><span class="co"># Mostrar la imagen con matplotlib</span></span>
+<span id="cb28-250"><a href="#cb28-250" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb28-251"><a href="#cb28-251" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-252"><a href="#cb28-252" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb28-253"><a href="#cb28-253" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.io <span class="im">import</span> fits</span>
+<span id="cb28-254"><a href="#cb28-254" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-255"><a href="#cb28-255" aria-hidden="true" tabindex="-1"></a>datos <span class="op">=</span> fits.getdata(<span class="st">'imagen_sintetica.fits'</span>)</span>
+<span id="cb28-256"><a href="#cb28-256" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-257"><a href="#cb28-257" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="dv">5</span>))</span>
+<span id="cb28-258"><a href="#cb28-258" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-259"><a href="#cb28-259" aria-hidden="true" tabindex="-1"></a><span class="co"># origin='lower' pone el píxel (0,0) abajo a la izquierda, como en astronomía</span></span>
+<span id="cb28-260"><a href="#cb28-260" aria-hidden="true" tabindex="-1"></a><span class="co"># vmin/vmax recortan el rango de colores para que se vean las estrellas débiles</span></span>
+<span id="cb28-261"><a href="#cb28-261" aria-hidden="true" tabindex="-1"></a>im <span class="op">=</span> ax.imshow(datos, origin<span class="op">=</span><span class="st">'lower'</span>, cmap<span class="op">=</span><span class="st">'gray'</span>, vmin<span class="op">=</span><span class="dv">90</span>, vmax<span class="op">=</span><span class="dv">300</span>)</span>
+<span id="cb28-262"><a href="#cb28-262" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-263"><a href="#cb28-263" aria-hidden="true" tabindex="-1"></a>fig.colorbar(im, ax<span class="op">=</span>ax, label<span class="op">=</span><span class="st">'Cuentas (ADU)'</span>)</span>
+<span id="cb28-264"><a href="#cb28-264" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">'x [píxel]'</span>)</span>
+<span id="cb28-265"><a href="#cb28-265" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">'y [píxel]'</span>)</span>
+<span id="cb28-266"><a href="#cb28-266" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Imagen sintética'</span>)</span>
+<span id="cb28-267"><a href="#cb28-267" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb28-268"><a href="#cb28-268" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb28-269"><a href="#cb28-269" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-270"><a href="#cb28-270" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb28-271"><a href="#cb28-271" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-272"><a href="#cb28-272" aria-hidden="true" tabindex="-1"></a><span class="fu">## Modificar un archivo FITS</span></span>
+<span id="cb28-273"><a href="#cb28-273" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-274"><a href="#cb28-274" aria-hidden="true" tabindex="-1"></a><span class="fu">### Editar el encabezado</span></span>
+<span id="cb28-275"><a href="#cb28-275" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-278"><a href="#cb28-278" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb28-279"><a href="#cb28-279" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb28-280"><a href="#cb28-280" aria-hidden="true" tabindex="-1"></a><span class="co"># Agregar, cambiar y borrar claves del encabezado</span></span>
+<span id="cb28-281"><a href="#cb28-281" aria-hidden="true" tabindex="-1"></a><span class="co"># mode='update' permite guardar los cambios en el mismo archivo</span></span>
+<span id="cb28-282"><a href="#cb28-282" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb28-283"><a href="#cb28-283" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-284"><a href="#cb28-284" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.io <span class="im">import</span> fits</span>
+<span id="cb28-285"><a href="#cb28-285" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-286"><a href="#cb28-286" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> fits.<span class="bu">open</span>(<span class="st">'imagen_sintetica.fits'</span>, mode<span class="op">=</span><span class="st">'update'</span>) <span class="im">as</span> hdul:</span>
+<span id="cb28-287"><a href="#cb28-287" aria-hidden="true" tabindex="-1"></a>    hdr <span class="op">=</span> hdul[<span class="dv">0</span>].header</span>
+<span id="cb28-288"><a href="#cb28-288" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-289"><a href="#cb28-289" aria-hidden="true" tabindex="-1"></a>    hdr[<span class="st">'OBSERVER'</span>] <span class="op">=</span> (<span class="st">'Blog AstroPy'</span>, <span class="st">'Nombre del observador'</span>)   <span class="co"># agregar</span></span>
+<span id="cb28-290"><a href="#cb28-290" aria-hidden="true" tabindex="-1"></a>    hdr[<span class="st">'EXPTIME'</span>]  <span class="op">=</span> <span class="fl">120.0</span>                                        <span class="co"># cambiar valor</span></span>
+<span id="cb28-291"><a href="#cb28-291" aria-hidden="true" tabindex="-1"></a>    hdr.add_history(<span class="st">'Exposicion corregida a 120 s'</span>)                <span class="co"># registro HISTORY</span></span>
+<span id="cb28-292"><a href="#cb28-292" aria-hidden="true" tabindex="-1"></a>    hdr.add_comment(<span class="st">'Archivo de practica del modulo 06'</span>)          <span class="co"># línea COMMENT</span></span>
+<span id="cb28-293"><a href="#cb28-293" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-294"><a href="#cb28-294" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Borrar una clave (si existe)</span></span>
+<span id="cb28-295"><a href="#cb28-295" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="st">'INSTRUME'</span> <span class="kw">in</span> hdr:</span>
+<span id="cb28-296"><a href="#cb28-296" aria-hidden="true" tabindex="-1"></a>        <span class="kw">del</span> hdr[<span class="st">'INSTRUME'</span>]</span>
+<span id="cb28-297"><a href="#cb28-297" aria-hidden="true" tabindex="-1"></a><span class="co"># Al salir del 'with' los cambios se escriben en el disco</span></span>
+<span id="cb28-298"><a href="#cb28-298" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-299"><a href="#cb28-299" aria-hidden="true" tabindex="-1"></a><span class="co"># Verificamos</span></span>
+<span id="cb28-300"><a href="#cb28-300" aria-hidden="true" tabindex="-1"></a>hdr <span class="op">=</span> fits.getheader(<span class="st">'imagen_sintetica.fits'</span>)</span>
+<span id="cb28-301"><a href="#cb28-301" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"OBSERVER : </span><span class="sc">{</span>hdr[<span class="st">'OBSERVER'</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb28-302"><a href="#cb28-302" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"EXPTIME  : </span><span class="sc">{</span>hdr[<span class="st">'EXPTIME'</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb28-303"><a href="#cb28-303" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"INSTRUME presente: </span><span class="sc">{</span><span class="st">'INSTRUME'</span> <span class="kw">in</span> hdr<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb28-304"><a href="#cb28-304" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"HISTORY  : </span><span class="sc">{</span>hdr[<span class="st">'HISTORY'</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb28-305"><a href="#cb28-305" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb28-306"><a href="#cb28-306" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-307"><a href="#cb28-307" aria-hidden="true" tabindex="-1"></a><span class="fu">### Operar sobre los datos y guardar una versión nueva</span></span>
+<span id="cb28-308"><a href="#cb28-308" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-311"><a href="#cb28-311" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb28-312"><a href="#cb28-312" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb28-313"><a href="#cb28-313" aria-hidden="true" tabindex="-1"></a><span class="co"># Restar el fondo del cielo y guardar en un archivo nuevo</span></span>
+<span id="cb28-314"><a href="#cb28-314" aria-hidden="true" tabindex="-1"></a><span class="co"># Buena práctica: NUNCA sobrescribir los datos crudos originales</span></span>
+<span id="cb28-315"><a href="#cb28-315" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb28-316"><a href="#cb28-316" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-317"><a href="#cb28-317" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.io <span class="im">import</span> fits</span>
+<span id="cb28-318"><a href="#cb28-318" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb28-319"><a href="#cb28-319" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-320"><a href="#cb28-320" aria-hidden="true" tabindex="-1"></a>datos, hdr <span class="op">=</span> fits.getdata(<span class="st">'imagen_sintetica.fits'</span>, header<span class="op">=</span><span class="va">True</span>)  <span class="co"># datos + header</span></span>
+<span id="cb28-321"><a href="#cb28-321" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-322"><a href="#cb28-322" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimamos el fondo con la mediana (robusta ante las estrellas brillantes)</span></span>
+<span id="cb28-323"><a href="#cb28-323" aria-hidden="true" tabindex="-1"></a>fondo <span class="op">=</span> np.median(datos)</span>
+<span id="cb28-324"><a href="#cb28-324" aria-hidden="true" tabindex="-1"></a>datos_sin_fondo <span class="op">=</span> datos <span class="op">-</span> fondo</span>
+<span id="cb28-325"><a href="#cb28-325" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-326"><a href="#cb28-326" aria-hidden="true" tabindex="-1"></a><span class="co"># Normalizamos por el tiempo de exposición → cuentas por segundo</span></span>
+<span id="cb28-327"><a href="#cb28-327" aria-hidden="true" tabindex="-1"></a>datos_por_segundo <span class="op">=</span> datos_sin_fondo <span class="op">/</span> hdr[<span class="st">'EXPTIME'</span>]</span>
+<span id="cb28-328"><a href="#cb28-328" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-329"><a href="#cb28-329" aria-hidden="true" tabindex="-1"></a><span class="co"># Actualizamos el encabezado para documentar lo que hicimos</span></span>
+<span id="cb28-330"><a href="#cb28-330" aria-hidden="true" tabindex="-1"></a>hdr[<span class="st">'BUNIT'</span>] <span class="op">=</span> (<span class="st">'ADU/s'</span>, <span class="st">'Unidad de los datos'</span>)</span>
+<span id="cb28-331"><a href="#cb28-331" aria-hidden="true" tabindex="-1"></a>hdr.add_history(<span class="ss">f'Fondo de </span><span class="sc">{</span>fondo<span class="sc">:.2f}</span><span class="ss"> ADU restado (mediana)'</span>)</span>
+<span id="cb28-332"><a href="#cb28-332" aria-hidden="true" tabindex="-1"></a>hdr.add_history(<span class="st">'Datos divididos por EXPTIME'</span>)</span>
+<span id="cb28-333"><a href="#cb28-333" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-334"><a href="#cb28-334" aria-hidden="true" tabindex="-1"></a>fits.writeto(<span class="st">'imagen_procesada.fits'</span>, datos_por_segundo.astype(np.float32),</span>
+<span id="cb28-335"><a href="#cb28-335" aria-hidden="true" tabindex="-1"></a>             header<span class="op">=</span>hdr, overwrite<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb28-336"><a href="#cb28-336" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-337"><a href="#cb28-337" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Fondo restado       : </span><span class="sc">{</span>fondo<span class="sc">:.2f}</span><span class="ss"> ADU"</span>)</span>
+<span id="cb28-338"><a href="#cb28-338" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Nuevo valor máximo  : </span><span class="sc">{</span>datos_por_segundo<span class="sc">.</span><span class="bu">max</span>()<span class="sc">:.2f}</span><span class="ss"> ADU/s"</span>)</span>
+<span id="cb28-339"><a href="#cb28-339" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Guardado en 'imagen_procesada.fits' ✓"</span>)</span>
+<span id="cb28-340"><a href="#cb28-340" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb28-341"><a href="#cb28-341" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-342"><a href="#cb28-342" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb28-343"><a href="#cb28-343" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-344"><a href="#cb28-344" aria-hidden="true" tabindex="-1"></a><span class="fu">## Archivos FITS con varias extensiones</span></span>
+<span id="cb28-345"><a href="#cb28-345" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-346"><a href="#cb28-346" aria-hidden="true" tabindex="-1"></a>Muchos FITS reales combinan imágenes y tablas. Construyamos uno con tres</span>
+<span id="cb28-347"><a href="#cb28-347" aria-hidden="true" tabindex="-1"></a>HDU: la imagen, un mapa de errores y una tabla con el catálogo de estrellas.</span>
+<span id="cb28-348"><a href="#cb28-348" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-351"><a href="#cb28-351" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb28-352"><a href="#cb28-352" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb28-353"><a href="#cb28-353" aria-hidden="true" tabindex="-1"></a><span class="co"># Crear un FITS con varias extensiones (multi-extensión)</span></span>
+<span id="cb28-354"><a href="#cb28-354" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb28-355"><a href="#cb28-355" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-356"><a href="#cb28-356" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.io <span class="im">import</span> fits</span>
+<span id="cb28-357"><a href="#cb28-357" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.table <span class="im">import</span> Table</span>
+<span id="cb28-358"><a href="#cb28-358" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb28-359"><a href="#cb28-359" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-360"><a href="#cb28-360" aria-hidden="true" tabindex="-1"></a>datos <span class="op">=</span> fits.getdata(<span class="st">'imagen_sintetica.fits'</span>)</span>
+<span id="cb28-361"><a href="#cb28-361" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-362"><a href="#cb28-362" aria-hidden="true" tabindex="-1"></a><span class="co"># HDU 0: primario (la imagen)</span></span>
+<span id="cb28-363"><a href="#cb28-363" aria-hidden="true" tabindex="-1"></a>primario <span class="op">=</span> fits.PrimaryHDU(data<span class="op">=</span>datos)</span>
+<span id="cb28-364"><a href="#cb28-364" aria-hidden="true" tabindex="-1"></a>primario.header[<span class="st">'OBJECT'</span>] <span class="op">=</span> <span class="st">'Campo de prueba'</span></span>
+<span id="cb28-365"><a href="#cb28-365" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-366"><a href="#cb28-366" aria-hidden="true" tabindex="-1"></a><span class="co"># HDU 1: imagen de errores (raíz cuadrada de las cuentas = ruido de Poisson)</span></span>
+<span id="cb28-367"><a href="#cb28-367" aria-hidden="true" tabindex="-1"></a>errores <span class="op">=</span> fits.ImageHDU(data<span class="op">=</span>np.sqrt(np.<span class="bu">abs</span>(datos)).astype(np.float32), name<span class="op">=</span><span class="st">'ERROR'</span>)</span>
+<span id="cb28-368"><a href="#cb28-368" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-369"><a href="#cb28-369" aria-hidden="true" tabindex="-1"></a><span class="co"># HDU 2: tabla con las posiciones y brillos de las estrellas que creamos</span></span>
+<span id="cb28-370"><a href="#cb28-370" aria-hidden="true" tabindex="-1"></a>catalogo <span class="op">=</span> Table({</span>
+<span id="cb28-371"><a href="#cb28-371" aria-hidden="true" tabindex="-1"></a>    <span class="st">'id'</span>    : [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>],</span>
+<span id="cb28-372"><a href="#cb28-372" aria-hidden="true" tabindex="-1"></a>    <span class="st">'x'</span>     : [<span class="dv">50</span>, <span class="dv">120</span>, <span class="dv">160</span>, <span class="dv">90</span>, <span class="dv">30</span>],</span>
+<span id="cb28-373"><a href="#cb28-373" aria-hidden="true" tabindex="-1"></a>    <span class="st">'y'</span>     : [<span class="dv">60</span>, <span class="dv">140</span>, <span class="dv">40</span>, <span class="dv">110</span>, <span class="dv">170</span>],</span>
+<span id="cb28-374"><a href="#cb28-374" aria-hidden="true" tabindex="-1"></a>    <span class="st">'brillo'</span>: [<span class="dv">800</span>, <span class="dv">1500</span>, <span class="dv">600</span>, <span class="dv">2500</span>, <span class="dv">400</span>],</span>
+<span id="cb28-375"><a href="#cb28-375" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb28-376"><a href="#cb28-376" aria-hidden="true" tabindex="-1"></a>tabla_hdu <span class="op">=</span> fits.BinTableHDU(catalogo, name<span class="op">=</span><span class="st">'CATALOGO'</span>)   <span class="co"># tabla binaria FITS</span></span>
+<span id="cb28-377"><a href="#cb28-377" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-378"><a href="#cb28-378" aria-hidden="true" tabindex="-1"></a><span class="co"># Juntamos todo en una HDUList y lo guardamos</span></span>
+<span id="cb28-379"><a href="#cb28-379" aria-hidden="true" tabindex="-1"></a>hdul <span class="op">=</span> fits.HDUList([primario, errores, tabla_hdu])</span>
+<span id="cb28-380"><a href="#cb28-380" aria-hidden="true" tabindex="-1"></a>hdul.writeto(<span class="st">'campo_multiext.fits'</span>, overwrite<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb28-381"><a href="#cb28-381" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-382"><a href="#cb28-382" aria-hidden="true" tabindex="-1"></a><span class="co"># Revisamos la estructura</span></span>
+<span id="cb28-383"><a href="#cb28-383" aria-hidden="true" tabindex="-1"></a>fits.info(<span class="st">'campo_multiext.fits'</span>)</span>
+<span id="cb28-384"><a href="#cb28-384" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb28-385"><a href="#cb28-385" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-388"><a href="#cb28-388" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb28-389"><a href="#cb28-389" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb28-390"><a href="#cb28-390" aria-hidden="true" tabindex="-1"></a><span class="co"># Acceder a cada extensión por índice o por nombre</span></span>
+<span id="cb28-391"><a href="#cb28-391" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb28-392"><a href="#cb28-392" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-393"><a href="#cb28-393" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.io <span class="im">import</span> fits</span>
+<span id="cb28-394"><a href="#cb28-394" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.table <span class="im">import</span> Table</span>
+<span id="cb28-395"><a href="#cb28-395" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-396"><a href="#cb28-396" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> fits.<span class="bu">open</span>(<span class="st">'campo_multiext.fits'</span>) <span class="im">as</span> hdul:</span>
+<span id="cb28-397"><a href="#cb28-397" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Por nombre (más legible y no depende del orden)</span></span>
+<span id="cb28-398"><a href="#cb28-398" aria-hidden="true" tabindex="-1"></a>    errores <span class="op">=</span> hdul[<span class="st">'ERROR'</span>].data</span>
+<span id="cb28-399"><a href="#cb28-399" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Mapa de error: forma </span><span class="sc">{</span>errores<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">, mediana </span><span class="sc">{</span>errores<span class="sc">.</span>mean()<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb28-400"><a href="#cb28-400" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-401"><a href="#cb28-401" aria-hidden="true" tabindex="-1"></a><span class="co"># Las tablas FITS se leen directamente como Table de Astropy (módulo 05)</span></span>
+<span id="cb28-402"><a href="#cb28-402" aria-hidden="true" tabindex="-1"></a>cat <span class="op">=</span> Table.read(<span class="st">'campo_multiext.fits'</span>, hdu<span class="op">=</span><span class="st">'CATALOGO'</span>)</span>
+<span id="cb28-403"><a href="#cb28-403" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Catálogo leído desde la extensión CATALOGO:"</span>)</span>
+<span id="cb28-404"><a href="#cb28-404" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(cat)</span>
+<span id="cb28-405"><a href="#cb28-405" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb28-406"><a href="#cb28-406" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-407"><a href="#cb28-407" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb28-408"><a href="#cb28-408" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-409"><a href="#cb28-409" aria-hidden="true" tabindex="-1"></a><span class="fu">## Recortar una región (cutout)</span></span>
+<span id="cb28-410"><a href="#cb28-410" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-413"><a href="#cb28-413" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb28-414"><a href="#cb28-414" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-cutout</span></span>
+<span id="cb28-415"><a href="#cb28-415" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Recorte de 30×30 píxeles alrededor de la estrella más brillante"</span></span>
+<span id="cb28-416"><a href="#cb28-416" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-417"><a href="#cb28-417" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb28-418"><a href="#cb28-418" aria-hidden="true" tabindex="-1"></a><span class="co"># Cutout2D extrae una subimagen alrededor de una posición</span></span>
+<span id="cb28-419"><a href="#cb28-419" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb28-420"><a href="#cb28-420" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-421"><a href="#cb28-421" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.nddata <span class="im">import</span> Cutout2D</span>
+<span id="cb28-422"><a href="#cb28-422" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.io <span class="im">import</span> fits</span>
+<span id="cb28-423"><a href="#cb28-423" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb28-424"><a href="#cb28-424" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-425"><a href="#cb28-425" aria-hidden="true" tabindex="-1"></a>datos <span class="op">=</span> fits.getdata(<span class="st">'imagen_sintetica.fits'</span>)</span>
+<span id="cb28-426"><a href="#cb28-426" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-427"><a href="#cb28-427" aria-hidden="true" tabindex="-1"></a><span class="co"># position=(x, y) — ¡aquí el orden SÍ es (x, y)!</span></span>
+<span id="cb28-428"><a href="#cb28-428" aria-hidden="true" tabindex="-1"></a><span class="co"># size=(alto, ancho) en píxeles</span></span>
+<span id="cb28-429"><a href="#cb28-429" aria-hidden="true" tabindex="-1"></a>recorte <span class="op">=</span> Cutout2D(datos, position<span class="op">=</span>(<span class="dv">90</span>, <span class="dv">110</span>), size<span class="op">=</span>(<span class="dv">30</span>, <span class="dv">30</span>))</span>
+<span id="cb28-430"><a href="#cb28-430" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-431"><a href="#cb28-431" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Forma del recorte                : </span><span class="sc">{</span>recorte<span class="sc">.</span>data<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb28-432"><a href="#cb28-432" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Esquina inferior izq. en original: </span><span class="sc">{</span>recorte<span class="sc">.</span>origin_original<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb28-433"><a href="#cb28-433" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-434"><a href="#cb28-434" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">4</span>, <span class="dv">4</span>))</span>
+<span id="cb28-435"><a href="#cb28-435" aria-hidden="true" tabindex="-1"></a>ax.imshow(recorte.data, origin<span class="op">=</span><span class="st">'lower'</span>, cmap<span class="op">=</span><span class="st">'magma'</span>)</span>
+<span id="cb28-436"><a href="#cb28-436" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Recorte alrededor de la estrella 4'</span>)</span>
+<span id="cb28-437"><a href="#cb28-437" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb28-438"><a href="#cb28-438" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb28-439"><a href="#cb28-439" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-440"><a href="#cb28-440" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb28-441"><a href="#cb28-441" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-442"><a href="#cb28-442" aria-hidden="true" tabindex="-1"></a><span class="fu">## Abrir un FITS real</span></span>
+<span id="cb28-443"><a href="#cb28-443" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-444"><a href="#cb28-444" aria-hidden="true" tabindex="-1"></a>Cuando trabajes con datos reales el procedimiento es idéntico. Algunos</span>
+<span id="cb28-445"><a href="#cb28-445" aria-hidden="true" tabindex="-1"></a>archivos públicos de donde descargar FITS gratis:</span>
+<span id="cb28-446"><a href="#cb28-446" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-447"><a href="#cb28-447" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Archivo <span class="pp">|</span> Qué ofrece <span class="pp">|</span></span>
+<span id="cb28-448"><a href="#cb28-448" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|</span></span>
+<span id="cb28-449"><a href="#cb28-449" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="co">[</span><span class="ot">MAST</span><span class="co">](https://archive.stsci.edu)</span> <span class="pp">|</span> Hubble, JWST, TESS, Kepler <span class="pp">|</span></span>
+<span id="cb28-450"><a href="#cb28-450" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="co">[</span><span class="ot">SDSS SkyServer</span><span class="co">](https://skyserver.sdss.org)</span> <span class="pp">|</span> Imágenes y espectros del Sloan <span class="pp">|</span></span>
+<span id="cb28-451"><a href="#cb28-451" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="co">[</span><span class="ot">ESO Archive</span><span class="co">](https://archive.eso.org)</span> <span class="pp">|</span> Telescopios del Observatorio Europeo Austral <span class="pp">|</span></span>
+<span id="cb28-452"><a href="#cb28-452" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="co">[</span><span class="ot">SkyView (NASA)</span><span class="co">](https://skyview.gsfc.nasa.gov)</span> <span class="pp">|</span> Recortes de casi cualquier zona del cielo <span class="pp">|</span></span>
+<span id="cb28-453"><a href="#cb28-453" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-454"><a href="#cb28-454" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
+<span id="cb28-455"><a href="#cb28-455" aria-hidden="true" tabindex="-1"></a><span class="co"># Ejemplo (no se ejecuta en el blog): abrir un FITS remoto directamente por URL</span></span>
+<span id="cb28-456"><a href="#cb28-456" aria-hidden="true" tabindex="-1"></a><span class="co"># use_fsspec=True permite leer solo la parte necesaria sin descargar todo</span></span>
+<span id="cb28-457"><a href="#cb28-457" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.io <span class="im">import</span> fits</span>
+<span id="cb28-458"><a href="#cb28-458" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-459"><a href="#cb28-459" aria-hidden="true" tabindex="-1"></a>url <span class="op">=</span> <span class="st">"https://ruta/a/un/archivo.fits"</span></span>
+<span id="cb28-460"><a href="#cb28-460" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> fits.<span class="bu">open</span>(url, use_fsspec<span class="op">=</span><span class="va">True</span>) <span class="im">as</span> hdul:</span>
+<span id="cb28-461"><a href="#cb28-461" aria-hidden="true" tabindex="-1"></a>    hdul.info()</span>
+<span id="cb28-462"><a href="#cb28-462" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb28-463"><a href="#cb28-463" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-464"><a href="#cb28-464" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip}</span>
+<span id="cb28-465"><a href="#cb28-465" aria-hidden="true" tabindex="-1"></a><span class="fu">## Archivos grandes</span></span>
+<span id="cb28-466"><a href="#cb28-466" aria-hidden="true" tabindex="-1"></a>Por defecto <span class="in">`fits.open()`</span> usa *memory mapping*: no carga toda la imagen en</span>
+<span id="cb28-467"><a href="#cb28-467" aria-hidden="true" tabindex="-1"></a>la RAM, solo lo que vas leyendo. Por eso puedes abrir archivos de varios GB</span>
+<span id="cb28-468"><a href="#cb28-468" aria-hidden="true" tabindex="-1"></a>sin problemas.</span>
+<span id="cb28-469"><a href="#cb28-469" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb28-470"><a href="#cb28-470" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-471"><a href="#cb28-471" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb28-472"><a href="#cb28-472" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-473"><a href="#cb28-473" aria-hidden="true" tabindex="-1"></a><span class="fu">## Ejercicio</span></span>
+<span id="cb28-474"><a href="#cb28-474" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-475"><a href="#cb28-475" aria-hidden="true" tabindex="-1"></a>Usando el archivo <span class="in">`campo_multiext.fits`</span> creado en este módulo:</span>
+<span id="cb28-476"><a href="#cb28-476" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-477"><a href="#cb28-477" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Lee la extensión <span class="in">`CATALOGO`</span> como tabla</span>
+<span id="cb28-478"><a href="#cb28-478" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Para cada estrella, mide el valor del píxel central en la imagen (HDU 0)</span>
+<span id="cb28-479"><a href="#cb28-479" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Agrega una columna <span class="in">`pico_medido`</span> a la tabla y guárdala en un FITS nuevo</span>
+<span id="cb28-480"><a href="#cb28-480" aria-hidden="true" tabindex="-1"></a>   llamado <span class="in">`catalogo_medido.fits`</span></span>
+<span id="cb28-481"><a href="#cb28-481" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-482"><a href="#cb28-482" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip collapse="true"}</span>
+<span id="cb28-483"><a href="#cb28-483" aria-hidden="true" tabindex="-1"></a><span class="fu">## Ver solución</span></span>
+<span id="cb28-484"><a href="#cb28-484" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-487"><a href="#cb28-487" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb28-488"><a href="#cb28-488" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb28-489"><a href="#cb28-489" aria-hidden="true" tabindex="-1"></a><span class="co"># SOLUCIÓN: medir el pico de cada estrella del catálogo</span></span>
+<span id="cb28-490"><a href="#cb28-490" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb28-491"><a href="#cb28-491" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-492"><a href="#cb28-492" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.io <span class="im">import</span> fits</span>
+<span id="cb28-493"><a href="#cb28-493" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.table <span class="im">import</span> Table</span>
+<span id="cb28-494"><a href="#cb28-494" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-495"><a href="#cb28-495" aria-hidden="true" tabindex="-1"></a><span class="co"># Paso 1: leer la tabla y la imagen</span></span>
+<span id="cb28-496"><a href="#cb28-496" aria-hidden="true" tabindex="-1"></a>cat    <span class="op">=</span> Table.read(<span class="st">'campo_multiext.fits'</span>, hdu<span class="op">=</span><span class="st">'CATALOGO'</span>)</span>
+<span id="cb28-497"><a href="#cb28-497" aria-hidden="true" tabindex="-1"></a>imagen <span class="op">=</span> fits.getdata(<span class="st">'campo_multiext.fits'</span>, ext<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb28-498"><a href="#cb28-498" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-499"><a href="#cb28-499" aria-hidden="true" tabindex="-1"></a><span class="co"># Paso 2: valor del píxel central de cada estrella (recuerda: [y, x])</span></span>
+<span id="cb28-500"><a href="#cb28-500" aria-hidden="true" tabindex="-1"></a>picos <span class="op">=</span> [imagen[fila[<span class="st">'y'</span>], fila[<span class="st">'x'</span>]] <span class="cf">for</span> fila <span class="kw">in</span> cat]</span>
+<span id="cb28-501"><a href="#cb28-501" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-502"><a href="#cb28-502" aria-hidden="true" tabindex="-1"></a><span class="co"># Paso 3: agregar la columna y guardar</span></span>
+<span id="cb28-503"><a href="#cb28-503" aria-hidden="true" tabindex="-1"></a>cat[<span class="st">'pico_medido'</span>] <span class="op">=</span> picos</span>
+<span id="cb28-504"><a href="#cb28-504" aria-hidden="true" tabindex="-1"></a>cat.write(<span class="st">'catalogo_medido.fits'</span>, overwrite<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb28-505"><a href="#cb28-505" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-506"><a href="#cb28-506" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(cat)</span>
+<span id="cb28-507"><a href="#cb28-507" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Guardado en 'catalogo_medido.fits' ✓"</span>)</span>
+<span id="cb28-508"><a href="#cb28-508" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb28-509"><a href="#cb28-509" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb28-510"><a href="#cb28-510" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-511"><a href="#cb28-511" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb28-512"><a href="#cb28-512" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-513"><a href="#cb28-513" aria-hidden="true" tabindex="-1"></a><span class="fu">## ¿Qué aprendiste en este módulo? {.seccion-aprendiste}</span></span>
+<span id="cb28-514"><a href="#cb28-514" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-515"><a href="#cb28-515" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ La estructura de un FITS: HDU, encabezado y datos</span>
+<span id="cb28-516"><a href="#cb28-516" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Crear y escribir archivos FITS con <span class="in">`PrimaryHDU`</span> y <span class="in">`writeto()`</span></span>
+<span id="cb28-517"><a href="#cb28-517" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Explorar archivos con <span class="in">`fits.info()`</span>, <span class="in">`getheader()`</span> y <span class="in">`getdata()`</span></span>
+<span id="cb28-518"><a href="#cb28-518" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Editar encabezados con <span class="in">`mode='update'`</span>, <span class="in">`HISTORY`</span> y <span class="in">`COMMENT`</span></span>
+<span id="cb28-519"><a href="#cb28-519" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Crear archivos multi-extensión con imágenes y tablas</span>
+<span id="cb28-520"><a href="#cb28-520" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Recortar regiones con <span class="in">`Cutout2D`</span></span>
+<span id="cb28-521"><a href="#cb28-521" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ La trampa del orden de ejes <span class="in">`[y, x]`</span></span>
+<span id="cb28-522"><a href="#cb28-522" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-523"><a href="#cb28-523" aria-hidden="true" tabindex="-1"></a>**Siguiente módulo →** <span class="co">[</span><span class="ot">07 · WCS: del píxel al cielo</span><span class="co">](07-wcs.qmd)</span></span>
+</code></pre></div><button title="Copiar al portapapeles" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<p>Blog hecho con Quarto</p>
+<p>AstroPy en Español · Blog de astronomía computacional</p>
 </div>   
     <div class="nav-footer-center">
       &nbsp;
     </div>
     <div class="nav-footer-right">
-<p>Datos: Astropy Project</p>
+<p>Hecho con <a href="https://quarto.org">Quarto</a> y <a href="https://www.astropy.org">Astropy</a></p>
 </div>
   </div>
 </footer>

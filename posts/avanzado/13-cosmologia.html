@@ -1,14 +1,15 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
 
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.9.37">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="description" content="Proximo modulo en preparacion">
+<meta name="author" content="Blog AstroPy en Español">
+<meta name="description" content="Calcula distancias, edades y tiempos en un universo en expansión con astropy.cosmology: modelos ΛCDM, Planck 2018, z_at_value y el diagrama de Hubble">
 
-<title>13 - Cosmologia computacional – AstroPy en Español</title>
+<title>13 · Cosmología computacional – AstroPy en Español</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -69,6 +70,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../">
+<link href="../../posts/avanzado/14-orbital.html" rel="next">
+<link href="../../posts/avanzado/12-espectroscopia.html" rel="prev">
 <link href="../../assets/logos/favicon.ico" rel="icon">
 <script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -76,14 +79,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-acf12a64177840b8d86f2d4f01b2e9fb.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-23bbe8b5e4efc1e257f6d59dce478b08.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-acf12a64177840b8d86f2d4f01b2e9fb.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-46c2da4921da100f2e8b760b91ba26ad.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-13f4910f51bb414f8177eb12ee348383.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../../site_libs/bootstrap/bootstrap-dark-c414a890e2011809a78d515def34b275.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../../site_libs/bootstrap/bootstrap-13f4910f51bb414f8177eb12ee348383.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-815cd9e140545d7958d81bc583beecec.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -98,187 +97,54 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   ],
   "show-item-context": false,
   "language": {
-    "search-no-results-text": "No results",
-    "search-matching-documents-text": "matching documents",
-    "search-copy-link-title": "Copy link to search",
-    "search-hide-matches-text": "Hide additional matches",
-    "search-more-match-text": "more match in this document",
-    "search-more-matches-text": "more matches in this document",
-    "search-clear-button-title": "Clear",
+    "search-no-results-text": "No se han encontrado resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
     "search-text-placeholder": "",
-    "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit",
-    "search-label": "Search"
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
   }
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
-<body class="nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
-    const toggleBodyColorMode = (bsSheetEl) => {
-      const mode = bsSheetEl.getAttribute("data-mode");
-      const bodyEl = window.document.querySelector("body");
-      if (mode === "dark") {
-        bodyEl.classList.add("quarto-dark");
-        bodyEl.classList.remove("quarto-light");
-      } else {
-        bodyEl.classList.add("quarto-light");
-        bodyEl.classList.remove("quarto-dark");
-      }
-    }
-    const toggleBodyColorPrimary = () => {
-      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
-      if (bsSheetEl) {
-        toggleBodyColorMode(bsSheetEl);
-      }
-    }
-    const setColorSchemeToggle = (alternate) => {
-      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
-      for (let i=0; i < toggles.length; i++) {
-        const toggle = toggles[i];
-        if (toggle) {
-          if (alternate) {
-            toggle.classList.add("alternate");
-          } else {
-            toggle.classList.remove("alternate");
-          }
-        }
-      }
-    };
-    const toggleColorMode = (alternate) => {
-      // Switch the stylesheets
-      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
-      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
-      manageTransitions('#quarto-margin-sidebar .nav-link', false);
-      if (alternate) {
-        // note: dark is layered on light, we don't disable primary!
-        enableStylesheet(alternateStylesheets);
-        for (const sheetNode of alternateStylesheets) {
-          if (sheetNode.id === "quarto-bootstrap") {
-            toggleBodyColorMode(sheetNode);
-          }
-        }
-      } else {
-        disableStylesheet(alternateStylesheets);
-        enableStylesheet(primaryStylesheets)
-        toggleBodyColorPrimary();
-      }
-      manageTransitions('#quarto-margin-sidebar .nav-link', true);
-      // Switch the toggles
-      setColorSchemeToggle(alternate)
-      // Hack to workaround the fact that safari doesn't
-      // properly recolor the scrollbar when toggling (#1455)
-      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
-        manageTransitions("body", false);
-        window.scrollTo(0, 1);
-        setTimeout(() => {
-          window.scrollTo(0, 0);
-          manageTransitions("body", true);
-        }, 40);
-      }
-    }
-    const disableStylesheet = (stylesheets) => {
-      for (let i=0; i < stylesheets.length; i++) {
-        const stylesheet = stylesheets[i];
-        stylesheet.rel = 'disabled-stylesheet';
-      }
-    }
-    const enableStylesheet = (stylesheets) => {
-      for (let i=0; i < stylesheets.length; i++) {
-        const stylesheet = stylesheets[i];
-        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
-          stylesheet.rel = 'stylesheet';
-        }
-      }
-    }
-    const manageTransitions = (selector, allowTransitions) => {
-      const els = window.document.querySelectorAll(selector);
-      for (let i=0; i < els.length; i++) {
-        const el = els[i];
-        if (allowTransitions) {
-          el.classList.remove('notransition');
-        } else {
-          el.classList.add('notransition');
-        }
-      }
-    }
-    const isFileUrl = () => {
-      return window.location.protocol === 'file:';
-    }
-    const hasAlternateSentinel = () => {
-      let styleSentinel = getColorSchemeSentinel();
-      if (styleSentinel !== null) {
-        return styleSentinel === "alternate";
-      } else {
-        return false;
-      }
-    }
-    const setStyleSentinel = (alternate) => {
-      const value = alternate ? "alternate" : "default";
-      if (!isFileUrl()) {
-        window.localStorage.setItem("quarto-color-scheme", value);
-      } else {
-        localAlternateSentinel = value;
-      }
-    }
-    const getColorSchemeSentinel = () => {
-      if (!isFileUrl()) {
-        const storageValue = window.localStorage.getItem("quarto-color-scheme");
-        return storageValue != null ? storageValue : localAlternateSentinel;
-      } else {
-        return localAlternateSentinel;
-      }
-    }
-    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
-      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
-      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
-      let newTheme = '';
-      if(authorPrefersDark) {
-        newTheme = isAlternate ? baseTheme : alternateTheme;
-      } else {
-        newTheme = isAlternate ? alternateTheme : baseTheme;
-      }
-      const changeGiscusTheme = () => {
-        // From: https://github.com/giscus/giscus/issues/336
-        const sendMessage = (message) => {
-          const iframe = document.querySelector('iframe.giscus-frame');
-          if (!iframe) return;
-          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
-        }
-        sendMessage({
-          setConfig: {
-            theme: newTheme
-          }
-        });
-      }
-      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
-      if (isGiscussLoaded) {
-        changeGiscusTheme();
-      }
-    };
-    const authorPrefersDark = false;
-    const darkModeDefault = authorPrefersDark;
-      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
-      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
-    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
-    // Dark / light mode switch
-    window.quartoToggleColorScheme = () => {
-      // Read the current dark / light value
-      let toAlternate = !hasAlternateSentinel();
-      toggleColorMode(toAlternate);
-      setStyleSentinel(toAlternate);
-      toggleGiscusIfUsed(toAlternate, darkModeDefault);
-      window.dispatchEvent(new Event('resize'));
-    };
-    // Switch to dark mode if need be
-    if (hasAlternateSentinel()) {
-      toggleColorMode(true);
-    } else {
-      toggleColorMode(false);
-    }
-  </script>
+<body class="nav-sidebar docked nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -289,105 +155,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <span class="navbar-title">AstroPy en Español</span>
     </a>
   </div>
-            <div id="quarto-search" class="" title="Search"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+            <div id="quarto-search" class="" title="Buscar"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Navegación de palanca" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../../index.html"> 
-<span class="menu-text">Inicio</span></a>
+    <a class="nav-link active" href="../../posts/basico/01-introduccion.html" aria-current="page"> 
+<span class="menu-text">Módulos</span></a>
   </li>  
-  <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-basico" role="link" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">Basico</span>
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-basico">    
-        <li>
-    <a class="dropdown-item" href="../../posts/basico/01-introduccion.html">
- <span class="dropdown-text">01 - Introduccion a Astropy</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/basico/02-unidades.html">
- <span class="dropdown-text">02 - Unidades y constantes</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/basico/03-tiempo.html">
- <span class="dropdown-text">03 - Tiempo astronomico</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/basico/04-coordenadas.html">
- <span class="dropdown-text">04 - Coordenadas celestes</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/basico/05-tablas.html">
- <span class="dropdown-text">05 - Tablas astronomicas</span></a>
-  </li>  
-    </ul>
-  </li>
-  <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-intermedio" role="link" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">Intermedio</span>
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-intermedio">    
-        <li>
-    <a class="dropdown-item" href="../../posts/intermedio/06-fits.html">
- <span class="dropdown-text">06 - Archivos FITS</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/intermedio/07-wcs.html">
- <span class="dropdown-text">07 - WCS del pixel al cielo</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/intermedio/08-fotometria.html">
- <span class="dropdown-text">08 - Fotometria de apertura</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/intermedio/09-visualizacion.html">
- <span class="dropdown-text">09 - Visualizacion astronomica</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/intermedio/10-estadistica.html">
- <span class="dropdown-text">10 - Estadistica y modelado</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/intermedio/11-catalogos.html">
- <span class="dropdown-text">11 - Catalogos en linea</span></a>
-  </li>  
-    </ul>
-  </li>
-  <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-avanzado" role="link" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">Avanzado</span>
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-avanzado">    
-        <li>
-    <a class="dropdown-item" href="../../posts/avanzado/12-espectroscopia.html">
- <span class="dropdown-text">12 - Espectroscopia</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/avanzado/13-cosmologia.html">
- <span class="dropdown-text">13 - Cosmologia computacional</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/avanzado/14-orbital.html">
- <span class="dropdown-text">14 - Mecanica orbital</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/avanzado/15-series-temporales.html">
- <span class="dropdown-text">15 - Series temporales</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/avanzado/16-extensiones.html">
- <span class="dropdown-text">16 - Extensiones propias</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/avanzado/17-pipeline.html">
- <span class="dropdown-text">17 - Pipeline completo</span></a>
-  </li>  
-    </ul>
-  </li>
   <li class="nav-item">
     <a class="nav-link" href="../../sobre.html"> 
 <span class="menu-text">Sobre el blog</span></a>
@@ -395,32 +172,217 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/tu-usuario/astropy-blog"> <i class="bi bi-github" role="img" aria-label="GitHub">
+    <a class="nav-link" href="https://github.com/fvelez78/astropy-blog"> <i class="bi bi-github" role="img" aria-label="GitHub">
 </i> 
 <span class="menu-text"></span></a>
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
-  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
 </div>
       </div> <!-- /container-fluid -->
     </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../posts/avanzado/12-espectroscopia.html">Nivel 3 · Avanzado</a></li><li class="breadcrumb-item"><a href="../../posts/avanzado/13-cosmologia.html">13 · Cosmología computacional</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Buscar" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
 </header>
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Buscar"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Inicio</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Nivel 1 · Básico</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/basico/01-introduccion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">01 · ¿Qué es Astropy y por qué usarlo?</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/basico/02-unidades.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">02 · Unidades y constantes físicas</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/basico/03-tiempo.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">03 · Tiempo astronómico con astropy.time</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/basico/04-coordenadas.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">04 · Coordenadas celestes con SkyCoord</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/basico/05-tablas.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">05 · Tablas astronómicas con astropy.table</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Nivel 2 · Intermedio</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/intermedio/06-fits.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">06 · Lectura y manipulación de archivos FITS</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/intermedio/07-wcs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">07 · WCS: del píxel al cielo</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/intermedio/08-fotometria.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">08 · Fotometría de apertura</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/intermedio/09-visualizacion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">09 · Visualización astronómica</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/intermedio/10-estadistica.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">10 · Estadística y modelado</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/intermedio/11-catalogos.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">11 · Consultas a catálogos en línea</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Nivel 3 · Avanzado</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/avanzado/12-espectroscopia.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">12 · Espectroscopía con specutils</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/avanzado/13-cosmologia.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">13 · Cosmología computacional</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/avanzado/14-orbital.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">14 · Mecánica orbital y efemérides</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/avanzado/15-series-temporales.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">15 · Series temporales astronómicas</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/avanzado/16-extensiones.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">16 · Extensiones y modelos propios</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/avanzado/17-pipeline.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">17 · Pipeline completo de reducción</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">En esta página</h2>
+   
+  <ul>
+  <li><a href="#por-qué-distancia-es-complicado-en-cosmología" id="toc-por-qué-distancia-es-complicado-en-cosmología" class="nav-link active" data-scroll-target="#por-qué-distancia-es-complicado-en-cosmología"><span class="header-section-number">1</span> ¿Por qué “distancia” es complicado en cosmología?</a></li>
+  <li><a href="#los-modelos-cosmológicos-incluidos" id="toc-los-modelos-cosmológicos-incluidos" class="nav-link" data-scroll-target="#los-modelos-cosmológicos-incluidos"><span class="header-section-number">2</span> Los modelos cosmológicos incluidos</a>
+  <ul class="collapse">
+  <li><a href="#crear-un-modelo-propio" id="toc-crear-un-modelo-propio" class="nav-link" data-scroll-target="#crear-un-modelo-propio"><span class="header-section-number">2.1</span> Crear un modelo propio</a></li>
+  </ul></li>
+  <li><a href="#distancias-para-un-corrimiento-al-rojo" id="toc-distancias-para-un-corrimiento-al-rojo" class="nav-link" data-scroll-target="#distancias-para-un-corrimiento-al-rojo"><span class="header-section-number">3</span> Distancias para un corrimiento al rojo</a></li>
+  <li><a href="#tiempos-cósmicos" id="toc-tiempos-cósmicos" class="nav-link" data-scroll-target="#tiempos-cósmicos"><span class="header-section-number">4</span> Tiempos cósmicos</a></li>
+  <li><a href="#el-camino-inverso-z_at_value" id="toc-el-camino-inverso-z_at_value" class="nav-link" data-scroll-target="#el-camino-inverso-z_at_value"><span class="header-section-number">5</span> El camino inverso: <code>z_at_value</code></a></li>
+  <li><a href="#tamaños-y-brillos" id="toc-tamaños-y-brillos" class="nav-link" data-scroll-target="#tamaños-y-brillos"><span class="header-section-number">6</span> Tamaños y brillos</a>
+  <ul class="collapse">
+  <li><a href="#escala-angular" id="toc-escala-angular" class="nav-link" data-scroll-target="#escala-angular"><span class="header-section-number">6.1</span> Escala angular</a></li>
+  <li><a href="#módulo-de-distancia" id="toc-módulo-de-distancia" class="nav-link" data-scroll-target="#módulo-de-distancia"><span class="header-section-number">6.2</span> Módulo de distancia</a></li>
+  </ul></li>
+  <li><a href="#aplicación-el-diagrama-de-hubble" id="toc-aplicación-el-diagrama-de-hubble" class="nav-link" data-scroll-target="#aplicación-el-diagrama-de-hubble"><span class="header-section-number">7</span> Aplicación: el diagrama de Hubble</a></li>
+  <li><a href="#ejercicio" id="toc-ejercicio" class="nav-link" data-scroll-target="#ejercicio"><span class="header-section-number">8</span> Ejercicio</a></li>
+  <li><a href="#qué-aprendiste-en-este-módulo" id="toc-qué-aprendiste-en-este-módulo" class="nav-link" data-scroll-target="#qué-aprendiste-en-este-módulo"><span class="header-section-number">9</span> ¿Qué aprendiste en este módulo?</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../posts/avanzado/12-espectroscopia.html">Nivel 3 · Avanzado</a></li><li class="breadcrumb-item"><a href="../../posts/avanzado/13-cosmologia.html">13 · Cosmología computacional</a></li></ol></nav>
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title">13 - Cosmologia computacional</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<div class="quarto-title-block"><div><h1 class="title">13 · Cosmología computacional</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Código</button></div></div>
   <div class="quarto-categories">
     <div class="quarto-category">avanzado</div>
   </div>
@@ -428,14 +390,26 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <div>
   <div class="description">
-    Proximo modulo en preparacion
+    Calcula distancias, edades y tiempos en un universo en expansión con astropy.cosmology: modelos ΛCDM, Planck 2018, z_at_value y el diagrama de Hubble
   </div>
 </div>
 
 
 <div class="quarto-title-meta">
 
+    <div>
+    <div class="quarto-title-meta-heading">Autor/a</div>
+    <div class="quarto-title-meta-contents">
+             <p>Blog AstroPy en Español </p>
+          </div>
+  </div>
     
+    <div>
+    <div class="quarto-title-meta-heading">Fecha de publicación</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">1 de noviembre de 2026</p>
+    </div>
+  </div>
   
     
   </div>
@@ -445,41 +419,501 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p><span class="badge-avanzado">Avanzado</span></p>
-<div class="callout callout-style-default callout-warning callout-titled">
+<p><span class="badge-avanzado">🚀 Avanzado</span></p>
+<section id="por-qué-distancia-es-complicado-en-cosmología" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="por-qué-distancia-es-complicado-en-cosmología"><span class="header-section-number">1</span> ¿Por qué “distancia” es complicado en cosmología?</h2>
+<p>En la vida cotidiana la distancia es una sola. En un universo que <strong>se expande</strong>, la pregunta <em>“¿a qué distancia está esta galaxia?”</em> tiene varias respuestas correctas, según qué se quiera medir:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Distancia</th>
+<th>Pregunta que responde</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Comóvil</strong></td>
+<td>¿A qué distancia está <em>hoy</em> la galaxia?</td>
+</tr>
+<tr class="even">
+<td><strong>De luminosidad</strong> <span class="math inline">\(d_L\)</span></td>
+<td>¿Qué distancia explica el brillo que vemos? (supernovas)</td>
+</tr>
+<tr class="odd">
+<td><strong>Diametral angular</strong> <span class="math inline">\(d_A\)</span></td>
+<td>¿Qué distancia explica el tamaño aparente?</td>
+</tr>
+<tr class="even">
+<td><strong>Tiempo de viaje de la luz</strong></td>
+<td>¿Hace cuánto salió la luz que vemos?</td>
+</tr>
+</tbody>
+</table>
+<p>Todas dependen del <strong>modelo cosmológico</strong>: cuánta materia y energía oscura hay, y la constante de Hubble <span class="math inline">\(H_0\)</span>. El submódulo <code>astropy.cosmology</code> hace estos cálculos (integrales nada triviales) en una línea.</p>
+<div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Warning</span>Modulo en construccion
+<span class="screen-reader-only">Nota</span>Requisitos previos
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Este modulo esta siendo preparado. Vuelve pronto.</p>
+<ul>
+<li>Módulos 02 (unidades) y 03 (tiempo)</li>
+<li>En el módulo 01 vimos que <code>H0</code> <strong>no está</strong> en <code>astropy.constants</code>: aquí es donde vive</li>
+</ul>
 </div>
 </div>
+<hr>
+</section>
+<section id="los-modelos-cosmológicos-incluidos" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="los-modelos-cosmológicos-incluidos"><span class="header-section-number">2</span> Los modelos cosmológicos incluidos</h2>
+<div id="b41aa7b0" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Astropy trae los modelos medidos por las grandes misiones</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Planck18 = resultados finales del satélite Planck (2018)</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.cosmology <span class="im">import</span> Planck18, WMAP9</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>cosmo <span class="op">=</span> Planck18     <span class="co"># modelo que usaremos en todo el módulo</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Modelo           : </span><span class="sc">{</span>cosmo<span class="sc">.</span>name<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"H0               : </span><span class="sc">{</span>cosmo<span class="sc">.</span>H0<span class="sc">}</span><span class="ss">"</span>)                 <span class="co"># constante de Hubble</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Ω materia (Om0)  : </span><span class="sc">{</span>cosmo<span class="sc">.</span>Om0<span class="sc">:.4f}</span><span class="ss">"</span>)            <span class="co"># materia (oscura + bariónica)</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Ω energía oscura : </span><span class="sc">{</span>cosmo<span class="sc">.</span>Ode0<span class="sc">:.4f}</span><span class="ss">"</span>)           <span class="co"># constante cosmológica Λ</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Ω bariones (Ob0) : </span><span class="sc">{</span>cosmo<span class="sc">.</span>Ob0<span class="sc">:.4f}</span><span class="ss">"</span>)            <span class="co"># materia "normal"</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"T del fondo CMB  : </span><span class="sc">{</span>cosmo<span class="sc">.</span>Tcmb0<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Edad del universo: </span><span class="sc">{</span>cosmo<span class="sc">.</span>age(<span class="dv">0</span>)<span class="sc">:.3f}</span><span class="ss">"</span>)         <span class="co"># edad hoy (z = 0)</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Comparación con WMAP9: H0 = </span><span class="sc">{</span>WMAP9<span class="sc">.</span>H0<span class="sc">}</span><span class="ss">, edad = </span><span class="sc">{</span>WMAP9<span class="sc">.</span>age(<span class="dv">0</span>)<span class="sc">:.3f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Modelo           : Planck18
+H0               : 67.66 km / (Mpc s)
+Ω materia (Om0)  : 0.3097
+Ω energía oscura : 0.6888
+Ω bariones (Ob0) : 0.0490
+T del fondo CMB  : 2.7255 K
+Edad del universo: 13.787 Gyr
+
+Comparación con WMAP9: H0 = 69.32 km / (Mpc s), edad = 13.769 Gyr</code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>La “tensión de Hubble”
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Planck (fondo cósmico de microondas) mide <span class="math inline">\(H_0 \approx 67.7\)</span> km/s/Mpc, pero las supernovas cercanas dan <span class="math inline">\(H_0 \approx 73\)</span>. Esta discrepancia es uno de los grandes problemas abiertos de la cosmología actual.</p>
+</div>
+</div>
+<section id="crear-un-modelo-propio" class="level3" data-number="2.1">
+<h3 data-number="2.1" class="anchored" data-anchor-id="crear-un-modelo-propio"><span class="header-section-number">2.1</span> Crear un modelo propio</h3>
+<div id="bb0dc124" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># FlatLambdaCDM: universo plano con materia + constante cosmológica</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.cosmology <span class="im">import</span> FlatLambdaCDM</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> astropy.units <span class="im">as</span> u</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Modelo "de libro de texto" con números redondos</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>cosmo_simple <span class="op">=</span> FlatLambdaCDM(H0<span class="op">=</span><span class="dv">70</span> <span class="op">*</span> u.km <span class="op">/</span> u.s <span class="op">/</span> u.Mpc, Om0<span class="op">=</span><span class="fl">0.3</span>, name<span class="op">=</span><span class="st">'Didáctico'</span>)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Un universo sin energía oscura (como se creía antes de 1998)</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>cosmo_sin_lambda <span class="op">=</span> FlatLambdaCDM(H0<span class="op">=</span><span class="dv">70</span> <span class="op">*</span> u.km <span class="op">/</span> u.s <span class="op">/</span> u.Mpc, Om0<span class="op">=</span><span class="fl">1.0</span>, name<span class="op">=</span><span class="st">'Solo materia'</span>)</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> c <span class="kw">in</span> [cosmo_simple, cosmo_sin_lambda]:</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>c<span class="sc">.</span>name<span class="sc">:&lt;14}</span><span class="ss">: edad = </span><span class="sc">{</span>c<span class="sc">.</span>age(<span class="dv">0</span>)<span class="sc">:.2f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Didáctico     : edad = 13.47 Gyr
+Solo materia  : edad = 9.31 Gyr</code></pre>
+</div>
+</div>
+<p>¡Un universo sin energía oscura sería <strong>más joven</strong> que algunas estrellas viejas! Esta fue una de las pistas que llevaron al descubrimiento de la energía oscura.</p>
+<hr>
+</section>
+</section>
+<section id="distancias-para-un-corrimiento-al-rojo" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="distancias-para-un-corrimiento-al-rojo"><span class="header-section-number">3</span> Distancias para un corrimiento al rojo</h2>
+<p>En el módulo 12 medimos <span class="math inline">\(z = 0.0185\)</span> para una galaxia. Veamos qué significa eso, junto con objetos más lejanos.</p>
+<div id="8367deec" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Las distintas distancias para varios corrimientos al rojo</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.table <span class="im">import</span> Table</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>objetos <span class="op">=</span> {</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Galaxia del módulo 12'</span>: <span class="fl">0.0185</span>,</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Cúmulo de Coma'</span>       : <span class="fl">0.0231</span>,</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Cuásar 3C 273'</span>        : <span class="fl">0.158</span>,</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Galaxia típica (z=1)'</span> : <span class="fl">1.0</span>,</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Galaxia lejana JWST'</span>  : <span class="fl">10.0</span>,</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>z <span class="op">=</span> np.array(<span class="bu">list</span>(objetos.values()))</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>tabla <span class="op">=</span> Table({</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    <span class="st">'objeto'</span>    : <span class="bu">list</span>(objetos.keys()),</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>    <span class="st">'z'</span>         : z,</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>    <span class="st">'d_comovil'</span> : cosmo.comoving_distance(z).to(u.Mpc).<span class="bu">round</span>(<span class="dv">1</span>),</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>    <span class="st">'d_lum'</span>     : cosmo.luminosity_distance(z).to(u.Mpc).<span class="bu">round</span>(<span class="dv">1</span>),</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>    <span class="st">'d_ang'</span>     : cosmo.angular_diameter_distance(z).to(u.Mpc).<span class="bu">round</span>(<span class="dv">1</span>),</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>    <span class="st">'t_viaje'</span>   : cosmo.lookback_time(z).to(u.Gyr).<span class="bu">round</span>(<span class="dv">3</span>),</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(tabla)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        objeto          z    d_comovil  d_lum   d_ang  t_viaje
+                                Mpc      Mpc     Mpc     Gyr  
+--------------------- ------ --------- -------- ------ -------
+Galaxia del módulo 12 0.0185      81.6     83.1   80.1   0.264
+       Cúmulo de Coma 0.0231     101.8    104.2   99.5   0.328
+        Cuásar 3C 273  0.158     673.6    780.0  581.7   2.042
+ Galaxia típica (z=1)    1.0    3395.6   6791.3 1697.8   7.936
+  Galaxia lejana JWST   10.0    9636.3 105999.1  876.0  13.315</code></pre>
+</div>
+</div>
+<p>Fíjate en dos curiosidades:</p>
+<ul>
+<li>A <span class="math inline">\(z = 10\)</span> la distancia de luminosidad es <strong>enorme</strong> (&gt; 100 000 Mpc): el objeto se ve mucho más débil de lo que su distancia “real” sugiere.</li>
+<li>La distancia diametral angular <strong>disminuye</strong> a z grande: una galaxia muy lejana se ve <em>más grande</em> que una a z ≈ 1,6. ¡El universo actúa como una lente!</li>
+</ul>
+<div id="cell-fig-distancias" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Graficar las distancias en función de z</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy <span class="im">import</span> constants <span class="im">as</span> const</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>z_grid <span class="op">=</span> np.logspace(<span class="op">-</span><span class="dv">2</span>, <span class="fl">1.3</span>, <span class="dv">300</span>)      <span class="co"># de z = 0.01 a z = 20</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">5</span>))</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>ax.plot(z_grid, cosmo.luminosity_distance(z_grid).to(u.Gpc), label<span class="op">=</span><span class="st">'Luminosidad $d_L$'</span>)</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>ax.plot(z_grid, cosmo.comoving_distance(z_grid).to(u.Gpc), label<span class="op">=</span><span class="st">'Comóvil'</span>)</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>ax.plot(z_grid, cosmo.angular_diameter_distance(z_grid).to(u.Gpc), label<span class="op">=</span><span class="st">'Diametral angular $d_A$'</span>)</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Tiempo de viaje de la luz × velocidad de la luz = "distancia de viaje"</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>ax.plot(z_grid, (cosmo.lookback_time(z_grid) <span class="op">*</span> const.c).to(u.Gpc),</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>        label<span class="op">=</span><span class="st">'Viaje de la luz × c'</span>, ls<span class="op">=</span><span class="st">'--'</span>)</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>ax.set_xscale(<span class="st">'log'</span>)<span class="op">;</span> ax.set_yscale(<span class="st">'log'</span>)</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">'Corrimiento al rojo z'</span>)</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">'Distancia [Gpc]'</span>)</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>ax.grid(alpha<span class="op">=</span><span class="fl">0.3</span>, which<span class="op">=</span><span class="st">'both'</span>)</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div id="fig-distancias" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-distancias-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="13-cosmologia_files/figure-html/fig-distancias-output-1.png" width="673" height="431" class="figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-distancias-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;1: Las distintas distancias cosmológicas en función del corrimiento al rojo
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<hr>
+</section>
+<section id="tiempos-cósmicos" class="level2" data-number="4">
+<h2 data-number="4" class="anchored" data-anchor-id="tiempos-cósmicos"><span class="header-section-number">4</span> Tiempos cósmicos</h2>
+<div id="a1e0a3c6" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Edad del universo en cada época y tiempo transcurrido desde entonces</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>eventos <span class="op">=</span> {</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Fondo cósmico de microondas'</span>: <span class="dv">1089</span>,</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Primeras galaxias'</span>          : <span class="dv">15</span>,</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Pico de formación estelar'</span>  : <span class="dv">2</span>,</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Formación del Sol'</span>          : <span class="fl">0.43</span>,</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span><span class="st">'Evento'</span><span class="sc">:&lt;30}</span><span class="ss"> </span><span class="sc">{</span><span class="st">'z'</span><span class="sc">:&gt;7}</span><span class="ss"> </span><span class="sc">{</span><span class="st">'Edad del universo'</span><span class="sc">:&gt;19}</span><span class="ss"> </span><span class="sc">{</span><span class="st">'Hace'</span><span class="sc">:&gt;12}</span><span class="ss">"</span>)</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> nombre, zz <span class="kw">in</span> eventos.items():</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    edad <span class="op">=</span> cosmo.age(zz)               <span class="co"># edad del universo en ese momento</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    hace <span class="op">=</span> cosmo.lookback_time(zz)     <span class="co"># cuánto tiempo hace de eso</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Elegimos la unidad más legible según el tamaño del número</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> edad <span class="op">&lt;</span> <span class="dv">1</span> <span class="op">*</span> u.Myr:</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>        edad_txt <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>edad<span class="sc">.</span>to(u.kyr)<span class="sc">:.0f}</span><span class="ss">"</span>       <span class="co"># miles de años</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">elif</span> edad <span class="op">&lt;</span> <span class="dv">1</span> <span class="op">*</span> u.Gyr:</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>        edad_txt <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>edad<span class="sc">.</span>to(u.Myr)<span class="sc">:.0f}</span><span class="ss">"</span>       <span class="co"># millones de años</span></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>        edad_txt <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>edad<span class="sc">.</span>to(u.Gyr)<span class="sc">:.2f}</span><span class="ss">"</span>       <span class="co"># miles de millones de años</span></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>nombre<span class="sc">:&lt;30}</span><span class="ss"> </span><span class="sc">{</span>zz<span class="sc">:&gt;7}</span><span class="ss"> </span><span class="sc">{</span>edad_txt<span class="sc">:&gt;19}</span><span class="ss"> </span><span class="sc">{</span>hace<span class="sc">.</span>to(u.Gyr)<span class="sc">:&gt;12.2f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Evento                               z   Edad del universo         Hace
+Fondo cósmico de microondas       1089             373 kyr        13.79 Gyr
+Primeras galaxias                   15             268 Myr        13.52 Gyr
+Pico de formación estelar            2            3.28 Gyr        10.51 Gyr
+Formación del Sol                 0.43            9.13 Gyr         4.66 Gyr</code></pre>
+</div>
+</div>
+<p>Esta es la forma correcta de hacer la “línea de tiempo cósmica” que en el módulo 03 tuvimos que simplificar: <code>astropy.time.Time</code> no sirve para miles de millones de años, pero <code>astropy.cosmology</code> sí.</p>
+<hr>
+</section>
+<section id="el-camino-inverso-z_at_value" class="level2" data-number="5">
+<h2 data-number="5" class="anchored" data-anchor-id="el-camino-inverso-z_at_value"><span class="header-section-number">5</span> El camino inverso: <code>z_at_value</code></h2>
+<p>¿Qué corrimiento al rojo corresponde a una edad o distancia dada? Hay que invertir la función numéricamente. <code>z_at_value</code> lo hace por nosotros.</p>
+<div id="ede79ac9" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Encontrar z a partir de una edad, un tiempo de viaje o una distancia</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.cosmology <span class="im">import</span> z_at_value</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="co"># z_at_value devuelve una cantidad con unidad 'redshift'; usamos .value</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="co"># para mostrar solo el número</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="co"># ¿A qué z el universo tenía 1000 millones de años?</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>z_1gyr <span class="op">=</span> z_at_value(cosmo.age, <span class="dv">1</span> <span class="op">*</span> u.Gyr)</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"El universo tenía 1 Gyr a z = </span><span class="sc">{</span>z_1gyr<span class="sc">.</span>value<span class="sc">:.3f}</span><span class="ss">"</span>)</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="co"># ¿A qué z la luz viajó durante 4 570 millones de años (la edad del Sol)?</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>z_sol <span class="op">=</span> z_at_value(cosmo.lookback_time, <span class="fl">4.57</span> <span class="op">*</span> u.Gyr)</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"La luz que salió cuando se formó el Sol viene de z = </span><span class="sc">{</span>z_sol<span class="sc">.</span>value<span class="sc">:.3f}</span><span class="ss">"</span>)</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a><span class="co"># ¿A qué z está una galaxia con distancia de luminosidad de 1 Gpc?</span></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>z_1gpc <span class="op">=</span> z_at_value(cosmo.luminosity_distance, <span class="dv">1</span> <span class="op">*</span> u.Gpc)</span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"d_L = 1 Gpc corresponde a z = </span><span class="sc">{</span>z_1gpc<span class="sc">.</span>value<span class="sc">:.3f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>El universo tenía 1 Gyr a z = 5.666
+La luz que salió cuando se formó el Sol viene de z = 0.419
+d_L = 1 Gpc corresponde a z = 0.198</code></pre>
+</div>
+</div>
+<hr>
+</section>
+<section id="tamaños-y-brillos" class="level2" data-number="6">
+<h2 data-number="6" class="anchored" data-anchor-id="tamaños-y-brillos"><span class="header-section-number">6</span> Tamaños y brillos</h2>
+<section id="escala-angular" class="level3" data-number="6.1">
+<h3 data-number="6.1" class="anchored" data-anchor-id="escala-angular"><span class="header-section-number">6.1</span> Escala angular</h3>
+<div id="01d86750" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co"># ¿Cuántos kiloparsecs abarca 1 segundo de arco a cada z?</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Útil para pasar el tamaño aparente de una galaxia a su tamaño real</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> zz <span class="kw">in</span> [<span class="fl">0.0185</span>, <span class="fl">0.1</span>, <span class="fl">0.5</span>, <span class="fl">1.0</span>, <span class="fl">1.6</span>, <span class="fl">3.0</span>, <span class="fl">10.0</span>]:</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    escala <span class="op">=</span> cosmo.kpc_proper_per_arcmin(zz).to(u.kpc <span class="op">/</span> u.arcsec)</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"z = </span><span class="sc">{</span>zz<span class="sc">:&gt;6}</span><span class="ss">:  1 arcsec = </span><span class="sc">{</span>escala<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Ejemplo: una galaxia de 12 arcsec de diámetro a z = 0.0185</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>tam <span class="op">=</span> (<span class="dv">12</span> <span class="op">*</span> u.arcsec <span class="op">*</span> cosmo.kpc_proper_per_arcmin(<span class="fl">0.0185</span>)).to(u.kpc)</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Galaxia de 12″ a z = 0.0185 → diámetro real ≈ </span><span class="sc">{</span>tam<span class="sc">:.1f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>z = 0.0185:  1 arcsec = 0.39 kpc / arcsec
+z =    0.1:  1 arcsec = 1.91 kpc / arcsec
+z =    0.5:  1 arcsec = 6.29 kpc / arcsec
+z =    1.0:  1 arcsec = 8.23 kpc / arcsec
+z =    1.6:  1 arcsec = 8.69 kpc / arcsec
+z =    3.0:  1 arcsec = 7.88 kpc / arcsec
+z =   10.0:  1 arcsec = 4.25 kpc / arcsec
+
+Galaxia de 12″ a z = 0.0185 → diámetro real ≈ 4.7 kpc</code></pre>
+</div>
+</div>
+</section>
+<section id="módulo-de-distancia" class="level3" data-number="6.2">
+<h3 data-number="6.2" class="anchored" data-anchor-id="módulo-de-distancia"><span class="header-section-number">6.2</span> Módulo de distancia</h3>
+<p><span class="math display">\[\mu = m - M = 5 \log_{10}\left(\frac{d_L}{10\,\text{pc}}\right)\]</span></p>
+<div id="8a3d5df9" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co"># El módulo de distancia convierte magnitudes aparentes en absolutas</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Una supernova Ia tiene magnitud absoluta pico M ≈ -19.3 (vela estándar)</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>M_snia <span class="op">=</span> <span class="op">-</span><span class="fl">19.3</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> zz <span class="kw">in</span> [<span class="fl">0.01</span>, <span class="fl">0.1</span>, <span class="fl">0.5</span>, <span class="fl">1.0</span>]:</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    mu <span class="op">=</span> cosmo.distmod(zz)                 <span class="co"># módulo de distancia en magnitudes</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>    m <span class="op">=</span> M_snia <span class="op">+</span> mu.value                  <span class="co"># magnitud aparente esperada</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"z = </span><span class="sc">{</span>zz<span class="sc">:&lt;5}</span><span class="ss"> μ = </span><span class="sc">{</span>mu<span class="sc">:.2f}</span><span class="ss">  → SN Ia aparente: m = </span><span class="sc">{</span>m<span class="sc">:.1f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>z = 0.01  μ = 33.25 mag  → SN Ia aparente: m = 13.9
+z = 0.1   μ = 38.39 mag  → SN Ia aparente: m = 19.1
+z = 0.5   μ = 42.33 mag  → SN Ia aparente: m = 23.0
+z = 1.0   μ = 44.16 mag  → SN Ia aparente: m = 24.9</code></pre>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="aplicación-el-diagrama-de-hubble" class="level2" data-number="7">
+<h2 data-number="7" class="anchored" data-anchor-id="aplicación-el-diagrama-de-hubble"><span class="header-section-number">7</span> Aplicación: el diagrama de Hubble</h2>
+<p>En 1998 dos equipos midieron supernovas Ia lejanas y descubrieron que eran <strong>más débiles</strong> de lo esperado en un universo sin energía oscura: la expansión se está <strong>acelerando</strong> (Premio Nobel 2011). Lo reproducimos con datos simulados.</p>
+<div id="cell-fig-hubble" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Simular supernovas en el universo Planck18 y compararlas con dos modelos</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.cosmology <span class="im">import</span> FlatLambdaCDM</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> np.random.default_rng(<span class="dv">1998</span>)</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 60 supernovas con z entre 0.01 y 1.4</span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>z_sn <span class="op">=</span> np.sort(rng.uniform(<span class="fl">0.01</span>, <span class="fl">1.4</span>, <span class="dv">60</span>))</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>err_mu <span class="op">=</span> <span class="fl">0.15</span>                                          <span class="co"># error típico en magnitudes</span></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>mu_sn <span class="op">=</span> cosmo.distmod(z_sn).value <span class="op">+</span> rng.normal(<span class="dv">0</span>, err_mu, z_sn.size)</span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Modelos a comparar (todos con el mismo H0)</span></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>modelos <span class="op">=</span> {</span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Planck18 (ΛCDM)'</span>      : cosmo,</span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Solo materia (Ω_m=1)'</span> : FlatLambdaCDM(H0<span class="op">=</span>cosmo.H0, Om0<span class="op">=</span><span class="fl">1.0</span>),</span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Casi solo energía oscura (Ω_m=0.01)'</span>: FlatLambdaCDM(H0<span class="op">=</span>cosmo.H0, Om0<span class="op">=</span><span class="fl">0.01</span>),</span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>z_lin <span class="op">=</span> np.linspace(<span class="fl">0.01</span>, <span class="fl">1.5</span>, <span class="dv">200</span>)</span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a>fig, (ax1, ax2) <span class="op">=</span> plt.subplots(<span class="dv">2</span>, <span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">7</span>), sharex<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a>                               gridspec_kw<span class="op">=</span>{<span class="st">'height_ratios'</span>: [<span class="dv">2</span>, <span class="dv">1</span>]})</span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel superior: módulo de distancia vs z</span></span>
+<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a>ax1.errorbar(z_sn, mu_sn, yerr<span class="op">=</span>err_mu, fmt<span class="op">=</span><span class="st">'o'</span>, ms<span class="op">=</span><span class="dv">4</span>, color<span class="op">=</span><span class="st">'C7'</span>, alpha<span class="op">=</span><span class="fl">0.6</span>, label<span class="op">=</span><span class="st">'SN Ia simuladas'</span>)</span>
+<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> nombre, m <span class="kw">in</span> modelos.items():</span>
+<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a>    ax1.plot(z_lin, m.distmod(z_lin), label<span class="op">=</span>nombre)</span>
+<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a>ax1.set_ylabel(<span class="st">'Módulo de distancia μ'</span>)</span>
+<span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a>ax1.legend()</span>
+<span id="cb16-33"><a href="#cb16-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-34"><a href="#cb16-34" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel inferior: diferencia respecto al modelo "solo materia"</span></span>
+<span id="cb16-35"><a href="#cb16-35" aria-hidden="true" tabindex="-1"></a>referencia <span class="op">=</span> modelos[<span class="st">'Solo materia (Ω_m=1)'</span>]</span>
+<span id="cb16-36"><a href="#cb16-36" aria-hidden="true" tabindex="-1"></a>ax2.errorbar(z_sn, mu_sn <span class="op">-</span> referencia.distmod(z_sn).value, yerr<span class="op">=</span>err_mu,</span>
+<span id="cb16-37"><a href="#cb16-37" aria-hidden="true" tabindex="-1"></a>             fmt<span class="op">=</span><span class="st">'o'</span>, ms<span class="op">=</span><span class="dv">4</span>, color<span class="op">=</span><span class="st">'C7'</span>, alpha<span class="op">=</span><span class="fl">0.6</span>)</span>
+<span id="cb16-38"><a href="#cb16-38" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> nombre, m <span class="kw">in</span> modelos.items():</span>
+<span id="cb16-39"><a href="#cb16-39" aria-hidden="true" tabindex="-1"></a>    ax2.plot(z_lin, m.distmod(z_lin).value <span class="op">-</span> referencia.distmod(z_lin).value)</span>
+<span id="cb16-40"><a href="#cb16-40" aria-hidden="true" tabindex="-1"></a>ax2.axhline(<span class="dv">0</span>, color<span class="op">=</span><span class="st">'gray'</span>, lw<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb16-41"><a href="#cb16-41" aria-hidden="true" tabindex="-1"></a>ax2.set_xlabel(<span class="st">'Corrimiento al rojo z'</span>)</span>
+<span id="cb16-42"><a href="#cb16-42" aria-hidden="true" tabindex="-1"></a>ax2.set_ylabel(<span class="st">'Δμ vs solo materia'</span>)</span>
+<span id="cb16-43"><a href="#cb16-43" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb16-44"><a href="#cb16-44" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div id="fig-hubble" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-hubble-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="13-cosmologia_files/figure-html/fig-hubble-output-1.png" width="758" height="662" class="figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-hubble-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;2: Diagrama de Hubble con supernovas simuladas y tres modelos cosmológicos
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Las supernovas quedan <strong>por encima</strong> de la curva de “solo materia” (Δμ &gt; 0): están más lejos de lo esperado → la expansión se acelera.</p>
+<hr>
+</section>
+<section id="ejercicio" class="level2" data-number="8">
+<h2 data-number="8" class="anchored" data-anchor-id="ejercicio"><span class="header-section-number">8</span> Ejercicio</h2>
+<p>Ajusta el valor de <span class="math inline">\(\Omega_m\)</span> a las supernovas simuladas:</p>
+<ol type="1">
+<li>Prueba valores de <code>Om0</code> entre 0.05 y 1.0 en un universo plano</li>
+<li>Para cada uno calcula <span class="math inline">\(\chi^2 = \sum \left(\frac{\mu_{obs} - \mu_{modelo}}{\sigma}\right)^2\)</span></li>
+<li>¿Qué valor de <span class="math inline">\(\Omega_m\)</span> minimiza <span class="math inline">\(\chi^2\)</span>? ¿Coincide con Planck18?</li>
+</ol>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Ver solución
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div id="cell-fig-chi2-om" class="cell" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="co"># SOLUCIÓN: barrido de Ω_m y mínimo de χ²</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.cosmology <span class="im">import</span> FlatLambdaCDM</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Paso 1: rejilla de valores de Ω_m</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>om_valores <span class="op">=</span> np.linspace(<span class="fl">0.05</span>, <span class="fl">1.0</span>, <span class="dv">96</span>)</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Paso 2: χ² para cada modelo</span></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>chi2 <span class="op">=</span> []</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> om <span class="kw">in</span> om_valores:</span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>    modelo <span class="op">=</span> FlatLambdaCDM(H0<span class="op">=</span>cosmo.H0, Om0<span class="op">=</span>om)</span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>    residuo <span class="op">=</span> (mu_sn <span class="op">-</span> modelo.distmod(z_sn).value) <span class="op">/</span> err_mu</span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>    chi2.append(np.<span class="bu">sum</span>(residuo<span class="op">**</span><span class="dv">2</span>))</span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>chi2 <span class="op">=</span> np.array(chi2)</span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Paso 3: el mínimo y un intervalo aproximado de 1σ (Δχ² = 1)</span></span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>om_mejor <span class="op">=</span> om_valores[np.argmin(chi2)]</span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>dentro <span class="op">=</span> om_valores[chi2 <span class="op">&lt;</span> chi2.<span class="bu">min</span>() <span class="op">+</span> <span class="dv">1</span>]</span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Mejor Ω_m = </span><span class="sc">{</span>om_mejor<span class="sc">:.3f}</span><span class="ss">  (1σ: </span><span class="sc">{</span>dentro<span class="sc">.</span><span class="bu">min</span>()<span class="sc">:.2f}</span><span class="ss"> – </span><span class="sc">{</span>dentro<span class="sc">.</span><span class="bu">max</span>()<span class="sc">:.2f}</span><span class="ss">)"</span>)</span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Planck18  = </span><span class="sc">{</span>cosmo<span class="sc">.</span>Om0<span class="sc">:.3f}</span><span class="ss">"</span>)</span>
+<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="dv">4</span>))</span>
+<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a>ax.plot(om_valores, chi2 <span class="op">-</span> chi2.<span class="bu">min</span>())</span>
+<span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a>ax.axvline(cosmo.Om0, color<span class="op">=</span><span class="st">'C3'</span>, ls<span class="op">=</span><span class="st">'--'</span>, label<span class="op">=</span><span class="st">'Planck18'</span>)</span>
+<span id="cb17-29"><a href="#cb17-29" aria-hidden="true" tabindex="-1"></a>ax.axhline(<span class="dv">1</span>, color<span class="op">=</span><span class="st">'gray'</span>, ls<span class="op">=</span><span class="st">':'</span>, label<span class="op">=</span><span class="st">'Δχ² = 1'</span>)</span>
+<span id="cb17-30"><a href="#cb17-30" aria-hidden="true" tabindex="-1"></a>ax.set_ylim(<span class="dv">0</span>, <span class="dv">20</span>)</span>
+<span id="cb17-31"><a href="#cb17-31" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">'$</span><span class="ch">\\</span><span class="st">Omega_m$'</span>)<span class="op">;</span> ax.set_ylabel(<span class="st">'$</span><span class="ch">\\</span><span class="st">Delta</span><span class="ch">\\</span><span class="st">chi^2$'</span>)</span>
+<span id="cb17-32"><a href="#cb17-32" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
+<span id="cb17-33"><a href="#cb17-33" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Mejor Ω_m = 0.330  (1σ: 0.31 – 0.34)
+Planck18  = 0.310</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div id="fig-chi2-om" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-chi2-om-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="13-cosmologia_files/figure-html/fig-chi2-om-output-2.png" width="527" height="362" class="figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-chi2-om-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;3: χ² en función de Ω_m: el mínimo indica el mejor ajuste
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</section>
+<section id="qué-aprendiste-en-este-módulo" class="level2 seccion-aprendiste" data-number="9">
+<h2 class="seccion-aprendiste anchored" data-number="9" data-anchor-id="qué-aprendiste-en-este-módulo"><span class="header-section-number">9</span> ¿Qué aprendiste en este módulo?</h2>
+<ul>
+<li>✅ Usar los modelos cosmológicos incluidos (<code>Planck18</code>, <code>WMAP9</code>)</li>
+<li>✅ Crear modelos propios con <code>FlatLambdaCDM</code></li>
+<li>✅ Las diferentes distancias: comóvil, de luminosidad y diametral angular</li>
+<li>✅ Calcular la edad del universo y el tiempo de viaje de la luz para cualquier z</li>
+<li>✅ Invertir funciones con <code>z_at_value</code></li>
+<li>✅ Escala angular (kpc/arcsec) y módulo de distancia</li>
+<li>✅ Reproducir el diagrama de Hubble que reveló la energía oscura</li>
+</ul>
+<p><strong>Siguiente módulo →</strong> <a href="../../posts/avanzado/14-orbital.html">14 · Mecánica orbital y efemérides</a></p>
 
 
 <!-- -->
 
+</section>
 
-</main> <!-- /main -->
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Volver arriba</a></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
-    // Ensure there is a toggle, if there isn't float one in the top right
-    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
-      const a = window.document.createElement('a');
-      a.classList.add('top-right');
-      a.classList.add('quarto-color-scheme-toggle');
-      a.href = "";
-      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
-      const i = window.document.createElement("i");
-      i.classList.add('bi');
-      a.appendChild(i);
-      window.document.body.appendChild(a);
-    }
-    setColorSchemeToggle(hasAlternateSentinel())
     const icon = "";
     const anchorJS = new window.AnchorJS();
     anchorJS.options = {
@@ -503,12 +937,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       // flash "checked"
       button.classList.add('code-copy-button-checked');
       var currentTitle = button.getAttribute("title");
-      button.setAttribute("title", "Copied!");
+      button.setAttribute("title", "Copiado");
       let tooltip;
       if (window.bootstrap) {
         button.setAttribute("data-bs-toggle", "tooltip");
         button.setAttribute("data-bs-placement", "left");
-        button.setAttribute("data-bs-title", "Copied!");
+        button.setAttribute("data-bs-title", "Copiado");
         tooltip = new bootstrap.Tooltip(button, 
           { trigger: "manual", 
             customClass: "code-copy-button-tooltip",
@@ -602,7 +1036,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/fvelez78\.github\.io\/astropy-blog\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
@@ -928,35 +1362,430 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       }
     }
   });
-  </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "13 - Cosmologia computacional"</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="an">description:</span><span class="co"> "Proximo modulo en preparacion"</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="an">categories:</span><span class="co"> [avanzado]</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="an">toc:</span><span class="co"> true</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co">  echo: true</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">  warning: false</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">span</span><span class="ot"> class</span><span class="op">=</span><span class="st">"badge-avanzado"</span><span class="dt">&gt;</span>Avanzado<span class="dt">&lt;/</span><span class="kw">span</span><span class="dt">&gt;</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>::: {.callout-warning}</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">## Modulo en construccion</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>Este modulo esta siendo preparado. Vuelve pronto.</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>:::</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../../posts/avanzado/12-espectroscopia.html" class="pagination-link" aria-label="12 · Espectroscopía con specutils">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">12 · Espectroscopía con specutils</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../../posts/avanzado/14-orbital.html" class="pagination-link" aria-label="14 · Mecánica orbital y efemérides">
+        <span class="nav-page-text">14 · Mecánica orbital y efemérides</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Ejecutar el código</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "13 · Cosmología computacional"</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="an">description:</span><span class="co"> "Calcula distancias, edades y tiempos en un universo en expansión con astropy.cosmology: modelos ΛCDM, Planck 2018, z_at_value y el diagrama de Hubble"</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span><span class="co"> "Blog AstroPy en Español"</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> "2026-11-01"</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="an">categories:</span><span class="co"> [avanzado]</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="an">toc:</span><span class="co"> true</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="an">toc-depth:</span><span class="co"> 3</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="an">number-sections:</span><span class="co"> true</span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a><span class="co">  echo: true</span></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a><span class="co">  warning: false</span></span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a><span class="co">  message: false</span></span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">span</span><span class="ot"> class</span><span class="op">=</span><span class="st">"badge-avanzado"</span><span class="dt">&gt;</span>🚀 Avanzado<span class="dt">&lt;/</span><span class="kw">span</span><span class="dt">&gt;</span></span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a><span class="fu">## ¿Por qué "distancia" es complicado en cosmología?</span></span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>En la vida cotidiana la distancia es una sola. En un universo que **se</span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a>expande**, la pregunta *"¿a qué distancia está esta galaxia?"* tiene varias</span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a>respuestas correctas, según qué se quiera medir:</span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Distancia <span class="pp">|</span> Pregunta que responde <span class="pp">|</span></span>
+<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|</span></span>
+<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Comóvil** <span class="pp">|</span> ¿A qué distancia está *hoy* la galaxia? <span class="pp">|</span></span>
+<span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **De luminosidad** $d_L$ <span class="pp">|</span> ¿Qué distancia explica el brillo que vemos? (supernovas) <span class="pp">|</span></span>
+<span id="cb19-28"><a href="#cb19-28" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Diametral angular** $d_A$ <span class="pp">|</span> ¿Qué distancia explica el tamaño aparente? <span class="pp">|</span></span>
+<span id="cb19-29"><a href="#cb19-29" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Tiempo de viaje de la luz** <span class="pp">|</span> ¿Hace cuánto salió la luz que vemos? <span class="pp">|</span></span>
+<span id="cb19-30"><a href="#cb19-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-31"><a href="#cb19-31" aria-hidden="true" tabindex="-1"></a>Todas dependen del **modelo cosmológico**: cuánta materia y energía oscura</span>
+<span id="cb19-32"><a href="#cb19-32" aria-hidden="true" tabindex="-1"></a>hay, y la constante de Hubble $H_0$. El submódulo <span class="in">`astropy.cosmology`</span></span>
+<span id="cb19-33"><a href="#cb19-33" aria-hidden="true" tabindex="-1"></a>hace estos cálculos (integrales nada triviales) en una línea.</span>
+<span id="cb19-34"><a href="#cb19-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-35"><a href="#cb19-35" aria-hidden="true" tabindex="-1"></a>::: {.callout-note}</span>
+<span id="cb19-36"><a href="#cb19-36" aria-hidden="true" tabindex="-1"></a><span class="fu">## Requisitos previos</span></span>
+<span id="cb19-37"><a href="#cb19-37" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Módulos 02 (unidades) y 03 (tiempo)</span>
+<span id="cb19-38"><a href="#cb19-38" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>En el módulo 01 vimos que <span class="in">`H0`</span> **no está** en <span class="in">`astropy.constants`</span>: aquí es donde vive</span>
+<span id="cb19-39"><a href="#cb19-39" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb19-40"><a href="#cb19-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-41"><a href="#cb19-41" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb19-42"><a href="#cb19-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-43"><a href="#cb19-43" aria-hidden="true" tabindex="-1"></a><span class="fu">## Los modelos cosmológicos incluidos</span></span>
+<span id="cb19-44"><a href="#cb19-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-47"><a href="#cb19-47" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb19-48"><a href="#cb19-48" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-49"><a href="#cb19-49" aria-hidden="true" tabindex="-1"></a><span class="co"># Astropy trae los modelos medidos por las grandes misiones</span></span>
+<span id="cb19-50"><a href="#cb19-50" aria-hidden="true" tabindex="-1"></a><span class="co"># Planck18 = resultados finales del satélite Planck (2018)</span></span>
+<span id="cb19-51"><a href="#cb19-51" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-52"><a href="#cb19-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-53"><a href="#cb19-53" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.cosmology <span class="im">import</span> Planck18, WMAP9</span>
+<span id="cb19-54"><a href="#cb19-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-55"><a href="#cb19-55" aria-hidden="true" tabindex="-1"></a>cosmo <span class="op">=</span> Planck18     <span class="co"># modelo que usaremos en todo el módulo</span></span>
+<span id="cb19-56"><a href="#cb19-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-57"><a href="#cb19-57" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Modelo           : </span><span class="sc">{</span>cosmo<span class="sc">.</span>name<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb19-58"><a href="#cb19-58" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"H0               : </span><span class="sc">{</span>cosmo<span class="sc">.</span>H0<span class="sc">}</span><span class="ss">"</span>)                 <span class="co"># constante de Hubble</span></span>
+<span id="cb19-59"><a href="#cb19-59" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Ω materia (Om0)  : </span><span class="sc">{</span>cosmo<span class="sc">.</span>Om0<span class="sc">:.4f}</span><span class="ss">"</span>)            <span class="co"># materia (oscura + bariónica)</span></span>
+<span id="cb19-60"><a href="#cb19-60" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Ω energía oscura : </span><span class="sc">{</span>cosmo<span class="sc">.</span>Ode0<span class="sc">:.4f}</span><span class="ss">"</span>)           <span class="co"># constante cosmológica Λ</span></span>
+<span id="cb19-61"><a href="#cb19-61" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Ω bariones (Ob0) : </span><span class="sc">{</span>cosmo<span class="sc">.</span>Ob0<span class="sc">:.4f}</span><span class="ss">"</span>)            <span class="co"># materia "normal"</span></span>
+<span id="cb19-62"><a href="#cb19-62" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"T del fondo CMB  : </span><span class="sc">{</span>cosmo<span class="sc">.</span>Tcmb0<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb19-63"><a href="#cb19-63" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Edad del universo: </span><span class="sc">{</span>cosmo<span class="sc">.</span>age(<span class="dv">0</span>)<span class="sc">:.3f}</span><span class="ss">"</span>)         <span class="co"># edad hoy (z = 0)</span></span>
+<span id="cb19-64"><a href="#cb19-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-65"><a href="#cb19-65" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Comparación con WMAP9: H0 = </span><span class="sc">{</span>WMAP9<span class="sc">.</span>H0<span class="sc">}</span><span class="ss">, edad = </span><span class="sc">{</span>WMAP9<span class="sc">.</span>age(<span class="dv">0</span>)<span class="sc">:.3f}</span><span class="ss">"</span>)</span>
+<span id="cb19-66"><a href="#cb19-66" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-67"><a href="#cb19-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-68"><a href="#cb19-68" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip}</span>
+<span id="cb19-69"><a href="#cb19-69" aria-hidden="true" tabindex="-1"></a><span class="fu">## La "tensión de Hubble"</span></span>
+<span id="cb19-70"><a href="#cb19-70" aria-hidden="true" tabindex="-1"></a>Planck (fondo cósmico de microondas) mide $H_0 \approx 67.7$ km/s/Mpc,</span>
+<span id="cb19-71"><a href="#cb19-71" aria-hidden="true" tabindex="-1"></a>pero las supernovas cercanas dan $H_0 \approx 73$. Esta discrepancia es uno</span>
+<span id="cb19-72"><a href="#cb19-72" aria-hidden="true" tabindex="-1"></a>de los grandes problemas abiertos de la cosmología actual.</span>
+<span id="cb19-73"><a href="#cb19-73" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb19-74"><a href="#cb19-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-75"><a href="#cb19-75" aria-hidden="true" tabindex="-1"></a><span class="fu">### Crear un modelo propio</span></span>
+<span id="cb19-76"><a href="#cb19-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-79"><a href="#cb19-79" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb19-80"><a href="#cb19-80" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-81"><a href="#cb19-81" aria-hidden="true" tabindex="-1"></a><span class="co"># FlatLambdaCDM: universo plano con materia + constante cosmológica</span></span>
+<span id="cb19-82"><a href="#cb19-82" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-83"><a href="#cb19-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-84"><a href="#cb19-84" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.cosmology <span class="im">import</span> FlatLambdaCDM</span>
+<span id="cb19-85"><a href="#cb19-85" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> astropy.units <span class="im">as</span> u</span>
+<span id="cb19-86"><a href="#cb19-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-87"><a href="#cb19-87" aria-hidden="true" tabindex="-1"></a><span class="co"># Modelo "de libro de texto" con números redondos</span></span>
+<span id="cb19-88"><a href="#cb19-88" aria-hidden="true" tabindex="-1"></a>cosmo_simple <span class="op">=</span> FlatLambdaCDM(H0<span class="op">=</span><span class="dv">70</span> <span class="op">*</span> u.km <span class="op">/</span> u.s <span class="op">/</span> u.Mpc, Om0<span class="op">=</span><span class="fl">0.3</span>, name<span class="op">=</span><span class="st">'Didáctico'</span>)</span>
+<span id="cb19-89"><a href="#cb19-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-90"><a href="#cb19-90" aria-hidden="true" tabindex="-1"></a><span class="co"># Un universo sin energía oscura (como se creía antes de 1998)</span></span>
+<span id="cb19-91"><a href="#cb19-91" aria-hidden="true" tabindex="-1"></a>cosmo_sin_lambda <span class="op">=</span> FlatLambdaCDM(H0<span class="op">=</span><span class="dv">70</span> <span class="op">*</span> u.km <span class="op">/</span> u.s <span class="op">/</span> u.Mpc, Om0<span class="op">=</span><span class="fl">1.0</span>, name<span class="op">=</span><span class="st">'Solo materia'</span>)</span>
+<span id="cb19-92"><a href="#cb19-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-93"><a href="#cb19-93" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> c <span class="kw">in</span> [cosmo_simple, cosmo_sin_lambda]:</span>
+<span id="cb19-94"><a href="#cb19-94" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>c<span class="sc">.</span>name<span class="sc">:&lt;14}</span><span class="ss">: edad = </span><span class="sc">{</span>c<span class="sc">.</span>age(<span class="dv">0</span>)<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb19-95"><a href="#cb19-95" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-96"><a href="#cb19-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-97"><a href="#cb19-97" aria-hidden="true" tabindex="-1"></a>¡Un universo sin energía oscura sería **más joven** que algunas estrellas</span>
+<span id="cb19-98"><a href="#cb19-98" aria-hidden="true" tabindex="-1"></a>viejas! Esta fue una de las pistas que llevaron al descubrimiento de la</span>
+<span id="cb19-99"><a href="#cb19-99" aria-hidden="true" tabindex="-1"></a>energía oscura.</span>
+<span id="cb19-100"><a href="#cb19-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-101"><a href="#cb19-101" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb19-102"><a href="#cb19-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-103"><a href="#cb19-103" aria-hidden="true" tabindex="-1"></a><span class="fu">## Distancias para un corrimiento al rojo</span></span>
+<span id="cb19-104"><a href="#cb19-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-105"><a href="#cb19-105" aria-hidden="true" tabindex="-1"></a>En el módulo 12 medimos $z = 0.0185$ para una galaxia. Veamos qué</span>
+<span id="cb19-106"><a href="#cb19-106" aria-hidden="true" tabindex="-1"></a>significa eso, junto con objetos más lejanos.</span>
+<span id="cb19-107"><a href="#cb19-107" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-110"><a href="#cb19-110" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb19-111"><a href="#cb19-111" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-112"><a href="#cb19-112" aria-hidden="true" tabindex="-1"></a><span class="co"># Las distintas distancias para varios corrimientos al rojo</span></span>
+<span id="cb19-113"><a href="#cb19-113" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-114"><a href="#cb19-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-115"><a href="#cb19-115" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb19-116"><a href="#cb19-116" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.table <span class="im">import</span> Table</span>
+<span id="cb19-117"><a href="#cb19-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-118"><a href="#cb19-118" aria-hidden="true" tabindex="-1"></a>objetos <span class="op">=</span> {</span>
+<span id="cb19-119"><a href="#cb19-119" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Galaxia del módulo 12'</span>: <span class="fl">0.0185</span>,</span>
+<span id="cb19-120"><a href="#cb19-120" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Cúmulo de Coma'</span>       : <span class="fl">0.0231</span>,</span>
+<span id="cb19-121"><a href="#cb19-121" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Cuásar 3C 273'</span>        : <span class="fl">0.158</span>,</span>
+<span id="cb19-122"><a href="#cb19-122" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Galaxia típica (z=1)'</span> : <span class="fl">1.0</span>,</span>
+<span id="cb19-123"><a href="#cb19-123" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Galaxia lejana JWST'</span>  : <span class="fl">10.0</span>,</span>
+<span id="cb19-124"><a href="#cb19-124" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb19-125"><a href="#cb19-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-126"><a href="#cb19-126" aria-hidden="true" tabindex="-1"></a>z <span class="op">=</span> np.array(<span class="bu">list</span>(objetos.values()))</span>
+<span id="cb19-127"><a href="#cb19-127" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-128"><a href="#cb19-128" aria-hidden="true" tabindex="-1"></a>tabla <span class="op">=</span> Table({</span>
+<span id="cb19-129"><a href="#cb19-129" aria-hidden="true" tabindex="-1"></a>    <span class="st">'objeto'</span>    : <span class="bu">list</span>(objetos.keys()),</span>
+<span id="cb19-130"><a href="#cb19-130" aria-hidden="true" tabindex="-1"></a>    <span class="st">'z'</span>         : z,</span>
+<span id="cb19-131"><a href="#cb19-131" aria-hidden="true" tabindex="-1"></a>    <span class="st">'d_comovil'</span> : cosmo.comoving_distance(z).to(u.Mpc).<span class="bu">round</span>(<span class="dv">1</span>),</span>
+<span id="cb19-132"><a href="#cb19-132" aria-hidden="true" tabindex="-1"></a>    <span class="st">'d_lum'</span>     : cosmo.luminosity_distance(z).to(u.Mpc).<span class="bu">round</span>(<span class="dv">1</span>),</span>
+<span id="cb19-133"><a href="#cb19-133" aria-hidden="true" tabindex="-1"></a>    <span class="st">'d_ang'</span>     : cosmo.angular_diameter_distance(z).to(u.Mpc).<span class="bu">round</span>(<span class="dv">1</span>),</span>
+<span id="cb19-134"><a href="#cb19-134" aria-hidden="true" tabindex="-1"></a>    <span class="st">'t_viaje'</span>   : cosmo.lookback_time(z).to(u.Gyr).<span class="bu">round</span>(<span class="dv">3</span>),</span>
+<span id="cb19-135"><a href="#cb19-135" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb19-136"><a href="#cb19-136" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(tabla)</span>
+<span id="cb19-137"><a href="#cb19-137" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-138"><a href="#cb19-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-139"><a href="#cb19-139" aria-hidden="true" tabindex="-1"></a>Fíjate en dos curiosidades:</span>
+<span id="cb19-140"><a href="#cb19-140" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-141"><a href="#cb19-141" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>A $z = 10$ la distancia de luminosidad es **enorme** (&gt; 100 000 Mpc): el</span>
+<span id="cb19-142"><a href="#cb19-142" aria-hidden="true" tabindex="-1"></a>  objeto se ve mucho más débil de lo que su distancia "real" sugiere.</span>
+<span id="cb19-143"><a href="#cb19-143" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>La distancia diametral angular **disminuye** a z grande: una galaxia muy</span>
+<span id="cb19-144"><a href="#cb19-144" aria-hidden="true" tabindex="-1"></a>  lejana se ve *más grande* que una a z ≈ 1,6. ¡El universo actúa como una lente!</span>
+<span id="cb19-145"><a href="#cb19-145" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-148"><a href="#cb19-148" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb19-149"><a href="#cb19-149" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-distancias</span></span>
+<span id="cb19-150"><a href="#cb19-150" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Las distintas distancias cosmológicas en función del corrimiento al rojo"</span></span>
+<span id="cb19-151"><a href="#cb19-151" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-152"><a href="#cb19-152" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-153"><a href="#cb19-153" aria-hidden="true" tabindex="-1"></a><span class="co"># Graficar las distancias en función de z</span></span>
+<span id="cb19-154"><a href="#cb19-154" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-155"><a href="#cb19-155" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-156"><a href="#cb19-156" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb19-157"><a href="#cb19-157" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy <span class="im">import</span> constants <span class="im">as</span> const</span>
+<span id="cb19-158"><a href="#cb19-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-159"><a href="#cb19-159" aria-hidden="true" tabindex="-1"></a>z_grid <span class="op">=</span> np.logspace(<span class="op">-</span><span class="dv">2</span>, <span class="fl">1.3</span>, <span class="dv">300</span>)      <span class="co"># de z = 0.01 a z = 20</span></span>
+<span id="cb19-160"><a href="#cb19-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-161"><a href="#cb19-161" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">5</span>))</span>
+<span id="cb19-162"><a href="#cb19-162" aria-hidden="true" tabindex="-1"></a>ax.plot(z_grid, cosmo.luminosity_distance(z_grid).to(u.Gpc), label<span class="op">=</span><span class="st">'Luminosidad $d_L$'</span>)</span>
+<span id="cb19-163"><a href="#cb19-163" aria-hidden="true" tabindex="-1"></a>ax.plot(z_grid, cosmo.comoving_distance(z_grid).to(u.Gpc), label<span class="op">=</span><span class="st">'Comóvil'</span>)</span>
+<span id="cb19-164"><a href="#cb19-164" aria-hidden="true" tabindex="-1"></a>ax.plot(z_grid, cosmo.angular_diameter_distance(z_grid).to(u.Gpc), label<span class="op">=</span><span class="st">'Diametral angular $d_A$'</span>)</span>
+<span id="cb19-165"><a href="#cb19-165" aria-hidden="true" tabindex="-1"></a><span class="co"># Tiempo de viaje de la luz × velocidad de la luz = "distancia de viaje"</span></span>
+<span id="cb19-166"><a href="#cb19-166" aria-hidden="true" tabindex="-1"></a>ax.plot(z_grid, (cosmo.lookback_time(z_grid) <span class="op">*</span> const.c).to(u.Gpc),</span>
+<span id="cb19-167"><a href="#cb19-167" aria-hidden="true" tabindex="-1"></a>        label<span class="op">=</span><span class="st">'Viaje de la luz × c'</span>, ls<span class="op">=</span><span class="st">'--'</span>)</span>
+<span id="cb19-168"><a href="#cb19-168" aria-hidden="true" tabindex="-1"></a>ax.set_xscale(<span class="st">'log'</span>)<span class="op">;</span> ax.set_yscale(<span class="st">'log'</span>)</span>
+<span id="cb19-169"><a href="#cb19-169" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">'Corrimiento al rojo z'</span>)</span>
+<span id="cb19-170"><a href="#cb19-170" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">'Distancia [Gpc]'</span>)</span>
+<span id="cb19-171"><a href="#cb19-171" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
+<span id="cb19-172"><a href="#cb19-172" aria-hidden="true" tabindex="-1"></a>ax.grid(alpha<span class="op">=</span><span class="fl">0.3</span>, which<span class="op">=</span><span class="st">'both'</span>)</span>
+<span id="cb19-173"><a href="#cb19-173" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb19-174"><a href="#cb19-174" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-175"><a href="#cb19-175" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-176"><a href="#cb19-176" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb19-177"><a href="#cb19-177" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-178"><a href="#cb19-178" aria-hidden="true" tabindex="-1"></a><span class="fu">## Tiempos cósmicos</span></span>
+<span id="cb19-179"><a href="#cb19-179" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-182"><a href="#cb19-182" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb19-183"><a href="#cb19-183" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-184"><a href="#cb19-184" aria-hidden="true" tabindex="-1"></a><span class="co"># Edad del universo en cada época y tiempo transcurrido desde entonces</span></span>
+<span id="cb19-185"><a href="#cb19-185" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-186"><a href="#cb19-186" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-187"><a href="#cb19-187" aria-hidden="true" tabindex="-1"></a>eventos <span class="op">=</span> {</span>
+<span id="cb19-188"><a href="#cb19-188" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Fondo cósmico de microondas'</span>: <span class="dv">1089</span>,</span>
+<span id="cb19-189"><a href="#cb19-189" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Primeras galaxias'</span>          : <span class="dv">15</span>,</span>
+<span id="cb19-190"><a href="#cb19-190" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Pico de formación estelar'</span>  : <span class="dv">2</span>,</span>
+<span id="cb19-191"><a href="#cb19-191" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Formación del Sol'</span>          : <span class="fl">0.43</span>,</span>
+<span id="cb19-192"><a href="#cb19-192" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb19-193"><a href="#cb19-193" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-194"><a href="#cb19-194" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span><span class="st">'Evento'</span><span class="sc">:&lt;30}</span><span class="ss"> </span><span class="sc">{</span><span class="st">'z'</span><span class="sc">:&gt;7}</span><span class="ss"> </span><span class="sc">{</span><span class="st">'Edad del universo'</span><span class="sc">:&gt;19}</span><span class="ss"> </span><span class="sc">{</span><span class="st">'Hace'</span><span class="sc">:&gt;12}</span><span class="ss">"</span>)</span>
+<span id="cb19-195"><a href="#cb19-195" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> nombre, zz <span class="kw">in</span> eventos.items():</span>
+<span id="cb19-196"><a href="#cb19-196" aria-hidden="true" tabindex="-1"></a>    edad <span class="op">=</span> cosmo.age(zz)               <span class="co"># edad del universo en ese momento</span></span>
+<span id="cb19-197"><a href="#cb19-197" aria-hidden="true" tabindex="-1"></a>    hace <span class="op">=</span> cosmo.lookback_time(zz)     <span class="co"># cuánto tiempo hace de eso</span></span>
+<span id="cb19-198"><a href="#cb19-198" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Elegimos la unidad más legible según el tamaño del número</span></span>
+<span id="cb19-199"><a href="#cb19-199" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> edad <span class="op">&lt;</span> <span class="dv">1</span> <span class="op">*</span> u.Myr:</span>
+<span id="cb19-200"><a href="#cb19-200" aria-hidden="true" tabindex="-1"></a>        edad_txt <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>edad<span class="sc">.</span>to(u.kyr)<span class="sc">:.0f}</span><span class="ss">"</span>       <span class="co"># miles de años</span></span>
+<span id="cb19-201"><a href="#cb19-201" aria-hidden="true" tabindex="-1"></a>    <span class="cf">elif</span> edad <span class="op">&lt;</span> <span class="dv">1</span> <span class="op">*</span> u.Gyr:</span>
+<span id="cb19-202"><a href="#cb19-202" aria-hidden="true" tabindex="-1"></a>        edad_txt <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>edad<span class="sc">.</span>to(u.Myr)<span class="sc">:.0f}</span><span class="ss">"</span>       <span class="co"># millones de años</span></span>
+<span id="cb19-203"><a href="#cb19-203" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb19-204"><a href="#cb19-204" aria-hidden="true" tabindex="-1"></a>        edad_txt <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>edad<span class="sc">.</span>to(u.Gyr)<span class="sc">:.2f}</span><span class="ss">"</span>       <span class="co"># miles de millones de años</span></span>
+<span id="cb19-205"><a href="#cb19-205" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>nombre<span class="sc">:&lt;30}</span><span class="ss"> </span><span class="sc">{</span>zz<span class="sc">:&gt;7}</span><span class="ss"> </span><span class="sc">{</span>edad_txt<span class="sc">:&gt;19}</span><span class="ss"> </span><span class="sc">{</span>hace<span class="sc">.</span>to(u.Gyr)<span class="sc">:&gt;12.2f}</span><span class="ss">"</span>)</span>
+<span id="cb19-206"><a href="#cb19-206" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-207"><a href="#cb19-207" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-208"><a href="#cb19-208" aria-hidden="true" tabindex="-1"></a>Esta es la forma correcta de hacer la "línea de tiempo cósmica" que en el</span>
+<span id="cb19-209"><a href="#cb19-209" aria-hidden="true" tabindex="-1"></a>módulo 03 tuvimos que simplificar: <span class="in">`astropy.time.Time`</span> no sirve para miles</span>
+<span id="cb19-210"><a href="#cb19-210" aria-hidden="true" tabindex="-1"></a>de millones de años, pero <span class="in">`astropy.cosmology`</span> sí.</span>
+<span id="cb19-211"><a href="#cb19-211" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-212"><a href="#cb19-212" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb19-213"><a href="#cb19-213" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-214"><a href="#cb19-214" aria-hidden="true" tabindex="-1"></a><span class="fu">## El camino inverso: `z_at_value`</span></span>
+<span id="cb19-215"><a href="#cb19-215" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-216"><a href="#cb19-216" aria-hidden="true" tabindex="-1"></a>¿Qué corrimiento al rojo corresponde a una edad o distancia dada? Hay que</span>
+<span id="cb19-217"><a href="#cb19-217" aria-hidden="true" tabindex="-1"></a>invertir la función numéricamente. <span class="in">`z_at_value`</span> lo hace por nosotros.</span>
+<span id="cb19-218"><a href="#cb19-218" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-221"><a href="#cb19-221" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb19-222"><a href="#cb19-222" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-223"><a href="#cb19-223" aria-hidden="true" tabindex="-1"></a><span class="co"># Encontrar z a partir de una edad, un tiempo de viaje o una distancia</span></span>
+<span id="cb19-224"><a href="#cb19-224" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-225"><a href="#cb19-225" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-226"><a href="#cb19-226" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.cosmology <span class="im">import</span> z_at_value</span>
+<span id="cb19-227"><a href="#cb19-227" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-228"><a href="#cb19-228" aria-hidden="true" tabindex="-1"></a><span class="co"># z_at_value devuelve una cantidad con unidad 'redshift'; usamos .value</span></span>
+<span id="cb19-229"><a href="#cb19-229" aria-hidden="true" tabindex="-1"></a><span class="co"># para mostrar solo el número</span></span>
+<span id="cb19-230"><a href="#cb19-230" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-231"><a href="#cb19-231" aria-hidden="true" tabindex="-1"></a><span class="co"># ¿A qué z el universo tenía 1000 millones de años?</span></span>
+<span id="cb19-232"><a href="#cb19-232" aria-hidden="true" tabindex="-1"></a>z_1gyr <span class="op">=</span> z_at_value(cosmo.age, <span class="dv">1</span> <span class="op">*</span> u.Gyr)</span>
+<span id="cb19-233"><a href="#cb19-233" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"El universo tenía 1 Gyr a z = </span><span class="sc">{</span>z_1gyr<span class="sc">.</span>value<span class="sc">:.3f}</span><span class="ss">"</span>)</span>
+<span id="cb19-234"><a href="#cb19-234" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-235"><a href="#cb19-235" aria-hidden="true" tabindex="-1"></a><span class="co"># ¿A qué z la luz viajó durante 4 570 millones de años (la edad del Sol)?</span></span>
+<span id="cb19-236"><a href="#cb19-236" aria-hidden="true" tabindex="-1"></a>z_sol <span class="op">=</span> z_at_value(cosmo.lookback_time, <span class="fl">4.57</span> <span class="op">*</span> u.Gyr)</span>
+<span id="cb19-237"><a href="#cb19-237" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"La luz que salió cuando se formó el Sol viene de z = </span><span class="sc">{</span>z_sol<span class="sc">.</span>value<span class="sc">:.3f}</span><span class="ss">"</span>)</span>
+<span id="cb19-238"><a href="#cb19-238" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-239"><a href="#cb19-239" aria-hidden="true" tabindex="-1"></a><span class="co"># ¿A qué z está una galaxia con distancia de luminosidad de 1 Gpc?</span></span>
+<span id="cb19-240"><a href="#cb19-240" aria-hidden="true" tabindex="-1"></a>z_1gpc <span class="op">=</span> z_at_value(cosmo.luminosity_distance, <span class="dv">1</span> <span class="op">*</span> u.Gpc)</span>
+<span id="cb19-241"><a href="#cb19-241" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"d_L = 1 Gpc corresponde a z = </span><span class="sc">{</span>z_1gpc<span class="sc">.</span>value<span class="sc">:.3f}</span><span class="ss">"</span>)</span>
+<span id="cb19-242"><a href="#cb19-242" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-243"><a href="#cb19-243" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-244"><a href="#cb19-244" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb19-245"><a href="#cb19-245" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-246"><a href="#cb19-246" aria-hidden="true" tabindex="-1"></a><span class="fu">## Tamaños y brillos</span></span>
+<span id="cb19-247"><a href="#cb19-247" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-248"><a href="#cb19-248" aria-hidden="true" tabindex="-1"></a><span class="fu">### Escala angular</span></span>
+<span id="cb19-249"><a href="#cb19-249" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-252"><a href="#cb19-252" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb19-253"><a href="#cb19-253" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-254"><a href="#cb19-254" aria-hidden="true" tabindex="-1"></a><span class="co"># ¿Cuántos kiloparsecs abarca 1 segundo de arco a cada z?</span></span>
+<span id="cb19-255"><a href="#cb19-255" aria-hidden="true" tabindex="-1"></a><span class="co"># Útil para pasar el tamaño aparente de una galaxia a su tamaño real</span></span>
+<span id="cb19-256"><a href="#cb19-256" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-257"><a href="#cb19-257" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-258"><a href="#cb19-258" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> zz <span class="kw">in</span> [<span class="fl">0.0185</span>, <span class="fl">0.1</span>, <span class="fl">0.5</span>, <span class="fl">1.0</span>, <span class="fl">1.6</span>, <span class="fl">3.0</span>, <span class="fl">10.0</span>]:</span>
+<span id="cb19-259"><a href="#cb19-259" aria-hidden="true" tabindex="-1"></a>    escala <span class="op">=</span> cosmo.kpc_proper_per_arcmin(zz).to(u.kpc <span class="op">/</span> u.arcsec)</span>
+<span id="cb19-260"><a href="#cb19-260" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"z = </span><span class="sc">{</span>zz<span class="sc">:&gt;6}</span><span class="ss">:  1 arcsec = </span><span class="sc">{</span>escala<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb19-261"><a href="#cb19-261" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-262"><a href="#cb19-262" aria-hidden="true" tabindex="-1"></a><span class="co"># Ejemplo: una galaxia de 12 arcsec de diámetro a z = 0.0185</span></span>
+<span id="cb19-263"><a href="#cb19-263" aria-hidden="true" tabindex="-1"></a>tam <span class="op">=</span> (<span class="dv">12</span> <span class="op">*</span> u.arcsec <span class="op">*</span> cosmo.kpc_proper_per_arcmin(<span class="fl">0.0185</span>)).to(u.kpc)</span>
+<span id="cb19-264"><a href="#cb19-264" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Galaxia de 12″ a z = 0.0185 → diámetro real ≈ </span><span class="sc">{</span>tam<span class="sc">:.1f}</span><span class="ss">"</span>)</span>
+<span id="cb19-265"><a href="#cb19-265" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-266"><a href="#cb19-266" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-267"><a href="#cb19-267" aria-hidden="true" tabindex="-1"></a><span class="fu">### Módulo de distancia</span></span>
+<span id="cb19-268"><a href="#cb19-268" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-269"><a href="#cb19-269" aria-hidden="true" tabindex="-1"></a>$$\mu = m - M = 5 \log_{10}\left(\frac{d_L}{10\,\text{pc}}\right)$$</span>
+<span id="cb19-270"><a href="#cb19-270" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-273"><a href="#cb19-273" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb19-274"><a href="#cb19-274" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-275"><a href="#cb19-275" aria-hidden="true" tabindex="-1"></a><span class="co"># El módulo de distancia convierte magnitudes aparentes en absolutas</span></span>
+<span id="cb19-276"><a href="#cb19-276" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-277"><a href="#cb19-277" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-278"><a href="#cb19-278" aria-hidden="true" tabindex="-1"></a><span class="co"># Una supernova Ia tiene magnitud absoluta pico M ≈ -19.3 (vela estándar)</span></span>
+<span id="cb19-279"><a href="#cb19-279" aria-hidden="true" tabindex="-1"></a>M_snia <span class="op">=</span> <span class="op">-</span><span class="fl">19.3</span></span>
+<span id="cb19-280"><a href="#cb19-280" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-281"><a href="#cb19-281" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> zz <span class="kw">in</span> [<span class="fl">0.01</span>, <span class="fl">0.1</span>, <span class="fl">0.5</span>, <span class="fl">1.0</span>]:</span>
+<span id="cb19-282"><a href="#cb19-282" aria-hidden="true" tabindex="-1"></a>    mu <span class="op">=</span> cosmo.distmod(zz)                 <span class="co"># módulo de distancia en magnitudes</span></span>
+<span id="cb19-283"><a href="#cb19-283" aria-hidden="true" tabindex="-1"></a>    m <span class="op">=</span> M_snia <span class="op">+</span> mu.value                  <span class="co"># magnitud aparente esperada</span></span>
+<span id="cb19-284"><a href="#cb19-284" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"z = </span><span class="sc">{</span>zz<span class="sc">:&lt;5}</span><span class="ss"> μ = </span><span class="sc">{</span>mu<span class="sc">:.2f}</span><span class="ss">  → SN Ia aparente: m = </span><span class="sc">{</span>m<span class="sc">:.1f}</span><span class="ss">"</span>)</span>
+<span id="cb19-285"><a href="#cb19-285" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-286"><a href="#cb19-286" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-287"><a href="#cb19-287" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb19-288"><a href="#cb19-288" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-289"><a href="#cb19-289" aria-hidden="true" tabindex="-1"></a><span class="fu">## Aplicación: el diagrama de Hubble</span></span>
+<span id="cb19-290"><a href="#cb19-290" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-291"><a href="#cb19-291" aria-hidden="true" tabindex="-1"></a>En 1998 dos equipos midieron supernovas Ia lejanas y descubrieron que</span>
+<span id="cb19-292"><a href="#cb19-292" aria-hidden="true" tabindex="-1"></a>eran **más débiles** de lo esperado en un universo sin energía oscura:</span>
+<span id="cb19-293"><a href="#cb19-293" aria-hidden="true" tabindex="-1"></a>la expansión se está **acelerando** (Premio Nobel 2011). Lo reproducimos</span>
+<span id="cb19-294"><a href="#cb19-294" aria-hidden="true" tabindex="-1"></a>con datos simulados.</span>
+<span id="cb19-295"><a href="#cb19-295" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-298"><a href="#cb19-298" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb19-299"><a href="#cb19-299" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-hubble</span></span>
+<span id="cb19-300"><a href="#cb19-300" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Diagrama de Hubble con supernovas simuladas y tres modelos cosmológicos"</span></span>
+<span id="cb19-301"><a href="#cb19-301" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-302"><a href="#cb19-302" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-303"><a href="#cb19-303" aria-hidden="true" tabindex="-1"></a><span class="co"># Simular supernovas en el universo Planck18 y compararlas con dos modelos</span></span>
+<span id="cb19-304"><a href="#cb19-304" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-305"><a href="#cb19-305" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-306"><a href="#cb19-306" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb19-307"><a href="#cb19-307" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb19-308"><a href="#cb19-308" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.cosmology <span class="im">import</span> FlatLambdaCDM</span>
+<span id="cb19-309"><a href="#cb19-309" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-310"><a href="#cb19-310" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> np.random.default_rng(<span class="dv">1998</span>)</span>
+<span id="cb19-311"><a href="#cb19-311" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-312"><a href="#cb19-312" aria-hidden="true" tabindex="-1"></a><span class="co"># 60 supernovas con z entre 0.01 y 1.4</span></span>
+<span id="cb19-313"><a href="#cb19-313" aria-hidden="true" tabindex="-1"></a>z_sn <span class="op">=</span> np.sort(rng.uniform(<span class="fl">0.01</span>, <span class="fl">1.4</span>, <span class="dv">60</span>))</span>
+<span id="cb19-314"><a href="#cb19-314" aria-hidden="true" tabindex="-1"></a>err_mu <span class="op">=</span> <span class="fl">0.15</span>                                          <span class="co"># error típico en magnitudes</span></span>
+<span id="cb19-315"><a href="#cb19-315" aria-hidden="true" tabindex="-1"></a>mu_sn <span class="op">=</span> cosmo.distmod(z_sn).value <span class="op">+</span> rng.normal(<span class="dv">0</span>, err_mu, z_sn.size)</span>
+<span id="cb19-316"><a href="#cb19-316" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-317"><a href="#cb19-317" aria-hidden="true" tabindex="-1"></a><span class="co"># Modelos a comparar (todos con el mismo H0)</span></span>
+<span id="cb19-318"><a href="#cb19-318" aria-hidden="true" tabindex="-1"></a>modelos <span class="op">=</span> {</span>
+<span id="cb19-319"><a href="#cb19-319" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Planck18 (ΛCDM)'</span>      : cosmo,</span>
+<span id="cb19-320"><a href="#cb19-320" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Solo materia (Ω_m=1)'</span> : FlatLambdaCDM(H0<span class="op">=</span>cosmo.H0, Om0<span class="op">=</span><span class="fl">1.0</span>),</span>
+<span id="cb19-321"><a href="#cb19-321" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Casi solo energía oscura (Ω_m=0.01)'</span>: FlatLambdaCDM(H0<span class="op">=</span>cosmo.H0, Om0<span class="op">=</span><span class="fl">0.01</span>),</span>
+<span id="cb19-322"><a href="#cb19-322" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb19-323"><a href="#cb19-323" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-324"><a href="#cb19-324" aria-hidden="true" tabindex="-1"></a>z_lin <span class="op">=</span> np.linspace(<span class="fl">0.01</span>, <span class="fl">1.5</span>, <span class="dv">200</span>)</span>
+<span id="cb19-325"><a href="#cb19-325" aria-hidden="true" tabindex="-1"></a>fig, (ax1, ax2) <span class="op">=</span> plt.subplots(<span class="dv">2</span>, <span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">7</span>), sharex<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb19-326"><a href="#cb19-326" aria-hidden="true" tabindex="-1"></a>                               gridspec_kw<span class="op">=</span>{<span class="st">'height_ratios'</span>: [<span class="dv">2</span>, <span class="dv">1</span>]})</span>
+<span id="cb19-327"><a href="#cb19-327" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-328"><a href="#cb19-328" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel superior: módulo de distancia vs z</span></span>
+<span id="cb19-329"><a href="#cb19-329" aria-hidden="true" tabindex="-1"></a>ax1.errorbar(z_sn, mu_sn, yerr<span class="op">=</span>err_mu, fmt<span class="op">=</span><span class="st">'o'</span>, ms<span class="op">=</span><span class="dv">4</span>, color<span class="op">=</span><span class="st">'C7'</span>, alpha<span class="op">=</span><span class="fl">0.6</span>, label<span class="op">=</span><span class="st">'SN Ia simuladas'</span>)</span>
+<span id="cb19-330"><a href="#cb19-330" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> nombre, m <span class="kw">in</span> modelos.items():</span>
+<span id="cb19-331"><a href="#cb19-331" aria-hidden="true" tabindex="-1"></a>    ax1.plot(z_lin, m.distmod(z_lin), label<span class="op">=</span>nombre)</span>
+<span id="cb19-332"><a href="#cb19-332" aria-hidden="true" tabindex="-1"></a>ax1.set_ylabel(<span class="st">'Módulo de distancia μ'</span>)</span>
+<span id="cb19-333"><a href="#cb19-333" aria-hidden="true" tabindex="-1"></a>ax1.legend()</span>
+<span id="cb19-334"><a href="#cb19-334" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-335"><a href="#cb19-335" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel inferior: diferencia respecto al modelo "solo materia"</span></span>
+<span id="cb19-336"><a href="#cb19-336" aria-hidden="true" tabindex="-1"></a>referencia <span class="op">=</span> modelos[<span class="st">'Solo materia (Ω_m=1)'</span>]</span>
+<span id="cb19-337"><a href="#cb19-337" aria-hidden="true" tabindex="-1"></a>ax2.errorbar(z_sn, mu_sn <span class="op">-</span> referencia.distmod(z_sn).value, yerr<span class="op">=</span>err_mu,</span>
+<span id="cb19-338"><a href="#cb19-338" aria-hidden="true" tabindex="-1"></a>             fmt<span class="op">=</span><span class="st">'o'</span>, ms<span class="op">=</span><span class="dv">4</span>, color<span class="op">=</span><span class="st">'C7'</span>, alpha<span class="op">=</span><span class="fl">0.6</span>)</span>
+<span id="cb19-339"><a href="#cb19-339" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> nombre, m <span class="kw">in</span> modelos.items():</span>
+<span id="cb19-340"><a href="#cb19-340" aria-hidden="true" tabindex="-1"></a>    ax2.plot(z_lin, m.distmod(z_lin).value <span class="op">-</span> referencia.distmod(z_lin).value)</span>
+<span id="cb19-341"><a href="#cb19-341" aria-hidden="true" tabindex="-1"></a>ax2.axhline(<span class="dv">0</span>, color<span class="op">=</span><span class="st">'gray'</span>, lw<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb19-342"><a href="#cb19-342" aria-hidden="true" tabindex="-1"></a>ax2.set_xlabel(<span class="st">'Corrimiento al rojo z'</span>)</span>
+<span id="cb19-343"><a href="#cb19-343" aria-hidden="true" tabindex="-1"></a>ax2.set_ylabel(<span class="st">'Δμ vs solo materia'</span>)</span>
+<span id="cb19-344"><a href="#cb19-344" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb19-345"><a href="#cb19-345" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb19-346"><a href="#cb19-346" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-347"><a href="#cb19-347" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-348"><a href="#cb19-348" aria-hidden="true" tabindex="-1"></a>Las supernovas quedan **por encima** de la curva de "solo materia"</span>
+<span id="cb19-349"><a href="#cb19-349" aria-hidden="true" tabindex="-1"></a>(Δμ &gt; 0): están más lejos de lo esperado → la expansión se acelera.</span>
+<span id="cb19-350"><a href="#cb19-350" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-351"><a href="#cb19-351" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb19-352"><a href="#cb19-352" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-353"><a href="#cb19-353" aria-hidden="true" tabindex="-1"></a><span class="fu">## Ejercicio</span></span>
+<span id="cb19-354"><a href="#cb19-354" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-355"><a href="#cb19-355" aria-hidden="true" tabindex="-1"></a>Ajusta el valor de $\Omega_m$ a las supernovas simuladas:</span>
+<span id="cb19-356"><a href="#cb19-356" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-357"><a href="#cb19-357" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Prueba valores de <span class="in">`Om0`</span> entre 0.05 y 1.0 en un universo plano</span>
+<span id="cb19-358"><a href="#cb19-358" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Para cada uno calcula $\chi^2 = \sum \left(\frac{\mu_{obs} - \mu_{modelo}}{\sigma}\right)^2$</span>
+<span id="cb19-359"><a href="#cb19-359" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>¿Qué valor de $\Omega_m$ minimiza $\chi^2$? ¿Coincide con Planck18?</span>
+<span id="cb19-360"><a href="#cb19-360" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-361"><a href="#cb19-361" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip collapse="true"}</span>
+<span id="cb19-362"><a href="#cb19-362" aria-hidden="true" tabindex="-1"></a><span class="fu">## Ver solución</span></span>
+<span id="cb19-363"><a href="#cb19-363" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-366"><a href="#cb19-366" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb19-367"><a href="#cb19-367" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-chi2-om</span></span>
+<span id="cb19-368"><a href="#cb19-368" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "χ² en función de Ω_m: el mínimo indica el mejor ajuste"</span></span>
+<span id="cb19-369"><a href="#cb19-369" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-370"><a href="#cb19-370" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-371"><a href="#cb19-371" aria-hidden="true" tabindex="-1"></a><span class="co"># SOLUCIÓN: barrido de Ω_m y mínimo de χ²</span></span>
+<span id="cb19-372"><a href="#cb19-372" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-373"><a href="#cb19-373" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-374"><a href="#cb19-374" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb19-375"><a href="#cb19-375" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb19-376"><a href="#cb19-376" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.cosmology <span class="im">import</span> FlatLambdaCDM</span>
+<span id="cb19-377"><a href="#cb19-377" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-378"><a href="#cb19-378" aria-hidden="true" tabindex="-1"></a><span class="co"># Paso 1: rejilla de valores de Ω_m</span></span>
+<span id="cb19-379"><a href="#cb19-379" aria-hidden="true" tabindex="-1"></a>om_valores <span class="op">=</span> np.linspace(<span class="fl">0.05</span>, <span class="fl">1.0</span>, <span class="dv">96</span>)</span>
+<span id="cb19-380"><a href="#cb19-380" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-381"><a href="#cb19-381" aria-hidden="true" tabindex="-1"></a><span class="co"># Paso 2: χ² para cada modelo</span></span>
+<span id="cb19-382"><a href="#cb19-382" aria-hidden="true" tabindex="-1"></a>chi2 <span class="op">=</span> []</span>
+<span id="cb19-383"><a href="#cb19-383" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> om <span class="kw">in</span> om_valores:</span>
+<span id="cb19-384"><a href="#cb19-384" aria-hidden="true" tabindex="-1"></a>    modelo <span class="op">=</span> FlatLambdaCDM(H0<span class="op">=</span>cosmo.H0, Om0<span class="op">=</span>om)</span>
+<span id="cb19-385"><a href="#cb19-385" aria-hidden="true" tabindex="-1"></a>    residuo <span class="op">=</span> (mu_sn <span class="op">-</span> modelo.distmod(z_sn).value) <span class="op">/</span> err_mu</span>
+<span id="cb19-386"><a href="#cb19-386" aria-hidden="true" tabindex="-1"></a>    chi2.append(np.<span class="bu">sum</span>(residuo<span class="op">**</span><span class="dv">2</span>))</span>
+<span id="cb19-387"><a href="#cb19-387" aria-hidden="true" tabindex="-1"></a>chi2 <span class="op">=</span> np.array(chi2)</span>
+<span id="cb19-388"><a href="#cb19-388" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-389"><a href="#cb19-389" aria-hidden="true" tabindex="-1"></a><span class="co"># Paso 3: el mínimo y un intervalo aproximado de 1σ (Δχ² = 1)</span></span>
+<span id="cb19-390"><a href="#cb19-390" aria-hidden="true" tabindex="-1"></a>om_mejor <span class="op">=</span> om_valores[np.argmin(chi2)]</span>
+<span id="cb19-391"><a href="#cb19-391" aria-hidden="true" tabindex="-1"></a>dentro <span class="op">=</span> om_valores[chi2 <span class="op">&lt;</span> chi2.<span class="bu">min</span>() <span class="op">+</span> <span class="dv">1</span>]</span>
+<span id="cb19-392"><a href="#cb19-392" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Mejor Ω_m = </span><span class="sc">{</span>om_mejor<span class="sc">:.3f}</span><span class="ss">  (1σ: </span><span class="sc">{</span>dentro<span class="sc">.</span><span class="bu">min</span>()<span class="sc">:.2f}</span><span class="ss"> – </span><span class="sc">{</span>dentro<span class="sc">.</span><span class="bu">max</span>()<span class="sc">:.2f}</span><span class="ss">)"</span>)</span>
+<span id="cb19-393"><a href="#cb19-393" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Planck18  = </span><span class="sc">{</span>cosmo<span class="sc">.</span>Om0<span class="sc">:.3f}</span><span class="ss">"</span>)</span>
+<span id="cb19-394"><a href="#cb19-394" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-395"><a href="#cb19-395" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="dv">4</span>))</span>
+<span id="cb19-396"><a href="#cb19-396" aria-hidden="true" tabindex="-1"></a>ax.plot(om_valores, chi2 <span class="op">-</span> chi2.<span class="bu">min</span>())</span>
+<span id="cb19-397"><a href="#cb19-397" aria-hidden="true" tabindex="-1"></a>ax.axvline(cosmo.Om0, color<span class="op">=</span><span class="st">'C3'</span>, ls<span class="op">=</span><span class="st">'--'</span>, label<span class="op">=</span><span class="st">'Planck18'</span>)</span>
+<span id="cb19-398"><a href="#cb19-398" aria-hidden="true" tabindex="-1"></a>ax.axhline(<span class="dv">1</span>, color<span class="op">=</span><span class="st">'gray'</span>, ls<span class="op">=</span><span class="st">':'</span>, label<span class="op">=</span><span class="st">'Δχ² = 1'</span>)</span>
+<span id="cb19-399"><a href="#cb19-399" aria-hidden="true" tabindex="-1"></a>ax.set_ylim(<span class="dv">0</span>, <span class="dv">20</span>)</span>
+<span id="cb19-400"><a href="#cb19-400" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">'$</span><span class="ch">\\</span><span class="st">Omega_m$'</span>)<span class="op">;</span> ax.set_ylabel(<span class="st">'$</span><span class="ch">\\</span><span class="st">Delta</span><span class="ch">\\</span><span class="st">chi^2$'</span>)</span>
+<span id="cb19-401"><a href="#cb19-401" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
+<span id="cb19-402"><a href="#cb19-402" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb19-403"><a href="#cb19-403" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-404"><a href="#cb19-404" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb19-405"><a href="#cb19-405" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-406"><a href="#cb19-406" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb19-407"><a href="#cb19-407" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-408"><a href="#cb19-408" aria-hidden="true" tabindex="-1"></a><span class="fu">## ¿Qué aprendiste en este módulo? {.seccion-aprendiste}</span></span>
+<span id="cb19-409"><a href="#cb19-409" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-410"><a href="#cb19-410" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Usar los modelos cosmológicos incluidos (<span class="in">`Planck18`</span>, <span class="in">`WMAP9`</span>)</span>
+<span id="cb19-411"><a href="#cb19-411" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Crear modelos propios con <span class="in">`FlatLambdaCDM`</span></span>
+<span id="cb19-412"><a href="#cb19-412" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Las diferentes distancias: comóvil, de luminosidad y diametral angular</span>
+<span id="cb19-413"><a href="#cb19-413" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Calcular la edad del universo y el tiempo de viaje de la luz para cualquier z</span>
+<span id="cb19-414"><a href="#cb19-414" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Invertir funciones con <span class="in">`z_at_value`</span></span>
+<span id="cb19-415"><a href="#cb19-415" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Escala angular (kpc/arcsec) y módulo de distancia</span>
+<span id="cb19-416"><a href="#cb19-416" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Reproducir el diagrama de Hubble que reveló la energía oscura</span>
+<span id="cb19-417"><a href="#cb19-417" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-418"><a href="#cb19-418" aria-hidden="true" tabindex="-1"></a>**Siguiente módulo →** <span class="co">[</span><span class="ot">14 · Mecánica orbital y efemérides</span><span class="co">](14-orbital.qmd)</span></span>
+</code></pre></div><button title="Copiar al portapapeles" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<p>Blog hecho con Quarto</p>
+<p>AstroPy en Español · Blog de astronomía computacional</p>
 </div>   
     <div class="nav-footer-center">
       &nbsp;
     </div>
     <div class="nav-footer-right">
-<p>Datos: Astropy Project</p>
+<p>Hecho con <a href="https://quarto.org">Quarto</a> y <a href="https://www.astropy.org">Astropy</a></p>
 </div>
   </div>
 </footer>

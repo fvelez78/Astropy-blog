@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
 
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.9.37">
@@ -7,7 +7,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Blog AstroPy en Español">
-<meta name="dcterms.date" content="2025-05-26">
 <meta name="description" content="Aprende a trabajar con unidades físicas en Python usando astropy.units y astropy.constants">
 
 <title>02 · Unidades y constantes físicas – AstroPy en Español</title>
@@ -71,6 +70,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../">
+<link href="../../posts/basico/03-tiempo.html" rel="next">
+<link href="../../posts/basico/01-introduccion.html" rel="prev">
 <link href="../../assets/logos/favicon.ico" rel="icon">
 <script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -78,14 +79,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-acf12a64177840b8d86f2d4f01b2e9fb.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-23bbe8b5e4efc1e257f6d59dce478b08.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-acf12a64177840b8d86f2d4f01b2e9fb.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-46c2da4921da100f2e8b760b91ba26ad.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-13f4910f51bb414f8177eb12ee348383.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../../site_libs/bootstrap/bootstrap-dark-c414a890e2011809a78d515def34b275.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../../site_libs/bootstrap/bootstrap-13f4910f51bb414f8177eb12ee348383.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-815cd9e140545d7958d81bc583beecec.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -100,17 +97,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   ],
   "show-item-context": false,
   "language": {
-    "search-no-results-text": "No results",
-    "search-matching-documents-text": "matching documents",
-    "search-copy-link-title": "Copy link to search",
-    "search-hide-matches-text": "Hide additional matches",
-    "search-more-match-text": "more match in this document",
-    "search-more-matches-text": "more matches in this document",
-    "search-clear-button-title": "Clear",
+    "search-no-results-text": "No se han encontrado resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
     "search-text-placeholder": "",
-    "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit",
-    "search-label": "Search"
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
   }
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
@@ -147,169 +144,7 @@ window.Quarto = {
 
 </head>
 
-<body class="nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
-    const toggleBodyColorMode = (bsSheetEl) => {
-      const mode = bsSheetEl.getAttribute("data-mode");
-      const bodyEl = window.document.querySelector("body");
-      if (mode === "dark") {
-        bodyEl.classList.add("quarto-dark");
-        bodyEl.classList.remove("quarto-light");
-      } else {
-        bodyEl.classList.add("quarto-light");
-        bodyEl.classList.remove("quarto-dark");
-      }
-    }
-    const toggleBodyColorPrimary = () => {
-      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
-      if (bsSheetEl) {
-        toggleBodyColorMode(bsSheetEl);
-      }
-    }
-    const setColorSchemeToggle = (alternate) => {
-      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
-      for (let i=0; i < toggles.length; i++) {
-        const toggle = toggles[i];
-        if (toggle) {
-          if (alternate) {
-            toggle.classList.add("alternate");
-          } else {
-            toggle.classList.remove("alternate");
-          }
-        }
-      }
-    };
-    const toggleColorMode = (alternate) => {
-      // Switch the stylesheets
-      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
-      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
-      manageTransitions('#quarto-margin-sidebar .nav-link', false);
-      if (alternate) {
-        // note: dark is layered on light, we don't disable primary!
-        enableStylesheet(alternateStylesheets);
-        for (const sheetNode of alternateStylesheets) {
-          if (sheetNode.id === "quarto-bootstrap") {
-            toggleBodyColorMode(sheetNode);
-          }
-        }
-      } else {
-        disableStylesheet(alternateStylesheets);
-        enableStylesheet(primaryStylesheets)
-        toggleBodyColorPrimary();
-      }
-      manageTransitions('#quarto-margin-sidebar .nav-link', true);
-      // Switch the toggles
-      setColorSchemeToggle(alternate)
-      // Hack to workaround the fact that safari doesn't
-      // properly recolor the scrollbar when toggling (#1455)
-      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
-        manageTransitions("body", false);
-        window.scrollTo(0, 1);
-        setTimeout(() => {
-          window.scrollTo(0, 0);
-          manageTransitions("body", true);
-        }, 40);
-      }
-    }
-    const disableStylesheet = (stylesheets) => {
-      for (let i=0; i < stylesheets.length; i++) {
-        const stylesheet = stylesheets[i];
-        stylesheet.rel = 'disabled-stylesheet';
-      }
-    }
-    const enableStylesheet = (stylesheets) => {
-      for (let i=0; i < stylesheets.length; i++) {
-        const stylesheet = stylesheets[i];
-        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
-          stylesheet.rel = 'stylesheet';
-        }
-      }
-    }
-    const manageTransitions = (selector, allowTransitions) => {
-      const els = window.document.querySelectorAll(selector);
-      for (let i=0; i < els.length; i++) {
-        const el = els[i];
-        if (allowTransitions) {
-          el.classList.remove('notransition');
-        } else {
-          el.classList.add('notransition');
-        }
-      }
-    }
-    const isFileUrl = () => {
-      return window.location.protocol === 'file:';
-    }
-    const hasAlternateSentinel = () => {
-      let styleSentinel = getColorSchemeSentinel();
-      if (styleSentinel !== null) {
-        return styleSentinel === "alternate";
-      } else {
-        return false;
-      }
-    }
-    const setStyleSentinel = (alternate) => {
-      const value = alternate ? "alternate" : "default";
-      if (!isFileUrl()) {
-        window.localStorage.setItem("quarto-color-scheme", value);
-      } else {
-        localAlternateSentinel = value;
-      }
-    }
-    const getColorSchemeSentinel = () => {
-      if (!isFileUrl()) {
-        const storageValue = window.localStorage.getItem("quarto-color-scheme");
-        return storageValue != null ? storageValue : localAlternateSentinel;
-      } else {
-        return localAlternateSentinel;
-      }
-    }
-    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
-      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
-      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
-      let newTheme = '';
-      if(authorPrefersDark) {
-        newTheme = isAlternate ? baseTheme : alternateTheme;
-      } else {
-        newTheme = isAlternate ? alternateTheme : baseTheme;
-      }
-      const changeGiscusTheme = () => {
-        // From: https://github.com/giscus/giscus/issues/336
-        const sendMessage = (message) => {
-          const iframe = document.querySelector('iframe.giscus-frame');
-          if (!iframe) return;
-          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
-        }
-        sendMessage({
-          setConfig: {
-            theme: newTheme
-          }
-        });
-      }
-      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
-      if (isGiscussLoaded) {
-        changeGiscusTheme();
-      }
-    };
-    const authorPrefersDark = false;
-    const darkModeDefault = authorPrefersDark;
-      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
-      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
-    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
-    // Dark / light mode switch
-    window.quartoToggleColorScheme = () => {
-      // Read the current dark / light value
-      let toAlternate = !hasAlternateSentinel();
-      toggleColorMode(toAlternate);
-      setStyleSentinel(toAlternate);
-      toggleGiscusIfUsed(toAlternate, darkModeDefault);
-      window.dispatchEvent(new Event('resize'));
-    };
-    // Switch to dark mode if need be
-    if (hasAlternateSentinel()) {
-      toggleColorMode(true);
-    } else {
-      toggleColorMode(false);
-    }
-  </script>
+<body class="nav-sidebar docked nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -320,105 +155,16 @@ window.Quarto = {
     <span class="navbar-title">AstroPy en Español</span>
     </a>
   </div>
-            <div id="quarto-search" class="" title="Search"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+            <div id="quarto-search" class="" title="Buscar"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Navegación de palanca" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../../index.html"> 
-<span class="menu-text">Inicio</span></a>
+    <a class="nav-link active" href="../../posts/basico/01-introduccion.html" aria-current="page"> 
+<span class="menu-text">Módulos</span></a>
   </li>  
-  <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-basico" role="link" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">Basico</span>
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-basico">    
-        <li>
-    <a class="dropdown-item" href="../../posts/basico/01-introduccion.html">
- <span class="dropdown-text">01 - Introduccion a Astropy</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/basico/02-unidades.html">
- <span class="dropdown-text">02 - Unidades y constantes</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/basico/03-tiempo.html">
- <span class="dropdown-text">03 - Tiempo astronomico</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/basico/04-coordenadas.html">
- <span class="dropdown-text">04 - Coordenadas celestes</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/basico/05-tablas.html">
- <span class="dropdown-text">05 - Tablas astronomicas</span></a>
-  </li>  
-    </ul>
-  </li>
-  <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-intermedio" role="link" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">Intermedio</span>
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-intermedio">    
-        <li>
-    <a class="dropdown-item" href="../../posts/intermedio/06-fits.html">
- <span class="dropdown-text">06 - Archivos FITS</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/intermedio/07-wcs.html">
- <span class="dropdown-text">07 - WCS del pixel al cielo</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/intermedio/08-fotometria.html">
- <span class="dropdown-text">08 - Fotometria de apertura</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/intermedio/09-visualizacion.html">
- <span class="dropdown-text">09 - Visualizacion astronomica</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/intermedio/10-estadistica.html">
- <span class="dropdown-text">10 - Estadistica y modelado</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/intermedio/11-catalogos.html">
- <span class="dropdown-text">11 - Catalogos en linea</span></a>
-  </li>  
-    </ul>
-  </li>
-  <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-avanzado" role="link" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">Avanzado</span>
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-avanzado">    
-        <li>
-    <a class="dropdown-item" href="../../posts/avanzado/12-espectroscopia.html">
- <span class="dropdown-text">12 - Espectroscopia</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/avanzado/13-cosmologia.html">
- <span class="dropdown-text">13 - Cosmologia computacional</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/avanzado/14-orbital.html">
- <span class="dropdown-text">14 - Mecanica orbital</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/avanzado/15-series-temporales.html">
- <span class="dropdown-text">15 - Series temporales</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/avanzado/16-extensiones.html">
- <span class="dropdown-text">16 - Extensiones propias</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/avanzado/17-pipeline.html">
- <span class="dropdown-text">17 - Pipeline completo</span></a>
-  </li>  
-    </ul>
-  </li>
   <li class="nav-item">
     <a class="nav-link" href="../../sobre.html"> 
 <span class="menu-text">Sobre el blog</span></a>
@@ -426,25 +172,190 @@ window.Quarto = {
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/tu-usuario/astropy-blog"> <i class="bi bi-github" role="img" aria-label="GitHub">
+    <a class="nav-link" href="https://github.com/fvelez78/astropy-blog"> <i class="bi bi-github" role="img" aria-label="GitHub">
 </i> 
 <span class="menu-text"></span></a>
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
-  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
 </div>
       </div> <!-- /container-fluid -->
     </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../posts/basico/01-introduccion.html">Nivel 1 · Básico</a></li><li class="breadcrumb-item"><a href="../../posts/basico/02-unidades.html">02 · Unidades y constantes físicas</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Buscar" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
 </header>
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Buscar"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Inicio</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Nivel 1 · Básico</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/basico/01-introduccion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">01 · ¿Qué es Astropy y por qué usarlo?</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/basico/02-unidades.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">02 · Unidades y constantes físicas</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/basico/03-tiempo.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">03 · Tiempo astronómico con astropy.time</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/basico/04-coordenadas.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">04 · Coordenadas celestes con SkyCoord</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/basico/05-tablas.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">05 · Tablas astronómicas con astropy.table</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Nivel 2 · Intermedio</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/intermedio/06-fits.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">06 · Lectura y manipulación de archivos FITS</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/intermedio/07-wcs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">07 · WCS: del píxel al cielo</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/intermedio/08-fotometria.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">08 · Fotometría de apertura</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/intermedio/09-visualizacion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">09 · Visualización astronómica</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/intermedio/10-estadistica.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">10 · Estadística y modelado</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/intermedio/11-catalogos.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">11 · Consultas a catálogos en línea</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Nivel 3 · Avanzado</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/avanzado/12-espectroscopia.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">12 · Espectroscopía con specutils</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/avanzado/13-cosmologia.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">13 · Cosmología computacional</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/avanzado/14-orbital.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">14 · Mecánica orbital y efemérides</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/avanzado/15-series-temporales.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">15 · Series temporales astronómicas</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/avanzado/16-extensiones.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">16 · Extensiones y modelos propios</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/avanzado/17-pipeline.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">17 · Pipeline completo de reducción</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">En esta entrada</h2>
+    <h2 id="toc-title">En esta página</h2>
    
   <ul>
   <li><a href="#por-qué-importan-las-unidades" id="toc-por-qué-importan-las-unidades" class="nav-link active" data-scroll-target="#por-qué-importan-las-unidades"><span class="header-section-number">1</span> ¿Por qué importan las unidades?</a></li>
@@ -468,10 +379,9 @@ window.Quarto = {
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../posts/basico/01-introduccion.html">Nivel 1 · Básico</a></li><li class="breadcrumb-item"><a href="../../posts/basico/02-unidades.html">02 · Unidades y constantes físicas</a></li></ol></nav>
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title">02 · Unidades y constantes físicas</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<div class="quarto-title-block"><div><h1 class="title">02 · Unidades y constantes físicas</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Código</button></div></div>
   <div class="quarto-categories">
     <div class="quarto-category">basico</div>
   </div>
@@ -487,16 +397,16 @@ window.Quarto = {
 <div class="quarto-title-meta">
 
     <div>
-    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-heading">Autor/a</div>
     <div class="quarto-title-meta-contents">
              <p>Blog AstroPy en Español </p>
           </div>
   </div>
     
     <div>
-    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-heading">Fecha de publicación</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">May 26, 2025</p>
+      <p class="date">26 de mayo de 2025</p>
     </div>
   </div>
   
@@ -519,7 +429,7 @@ window.Quarto = {
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Requisitos previos
+<span class="screen-reader-only">Nota</span>Requisitos previos
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -535,7 +445,7 @@ window.Quarto = {
 <h2 data-number="2" class="anchored" data-anchor-id="el-módulo-astropy.units"><span class="header-section-number">2</span> El módulo <code>astropy.units</code></h2>
 <section id="asignar-una-unidad-a-un-número" class="level3" data-number="2.1">
 <h3 data-number="2.1" class="anchored" data-anchor-id="asignar-una-unidad-a-un-número"><span class="header-section-number">2.1</span> Asignar una unidad a un número</h3>
-<div id="a2f9db0d" class="cell" data-execution_count="1">
+<div id="b550b4f6" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Importar el módulo de unidades</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Por convención se abrevia como 'u' en toda la comunidad astronómica</span></span>
@@ -552,7 +462,7 @@ window.Quarto = {
 <span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Astropy muestra siempre el valor y la unidad juntos</span></span>
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Distancia : </span><span class="sc">{</span>distancia<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Masa      : </span><span class="sc">{</span>masa<span class="sc">:.3e}</span><span class="ss">"</span>)</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Tiempo    : </span><span class="sc">{</span>tiempo<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Tiempo    : </span><span class="sc">{</span>tiempo<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Distancia : 150000000.0 km
 Masa      : 1.989e+30 kg
@@ -562,7 +472,7 @@ Tiempo    : 365.25 d</code></pre>
 </section>
 <section id="convertir-entre-unidades-con-.to" class="level3" data-number="2.2">
 <h3 data-number="2.2" class="anchored" data-anchor-id="convertir-entre-unidades-con-.to"><span class="header-section-number">2.2</span> Convertir entre unidades con <code>.to()</code></h3>
-<div id="51806b32" class="cell" data-execution_count="2">
+<div id="d290dd46" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Convertir unidades con el método .to()</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Solo hay que indicar a qué unidad se quiere llegar</span></span>
@@ -582,7 +492,7 @@ Tiempo    : 365.25 d</code></pre>
 <span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  </span><span class="sc">{</span>distancia_km<span class="sc">:.3e}</span><span class="ss">"</span>)</span>
 <span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  </span><span class="sc">{</span>distancia_m<span class="sc">:.3e}</span><span class="ss">"</span>)</span>
 <span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  </span><span class="sc">{</span>distancia_au<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  </span><span class="sc">{</span>distancia_ly<span class="sc">:.6f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  </span><span class="sc">{</span>distancia_ly<span class="sc">:.6f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>La distancia Tierra-Sol equivale a:
   1.500e+08 km
@@ -594,7 +504,7 @@ Tiempo    : 365.25 d</code></pre>
 </section>
 <section id="unidades-compuestas-velocidad-presión-energía" class="level3" data-number="2.3">
 <h3 data-number="2.3" class="anchored" data-anchor-id="unidades-compuestas-velocidad-presión-energía"><span class="header-section-number">2.3</span> Unidades compuestas: velocidad, presión, energía</h3>
-<div id="6e25d3f8" class="cell" data-execution_count="3">
+<div id="6405f29b" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Las unidades se pueden combinar con * (por) y / (entre)</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Astropy construye la unidad compuesta automáticamente</span></span>
@@ -614,7 +524,7 @@ Tiempo    : 365.25 d</code></pre>
 <span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>energia_foton <span class="op">=</span> <span class="fl">2.5</span> <span class="op">*</span> u.eV                <span class="co"># energía de un fotón de luz visible</span></span>
 <span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>energia_joules <span class="op">=</span> energia_foton.to(u.J)    <span class="co"># convertir a julios</span></span>
 <span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Energía del fotón: </span><span class="sc">{</span>energia_foton<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"En julios        : </span><span class="sc">{</span>energia_joules<span class="sc">:.3e}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"En julios        : </span><span class="sc">{</span>energia_joules<span class="sc">:.3e}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Velocidad de la luz: 300000.0 km / s
 En metros por segundo: 3.000e+08 m / s
@@ -626,7 +536,7 @@ En julios        : 4.005e-19 J</code></pre>
 </section>
 <section id="unidades-angulares-grados-arcominutos-arcosegundos" class="level3" data-number="2.4">
 <h3 data-number="2.4" class="anchored" data-anchor-id="unidades-angulares-grados-arcominutos-arcosegundos"><span class="header-section-number">2.4</span> Unidades angulares: grados, arcominutos, arcosegundos</h3>
-<div id="7c5e9db4" class="cell" data-execution_count="4">
+<div id="3fc26273" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co"># En astronomía los ángulos tienen sus propias unidades:</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   grado (°) → arcominuto (') → arcosegundo ('')</span></span>
@@ -651,7 +561,7 @@ En julios        : 4.005e-19 J</code></pre>
 <span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a><span class="co"># se mide en arcosegundos (o miliarcsegundos en radioastronomía)</span></span>
 <span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>limite_hubble <span class="op">=</span> <span class="fl">0.05</span> <span class="op">*</span> u.arcsec           <span class="co"># límite de resolución del HST</span></span>
 <span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Resolución del Hubble : </span><span class="sc">{</span>limite_hubble<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"En grados             : </span><span class="sc">{</span>limite_hubble<span class="sc">.</span>to(u.degree)<span class="sc">:.6f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"En grados             : </span><span class="sc">{</span>limite_hubble<span class="sc">.</span>to(u.degree)<span class="sc">:.6f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Diámetro angular de la Luna:
   En grados       : 0.5 deg
@@ -667,7 +577,7 @@ En grados             : 0.000014 deg</code></pre>
 </section>
 <section id="operaciones-aritméticas-con-unidades" class="level2" data-number="3">
 <h2 data-number="3" class="anchored" data-anchor-id="operaciones-aritméticas-con-unidades"><span class="header-section-number">3</span> Operaciones aritméticas con unidades</h2>
-<div id="020f5fb8" class="cell" data-execution_count="5">
+<div id="c747a308" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Las cantidades con unidades se pueden sumar, restar, multiplicar y dividir</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Astropy verifica automáticamente que las unidades sean compatibles</span></span>
@@ -695,7 +605,7 @@ En grados             : 0.000014 deg</code></pre>
 <span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>H0   <span class="op">=</span> <span class="dv">70</span> <span class="op">*</span> (u.km <span class="op">/</span> u.s <span class="op">/</span> u.Mpc)    <span class="co"># constante de Hubble</span></span>
 <span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>dist <span class="op">=</span> <span class="dv">10</span> <span class="op">*</span> u.Mpc                    <span class="co"># distancia a una galaxia (megaparsecs)</span></span>
 <span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>vel  <span class="op">=</span> H0 <span class="op">*</span> dist                     <span class="co"># velocidad de recesión</span></span>
-<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Velocidad de recesión: </span><span class="sc">{</span>vel<span class="sc">:.0f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Velocidad de recesión: </span><span class="sc">{</span>vel<span class="sc">:.0f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Suma de distancias: 7.480e+08 km
 
@@ -709,7 +619,7 @@ Velocidad de recesión: 700 km / s</code></pre>
 </section>
 <section id="errores-comunes-y-cómo-evitarlos" class="level2" data-number="4">
 <h2 data-number="4" class="anchored" data-anchor-id="errores-comunes-y-cómo-evitarlos"><span class="header-section-number">4</span> Errores comunes y cómo evitarlos</h2>
-<div id="c520d2aa" class="cell" data-execution_count="6">
+<div id="60b5c88e" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Astropy lanza un error si intentamos mezclar unidades incompatibles</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Esto es una PROTECCIÓN — evita errores silenciosos en los cálculos</span></span>
@@ -725,7 +635,7 @@ Velocidad de recesión: 700 km / s</code></pre>
 <span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Error detectado por Astropy:"</span>)</span>
 <span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  </span><span class="sc">{</span>error<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">→ Esto es exactamente lo que queremos:"</span>)</span>
-<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"  en vez de obtener un número sin sentido, Astropy nos avisa."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"  en vez de obtener un número sin sentido, Astropy nos avisa."</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Error detectado por Astropy:
   Can only apply 'add' function to quantities with compatible dimensions
@@ -734,7 +644,7 @@ Velocidad de recesión: 700 km / s</code></pre>
   en vez de obtener un número sin sentido, Astropy nos avisa.</code></pre>
 </div>
 </div>
-<div id="8df5ee04" class="cell" data-execution_count="7">
+<div id="b6fc90a6" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Para extraer solo el número (sin la unidad) se usa .value</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Útil cuando necesitamos pasar el dato a otra librería como matplotlib</span></span>
@@ -750,7 +660,7 @@ Velocidad de recesión: 700 km / s</code></pre>
 <span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Cantidad completa : </span><span class="sc">{</span>velocidad<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Solo el número    : </span><span class="sc">{</span>solo_numero<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Solo la unidad    : </span><span class="sc">{</span>solo_unidad<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Tipo de dato      : </span><span class="sc">{</span><span class="bu">type</span>(solo_numero)<span class="sc">}</span><span class="ss">"</span>)   <span class="co"># float normal de Python</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Tipo de dato      : </span><span class="sc">{</span><span class="bu">type</span>(solo_numero)<span class="sc">}</span><span class="ss">"</span>)   <span class="co"># float normal de Python</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Cantidad completa : 299792.458 km / s
 Solo el número    : 299792.458
@@ -763,7 +673,7 @@ Tipo de dato      : &lt;class 'numpy.float64'&gt;</code></pre>
 <section id="constantes-físicas-con-astropy.constants" class="level2" data-number="5">
 <h2 data-number="5" class="anchored" data-anchor-id="constantes-físicas-con-astropy.constants"><span class="header-section-number">5</span> Constantes físicas con <code>astropy.constants</code></h2>
 <p>Astropy incluye las constantes físicas y astronómicas más usadas, con sus valores oficiales del CODATA y la IAU (Unión Astronómica Internacional).</p>
-<div id="304c2bb1" class="cell" data-execution_count="8">
+<div id="ec50c28e" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co"># El módulo astropy.constants contiene constantes físicas oficiales</span></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co"># con valor, unidad e incertidumbre incluidos</span></span>
@@ -781,7 +691,7 @@ Tipo de dato      : &lt;class 'numpy.float64'&gt;</code></pre>
 <span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Masa del Sol          M☉ = </span><span class="sc">{</span>const<span class="sc">.</span>M_sun<span class="sc">:.6e}</span><span class="ss">"</span>)</span>
 <span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Radio del Sol         R☉ = </span><span class="sc">{</span>const<span class="sc">.</span>R_sun<span class="sc">:.6e}</span><span class="ss">"</span>)</span>
 <span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Masa de la Tierra     M⊕ = </span><span class="sc">{</span>const<span class="sc">.</span>M_earth<span class="sc">:.6e}</span><span class="ss">"</span>)</span>
-<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Radio de la Tierra    R⊕ = </span><span class="sc">{</span>const<span class="sc">.</span>R_earth<span class="sc">:.6e}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Radio de la Tierra    R⊕ = </span><span class="sc">{</span>const<span class="sc">.</span>R_earth<span class="sc">:.6e}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>─── Constantes físicas ───────────────────────────────
 Velocidad de la luz   c  = 2.997925e+08 m / s
@@ -796,7 +706,7 @@ Masa de la Tierra     M⊕ = 5.972168e+24 kg
 Radio de la Tierra    R⊕ = 6.378100e+06 m</code></pre>
 </div>
 </div>
-<div id="44e56a89" class="cell" data-execution_count="9">
+<div id="f25a0ab8" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Las constantes también se convierten con .to()</span></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co"># y se usan directamente en cálculos igual que cualquier cantidad con unidad</span></span>
@@ -817,7 +727,7 @@ Radio de la Tierra    R⊕ = 6.378100e+06 m</code></pre>
 <span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Energía en reposo del electrón (E = mc²):"</span>)</span>
 <span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  En julios          : </span><span class="sc">{</span>energia<span class="sc">:.4e}</span><span class="ss">"</span>)</span>
-<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  En electronvoltios : </span><span class="sc">{</span>energia_eV<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  En electronvoltios : </span><span class="sc">{</span>energia_eV<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Velocidad de la luz:
   en km/s  : 2.99792e+08 m / s
@@ -829,7 +739,7 @@ Energía en reposo del electrón (E = mc²):
   En electronvoltios : 510998.9500 eV</code></pre>
 </div>
 </div>
-<div id="b045d121" class="cell" data-execution_count="10">
+<div id="9659fdaa" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Ver la ficha completa de una constante:</span></span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="co"># nombre, valor, incertidumbre, unidad y referencia bibliográfica</span></span>
@@ -838,7 +748,7 @@ Energía en reposo del electrón (E = mc²):
 <span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy <span class="im">import</span> constants <span class="im">as</span> const</span>
 <span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Imprimimos la ficha completa de la constante gravitacional</span></span>
-<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(const.G)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(const.G)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  Name   = Gravitational constant
   Value  = 6.6743e-11
@@ -853,7 +763,7 @@ Energía en reposo del electrón (E = mc²):
 <h2 data-number="6" class="anchored" data-anchor-id="aplicación-práctica-velocidad-de-escape"><span class="header-section-number">6</span> Aplicación práctica: velocidad de escape</h2>
 <p>Calculamos cuánta velocidad necesita un cohete para escapar de la gravedad de distintos cuerpos del Sistema Solar.</p>
 <p>La fórmula es: <span class="math inline">\(v_{escape} = \sqrt{\dfrac{2GM}{R}}\)</span></p>
-<div id="5c957027" class="cell" data-execution_count="11">
+<div id="d9b2695a" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Velocidad de escape de distintos planetas</span></span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Fórmula: v = sqrt(2 * G * M / R)</span></span>
@@ -886,7 +796,7 @@ Energía en reposo del electrón (E = mc²):
 <span id="cb21-30"><a href="#cb21-30" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Convertimos a km/s para facilitar la comparación</span></span>
 <span id="cb21-31"><a href="#cb21-31" aria-hidden="true" tabindex="-1"></a>    v_kms <span class="op">=</span> v_escape.to(u.km <span class="op">/</span> u.s)</span>
 <span id="cb21-32"><a href="#cb21-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-33"><a href="#cb21-33" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>nombre<span class="sc">:&lt;10}</span><span class="ss"> </span><span class="sc">{</span>v_kms<span class="sc">.</span>value<span class="sc">:&gt;8.2f}</span><span class="ss"> km/s"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb21-33"><a href="#cb21-33" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>nombre<span class="sc">:&lt;10}</span><span class="ss"> </span><span class="sc">{</span>v_kms<span class="sc">.</span>value<span class="sc">:&gt;8.2f}</span><span class="ss"> km/s"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Cuerpo        V. escape
 ─────────────────────────
@@ -1006,7 +916,7 @@ Sol          617.67 km/s</code></pre>
 </div>
 <div id="callout-2" class="callout-2-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="f9114823" class="cell" data-execution_count="12">
+<div id="6cf36f34" class="cell" data-execution_count="12">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="co"># SOLUCIÓN: distancia y retardo de señal del telescopio James Webb</span></span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -1036,7 +946,7 @@ Sol          617.67 km/s</code></pre>
 <span id="cb23-27"><a href="#cb23-27" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-28"><a href="#cb23-28" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Retardo de señal Tierra ↔ JWST:"</span>)</span>
 <span id="cb23-29"><a href="#cb23-29" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  En segundos : </span><span class="sc">{</span>tiempo_seg<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
-<span id="cb23-30"><a href="#cb23-30" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  En minutos  : </span><span class="sc">{</span>tiempo_min<span class="sc">:.2f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb23-30"><a href="#cb23-30" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  En minutos  : </span><span class="sc">{</span>tiempo_min<span class="sc">:.2f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Distancia Tierra → JWST:
   En kilómetros          : 1.500e+06 km
@@ -1072,22 +982,9 @@ Retardo de señal Tierra ↔ JWST:
 
 </section>
 
-</main> <!-- /main -->
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Volver arriba</a></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
-    // Ensure there is a toggle, if there isn't float one in the top right
-    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
-      const a = window.document.createElement('a');
-      a.classList.add('top-right');
-      a.classList.add('quarto-color-scheme-toggle');
-      a.href = "";
-      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
-      const i = window.document.createElement("i");
-      i.classList.add('bi');
-      a.appendChild(i);
-      window.document.body.appendChild(a);
-    }
-    setColorSchemeToggle(hasAlternateSentinel())
     const icon = "";
     const anchorJS = new window.AnchorJS();
     anchorJS.options = {
@@ -1111,12 +1008,12 @@ Retardo de señal Tierra ↔ JWST:
       // flash "checked"
       button.classList.add('code-copy-button-checked');
       var currentTitle = button.getAttribute("title");
-      button.setAttribute("title", "Copied!");
+      button.setAttribute("title", "Copiado");
       let tooltip;
       if (window.bootstrap) {
         button.setAttribute("data-bs-toggle", "tooltip");
         button.setAttribute("data-bs-placement", "left");
-        button.setAttribute("data-bs-title", "Copied!");
+        button.setAttribute("data-bs-title", "Copiado");
         tooltip = new bootstrap.Tooltip(button, 
           { trigger: "manual", 
             customClass: "code-copy-button-tooltip",
@@ -1210,7 +1107,7 @@ Retardo de señal Tierra ↔ JWST:
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/fvelez78\.github\.io\/astropy-blog\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
@@ -1536,7 +1433,19 @@ Retardo de señal Tierra ↔ JWST:
       }
     }
   });
-  </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../../posts/basico/01-introduccion.html" class="pagination-link" aria-label="01 · ¿Qué es Astropy y por qué usarlo?">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">01 · ¿Qué es Astropy y por qué usarlo?</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../../posts/basico/03-tiempo.html" class="pagination-link" aria-label="03 · Tiempo astronómico con astropy.time">
+        <span class="nav-page-text">03 · Tiempo astronómico con astropy.time</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Ejecutar el código</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "02 · Unidades y constantes físicas"</span></span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="an">description:</span><span class="co"> "Aprende a trabajar con unidades físicas en Python usando astropy.units y astropy.constants"</span></span>
@@ -1945,19 +1854,19 @@ Retardo de señal Tierra ↔ JWST:
 <span id="cb25-430"><a href="#cb25-430" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Aplicar todo en un cálculo real: velocidad de escape de planetas</span>
 <span id="cb25-431"><a href="#cb25-431" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-432"><a href="#cb25-432" aria-hidden="true" tabindex="-1"></a>**Siguiente módulo →** <span class="co">[</span><span class="ot">03 · Tiempo astronómico con `astropy.time`</span><span class="co">](03-tiempo.qmd)</span></span>
-</code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+</code></pre></div><button title="Copiar al portapapeles" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<p>Blog hecho con Quarto</p>
+<p>AstroPy en Español · Blog de astronomía computacional</p>
 </div>   
     <div class="nav-footer-center">
       &nbsp;
     </div>
     <div class="nav-footer-right">
-<p>Datos: Astropy Project</p>
+<p>Hecho con <a href="https://quarto.org">Quarto</a> y <a href="https://www.astropy.org">Astropy</a></p>
 </div>
   </div>
 </footer>

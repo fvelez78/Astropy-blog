@@ -1,14 +1,15 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
 
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.9.37">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="description" content="Proximo modulo en preparacion">
+<meta name="author" content="Blog AstroPy en Español">
+<meta name="description" content="Calcula dónde están el Sol, la Luna y los planetas en cualquier fecha, planifica una noche de observación, reproduce el movimiento retrógrado de Marte y resuelve la ecuación de Kepler">
 
-<title>14 - Mecanica orbital y efemerides – AstroPy en Español</title>
+<title>14 · Mecánica orbital y efemérides – AstroPy en Español</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -69,6 +70,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../">
+<link href="../../posts/avanzado/15-series-temporales.html" rel="next">
+<link href="../../posts/avanzado/13-cosmologia.html" rel="prev">
 <link href="../../assets/logos/favicon.ico" rel="icon">
 <script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -76,14 +79,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-acf12a64177840b8d86f2d4f01b2e9fb.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-23bbe8b5e4efc1e257f6d59dce478b08.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-acf12a64177840b8d86f2d4f01b2e9fb.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-46c2da4921da100f2e8b760b91ba26ad.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-13f4910f51bb414f8177eb12ee348383.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../../site_libs/bootstrap/bootstrap-dark-c414a890e2011809a78d515def34b275.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../../site_libs/bootstrap/bootstrap-13f4910f51bb414f8177eb12ee348383.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-815cd9e140545d7958d81bc583beecec.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -98,187 +97,54 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   ],
   "show-item-context": false,
   "language": {
-    "search-no-results-text": "No results",
-    "search-matching-documents-text": "matching documents",
-    "search-copy-link-title": "Copy link to search",
-    "search-hide-matches-text": "Hide additional matches",
-    "search-more-match-text": "more match in this document",
-    "search-more-matches-text": "more matches in this document",
-    "search-clear-button-title": "Clear",
+    "search-no-results-text": "No se han encontrado resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
     "search-text-placeholder": "",
-    "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit",
-    "search-label": "Search"
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
   }
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
-<body class="nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
-    const toggleBodyColorMode = (bsSheetEl) => {
-      const mode = bsSheetEl.getAttribute("data-mode");
-      const bodyEl = window.document.querySelector("body");
-      if (mode === "dark") {
-        bodyEl.classList.add("quarto-dark");
-        bodyEl.classList.remove("quarto-light");
-      } else {
-        bodyEl.classList.add("quarto-light");
-        bodyEl.classList.remove("quarto-dark");
-      }
-    }
-    const toggleBodyColorPrimary = () => {
-      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
-      if (bsSheetEl) {
-        toggleBodyColorMode(bsSheetEl);
-      }
-    }
-    const setColorSchemeToggle = (alternate) => {
-      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
-      for (let i=0; i < toggles.length; i++) {
-        const toggle = toggles[i];
-        if (toggle) {
-          if (alternate) {
-            toggle.classList.add("alternate");
-          } else {
-            toggle.classList.remove("alternate");
-          }
-        }
-      }
-    };
-    const toggleColorMode = (alternate) => {
-      // Switch the stylesheets
-      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
-      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
-      manageTransitions('#quarto-margin-sidebar .nav-link', false);
-      if (alternate) {
-        // note: dark is layered on light, we don't disable primary!
-        enableStylesheet(alternateStylesheets);
-        for (const sheetNode of alternateStylesheets) {
-          if (sheetNode.id === "quarto-bootstrap") {
-            toggleBodyColorMode(sheetNode);
-          }
-        }
-      } else {
-        disableStylesheet(alternateStylesheets);
-        enableStylesheet(primaryStylesheets)
-        toggleBodyColorPrimary();
-      }
-      manageTransitions('#quarto-margin-sidebar .nav-link', true);
-      // Switch the toggles
-      setColorSchemeToggle(alternate)
-      // Hack to workaround the fact that safari doesn't
-      // properly recolor the scrollbar when toggling (#1455)
-      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
-        manageTransitions("body", false);
-        window.scrollTo(0, 1);
-        setTimeout(() => {
-          window.scrollTo(0, 0);
-          manageTransitions("body", true);
-        }, 40);
-      }
-    }
-    const disableStylesheet = (stylesheets) => {
-      for (let i=0; i < stylesheets.length; i++) {
-        const stylesheet = stylesheets[i];
-        stylesheet.rel = 'disabled-stylesheet';
-      }
-    }
-    const enableStylesheet = (stylesheets) => {
-      for (let i=0; i < stylesheets.length; i++) {
-        const stylesheet = stylesheets[i];
-        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
-          stylesheet.rel = 'stylesheet';
-        }
-      }
-    }
-    const manageTransitions = (selector, allowTransitions) => {
-      const els = window.document.querySelectorAll(selector);
-      for (let i=0; i < els.length; i++) {
-        const el = els[i];
-        if (allowTransitions) {
-          el.classList.remove('notransition');
-        } else {
-          el.classList.add('notransition');
-        }
-      }
-    }
-    const isFileUrl = () => {
-      return window.location.protocol === 'file:';
-    }
-    const hasAlternateSentinel = () => {
-      let styleSentinel = getColorSchemeSentinel();
-      if (styleSentinel !== null) {
-        return styleSentinel === "alternate";
-      } else {
-        return false;
-      }
-    }
-    const setStyleSentinel = (alternate) => {
-      const value = alternate ? "alternate" : "default";
-      if (!isFileUrl()) {
-        window.localStorage.setItem("quarto-color-scheme", value);
-      } else {
-        localAlternateSentinel = value;
-      }
-    }
-    const getColorSchemeSentinel = () => {
-      if (!isFileUrl()) {
-        const storageValue = window.localStorage.getItem("quarto-color-scheme");
-        return storageValue != null ? storageValue : localAlternateSentinel;
-      } else {
-        return localAlternateSentinel;
-      }
-    }
-    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
-      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
-      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
-      let newTheme = '';
-      if(authorPrefersDark) {
-        newTheme = isAlternate ? baseTheme : alternateTheme;
-      } else {
-        newTheme = isAlternate ? alternateTheme : baseTheme;
-      }
-      const changeGiscusTheme = () => {
-        // From: https://github.com/giscus/giscus/issues/336
-        const sendMessage = (message) => {
-          const iframe = document.querySelector('iframe.giscus-frame');
-          if (!iframe) return;
-          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
-        }
-        sendMessage({
-          setConfig: {
-            theme: newTheme
-          }
-        });
-      }
-      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
-      if (isGiscussLoaded) {
-        changeGiscusTheme();
-      }
-    };
-    const authorPrefersDark = false;
-    const darkModeDefault = authorPrefersDark;
-      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
-      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
-    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
-    // Dark / light mode switch
-    window.quartoToggleColorScheme = () => {
-      // Read the current dark / light value
-      let toAlternate = !hasAlternateSentinel();
-      toggleColorMode(toAlternate);
-      setStyleSentinel(toAlternate);
-      toggleGiscusIfUsed(toAlternate, darkModeDefault);
-      window.dispatchEvent(new Event('resize'));
-    };
-    // Switch to dark mode if need be
-    if (hasAlternateSentinel()) {
-      toggleColorMode(true);
-    } else {
-      toggleColorMode(false);
-    }
-  </script>
+<body class="nav-sidebar docked nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -289,105 +155,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <span class="navbar-title">AstroPy en Español</span>
     </a>
   </div>
-            <div id="quarto-search" class="" title="Search"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+            <div id="quarto-search" class="" title="Buscar"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Navegación de palanca" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../../index.html"> 
-<span class="menu-text">Inicio</span></a>
+    <a class="nav-link active" href="../../posts/basico/01-introduccion.html" aria-current="page"> 
+<span class="menu-text">Módulos</span></a>
   </li>  
-  <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-basico" role="link" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">Basico</span>
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-basico">    
-        <li>
-    <a class="dropdown-item" href="../../posts/basico/01-introduccion.html">
- <span class="dropdown-text">01 - Introduccion a Astropy</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/basico/02-unidades.html">
- <span class="dropdown-text">02 - Unidades y constantes</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/basico/03-tiempo.html">
- <span class="dropdown-text">03 - Tiempo astronomico</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/basico/04-coordenadas.html">
- <span class="dropdown-text">04 - Coordenadas celestes</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/basico/05-tablas.html">
- <span class="dropdown-text">05 - Tablas astronomicas</span></a>
-  </li>  
-    </ul>
-  </li>
-  <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-intermedio" role="link" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">Intermedio</span>
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-intermedio">    
-        <li>
-    <a class="dropdown-item" href="../../posts/intermedio/06-fits.html">
- <span class="dropdown-text">06 - Archivos FITS</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/intermedio/07-wcs.html">
- <span class="dropdown-text">07 - WCS del pixel al cielo</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/intermedio/08-fotometria.html">
- <span class="dropdown-text">08 - Fotometria de apertura</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/intermedio/09-visualizacion.html">
- <span class="dropdown-text">09 - Visualizacion astronomica</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/intermedio/10-estadistica.html">
- <span class="dropdown-text">10 - Estadistica y modelado</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/intermedio/11-catalogos.html">
- <span class="dropdown-text">11 - Catalogos en linea</span></a>
-  </li>  
-    </ul>
-  </li>
-  <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-avanzado" role="link" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">Avanzado</span>
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-avanzado">    
-        <li>
-    <a class="dropdown-item" href="../../posts/avanzado/12-espectroscopia.html">
- <span class="dropdown-text">12 - Espectroscopia</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/avanzado/13-cosmologia.html">
- <span class="dropdown-text">13 - Cosmologia computacional</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/avanzado/14-orbital.html">
- <span class="dropdown-text">14 - Mecanica orbital</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/avanzado/15-series-temporales.html">
- <span class="dropdown-text">15 - Series temporales</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/avanzado/16-extensiones.html">
- <span class="dropdown-text">16 - Extensiones propias</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/avanzado/17-pipeline.html">
- <span class="dropdown-text">17 - Pipeline completo</span></a>
-  </li>  
-    </ul>
-  </li>
   <li class="nav-item">
     <a class="nav-link" href="../../sobre.html"> 
 <span class="menu-text">Sobre el blog</span></a>
@@ -395,32 +172,219 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/tu-usuario/astropy-blog"> <i class="bi bi-github" role="img" aria-label="GitHub">
+    <a class="nav-link" href="https://github.com/fvelez78/astropy-blog"> <i class="bi bi-github" role="img" aria-label="GitHub">
 </i> 
 <span class="menu-text"></span></a>
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
-  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
 </div>
       </div> <!-- /container-fluid -->
     </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../posts/avanzado/12-espectroscopia.html">Nivel 3 · Avanzado</a></li><li class="breadcrumb-item"><a href="../../posts/avanzado/14-orbital.html">14 · Mecánica orbital y efemérides</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Buscar" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
 </header>
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Buscar"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Inicio</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Nivel 1 · Básico</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/basico/01-introduccion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">01 · ¿Qué es Astropy y por qué usarlo?</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/basico/02-unidades.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">02 · Unidades y constantes físicas</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/basico/03-tiempo.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">03 · Tiempo astronómico con astropy.time</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/basico/04-coordenadas.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">04 · Coordenadas celestes con SkyCoord</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/basico/05-tablas.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">05 · Tablas astronómicas con astropy.table</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Nivel 2 · Intermedio</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/intermedio/06-fits.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">06 · Lectura y manipulación de archivos FITS</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/intermedio/07-wcs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">07 · WCS: del píxel al cielo</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/intermedio/08-fotometria.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">08 · Fotometría de apertura</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/intermedio/09-visualizacion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">09 · Visualización astronómica</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/intermedio/10-estadistica.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">10 · Estadística y modelado</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/intermedio/11-catalogos.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">11 · Consultas a catálogos en línea</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Nivel 3 · Avanzado</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/avanzado/12-espectroscopia.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">12 · Espectroscopía con specutils</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/avanzado/13-cosmologia.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">13 · Cosmología computacional</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/avanzado/14-orbital.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">14 · Mecánica orbital y efemérides</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/avanzado/15-series-temporales.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">15 · Series temporales astronómicas</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/avanzado/16-extensiones.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">16 · Extensiones y modelos propios</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/avanzado/17-pipeline.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">17 · Pipeline completo de reducción</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">En esta página</h2>
+   
+  <ul>
+  <li><a href="#efemérides-el-horario-del-sistema-solar" id="toc-efemérides-el-horario-del-sistema-solar" class="nav-link active" data-scroll-target="#efemérides-el-horario-del-sistema-solar"><span class="header-section-number">1</span> Efemérides: el horario del Sistema Solar</a></li>
+  <li><a href="#dónde-están-los-planetas-hoy" id="toc-dónde-están-los-planetas-hoy" class="nav-link" data-scroll-target="#dónde-están-los-planetas-hoy"><span class="header-section-number">2</span> ¿Dónde están los planetas hoy?</a></li>
+  <li><a href="#planificar-una-noche-de-observación" id="toc-planificar-una-noche-de-observación" class="nav-link" data-scroll-target="#planificar-una-noche-de-observación"><span class="header-section-number">3</span> Planificar una noche de observación</a>
+  <ul class="collapse">
+  <li><a href="#hora-de-la-puesta-del-sol-y-del-inicio-de-la-noche" id="toc-hora-de-la-puesta-del-sol-y-del-inicio-de-la-noche" class="nav-link" data-scroll-target="#hora-de-la-puesta-del-sol-y-del-inicio-de-la-noche"><span class="header-section-number">3.1</span> Hora de la puesta del Sol y del inicio de la noche</a></li>
+  </ul></li>
+  <li><a href="#la-fase-de-la-luna" id="toc-la-fase-de-la-luna" class="nav-link" data-scroll-target="#la-fase-de-la-luna"><span class="header-section-number">4</span> La fase de la Luna</a></li>
+  <li><a href="#el-movimiento-retrógrado-de-marte" id="toc-el-movimiento-retrógrado-de-marte" class="nav-link" data-scroll-target="#el-movimiento-retrógrado-de-marte"><span class="header-section-number">5</span> El movimiento retrógrado de Marte</a>
+  <ul class="collapse">
+  <li><a href="#la-explicación-desde-arriba" id="toc-la-explicación-desde-arriba" class="nav-link" data-scroll-target="#la-explicación-desde-arriba"><span class="header-section-number">5.1</span> La explicación desde arriba</a></li>
+  </ul></li>
+  <li><a href="#las-leyes-de-kepler-con-unidades" id="toc-las-leyes-de-kepler-con-unidades" class="nav-link" data-scroll-target="#las-leyes-de-kepler-con-unidades"><span class="header-section-number">6</span> Las leyes de Kepler con unidades</a>
+  <ul class="collapse">
+  <li><a href="#tercera-ley-período-y-tamaño-de-la-órbita" id="toc-tercera-ley-período-y-tamaño-de-la-órbita" class="nav-link" data-scroll-target="#tercera-ley-período-y-tamaño-de-la-órbita"><span class="header-section-number">6.1</span> Tercera ley: período y tamaño de la órbita</a></li>
+  <li><a href="#ecuación-de-kepler-dónde-está-un-cuerpo-en-su-órbita" id="toc-ecuación-de-kepler-dónde-está-un-cuerpo-en-su-órbita" class="nav-link" data-scroll-target="#ecuación-de-kepler-dónde-está-un-cuerpo-en-su-órbita"><span class="header-section-number">6.2</span> Ecuación de Kepler: dónde está un cuerpo en su órbita</a></li>
+  </ul></li>
+  <li><a href="#ejercicio" id="toc-ejercicio" class="nav-link" data-scroll-target="#ejercicio"><span class="header-section-number">7</span> Ejercicio</a></li>
+  <li><a href="#qué-aprendiste-en-este-módulo" id="toc-qué-aprendiste-en-este-módulo" class="nav-link" data-scroll-target="#qué-aprendiste-en-este-módulo"><span class="header-section-number">8</span> ¿Qué aprendiste en este módulo?</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../posts/avanzado/12-espectroscopia.html">Nivel 3 · Avanzado</a></li><li class="breadcrumb-item"><a href="../../posts/avanzado/14-orbital.html">14 · Mecánica orbital y efemérides</a></li></ol></nav>
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title">14 - Mecanica orbital y efemerides</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<div class="quarto-title-block"><div><h1 class="title">14 · Mecánica orbital y efemérides</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Código</button></div></div>
   <div class="quarto-categories">
     <div class="quarto-category">avanzado</div>
   </div>
@@ -428,14 +392,26 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <div>
   <div class="description">
-    Proximo modulo en preparacion
+    Calcula dónde están el Sol, la Luna y los planetas en cualquier fecha, planifica una noche de observación, reproduce el movimiento retrógrado de Marte y resuelve la ecuación de Kepler
   </div>
 </div>
 
 
 <div class="quarto-title-meta">
 
+    <div>
+    <div class="quarto-title-meta-heading">Autor/a</div>
+    <div class="quarto-title-meta-contents">
+             <p>Blog AstroPy en Español </p>
+          </div>
+  </div>
     
+    <div>
+    <div class="quarto-title-meta-heading">Fecha de publicación</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">1 de noviembre de 2026</p>
+    </div>
+  </div>
   
     
   </div>
@@ -445,41 +421,554 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p><span class="badge-avanzado">Avanzado</span></p>
+<p><span class="badge-avanzado">🚀 Avanzado</span></p>
+<section id="efemérides-el-horario-del-sistema-solar" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="efemérides-el-horario-del-sistema-solar"><span class="header-section-number">1</span> Efemérides: el horario del Sistema Solar</h2>
+<p>Una <strong>efeméride</strong> es una tabla con la posición de un cuerpo celeste a lo largo del tiempo. Antes se publicaban en libros; hoy las calculamos con Python a partir de modelos muy precisos del Sistema Solar.</p>
+<p>Astropy incluye:</p>
+<ul>
+<li><strong><code>get_body</code></strong>: posición del Sol, la Luna y los planetas vistos desde la Tierra (o desde un observatorio concreto)</li>
+<li><strong><code>get_body_barycentric</code></strong>: posición en el espacio respecto al centro de masa del Sistema Solar</li>
+<li>Toda la maquinaria de <code>SkyCoord</code>, <code>AltAz</code> y <code>Time</code> de los módulos 03 y 04</li>
+</ul>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Requisitos previos
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>Módulos 03 (tiempo) y 04 (coordenadas)</li>
+<li>Sin instalaciones extra: usamos la efeméride integrada (<code>builtin</code>) de Astropy</li>
+</ul>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Más precisión
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>La efeméride integrada tiene una precisión de segundos de arco, suficiente para observar. Para trabajo profesional instala <code>pip install jplephem</code> y usa <code>solar_system_ephemeris.set('de440')</code>, que descarga los modelos del JPL de la NASA.</p>
+</div>
+</div>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Warning</span>Modulo en construccion
+<span class="screen-reader-only">Advertencia</span>Tablas de rotación de la Tierra (IERS)
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Este modulo esta siendo preparado. Vuelve pronto.</p>
+<p>La rotación de la Tierra no es perfectamente regular: el Servicio Internacional de Rotación Terrestre (IERS) la mide y publica tablas que Astropy descarga de internet para calcular alturas y acimuts con precisión. Si no hay conexión y las tablas incluidas quedaron viejas, Astropy se detiene con un error. La línea <code>iers.conf.auto_max_age = None</code> del primer bloque le permite seguir con las tablas que tenga: la diferencia es de fracciones de segundo de arco, irrelevante para planificar una observación.</p>
 </div>
 </div>
+<hr>
+</section>
+<section id="dónde-están-los-planetas-hoy" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="dónde-están-los-planetas-hoy"><span class="header-section-number">2</span> ¿Dónde están los planetas hoy?</h2>
+<div id="a14e433d" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Posición de los planetas vistos desde la Tierra en una fecha dada</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.time <span class="im">import</span> Time</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.coordinates <span class="im">import</span> get_body, get_constellation, solar_system_ephemeris</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> astropy.units <span class="im">as</span> u</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>solar_system_ephemeris.<span class="bu">set</span>(<span class="st">'builtin'</span>)        <span class="co"># efeméride integrada (sin descargas)</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Permitir tablas de rotación terrestre (IERS) desactualizadas si no hay internet</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># (ver el recuadro de advertencia de arriba)</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.utils <span class="im">import</span> iers</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>iers.conf.auto_max_age <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>fecha <span class="op">=</span> Time(<span class="st">'2026-11-15 00:00:00'</span>, scale<span class="op">=</span><span class="st">'utc'</span>)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Posiciones geocéntricas para </span><span class="sc">{</span>fecha<span class="sc">.</span>iso[:<span class="dv">10</span>]<span class="sc">}</span><span class="ss">:</span><span class="ch">\n</span><span class="ss">"</span>)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span><span class="st">'Cuerpo'</span><span class="sc">:&lt;9}</span><span class="ss"> </span><span class="sc">{</span><span class="st">'RA'</span><span class="sc">:&gt;12}</span><span class="ss"> </span><span class="sc">{</span><span class="st">'Dec'</span><span class="sc">:&gt;12}</span><span class="ss"> </span><span class="sc">{</span><span class="st">'Distancia'</span><span class="sc">:&gt;14}</span><span class="ss">  Constelación"</span>)</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> cuerpo <span class="kw">in</span> [<span class="st">'sun'</span>, <span class="st">'moon'</span>, <span class="st">'mercury'</span>, <span class="st">'venus'</span>, <span class="st">'mars'</span>, <span class="st">'jupiter'</span>, <span class="st">'saturn'</span>]:</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    pos <span class="op">=</span> get_body(cuerpo, fecha)                      <span class="co"># SkyCoord con distancia</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    <span class="co"># La distancia de la Luna se lee mejor en km; el resto en UA</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    dist <span class="op">=</span> pos.distance.to(u.km) <span class="cf">if</span> cuerpo <span class="op">==</span> <span class="st">'moon'</span> <span class="cf">else</span> pos.distance.to(u.au)</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>cuerpo<span class="sc">.</span>capitalize()<span class="sc">:&lt;9}</span><span class="ss"> "</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>          <span class="ss">f"</span><span class="sc">{</span>pos<span class="sc">.</span>ra<span class="sc">.</span>to_string(unit<span class="op">=</span>u.hour, precision<span class="op">=</span><span class="dv">0</span>)<span class="sc">:&gt;12}</span><span class="ss"> "</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>          <span class="ss">f"</span><span class="sc">{</span>pos<span class="sc">.</span>dec<span class="sc">.</span>to_string(precision<span class="op">=</span><span class="dv">0</span>)<span class="sc">:&gt;12}</span><span class="ss"> "</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>          <span class="ss">f"</span><span class="sc">{</span>dist<span class="sc">:&gt;14.3f}</span><span class="ss">  </span><span class="sc">{</span>get_constellation(pos)<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Posiciones geocéntricas para 2026-11-15:
+
+Cuerpo              RA          Dec      Distancia  Constelación
+Sun          15h19m22s   -18d19m47s          0.989 AU  Libra
+Moon         19h49m42s   -23d35m42s     404785.248 km  Sagittarius
+Mercury      14h13m11s   -11d02m35s          0.845 AU  Virgo
+Venus        13h21m05s   -10d05m12s          0.331 AU  Virgo
+Mars          9h51m33s    15d00m19s          1.316 AU  Leo
+Jupiter       9h51m42s    13d44m59s          5.283 AU  Leo
+Saturn        0h34m08s     0d48m01s          8.686 AU  Cetus</code></pre>
+</div>
+</div>
+<p><code>get_constellation()</code> nos dice en qué constelación aparece cada cuerpo: los planetas siempre están en las constelaciones del zodíaco (y Ofiuco), porque orbitan cerca del plano de la eclíptica.</p>
+<hr>
+</section>
+<section id="planificar-una-noche-de-observación" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="planificar-una-noche-de-observación"><span class="header-section-number">3</span> Planificar una noche de observación</h2>
+<p>Calculamos la altura sobre el horizonte de varios cuerpos durante una noche, desde el <strong>Observatorio del Teide</strong> (Tenerife, España).</p>
+<div id="cell-fig-noche" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Curvas de altura durante una noche</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.coordinates <span class="im">import</span> EarthLocation, AltAz, get_body</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.time <span class="im">import</span> Time</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> astropy.units <span class="im">as</span> u</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Ubicación del observatorio</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>teide <span class="op">=</span> EarthLocation(lat<span class="op">=</span><span class="fl">28.3009</span> <span class="op">*</span> u.deg, lon<span class="op">=-</span><span class="fl">16.5110</span> <span class="op">*</span> u.deg, height<span class="op">=</span><span class="dv">2390</span> <span class="op">*</span> u.m)</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Tiempos: de 17:00 a 08:00 UTC cada 10 minutos (Tenerife está en UTC+0 en invierno)</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>inicio <span class="op">=</span> Time(<span class="st">'2026-11-15 17:00:00'</span>, scale<span class="op">=</span><span class="st">'utc'</span>)</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>tiempos <span class="op">=</span> inicio <span class="op">+</span> np.linspace(<span class="dv">0</span>, <span class="dv">15</span>, <span class="dv">91</span>) <span class="op">*</span> u.hour</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Marco horizontal para TODOS los tiempos a la vez</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>marco <span class="op">=</span> AltAz(obstime<span class="op">=</span>tiempos, location<span class="op">=</span>teide)</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Altura del Sol: define la noche y los crepúsculos</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>alt_sol <span class="op">=</span> get_body(<span class="st">'sun'</span>, tiempos).transform_to(marco).alt</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">5</span>))</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>horas <span class="op">=</span> (tiempos <span class="op">-</span> inicio).to(u.hour).value <span class="op">+</span> <span class="dv">17</span>         <span class="co"># eje x en horas UTC</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> cuerpo, color <span class="kw">in</span> [(<span class="st">'moon'</span>, <span class="st">'gray'</span>), (<span class="st">'mars'</span>, <span class="st">'C3'</span>),</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>                      (<span class="st">'jupiter'</span>, <span class="st">'C1'</span>), (<span class="st">'saturn'</span>, <span class="st">'C2'</span>)]:</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    alt <span class="op">=</span> get_body(cuerpo, tiempos, location<span class="op">=</span>teide).transform_to(marco).alt</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>    ax.plot(horas, alt.deg, color<span class="op">=</span>color, lw<span class="op">=</span><span class="dv">2</span>, label<span class="op">=</span>cuerpo.capitalize())</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a><span class="co"># Sombrear: día (Sol &gt; -0.8°), crepúsculo (-0.8° a -18°), noche (&lt; -18°)</span></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>ax.fill_between(horas, <span class="dv">0</span>, <span class="dv">90</span>, where<span class="op">=</span>alt_sol.deg <span class="op">&gt;</span> <span class="op">-</span><span class="fl">0.8</span>, color<span class="op">=</span><span class="st">'gold'</span>, alpha<span class="op">=</span><span class="fl">0.25</span>, label<span class="op">=</span><span class="st">'Día'</span>)</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>ax.fill_between(horas, <span class="dv">0</span>, <span class="dv">90</span>, where<span class="op">=</span>(alt_sol.deg <span class="op">&lt;</span> <span class="op">-</span><span class="fl">0.8</span>) <span class="op">&amp;</span> (alt_sol.deg <span class="op">&gt;</span> <span class="op">-</span><span class="dv">18</span>),</span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>                color<span class="op">=</span><span class="st">'gray'</span>, alpha<span class="op">=</span><span class="fl">0.25</span>, label<span class="op">=</span><span class="st">'Crepúsculo'</span>)</span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>ax.axhline(<span class="dv">30</span>, color<span class="op">=</span><span class="st">'C7'</span>, ls<span class="op">=</span><span class="st">':'</span>, lw<span class="op">=</span><span class="dv">1</span>)                   <span class="co"># altura mínima recomendada</span></span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>ax.set_ylim(<span class="dv">0</span>, <span class="dv">90</span>)<span class="op">;</span> ax.set_xlim(horas[<span class="dv">0</span>], horas[<span class="op">-</span><span class="dv">1</span>])</span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>ax.set_xticks(<span class="bu">range</span>(<span class="dv">17</span>, <span class="dv">33</span>, <span class="dv">2</span>))</span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>ax.set_xticklabels([<span class="ss">f"</span><span class="sc">{</span>h <span class="op">%</span> <span class="dv">24</span><span class="sc">:02d}</span><span class="ss">h"</span> <span class="cf">for</span> h <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">17</span>, <span class="dv">33</span>, <span class="dv">2</span>)])</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">'Hora UTC'</span>)<span class="op">;</span> ax.set_ylabel(<span class="st">'Altura [°]'</span>)</span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Noche del 15 al 16 de noviembre de 2026 – Observatorio del Teide'</span>)</span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>ax.legend(loc<span class="op">=</span><span class="st">'upper right'</span>, fontsize<span class="op">=</span><span class="dv">8</span>, ncol<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div id="fig-noche" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-noche-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="14-orbital_files/figure-html/fig-noche-output-1.png" width="808" height="449" class="figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-noche-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;1: Altura de la Luna y los planetas durante la noche. Las franjas grises marcan el crepúsculo
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>¿Por qué las curvas de Marte y Júpiter casi coinciden? Porque esa noche están en <strong>conjunción</strong>: ambos aparecen en Leo separados por poco más de un grado. Puedes comprobarlo con <code>get_body('mars', t).separation(get_body('jupiter', t))</code>.</p>
+<section id="hora-de-la-puesta-del-sol-y-del-inicio-de-la-noche" class="level3" data-number="3.1">
+<h3 data-number="3.1" class="anchored" data-anchor-id="hora-de-la-puesta-del-sol-y-del-inicio-de-la-noche"><span class="header-section-number">3.1</span> Hora de la puesta del Sol y del inicio de la noche</h3>
+<div id="871791f8" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Encontrar cuándo el Sol cruza ciertas alturas</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Buscamos el primer instante en que la altura pasa por debajo del umbral</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Rejilla más fina (cada minuto) para mayor precisión</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>t_fino <span class="op">=</span> inicio <span class="op">+</span> np.linspace(<span class="dv">0</span>, <span class="dv">15</span>, <span class="dv">15</span> <span class="op">*</span> <span class="dv">60</span> <span class="op">+</span> <span class="dv">1</span>) <span class="op">*</span> u.hour</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>alt_fino <span class="op">=</span> get_body(<span class="st">'sun'</span>, t_fino).transform_to(AltAz(obstime<span class="op">=</span>t_fino, location<span class="op">=</span>teide)).alt.deg</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> primer_cruce_bajando(alturas, umbral):</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Índice del primer elemento donde la altura pasa de &gt; umbral a ≤ umbral."""</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    cruces <span class="op">=</span> np.where((alturas[:<span class="op">-</span><span class="dv">1</span>] <span class="op">&gt;</span> umbral) <span class="op">&amp;</span> (alturas[<span class="dv">1</span>:] <span class="op">&lt;=</span> umbral))[<span class="dv">0</span>]</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> cruces[<span class="dv">0</span>] <span class="op">+</span> <span class="dv">1</span> <span class="cf">if</span> <span class="bu">len</span>(cruces) <span class="cf">else</span> <span class="va">None</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>eventos <span class="op">=</span> {</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Puesta del Sol'</span>               : <span class="op">-</span><span class="fl">0.833</span>,   <span class="co"># refracción + radio solar</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Fin del crepúsculo civil'</span>     : <span class="op">-</span><span class="dv">6</span>,</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Fin del crepúsculo náutico'</span>   : <span class="op">-</span><span class="dv">12</span>,</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Inicio de la noche astronómica'</span>: <span class="op">-</span><span class="dv">18</span>,</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> nombre, umbral <span class="kw">in</span> eventos.items():</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>    i <span class="op">=</span> primer_cruce_bajando(alt_fino, umbral)</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>nombre<span class="sc">:&lt;32}</span><span class="ss">: </span><span class="sc">{</span>t_fino[i]<span class="sc">.</span>iso[<span class="dv">11</span>:<span class="dv">16</span>]<span class="sc">}</span><span class="ss"> UTC"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Puesta del Sol                  : 18:13 UTC
+Fin del crepúsculo civil        : 18:38 UTC
+Fin del crepúsculo náutico      : 19:07 UTC
+Inicio de la noche astronómica  : 19:35 UTC</code></pre>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="la-fase-de-la-luna" class="level2" data-number="4">
+<h2 data-number="4" class="anchored" data-anchor-id="la-fase-de-la-luna"><span class="header-section-number">4</span> La fase de la Luna</h2>
+<div id="cell-fig-fases" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Fracción iluminada a partir de la elongación (ángulo Sol–Tierra–Luna)</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>dias <span class="op">=</span> Time(<span class="st">'2026-11-01'</span>) <span class="op">+</span> np.arange(<span class="dv">0</span>, <span class="dv">30</span>, <span class="fl">0.25</span>) <span class="op">*</span> u.day</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>sol  <span class="op">=</span> get_body(<span class="st">'sun'</span>, dias)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>luna <span class="op">=</span> get_body(<span class="st">'moon'</span>, dias)</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Elongación: separación angular entre el Sol y la Luna vista desde la Tierra</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>elongacion <span class="op">=</span> sol.separation(luna)</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Aproximación: fracción iluminada = (1 − cos(elongación)) / 2</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>iluminada <span class="op">=</span> (<span class="dv">1</span> <span class="op">-</span> np.cos(elongacion.radian)) <span class="op">/</span> <span class="dv">2</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">9</span>, <span class="fl">3.5</span>))</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>ax.plot(dias.datetime, iluminada <span class="op">*</span> <span class="dv">100</span>)</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">'</span><span class="sc">% i</span><span class="st">luminado'</span>)<span class="op">;</span> ax.set_ylim(<span class="dv">0</span>, <span class="dv">100</span>)</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Fase lunar – noviembre 2026'</span>)</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>fig.autofmt_xdate()</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>i_llena <span class="op">=</span> np.argmax(iluminada)<span class="op">;</span> i_nueva <span class="op">=</span> np.argmin(iluminada)</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Luna llena ≈ </span><span class="sc">{</span>dias[i_llena]<span class="sc">.</span>iso[:<span class="dv">16</span>]<span class="sc">}</span><span class="ss"> UTC"</span>)</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Luna nueva ≈ </span><span class="sc">{</span>dias[i_nueva]<span class="sc">.</span>iso[:<span class="dv">16</span>]<span class="sc">}</span><span class="ss"> UTC"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div id="fig-fases" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-fases-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="14-orbital_files/figure-html/fig-fases-output-1.png" width="742" height="327" class="figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-fases-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;2: Fracción iluminada de la Luna durante noviembre de 2026
+</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Luna llena ≈ 2026-11-24 18:00 UTC
+Luna nueva ≈ 2026-11-09 06:00 UTC</code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Planificar astrofotografía
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Para fotografiar nebulosas y galaxias débiles conviene la <strong>Luna nueva</strong>; para planetas y la propia Luna, la fase no importa tanto. Combinando este bloque con el anterior puedes armar un calendario de observación.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="el-movimiento-retrógrado-de-marte" class="level2" data-number="5">
+<h2 data-number="5" class="anchored" data-anchor-id="el-movimiento-retrógrado-de-marte"><span class="header-section-number">5</span> El movimiento retrógrado de Marte</h2>
+<p>Visto desde la Tierra, Marte a veces parece <strong>retroceder</strong> en el cielo. No es que Marte cambie de dirección: es la Tierra adelantándolo en su órbita interior, como cuando adelantamos un auto en la autopista.</p>
+<div id="cell-fig-retrogrado" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Posición diaria de Marte en coordenadas eclípticas durante 9 meses</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.coordinates <span class="im">import</span> GeocentricTrueEcliptic</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>dias <span class="op">=</span> Time(<span class="st">'2026-10-01'</span>) <span class="op">+</span> np.arange(<span class="dv">0</span>, <span class="dv">273</span>) <span class="op">*</span> u.day</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>marte <span class="op">=</span> get_body(<span class="st">'mars'</span>, dias).transform_to(GeocentricTrueEcliptic(equinox<span class="op">=</span>dias))</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>lon <span class="op">=</span> marte.lon.wrap_at(<span class="dv">360</span> <span class="op">*</span> u.deg).deg     <span class="co"># longitud eclíptica</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>lat <span class="op">=</span> marte.lat.deg                          <span class="co"># latitud eclíptica</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Detectar el tramo retrógrado: la longitud DISMINUYE día a día</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>retro <span class="op">=</span> np.diff(lon) <span class="op">&lt;</span> <span class="dv">0</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Marte retrógrado del </span><span class="sc">{</span>dias[<span class="dv">1</span>:][retro][<span class="dv">0</span>]<span class="sc">.</span>iso[:<span class="dv">10</span>]<span class="sc">}</span><span class="ss"> al </span><span class="sc">{</span>dias[<span class="dv">1</span>:][retro][<span class="op">-</span><span class="dv">1</span>]<span class="sc">.</span>iso[:<span class="dv">10</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">9</span>, <span class="dv">4</span>))</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>sc <span class="op">=</span> ax.scatter(lon, lat, c<span class="op">=</span>np.arange(<span class="bu">len</span>(dias)), cmap<span class="op">=</span><span class="st">'plasma'</span>, s<span class="op">=</span><span class="dv">8</span>)</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>ax.invert_xaxis()                      <span class="co"># en el cielo el este queda a la izquierda</span></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>cbar <span class="op">=</span> fig.colorbar(sc, ax<span class="op">=</span>ax)</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>cbar.set_label(<span class="st">'Días desde el 1 oct 2026'</span>)</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">'Longitud eclíptica [°]'</span>)<span class="op">;</span> ax.set_ylabel(<span class="st">'Latitud eclíptica [°]'</span>)</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'El "bucle" retrógrado de Marte'</span>)</span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Marte retrógrado del 2027-01-12 al 2027-04-02</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div id="fig-retrogrado" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-retrogrado-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="14-orbital_files/figure-html/fig-retrogrado-output-2.png" width="706" height="377" class="figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-retrogrado-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;3: Trayectoria de Marte en el cielo entre octubre de 2026 y julio de 2027
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<section id="la-explicación-desde-arriba" class="level3" data-number="5.1">
+<h3 data-number="5.1" class="anchored" data-anchor-id="la-explicación-desde-arriba"><span class="header-section-number">5.1</span> La explicación desde arriba</h3>
+<div id="cell-fig-orbitas" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Posiciones en el espacio (baricéntricas) de la Tierra y Marte</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.coordinates <span class="im">import</span> get_body_barycentric</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>tierra <span class="op">=</span> get_body_barycentric(<span class="st">'earth'</span>, dias)       <span class="co"># vector cartesiano (x, y, z)</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>marte_xyz <span class="op">=</span> get_body_barycentric(<span class="st">'mars'</span>, dias)</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="dv">6</span>))</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>ax.plot(tierra.x.to(u.au), tierra.y.to(u.au), <span class="st">'C0'</span>, label<span class="op">=</span><span class="st">'Tierra'</span>)</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>ax.plot(marte_xyz.x.to(u.au), marte_xyz.y.to(u.au), <span class="st">'C3'</span>, label<span class="op">=</span><span class="st">'Marte'</span>)</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Líneas de visión Tierra → Marte cada 20 días</span></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">0</span>, <span class="bu">len</span>(dias), <span class="dv">20</span>):</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>    ax.plot([tierra.x[i].to_value(u.au), marte_xyz.x[i].to_value(u.au)],</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>            [tierra.y[i].to_value(u.au), marte_xyz.y[i].to_value(u.au)],</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>            color<span class="op">=</span><span class="st">'gray'</span>, lw<span class="op">=</span><span class="fl">0.6</span>, alpha<span class="op">=</span><span class="fl">0.7</span>)</span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>ax.plot(<span class="dv">0</span>, <span class="dv">0</span>, <span class="st">'o'</span>, color<span class="op">=</span><span class="st">'gold'</span>, ms<span class="op">=</span><span class="dv">14</span>, label<span class="op">=</span><span class="st">'Sol'</span>)</span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>ax.set_aspect(<span class="st">'equal'</span>)</span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">'x [UA]'</span>)<span class="op">;</span> ax.set_ylabel(<span class="st">'y [UA]'</span>)</span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Distancia mínima Tierra–Marte en el período (cerca de la oposición)</span></span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>dist <span class="op">=</span> get_body(<span class="st">'mars'</span>, dias).distance.to(u.au)</span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Máximo acercamiento: </span><span class="sc">{</span>dist<span class="sc">.</span><span class="bu">min</span>()<span class="sc">:.3f}</span><span class="ss"> el </span><span class="sc">{</span>dias[np.argmin(dist)]<span class="sc">.</span>iso[:<span class="dv">10</span>]<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div id="fig-orbitas" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-orbitas-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="14-orbital_files/figure-html/fig-orbitas-output-1.png" width="526" height="459" class="figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-orbitas-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;4: Órbitas de la Tierra y Marte vistas desde el polo norte de la eclíptica; las líneas unen las posiciones del mismo día
+</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Máximo acercamiento: 0.678 AU el 2027-02-20</code></pre>
+</div>
+</div>
+<p>Las líneas de visión “se cruzan” justo cuando la Tierra adelanta a Marte: ese es el tramo retrógrado, centrado en la <strong>oposición</strong>.</p>
+<hr>
+</section>
+</section>
+<section id="las-leyes-de-kepler-con-unidades" class="level2" data-number="6">
+<h2 data-number="6" class="anchored" data-anchor-id="las-leyes-de-kepler-con-unidades"><span class="header-section-number">6</span> Las leyes de Kepler con unidades</h2>
+<section id="tercera-ley-período-y-tamaño-de-la-órbita" class="level3" data-number="6.1">
+<h3 data-number="6.1" class="anchored" data-anchor-id="tercera-ley-período-y-tamaño-de-la-órbita"><span class="header-section-number">6.1</span> Tercera ley: período y tamaño de la órbita</h3>
+<p><span class="math display">\[P^2 = \frac{4\pi^2}{G M_\odot}\, a^3\]</span></p>
+<div id="4e05fefe" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Período orbital a partir del semieje mayor (y viceversa)</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy <span class="im">import</span> constants <span class="im">as</span> const</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> periodo(a, M<span class="op">=</span>const.M_sun):</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Tercera ley de Kepler: período a partir del semieje mayor."""</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (<span class="dv">2</span> <span class="op">*</span> np.pi <span class="op">*</span> np.sqrt(a<span class="op">**</span><span class="dv">3</span> <span class="op">/</span> (const.G <span class="op">*</span> M))).to(u.yr)</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>cuerpos <span class="op">=</span> {<span class="st">'Tierra'</span>: <span class="fl">1.000</span>, <span class="st">'Marte'</span>: <span class="fl">1.524</span>, <span class="st">'Júpiter'</span>: <span class="fl">5.203</span>,</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>           <span class="st">'Halley'</span>: <span class="fl">17.83</span>, <span class="st">'Sedna'</span>: <span class="dv">506</span>}</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> nombre, a <span class="kw">in</span> cuerpos.items():</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>nombre<span class="sc">:&lt;8}</span><span class="ss"> a = </span><span class="sc">{</span>a<span class="sc">:&gt;7.2f}</span><span class="ss"> UA  →  P = </span><span class="sc">{</span>periodo(a <span class="op">*</span> u.au)<span class="sc">:&gt;9.2f}</span><span class="ss">"</span>)</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a><span class="co"># También funciona para exoplanetas: planeta a 0.05 UA de una estrella de 0.8 M☉</span></span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Júpiter caliente: P = </span><span class="sc">{</span>periodo(<span class="fl">0.05</span> <span class="op">*</span> u.au, <span class="fl">0.8</span> <span class="op">*</span> const.M_sun)<span class="sc">.</span>to(u.day)<span class="sc">:.2f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Tierra   a =    1.00 UA  →  P =      1.00 yr
+Marte    a =    1.52 UA  →  P =      1.88 yr
+Júpiter  a =    5.20 UA  →  P =     11.87 yr
+Halley   a =   17.83 UA  →  P =     75.29 yr
+Sedna    a =  506.00 UA  →  P =  11382.40 yr
+
+Júpiter caliente: P = 4.57 d</code></pre>
+</div>
+</div>
+</section>
+<section id="ecuación-de-kepler-dónde-está-un-cuerpo-en-su-órbita" class="level3" data-number="6.2">
+<h3 data-number="6.2" class="anchored" data-anchor-id="ecuación-de-kepler-dónde-está-un-cuerpo-en-su-órbita"><span class="header-section-number">6.2</span> Ecuación de Kepler: dónde está un cuerpo en su órbita</h3>
+<p>Para una órbita elíptica, la posición en el tiempo se obtiene resolviendo la <strong>ecuación de Kepler</strong>, que no tiene solución algebraica:</p>
+<p><span class="math display">\[M = E - e \sin E\]</span></p>
+<p>donde <span class="math inline">\(M\)</span> (anomalía media) crece uniformemente con el tiempo y <span class="math inline">\(E\)</span> (anomalía excéntrica) da la posición. La resolvemos con el método de Newton.</p>
+<div id="cell-fig-halley" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Propagar la órbita del cometa Halley resolviendo la ecuación de Kepler</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> resolver_kepler(M, e, tolerancia<span class="op">=</span><span class="fl">1e-12</span>):</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Resuelve M = E - e·sin(E) para E con el método de Newton-Raphson."""</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>    E <span class="op">=</span> np.where(e <span class="op">&lt;</span> <span class="fl">0.8</span>, M, np.pi)              <span class="co"># valor inicial recomendado</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">100</span>):</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>        delta <span class="op">=</span> (E <span class="op">-</span> e <span class="op">*</span> np.sin(E) <span class="op">-</span> M) <span class="op">/</span> (<span class="dv">1</span> <span class="op">-</span> e <span class="op">*</span> np.cos(E))</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>        E <span class="op">=</span> E <span class="op">-</span> delta</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> np.<span class="bu">all</span>(np.<span class="bu">abs</span>(delta) <span class="op">&lt;</span> tolerancia):</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>            <span class="cf">break</span></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> E</span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Elementos orbitales del Halley</span></span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> <span class="fl">17.83</span> <span class="op">*</span> u.au        <span class="co"># semieje mayor</span></span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>e <span class="op">=</span> <span class="fl">0.967</span>               <span class="co"># excentricidad (muy alargada)</span></span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>P <span class="op">=</span> periodo(a)          <span class="co"># período con la tercera ley</span></span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>perihelio <span class="op">=</span> Time(<span class="st">'1986-02-09'</span>)</span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Posiciones cada 2 años durante una órbita completa</span></span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> perihelio <span class="op">+</span> np.arange(<span class="dv">0</span>, P.to_value(u.yr), <span class="dv">2</span>) <span class="op">*</span> u.yr</span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a>M <span class="op">=</span> <span class="dv">2</span> <span class="op">*</span> np.pi <span class="op">*</span> ((t <span class="op">-</span> perihelio) <span class="op">/</span> P).decompose().value   <span class="co"># anomalía media</span></span>
+<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a>E <span class="op">=</span> resolver_kepler(M <span class="op">%</span> (<span class="dv">2</span> <span class="op">*</span> np.pi), e)</span>
+<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Coordenadas en el plano de la órbita (Sol en el foco)</span></span>
+<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> a <span class="op">*</span> (np.cos(E) <span class="op">-</span> e)</span>
+<span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> a <span class="op">*</span> np.sqrt(<span class="dv">1</span> <span class="op">-</span> e<span class="op">**</span><span class="dv">2</span>) <span class="op">*</span> np.sin(E)</span>
+<span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> np.hypot(x, y)</span>
+<span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a><span class="co"># Órbita completa para dibujar la elipse</span></span>
+<span id="cb14-35"><a href="#cb14-35" aria-hidden="true" tabindex="-1"></a>E_lin <span class="op">=</span> np.linspace(<span class="dv">0</span>, <span class="dv">2</span> <span class="op">*</span> np.pi, <span class="dv">400</span>)</span>
+<span id="cb14-36"><a href="#cb14-36" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">9</span>, <span class="dv">4</span>))</span>
+<span id="cb14-37"><a href="#cb14-37" aria-hidden="true" tabindex="-1"></a>ax.plot(a <span class="op">*</span> (np.cos(E_lin) <span class="op">-</span> e), a <span class="op">*</span> np.sqrt(<span class="dv">1</span> <span class="op">-</span> e<span class="op">**</span><span class="dv">2</span>) <span class="op">*</span> np.sin(E_lin), <span class="st">'gray'</span>, lw<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb14-38"><a href="#cb14-38" aria-hidden="true" tabindex="-1"></a>ax.scatter(x, y, c<span class="op">=</span><span class="st">'C0'</span>, s<span class="op">=</span><span class="dv">25</span>, zorder<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb14-39"><a href="#cb14-39" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> ti, xi, yi <span class="kw">in</span> <span class="bu">zip</span>(t[::<span class="dv">5</span>], x[::<span class="dv">5</span>], y[::<span class="dv">5</span>]):</span>
+<span id="cb14-40"><a href="#cb14-40" aria-hidden="true" tabindex="-1"></a>    ax.annotate(ti.iso[:<span class="dv">4</span>], (xi.value, yi.value), fontsize<span class="op">=</span><span class="dv">8</span>, xytext<span class="op">=</span>(<span class="dv">3</span>, <span class="dv">5</span>),</span>
+<span id="cb14-41"><a href="#cb14-41" aria-hidden="true" tabindex="-1"></a>                textcoords<span class="op">=</span><span class="st">'offset points'</span>)</span>
+<span id="cb14-42"><a href="#cb14-42" aria-hidden="true" tabindex="-1"></a>ax.plot(<span class="dv">0</span>, <span class="dv">0</span>, <span class="st">'o'</span>, color<span class="op">=</span><span class="st">'gold'</span>, ms<span class="op">=</span><span class="dv">10</span>)</span>
+<span id="cb14-43"><a href="#cb14-43" aria-hidden="true" tabindex="-1"></a>ax.set_aspect(<span class="st">'equal'</span>)<span class="op">;</span> ax.set_xlabel(<span class="st">'x [UA]'</span>)<span class="op">;</span> ax.set_ylabel(<span class="st">'y [UA]'</span>)</span>
+<span id="cb14-44"><a href="#cb14-44" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="ss">f'Cometa Halley: P = </span><span class="sc">{</span>P<span class="sc">:.1f}</span><span class="ss">, e = </span><span class="sc">{</span>e<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb14-45"><a href="#cb14-45" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb14-46"><a href="#cb14-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-47"><a href="#cb14-47" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Distancia en el perihelio: </span><span class="sc">{</span>a <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> e)<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb14-48"><a href="#cb14-48" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Distancia en el afelio   : </span><span class="sc">{</span>a <span class="op">*</span> (<span class="dv">1</span> <span class="op">+</span> e)<span class="sc">:.1f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div id="fig-halley" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-halley-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="14-orbital_files/figure-html/fig-halley-output-1.png" width="737" height="250" class="figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-halley-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;5: Órbita del cometa Halley con su posición cada 2 años
+</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Distancia en el perihelio: 0.59 AU
+Distancia en el afelio   : 35.1 AU</code></pre>
+</div>
+</div>
+<p>Los puntos están muy juntos cerca del afelio y muy separados cerca del Sol: es la <strong>segunda ley de Kepler</strong> (áreas iguales en tiempos iguales). El Halley pasa décadas lejos y solo unos meses cerca del Sol.</p>
+<hr>
+</section>
+</section>
+<section id="ejercicio" class="level2" data-number="7">
+<h2 data-number="7" class="anchored" data-anchor-id="ejercicio"><span class="header-section-number">7</span> Ejercicio</h2>
+<p>La <strong>oposición</strong> de Marte ocurre cuando la Tierra queda entre el Sol y Marte: la elongación Sol–Marte es ~180°. Es el mejor momento para observarlo.</p>
+<ol type="1">
+<li>Calcula la elongación (separación Sol–Marte) para cada día entre 2026-06-01 y 2028-06-01</li>
+<li>Encuentra la fecha de la oposición (elongación máxima)</li>
+<li>Ese día, ¿a qué distancia está Marte y en qué constelación aparece?</li>
+</ol>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Ver solución
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div id="4281beff" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="co"># SOLUCIÓN: próxima oposición de Marte</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Paso 1: rejilla diaria de dos años</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>dias <span class="op">=</span> Time(<span class="st">'2026-06-01'</span>) <span class="op">+</span> np.arange(<span class="dv">0</span>, <span class="dv">731</span>) <span class="op">*</span> u.day</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>sol   <span class="op">=</span> get_body(<span class="st">'sun'</span>, dias)</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>marte <span class="op">=</span> get_body(<span class="st">'mars'</span>, dias)</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>elong <span class="op">=</span> sol.separation(marte).deg</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Paso 2: el día de elongación máxima</span></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>i <span class="op">=</span> np.argmax(elong)</span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Oposición de Marte: </span><span class="sc">{</span>dias[i]<span class="sc">.</span>iso[:<span class="dv">10</span>]<span class="sc">}</span><span class="ss"> (elongación </span><span class="sc">{</span>elong[i]<span class="sc">:.1f}</span><span class="ss">°)"</span>)</span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Paso 3: distancia y constelación ese día</span></span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Distancia a la Tierra: </span><span class="sc">{</span>marte[i]<span class="sc">.</span>distance<span class="sc">.</span>to(u.au)<span class="sc">:.3f}</span><span class="ss">"</span>)</span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"                     = </span><span class="sc">{</span>marte[i]<span class="sc">.</span>distance<span class="sc">.</span>to(u.km)<span class="sc">:.3e}</span><span class="ss">"</span>)</span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Constelación         : </span><span class="sc">{</span>get_constellation(marte[i])<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a><span class="co"># ¿Por qué la elongación no llega exactamente a 180°? Porque la órbita de</span></span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Marte está inclinada ~1.85° respecto a la de la Tierra: en la oposición</span></span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Marte suele quedar un poco por encima o por debajo de la línea Sol–Tierra.</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Oposición de Marte: 2027-02-20 (elongación 175.5°)
+Distancia a la Tierra: 0.678 AU
+                     = 1.014e+08 km
+Constelación         : Leo</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</section>
+<section id="qué-aprendiste-en-este-módulo" class="level2 seccion-aprendiste" data-number="8">
+<h2 class="seccion-aprendiste anchored" data-number="8" data-anchor-id="qué-aprendiste-en-este-módulo"><span class="header-section-number">8</span> ¿Qué aprendiste en este módulo?</h2>
+<ul>
+<li>✅ Obtener posiciones del Sol, la Luna y los planetas con <code>get_body</code></li>
+<li>✅ Saber en qué constelación está un objeto con <code>get_constellation</code></li>
+<li>✅ Calcular curvas de altura y horarios de crepúsculo para un observatorio</li>
+<li>✅ Estimar la fase lunar a partir de la elongación</li>
+<li>✅ Reproducir el movimiento retrógrado de Marte y explicarlo con <code>get_body_barycentric</code></li>
+<li>✅ Aplicar la tercera ley de Kepler con unidades</li>
+<li>✅ Resolver la ecuación de Kepler para propagar una órbita</li>
+</ul>
+<p><strong>Siguiente módulo →</strong> <a href="../../posts/avanzado/15-series-temporales.html">15 · Series temporales astronómicas</a></p>
 
 
 <!-- -->
 
+</section>
 
-</main> <!-- /main -->
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Volver arriba</a></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
-    // Ensure there is a toggle, if there isn't float one in the top right
-    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
-      const a = window.document.createElement('a');
-      a.classList.add('top-right');
-      a.classList.add('quarto-color-scheme-toggle');
-      a.href = "";
-      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
-      const i = window.document.createElement("i");
-      i.classList.add('bi');
-      a.appendChild(i);
-      window.document.body.appendChild(a);
-    }
-    setColorSchemeToggle(hasAlternateSentinel())
     const icon = "";
     const anchorJS = new window.AnchorJS();
     anchorJS.options = {
@@ -503,12 +992,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       // flash "checked"
       button.classList.add('code-copy-button-checked');
       var currentTitle = button.getAttribute("title");
-      button.setAttribute("title", "Copied!");
+      button.setAttribute("title", "Copiado");
       let tooltip;
       if (window.bootstrap) {
         button.setAttribute("data-bs-toggle", "tooltip");
         button.setAttribute("data-bs-placement", "left");
-        button.setAttribute("data-bs-title", "Copied!");
+        button.setAttribute("data-bs-title", "Copiado");
         tooltip = new bootstrap.Tooltip(button, 
           { trigger: "manual", 
             customClass: "code-copy-button-tooltip",
@@ -602,7 +1091,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/fvelez78\.github\.io\/astropy-blog\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
@@ -928,35 +1417,493 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       }
     }
   });
-  </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "14 - Mecanica orbital y efemerides"</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="an">description:</span><span class="co"> "Proximo modulo en preparacion"</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="an">categories:</span><span class="co"> [avanzado]</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="an">toc:</span><span class="co"> true</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co">  echo: true</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">  warning: false</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">span</span><span class="ot"> class</span><span class="op">=</span><span class="st">"badge-avanzado"</span><span class="dt">&gt;</span>Avanzado<span class="dt">&lt;/</span><span class="kw">span</span><span class="dt">&gt;</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>::: {.callout-warning}</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">## Modulo en construccion</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>Este modulo esta siendo preparado. Vuelve pronto.</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>:::</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../../posts/avanzado/13-cosmologia.html" class="pagination-link" aria-label="13 · Cosmología computacional">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">13 · Cosmología computacional</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../../posts/avanzado/15-series-temporales.html" class="pagination-link" aria-label="15 · Series temporales astronómicas">
+        <span class="nav-page-text">15 · Series temporales astronómicas</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Ejecutar el código</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "14 · Mecánica orbital y efemérides"</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="an">description:</span><span class="co"> "Calcula dónde están el Sol, la Luna y los planetas en cualquier fecha, planifica una noche de observación, reproduce el movimiento retrógrado de Marte y resuelve la ecuación de Kepler"</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span><span class="co"> "Blog AstroPy en Español"</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> "2026-11-01"</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="an">categories:</span><span class="co"> [avanzado]</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="an">toc:</span><span class="co"> true</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="an">toc-depth:</span><span class="co"> 3</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="an">number-sections:</span><span class="co"> true</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a><span class="co">  echo: true</span></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a><span class="co">  warning: false</span></span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a><span class="co">  message: false</span></span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">span</span><span class="ot"> class</span><span class="op">=</span><span class="st">"badge-avanzado"</span><span class="dt">&gt;</span>🚀 Avanzado<span class="dt">&lt;/</span><span class="kw">span</span><span class="dt">&gt;</span></span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a><span class="fu">## Efemérides: el horario del Sistema Solar</span></span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>Una **efeméride** es una tabla con la posición de un cuerpo celeste a lo</span>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a>largo del tiempo. Antes se publicaban en libros; hoy las calculamos con</span>
+<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a>Python a partir de modelos muy precisos del Sistema Solar.</span>
+<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a>Astropy incluye:</span>
+<span id="cb18-25"><a href="#cb18-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-26"><a href="#cb18-26" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**`get_body`**: posición del Sol, la Luna y los planetas vistos desde la</span>
+<span id="cb18-27"><a href="#cb18-27" aria-hidden="true" tabindex="-1"></a>  Tierra (o desde un observatorio concreto)</span>
+<span id="cb18-28"><a href="#cb18-28" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**`get_body_barycentric`**: posición en el espacio respecto al centro de</span>
+<span id="cb18-29"><a href="#cb18-29" aria-hidden="true" tabindex="-1"></a>  masa del Sistema Solar</span>
+<span id="cb18-30"><a href="#cb18-30" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Toda la maquinaria de <span class="in">`SkyCoord`</span>, <span class="in">`AltAz`</span> y <span class="in">`Time`</span> de los módulos 03 y 04</span>
+<span id="cb18-31"><a href="#cb18-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-32"><a href="#cb18-32" aria-hidden="true" tabindex="-1"></a>::: {.callout-note}</span>
+<span id="cb18-33"><a href="#cb18-33" aria-hidden="true" tabindex="-1"></a><span class="fu">## Requisitos previos</span></span>
+<span id="cb18-34"><a href="#cb18-34" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Módulos 03 (tiempo) y 04 (coordenadas)</span>
+<span id="cb18-35"><a href="#cb18-35" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Sin instalaciones extra: usamos la efeméride integrada (<span class="in">`builtin`</span>) de Astropy</span>
+<span id="cb18-36"><a href="#cb18-36" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb18-37"><a href="#cb18-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-38"><a href="#cb18-38" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip}</span>
+<span id="cb18-39"><a href="#cb18-39" aria-hidden="true" tabindex="-1"></a><span class="fu">## Más precisión</span></span>
+<span id="cb18-40"><a href="#cb18-40" aria-hidden="true" tabindex="-1"></a>La efeméride integrada tiene una precisión de segundos de arco, suficiente</span>
+<span id="cb18-41"><a href="#cb18-41" aria-hidden="true" tabindex="-1"></a>para observar. Para trabajo profesional instala <span class="in">`pip install jplephem`</span> y usa</span>
+<span id="cb18-42"><a href="#cb18-42" aria-hidden="true" tabindex="-1"></a><span class="in">`solar_system_ephemeris.set('de440')`</span>, que descarga los modelos del JPL de la NASA.</span>
+<span id="cb18-43"><a href="#cb18-43" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb18-44"><a href="#cb18-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-45"><a href="#cb18-45" aria-hidden="true" tabindex="-1"></a>::: {.callout-warning}</span>
+<span id="cb18-46"><a href="#cb18-46" aria-hidden="true" tabindex="-1"></a><span class="fu">## Tablas de rotación de la Tierra (IERS)</span></span>
+<span id="cb18-47"><a href="#cb18-47" aria-hidden="true" tabindex="-1"></a>La rotación de la Tierra no es perfectamente regular: el Servicio</span>
+<span id="cb18-48"><a href="#cb18-48" aria-hidden="true" tabindex="-1"></a>Internacional de Rotación Terrestre (IERS) la mide y publica tablas que</span>
+<span id="cb18-49"><a href="#cb18-49" aria-hidden="true" tabindex="-1"></a>Astropy descarga de internet para calcular alturas y acimuts con precisión.</span>
+<span id="cb18-50"><a href="#cb18-50" aria-hidden="true" tabindex="-1"></a>Si no hay conexión y las tablas incluidas quedaron viejas, Astropy se detiene</span>
+<span id="cb18-51"><a href="#cb18-51" aria-hidden="true" tabindex="-1"></a>con un error. La línea <span class="in">`iers.conf.auto_max_age = None`</span> del primer bloque le</span>
+<span id="cb18-52"><a href="#cb18-52" aria-hidden="true" tabindex="-1"></a>permite seguir con las tablas que tenga: la diferencia es de fracciones de</span>
+<span id="cb18-53"><a href="#cb18-53" aria-hidden="true" tabindex="-1"></a>segundo de arco, irrelevante para planificar una observación.</span>
+<span id="cb18-54"><a href="#cb18-54" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb18-55"><a href="#cb18-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-56"><a href="#cb18-56" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb18-57"><a href="#cb18-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-58"><a href="#cb18-58" aria-hidden="true" tabindex="-1"></a><span class="fu">## ¿Dónde están los planetas hoy?</span></span>
+<span id="cb18-59"><a href="#cb18-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-62"><a href="#cb18-62" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb18-63"><a href="#cb18-63" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb18-64"><a href="#cb18-64" aria-hidden="true" tabindex="-1"></a><span class="co"># Posición de los planetas vistos desde la Tierra en una fecha dada</span></span>
+<span id="cb18-65"><a href="#cb18-65" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb18-66"><a href="#cb18-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-67"><a href="#cb18-67" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.time <span class="im">import</span> Time</span>
+<span id="cb18-68"><a href="#cb18-68" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.coordinates <span class="im">import</span> get_body, get_constellation, solar_system_ephemeris</span>
+<span id="cb18-69"><a href="#cb18-69" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> astropy.units <span class="im">as</span> u</span>
+<span id="cb18-70"><a href="#cb18-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-71"><a href="#cb18-71" aria-hidden="true" tabindex="-1"></a>solar_system_ephemeris.<span class="bu">set</span>(<span class="st">'builtin'</span>)        <span class="co"># efeméride integrada (sin descargas)</span></span>
+<span id="cb18-72"><a href="#cb18-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-73"><a href="#cb18-73" aria-hidden="true" tabindex="-1"></a><span class="co"># Permitir tablas de rotación terrestre (IERS) desactualizadas si no hay internet</span></span>
+<span id="cb18-74"><a href="#cb18-74" aria-hidden="true" tabindex="-1"></a><span class="co"># (ver el recuadro de advertencia de arriba)</span></span>
+<span id="cb18-75"><a href="#cb18-75" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.utils <span class="im">import</span> iers</span>
+<span id="cb18-76"><a href="#cb18-76" aria-hidden="true" tabindex="-1"></a>iers.conf.auto_max_age <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb18-77"><a href="#cb18-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-78"><a href="#cb18-78" aria-hidden="true" tabindex="-1"></a>fecha <span class="op">=</span> Time(<span class="st">'2026-11-15 00:00:00'</span>, scale<span class="op">=</span><span class="st">'utc'</span>)</span>
+<span id="cb18-79"><a href="#cb18-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-80"><a href="#cb18-80" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Posiciones geocéntricas para </span><span class="sc">{</span>fecha<span class="sc">.</span>iso[:<span class="dv">10</span>]<span class="sc">}</span><span class="ss">:</span><span class="ch">\n</span><span class="ss">"</span>)</span>
+<span id="cb18-81"><a href="#cb18-81" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span><span class="st">'Cuerpo'</span><span class="sc">:&lt;9}</span><span class="ss"> </span><span class="sc">{</span><span class="st">'RA'</span><span class="sc">:&gt;12}</span><span class="ss"> </span><span class="sc">{</span><span class="st">'Dec'</span><span class="sc">:&gt;12}</span><span class="ss"> </span><span class="sc">{</span><span class="st">'Distancia'</span><span class="sc">:&gt;14}</span><span class="ss">  Constelación"</span>)</span>
+<span id="cb18-82"><a href="#cb18-82" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> cuerpo <span class="kw">in</span> [<span class="st">'sun'</span>, <span class="st">'moon'</span>, <span class="st">'mercury'</span>, <span class="st">'venus'</span>, <span class="st">'mars'</span>, <span class="st">'jupiter'</span>, <span class="st">'saturn'</span>]:</span>
+<span id="cb18-83"><a href="#cb18-83" aria-hidden="true" tabindex="-1"></a>    pos <span class="op">=</span> get_body(cuerpo, fecha)                      <span class="co"># SkyCoord con distancia</span></span>
+<span id="cb18-84"><a href="#cb18-84" aria-hidden="true" tabindex="-1"></a>    <span class="co"># La distancia de la Luna se lee mejor en km; el resto en UA</span></span>
+<span id="cb18-85"><a href="#cb18-85" aria-hidden="true" tabindex="-1"></a>    dist <span class="op">=</span> pos.distance.to(u.km) <span class="cf">if</span> cuerpo <span class="op">==</span> <span class="st">'moon'</span> <span class="cf">else</span> pos.distance.to(u.au)</span>
+<span id="cb18-86"><a href="#cb18-86" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>cuerpo<span class="sc">.</span>capitalize()<span class="sc">:&lt;9}</span><span class="ss"> "</span></span>
+<span id="cb18-87"><a href="#cb18-87" aria-hidden="true" tabindex="-1"></a>          <span class="ss">f"</span><span class="sc">{</span>pos<span class="sc">.</span>ra<span class="sc">.</span>to_string(unit<span class="op">=</span>u.hour, precision<span class="op">=</span><span class="dv">0</span>)<span class="sc">:&gt;12}</span><span class="ss"> "</span></span>
+<span id="cb18-88"><a href="#cb18-88" aria-hidden="true" tabindex="-1"></a>          <span class="ss">f"</span><span class="sc">{</span>pos<span class="sc">.</span>dec<span class="sc">.</span>to_string(precision<span class="op">=</span><span class="dv">0</span>)<span class="sc">:&gt;12}</span><span class="ss"> "</span></span>
+<span id="cb18-89"><a href="#cb18-89" aria-hidden="true" tabindex="-1"></a>          <span class="ss">f"</span><span class="sc">{</span>dist<span class="sc">:&gt;14.3f}</span><span class="ss">  </span><span class="sc">{</span>get_constellation(pos)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb18-90"><a href="#cb18-90" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb18-91"><a href="#cb18-91" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-92"><a href="#cb18-92" aria-hidden="true" tabindex="-1"></a><span class="in">`get_constellation()`</span> nos dice en qué constelación aparece cada cuerpo:</span>
+<span id="cb18-93"><a href="#cb18-93" aria-hidden="true" tabindex="-1"></a>los planetas siempre están en las constelaciones del zodíaco (y Ofiuco),</span>
+<span id="cb18-94"><a href="#cb18-94" aria-hidden="true" tabindex="-1"></a>porque orbitan cerca del plano de la eclíptica.</span>
+<span id="cb18-95"><a href="#cb18-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-96"><a href="#cb18-96" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb18-97"><a href="#cb18-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-98"><a href="#cb18-98" aria-hidden="true" tabindex="-1"></a><span class="fu">## Planificar una noche de observación</span></span>
+<span id="cb18-99"><a href="#cb18-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-100"><a href="#cb18-100" aria-hidden="true" tabindex="-1"></a>Calculamos la altura sobre el horizonte de varios cuerpos durante una</span>
+<span id="cb18-101"><a href="#cb18-101" aria-hidden="true" tabindex="-1"></a>noche, desde el **Observatorio del Teide** (Tenerife, España).</span>
+<span id="cb18-102"><a href="#cb18-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-105"><a href="#cb18-105" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb18-106"><a href="#cb18-106" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-noche</span></span>
+<span id="cb18-107"><a href="#cb18-107" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Altura de la Luna y los planetas durante la noche. Las franjas grises marcan el crepúsculo"</span></span>
+<span id="cb18-108"><a href="#cb18-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-109"><a href="#cb18-109" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb18-110"><a href="#cb18-110" aria-hidden="true" tabindex="-1"></a><span class="co"># Curvas de altura durante una noche</span></span>
+<span id="cb18-111"><a href="#cb18-111" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb18-112"><a href="#cb18-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-113"><a href="#cb18-113" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb18-114"><a href="#cb18-114" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb18-115"><a href="#cb18-115" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.coordinates <span class="im">import</span> EarthLocation, AltAz, get_body</span>
+<span id="cb18-116"><a href="#cb18-116" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.time <span class="im">import</span> Time</span>
+<span id="cb18-117"><a href="#cb18-117" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> astropy.units <span class="im">as</span> u</span>
+<span id="cb18-118"><a href="#cb18-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-119"><a href="#cb18-119" aria-hidden="true" tabindex="-1"></a><span class="co"># Ubicación del observatorio</span></span>
+<span id="cb18-120"><a href="#cb18-120" aria-hidden="true" tabindex="-1"></a>teide <span class="op">=</span> EarthLocation(lat<span class="op">=</span><span class="fl">28.3009</span> <span class="op">*</span> u.deg, lon<span class="op">=-</span><span class="fl">16.5110</span> <span class="op">*</span> u.deg, height<span class="op">=</span><span class="dv">2390</span> <span class="op">*</span> u.m)</span>
+<span id="cb18-121"><a href="#cb18-121" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-122"><a href="#cb18-122" aria-hidden="true" tabindex="-1"></a><span class="co"># Tiempos: de 17:00 a 08:00 UTC cada 10 minutos (Tenerife está en UTC+0 en invierno)</span></span>
+<span id="cb18-123"><a href="#cb18-123" aria-hidden="true" tabindex="-1"></a>inicio <span class="op">=</span> Time(<span class="st">'2026-11-15 17:00:00'</span>, scale<span class="op">=</span><span class="st">'utc'</span>)</span>
+<span id="cb18-124"><a href="#cb18-124" aria-hidden="true" tabindex="-1"></a>tiempos <span class="op">=</span> inicio <span class="op">+</span> np.linspace(<span class="dv">0</span>, <span class="dv">15</span>, <span class="dv">91</span>) <span class="op">*</span> u.hour</span>
+<span id="cb18-125"><a href="#cb18-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-126"><a href="#cb18-126" aria-hidden="true" tabindex="-1"></a><span class="co"># Marco horizontal para TODOS los tiempos a la vez</span></span>
+<span id="cb18-127"><a href="#cb18-127" aria-hidden="true" tabindex="-1"></a>marco <span class="op">=</span> AltAz(obstime<span class="op">=</span>tiempos, location<span class="op">=</span>teide)</span>
+<span id="cb18-128"><a href="#cb18-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-129"><a href="#cb18-129" aria-hidden="true" tabindex="-1"></a><span class="co"># Altura del Sol: define la noche y los crepúsculos</span></span>
+<span id="cb18-130"><a href="#cb18-130" aria-hidden="true" tabindex="-1"></a>alt_sol <span class="op">=</span> get_body(<span class="st">'sun'</span>, tiempos).transform_to(marco).alt</span>
+<span id="cb18-131"><a href="#cb18-131" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-132"><a href="#cb18-132" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">5</span>))</span>
+<span id="cb18-133"><a href="#cb18-133" aria-hidden="true" tabindex="-1"></a>horas <span class="op">=</span> (tiempos <span class="op">-</span> inicio).to(u.hour).value <span class="op">+</span> <span class="dv">17</span>         <span class="co"># eje x en horas UTC</span></span>
+<span id="cb18-134"><a href="#cb18-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-135"><a href="#cb18-135" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> cuerpo, color <span class="kw">in</span> [(<span class="st">'moon'</span>, <span class="st">'gray'</span>), (<span class="st">'mars'</span>, <span class="st">'C3'</span>),</span>
+<span id="cb18-136"><a href="#cb18-136" aria-hidden="true" tabindex="-1"></a>                      (<span class="st">'jupiter'</span>, <span class="st">'C1'</span>), (<span class="st">'saturn'</span>, <span class="st">'C2'</span>)]:</span>
+<span id="cb18-137"><a href="#cb18-137" aria-hidden="true" tabindex="-1"></a>    alt <span class="op">=</span> get_body(cuerpo, tiempos, location<span class="op">=</span>teide).transform_to(marco).alt</span>
+<span id="cb18-138"><a href="#cb18-138" aria-hidden="true" tabindex="-1"></a>    ax.plot(horas, alt.deg, color<span class="op">=</span>color, lw<span class="op">=</span><span class="dv">2</span>, label<span class="op">=</span>cuerpo.capitalize())</span>
+<span id="cb18-139"><a href="#cb18-139" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-140"><a href="#cb18-140" aria-hidden="true" tabindex="-1"></a><span class="co"># Sombrear: día (Sol &gt; -0.8°), crepúsculo (-0.8° a -18°), noche (&lt; -18°)</span></span>
+<span id="cb18-141"><a href="#cb18-141" aria-hidden="true" tabindex="-1"></a>ax.fill_between(horas, <span class="dv">0</span>, <span class="dv">90</span>, where<span class="op">=</span>alt_sol.deg <span class="op">&gt;</span> <span class="op">-</span><span class="fl">0.8</span>, color<span class="op">=</span><span class="st">'gold'</span>, alpha<span class="op">=</span><span class="fl">0.25</span>, label<span class="op">=</span><span class="st">'Día'</span>)</span>
+<span id="cb18-142"><a href="#cb18-142" aria-hidden="true" tabindex="-1"></a>ax.fill_between(horas, <span class="dv">0</span>, <span class="dv">90</span>, where<span class="op">=</span>(alt_sol.deg <span class="op">&lt;</span> <span class="op">-</span><span class="fl">0.8</span>) <span class="op">&amp;</span> (alt_sol.deg <span class="op">&gt;</span> <span class="op">-</span><span class="dv">18</span>),</span>
+<span id="cb18-143"><a href="#cb18-143" aria-hidden="true" tabindex="-1"></a>                color<span class="op">=</span><span class="st">'gray'</span>, alpha<span class="op">=</span><span class="fl">0.25</span>, label<span class="op">=</span><span class="st">'Crepúsculo'</span>)</span>
+<span id="cb18-144"><a href="#cb18-144" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-145"><a href="#cb18-145" aria-hidden="true" tabindex="-1"></a>ax.axhline(<span class="dv">30</span>, color<span class="op">=</span><span class="st">'C7'</span>, ls<span class="op">=</span><span class="st">':'</span>, lw<span class="op">=</span><span class="dv">1</span>)                   <span class="co"># altura mínima recomendada</span></span>
+<span id="cb18-146"><a href="#cb18-146" aria-hidden="true" tabindex="-1"></a>ax.set_ylim(<span class="dv">0</span>, <span class="dv">90</span>)<span class="op">;</span> ax.set_xlim(horas[<span class="dv">0</span>], horas[<span class="op">-</span><span class="dv">1</span>])</span>
+<span id="cb18-147"><a href="#cb18-147" aria-hidden="true" tabindex="-1"></a>ax.set_xticks(<span class="bu">range</span>(<span class="dv">17</span>, <span class="dv">33</span>, <span class="dv">2</span>))</span>
+<span id="cb18-148"><a href="#cb18-148" aria-hidden="true" tabindex="-1"></a>ax.set_xticklabels([<span class="ss">f"</span><span class="sc">{</span>h <span class="op">%</span> <span class="dv">24</span><span class="sc">:02d}</span><span class="ss">h"</span> <span class="cf">for</span> h <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">17</span>, <span class="dv">33</span>, <span class="dv">2</span>)])</span>
+<span id="cb18-149"><a href="#cb18-149" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">'Hora UTC'</span>)<span class="op">;</span> ax.set_ylabel(<span class="st">'Altura [°]'</span>)</span>
+<span id="cb18-150"><a href="#cb18-150" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Noche del 15 al 16 de noviembre de 2026 – Observatorio del Teide'</span>)</span>
+<span id="cb18-151"><a href="#cb18-151" aria-hidden="true" tabindex="-1"></a>ax.legend(loc<span class="op">=</span><span class="st">'upper right'</span>, fontsize<span class="op">=</span><span class="dv">8</span>, ncol<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb18-152"><a href="#cb18-152" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb18-153"><a href="#cb18-153" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb18-154"><a href="#cb18-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-155"><a href="#cb18-155" aria-hidden="true" tabindex="-1"></a>¿Por qué las curvas de Marte y Júpiter casi coinciden? Porque esa noche</span>
+<span id="cb18-156"><a href="#cb18-156" aria-hidden="true" tabindex="-1"></a>están en **conjunción**: ambos aparecen en Leo separados por poco más de un</span>
+<span id="cb18-157"><a href="#cb18-157" aria-hidden="true" tabindex="-1"></a>grado. Puedes comprobarlo con <span class="in">`get_body('mars', t).separation(get_body('jupiter', t))`</span>.</span>
+<span id="cb18-158"><a href="#cb18-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-159"><a href="#cb18-159" aria-hidden="true" tabindex="-1"></a><span class="fu">### Hora de la puesta del Sol y del inicio de la noche</span></span>
+<span id="cb18-160"><a href="#cb18-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-163"><a href="#cb18-163" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb18-164"><a href="#cb18-164" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb18-165"><a href="#cb18-165" aria-hidden="true" tabindex="-1"></a><span class="co"># Encontrar cuándo el Sol cruza ciertas alturas</span></span>
+<span id="cb18-166"><a href="#cb18-166" aria-hidden="true" tabindex="-1"></a><span class="co"># Buscamos el primer instante en que la altura pasa por debajo del umbral</span></span>
+<span id="cb18-167"><a href="#cb18-167" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb18-168"><a href="#cb18-168" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-169"><a href="#cb18-169" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb18-170"><a href="#cb18-170" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-171"><a href="#cb18-171" aria-hidden="true" tabindex="-1"></a><span class="co"># Rejilla más fina (cada minuto) para mayor precisión</span></span>
+<span id="cb18-172"><a href="#cb18-172" aria-hidden="true" tabindex="-1"></a>t_fino <span class="op">=</span> inicio <span class="op">+</span> np.linspace(<span class="dv">0</span>, <span class="dv">15</span>, <span class="dv">15</span> <span class="op">*</span> <span class="dv">60</span> <span class="op">+</span> <span class="dv">1</span>) <span class="op">*</span> u.hour</span>
+<span id="cb18-173"><a href="#cb18-173" aria-hidden="true" tabindex="-1"></a>alt_fino <span class="op">=</span> get_body(<span class="st">'sun'</span>, t_fino).transform_to(AltAz(obstime<span class="op">=</span>t_fino, location<span class="op">=</span>teide)).alt.deg</span>
+<span id="cb18-174"><a href="#cb18-174" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-175"><a href="#cb18-175" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> primer_cruce_bajando(alturas, umbral):</span>
+<span id="cb18-176"><a href="#cb18-176" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Índice del primer elemento donde la altura pasa de &gt; umbral a ≤ umbral."""</span></span>
+<span id="cb18-177"><a href="#cb18-177" aria-hidden="true" tabindex="-1"></a>    cruces <span class="op">=</span> np.where((alturas[:<span class="op">-</span><span class="dv">1</span>] <span class="op">&gt;</span> umbral) <span class="op">&amp;</span> (alturas[<span class="dv">1</span>:] <span class="op">&lt;=</span> umbral))[<span class="dv">0</span>]</span>
+<span id="cb18-178"><a href="#cb18-178" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> cruces[<span class="dv">0</span>] <span class="op">+</span> <span class="dv">1</span> <span class="cf">if</span> <span class="bu">len</span>(cruces) <span class="cf">else</span> <span class="va">None</span></span>
+<span id="cb18-179"><a href="#cb18-179" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-180"><a href="#cb18-180" aria-hidden="true" tabindex="-1"></a>eventos <span class="op">=</span> {</span>
+<span id="cb18-181"><a href="#cb18-181" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Puesta del Sol'</span>               : <span class="op">-</span><span class="fl">0.833</span>,   <span class="co"># refracción + radio solar</span></span>
+<span id="cb18-182"><a href="#cb18-182" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Fin del crepúsculo civil'</span>     : <span class="op">-</span><span class="dv">6</span>,</span>
+<span id="cb18-183"><a href="#cb18-183" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Fin del crepúsculo náutico'</span>   : <span class="op">-</span><span class="dv">12</span>,</span>
+<span id="cb18-184"><a href="#cb18-184" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Inicio de la noche astronómica'</span>: <span class="op">-</span><span class="dv">18</span>,</span>
+<span id="cb18-185"><a href="#cb18-185" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb18-186"><a href="#cb18-186" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> nombre, umbral <span class="kw">in</span> eventos.items():</span>
+<span id="cb18-187"><a href="#cb18-187" aria-hidden="true" tabindex="-1"></a>    i <span class="op">=</span> primer_cruce_bajando(alt_fino, umbral)</span>
+<span id="cb18-188"><a href="#cb18-188" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>nombre<span class="sc">:&lt;32}</span><span class="ss">: </span><span class="sc">{</span>t_fino[i]<span class="sc">.</span>iso[<span class="dv">11</span>:<span class="dv">16</span>]<span class="sc">}</span><span class="ss"> UTC"</span>)</span>
+<span id="cb18-189"><a href="#cb18-189" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb18-190"><a href="#cb18-190" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-191"><a href="#cb18-191" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb18-192"><a href="#cb18-192" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-193"><a href="#cb18-193" aria-hidden="true" tabindex="-1"></a><span class="fu">## La fase de la Luna</span></span>
+<span id="cb18-194"><a href="#cb18-194" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-197"><a href="#cb18-197" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb18-198"><a href="#cb18-198" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-fases</span></span>
+<span id="cb18-199"><a href="#cb18-199" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Fracción iluminada de la Luna durante noviembre de 2026"</span></span>
+<span id="cb18-200"><a href="#cb18-200" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-201"><a href="#cb18-201" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb18-202"><a href="#cb18-202" aria-hidden="true" tabindex="-1"></a><span class="co"># Fracción iluminada a partir de la elongación (ángulo Sol–Tierra–Luna)</span></span>
+<span id="cb18-203"><a href="#cb18-203" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb18-204"><a href="#cb18-204" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-205"><a href="#cb18-205" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb18-206"><a href="#cb18-206" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb18-207"><a href="#cb18-207" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-208"><a href="#cb18-208" aria-hidden="true" tabindex="-1"></a>dias <span class="op">=</span> Time(<span class="st">'2026-11-01'</span>) <span class="op">+</span> np.arange(<span class="dv">0</span>, <span class="dv">30</span>, <span class="fl">0.25</span>) <span class="op">*</span> u.day</span>
+<span id="cb18-209"><a href="#cb18-209" aria-hidden="true" tabindex="-1"></a>sol  <span class="op">=</span> get_body(<span class="st">'sun'</span>, dias)</span>
+<span id="cb18-210"><a href="#cb18-210" aria-hidden="true" tabindex="-1"></a>luna <span class="op">=</span> get_body(<span class="st">'moon'</span>, dias)</span>
+<span id="cb18-211"><a href="#cb18-211" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-212"><a href="#cb18-212" aria-hidden="true" tabindex="-1"></a><span class="co"># Elongación: separación angular entre el Sol y la Luna vista desde la Tierra</span></span>
+<span id="cb18-213"><a href="#cb18-213" aria-hidden="true" tabindex="-1"></a>elongacion <span class="op">=</span> sol.separation(luna)</span>
+<span id="cb18-214"><a href="#cb18-214" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-215"><a href="#cb18-215" aria-hidden="true" tabindex="-1"></a><span class="co"># Aproximación: fracción iluminada = (1 − cos(elongación)) / 2</span></span>
+<span id="cb18-216"><a href="#cb18-216" aria-hidden="true" tabindex="-1"></a>iluminada <span class="op">=</span> (<span class="dv">1</span> <span class="op">-</span> np.cos(elongacion.radian)) <span class="op">/</span> <span class="dv">2</span></span>
+<span id="cb18-217"><a href="#cb18-217" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-218"><a href="#cb18-218" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">9</span>, <span class="fl">3.5</span>))</span>
+<span id="cb18-219"><a href="#cb18-219" aria-hidden="true" tabindex="-1"></a>ax.plot(dias.datetime, iluminada <span class="op">*</span> <span class="dv">100</span>)</span>
+<span id="cb18-220"><a href="#cb18-220" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">'</span><span class="sc">% i</span><span class="st">luminado'</span>)<span class="op">;</span> ax.set_ylim(<span class="dv">0</span>, <span class="dv">100</span>)</span>
+<span id="cb18-221"><a href="#cb18-221" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Fase lunar – noviembre 2026'</span>)</span>
+<span id="cb18-222"><a href="#cb18-222" aria-hidden="true" tabindex="-1"></a>fig.autofmt_xdate()</span>
+<span id="cb18-223"><a href="#cb18-223" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb18-224"><a href="#cb18-224" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-225"><a href="#cb18-225" aria-hidden="true" tabindex="-1"></a>i_llena <span class="op">=</span> np.argmax(iluminada)<span class="op">;</span> i_nueva <span class="op">=</span> np.argmin(iluminada)</span>
+<span id="cb18-226"><a href="#cb18-226" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Luna llena ≈ </span><span class="sc">{</span>dias[i_llena]<span class="sc">.</span>iso[:<span class="dv">16</span>]<span class="sc">}</span><span class="ss"> UTC"</span>)</span>
+<span id="cb18-227"><a href="#cb18-227" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Luna nueva ≈ </span><span class="sc">{</span>dias[i_nueva]<span class="sc">.</span>iso[:<span class="dv">16</span>]<span class="sc">}</span><span class="ss"> UTC"</span>)</span>
+<span id="cb18-228"><a href="#cb18-228" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb18-229"><a href="#cb18-229" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-230"><a href="#cb18-230" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip}</span>
+<span id="cb18-231"><a href="#cb18-231" aria-hidden="true" tabindex="-1"></a><span class="fu">## Planificar astrofotografía</span></span>
+<span id="cb18-232"><a href="#cb18-232" aria-hidden="true" tabindex="-1"></a>Para fotografiar nebulosas y galaxias débiles conviene la **Luna nueva**;</span>
+<span id="cb18-233"><a href="#cb18-233" aria-hidden="true" tabindex="-1"></a>para planetas y la propia Luna, la fase no importa tanto. Combinando este</span>
+<span id="cb18-234"><a href="#cb18-234" aria-hidden="true" tabindex="-1"></a>bloque con el anterior puedes armar un calendario de observación.</span>
+<span id="cb18-235"><a href="#cb18-235" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb18-236"><a href="#cb18-236" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-237"><a href="#cb18-237" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb18-238"><a href="#cb18-238" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-239"><a href="#cb18-239" aria-hidden="true" tabindex="-1"></a><span class="fu">## El movimiento retrógrado de Marte</span></span>
+<span id="cb18-240"><a href="#cb18-240" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-241"><a href="#cb18-241" aria-hidden="true" tabindex="-1"></a>Visto desde la Tierra, Marte a veces parece **retroceder** en el cielo.</span>
+<span id="cb18-242"><a href="#cb18-242" aria-hidden="true" tabindex="-1"></a>No es que Marte cambie de dirección: es la Tierra adelantándolo en su</span>
+<span id="cb18-243"><a href="#cb18-243" aria-hidden="true" tabindex="-1"></a>órbita interior, como cuando adelantamos un auto en la autopista.</span>
+<span id="cb18-244"><a href="#cb18-244" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-247"><a href="#cb18-247" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb18-248"><a href="#cb18-248" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-retrogrado</span></span>
+<span id="cb18-249"><a href="#cb18-249" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Trayectoria de Marte en el cielo entre octubre de 2026 y julio de 2027"</span></span>
+<span id="cb18-250"><a href="#cb18-250" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-251"><a href="#cb18-251" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb18-252"><a href="#cb18-252" aria-hidden="true" tabindex="-1"></a><span class="co"># Posición diaria de Marte en coordenadas eclípticas durante 9 meses</span></span>
+<span id="cb18-253"><a href="#cb18-253" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb18-254"><a href="#cb18-254" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-255"><a href="#cb18-255" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb18-256"><a href="#cb18-256" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb18-257"><a href="#cb18-257" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.coordinates <span class="im">import</span> GeocentricTrueEcliptic</span>
+<span id="cb18-258"><a href="#cb18-258" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-259"><a href="#cb18-259" aria-hidden="true" tabindex="-1"></a>dias <span class="op">=</span> Time(<span class="st">'2026-10-01'</span>) <span class="op">+</span> np.arange(<span class="dv">0</span>, <span class="dv">273</span>) <span class="op">*</span> u.day</span>
+<span id="cb18-260"><a href="#cb18-260" aria-hidden="true" tabindex="-1"></a>marte <span class="op">=</span> get_body(<span class="st">'mars'</span>, dias).transform_to(GeocentricTrueEcliptic(equinox<span class="op">=</span>dias))</span>
+<span id="cb18-261"><a href="#cb18-261" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-262"><a href="#cb18-262" aria-hidden="true" tabindex="-1"></a>lon <span class="op">=</span> marte.lon.wrap_at(<span class="dv">360</span> <span class="op">*</span> u.deg).deg     <span class="co"># longitud eclíptica</span></span>
+<span id="cb18-263"><a href="#cb18-263" aria-hidden="true" tabindex="-1"></a>lat <span class="op">=</span> marte.lat.deg                          <span class="co"># latitud eclíptica</span></span>
+<span id="cb18-264"><a href="#cb18-264" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-265"><a href="#cb18-265" aria-hidden="true" tabindex="-1"></a><span class="co"># Detectar el tramo retrógrado: la longitud DISMINUYE día a día</span></span>
+<span id="cb18-266"><a href="#cb18-266" aria-hidden="true" tabindex="-1"></a>retro <span class="op">=</span> np.diff(lon) <span class="op">&lt;</span> <span class="dv">0</span></span>
+<span id="cb18-267"><a href="#cb18-267" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Marte retrógrado del </span><span class="sc">{</span>dias[<span class="dv">1</span>:][retro][<span class="dv">0</span>]<span class="sc">.</span>iso[:<span class="dv">10</span>]<span class="sc">}</span><span class="ss"> al </span><span class="sc">{</span>dias[<span class="dv">1</span>:][retro][<span class="op">-</span><span class="dv">1</span>]<span class="sc">.</span>iso[:<span class="dv">10</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb18-268"><a href="#cb18-268" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-269"><a href="#cb18-269" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">9</span>, <span class="dv">4</span>))</span>
+<span id="cb18-270"><a href="#cb18-270" aria-hidden="true" tabindex="-1"></a>sc <span class="op">=</span> ax.scatter(lon, lat, c<span class="op">=</span>np.arange(<span class="bu">len</span>(dias)), cmap<span class="op">=</span><span class="st">'plasma'</span>, s<span class="op">=</span><span class="dv">8</span>)</span>
+<span id="cb18-271"><a href="#cb18-271" aria-hidden="true" tabindex="-1"></a>ax.invert_xaxis()                      <span class="co"># en el cielo el este queda a la izquierda</span></span>
+<span id="cb18-272"><a href="#cb18-272" aria-hidden="true" tabindex="-1"></a>cbar <span class="op">=</span> fig.colorbar(sc, ax<span class="op">=</span>ax)</span>
+<span id="cb18-273"><a href="#cb18-273" aria-hidden="true" tabindex="-1"></a>cbar.set_label(<span class="st">'Días desde el 1 oct 2026'</span>)</span>
+<span id="cb18-274"><a href="#cb18-274" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">'Longitud eclíptica [°]'</span>)<span class="op">;</span> ax.set_ylabel(<span class="st">'Latitud eclíptica [°]'</span>)</span>
+<span id="cb18-275"><a href="#cb18-275" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'El "bucle" retrógrado de Marte'</span>)</span>
+<span id="cb18-276"><a href="#cb18-276" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb18-277"><a href="#cb18-277" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb18-278"><a href="#cb18-278" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-279"><a href="#cb18-279" aria-hidden="true" tabindex="-1"></a><span class="fu">### La explicación desde arriba</span></span>
+<span id="cb18-280"><a href="#cb18-280" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-283"><a href="#cb18-283" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb18-284"><a href="#cb18-284" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-orbitas</span></span>
+<span id="cb18-285"><a href="#cb18-285" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Órbitas de la Tierra y Marte vistas desde el polo norte de la eclíptica; las líneas unen las posiciones del mismo día"</span></span>
+<span id="cb18-286"><a href="#cb18-286" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-287"><a href="#cb18-287" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb18-288"><a href="#cb18-288" aria-hidden="true" tabindex="-1"></a><span class="co"># Posiciones en el espacio (baricéntricas) de la Tierra y Marte</span></span>
+<span id="cb18-289"><a href="#cb18-289" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb18-290"><a href="#cb18-290" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-291"><a href="#cb18-291" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb18-292"><a href="#cb18-292" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.coordinates <span class="im">import</span> get_body_barycentric</span>
+<span id="cb18-293"><a href="#cb18-293" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-294"><a href="#cb18-294" aria-hidden="true" tabindex="-1"></a>tierra <span class="op">=</span> get_body_barycentric(<span class="st">'earth'</span>, dias)       <span class="co"># vector cartesiano (x, y, z)</span></span>
+<span id="cb18-295"><a href="#cb18-295" aria-hidden="true" tabindex="-1"></a>marte_xyz <span class="op">=</span> get_body_barycentric(<span class="st">'mars'</span>, dias)</span>
+<span id="cb18-296"><a href="#cb18-296" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-297"><a href="#cb18-297" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="dv">6</span>))</span>
+<span id="cb18-298"><a href="#cb18-298" aria-hidden="true" tabindex="-1"></a>ax.plot(tierra.x.to(u.au), tierra.y.to(u.au), <span class="st">'C0'</span>, label<span class="op">=</span><span class="st">'Tierra'</span>)</span>
+<span id="cb18-299"><a href="#cb18-299" aria-hidden="true" tabindex="-1"></a>ax.plot(marte_xyz.x.to(u.au), marte_xyz.y.to(u.au), <span class="st">'C3'</span>, label<span class="op">=</span><span class="st">'Marte'</span>)</span>
+<span id="cb18-300"><a href="#cb18-300" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-301"><a href="#cb18-301" aria-hidden="true" tabindex="-1"></a><span class="co"># Líneas de visión Tierra → Marte cada 20 días</span></span>
+<span id="cb18-302"><a href="#cb18-302" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">0</span>, <span class="bu">len</span>(dias), <span class="dv">20</span>):</span>
+<span id="cb18-303"><a href="#cb18-303" aria-hidden="true" tabindex="-1"></a>    ax.plot([tierra.x[i].to_value(u.au), marte_xyz.x[i].to_value(u.au)],</span>
+<span id="cb18-304"><a href="#cb18-304" aria-hidden="true" tabindex="-1"></a>            [tierra.y[i].to_value(u.au), marte_xyz.y[i].to_value(u.au)],</span>
+<span id="cb18-305"><a href="#cb18-305" aria-hidden="true" tabindex="-1"></a>            color<span class="op">=</span><span class="st">'gray'</span>, lw<span class="op">=</span><span class="fl">0.6</span>, alpha<span class="op">=</span><span class="fl">0.7</span>)</span>
+<span id="cb18-306"><a href="#cb18-306" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-307"><a href="#cb18-307" aria-hidden="true" tabindex="-1"></a>ax.plot(<span class="dv">0</span>, <span class="dv">0</span>, <span class="st">'o'</span>, color<span class="op">=</span><span class="st">'gold'</span>, ms<span class="op">=</span><span class="dv">14</span>, label<span class="op">=</span><span class="st">'Sol'</span>)</span>
+<span id="cb18-308"><a href="#cb18-308" aria-hidden="true" tabindex="-1"></a>ax.set_aspect(<span class="st">'equal'</span>)</span>
+<span id="cb18-309"><a href="#cb18-309" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">'x [UA]'</span>)<span class="op">;</span> ax.set_ylabel(<span class="st">'y [UA]'</span>)</span>
+<span id="cb18-310"><a href="#cb18-310" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
+<span id="cb18-311"><a href="#cb18-311" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb18-312"><a href="#cb18-312" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-313"><a href="#cb18-313" aria-hidden="true" tabindex="-1"></a><span class="co"># Distancia mínima Tierra–Marte en el período (cerca de la oposición)</span></span>
+<span id="cb18-314"><a href="#cb18-314" aria-hidden="true" tabindex="-1"></a>dist <span class="op">=</span> get_body(<span class="st">'mars'</span>, dias).distance.to(u.au)</span>
+<span id="cb18-315"><a href="#cb18-315" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Máximo acercamiento: </span><span class="sc">{</span>dist<span class="sc">.</span><span class="bu">min</span>()<span class="sc">:.3f}</span><span class="ss"> el </span><span class="sc">{</span>dias[np.argmin(dist)]<span class="sc">.</span>iso[:<span class="dv">10</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb18-316"><a href="#cb18-316" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb18-317"><a href="#cb18-317" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-318"><a href="#cb18-318" aria-hidden="true" tabindex="-1"></a>Las líneas de visión "se cruzan" justo cuando la Tierra adelanta a Marte:</span>
+<span id="cb18-319"><a href="#cb18-319" aria-hidden="true" tabindex="-1"></a>ese es el tramo retrógrado, centrado en la **oposición**.</span>
+<span id="cb18-320"><a href="#cb18-320" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-321"><a href="#cb18-321" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb18-322"><a href="#cb18-322" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-323"><a href="#cb18-323" aria-hidden="true" tabindex="-1"></a><span class="fu">## Las leyes de Kepler con unidades</span></span>
+<span id="cb18-324"><a href="#cb18-324" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-325"><a href="#cb18-325" aria-hidden="true" tabindex="-1"></a><span class="fu">### Tercera ley: período y tamaño de la órbita</span></span>
+<span id="cb18-326"><a href="#cb18-326" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-327"><a href="#cb18-327" aria-hidden="true" tabindex="-1"></a>$$P^2 = \frac{4\pi^2}{G M_\odot}\, a^3$$</span>
+<span id="cb18-328"><a href="#cb18-328" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-331"><a href="#cb18-331" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb18-332"><a href="#cb18-332" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb18-333"><a href="#cb18-333" aria-hidden="true" tabindex="-1"></a><span class="co"># Período orbital a partir del semieje mayor (y viceversa)</span></span>
+<span id="cb18-334"><a href="#cb18-334" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb18-335"><a href="#cb18-335" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-336"><a href="#cb18-336" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb18-337"><a href="#cb18-337" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy <span class="im">import</span> constants <span class="im">as</span> const</span>
+<span id="cb18-338"><a href="#cb18-338" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-339"><a href="#cb18-339" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> periodo(a, M<span class="op">=</span>const.M_sun):</span>
+<span id="cb18-340"><a href="#cb18-340" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Tercera ley de Kepler: período a partir del semieje mayor."""</span></span>
+<span id="cb18-341"><a href="#cb18-341" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (<span class="dv">2</span> <span class="op">*</span> np.pi <span class="op">*</span> np.sqrt(a<span class="op">**</span><span class="dv">3</span> <span class="op">/</span> (const.G <span class="op">*</span> M))).to(u.yr)</span>
+<span id="cb18-342"><a href="#cb18-342" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-343"><a href="#cb18-343" aria-hidden="true" tabindex="-1"></a>cuerpos <span class="op">=</span> {<span class="st">'Tierra'</span>: <span class="fl">1.000</span>, <span class="st">'Marte'</span>: <span class="fl">1.524</span>, <span class="st">'Júpiter'</span>: <span class="fl">5.203</span>,</span>
+<span id="cb18-344"><a href="#cb18-344" aria-hidden="true" tabindex="-1"></a>           <span class="st">'Halley'</span>: <span class="fl">17.83</span>, <span class="st">'Sedna'</span>: <span class="dv">506</span>}</span>
+<span id="cb18-345"><a href="#cb18-345" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> nombre, a <span class="kw">in</span> cuerpos.items():</span>
+<span id="cb18-346"><a href="#cb18-346" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>nombre<span class="sc">:&lt;8}</span><span class="ss"> a = </span><span class="sc">{</span>a<span class="sc">:&gt;7.2f}</span><span class="ss"> UA  →  P = </span><span class="sc">{</span>periodo(a <span class="op">*</span> u.au)<span class="sc">:&gt;9.2f}</span><span class="ss">"</span>)</span>
+<span id="cb18-347"><a href="#cb18-347" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-348"><a href="#cb18-348" aria-hidden="true" tabindex="-1"></a><span class="co"># También funciona para exoplanetas: planeta a 0.05 UA de una estrella de 0.8 M☉</span></span>
+<span id="cb18-349"><a href="#cb18-349" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Júpiter caliente: P = </span><span class="sc">{</span>periodo(<span class="fl">0.05</span> <span class="op">*</span> u.au, <span class="fl">0.8</span> <span class="op">*</span> const.M_sun)<span class="sc">.</span>to(u.day)<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb18-350"><a href="#cb18-350" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb18-351"><a href="#cb18-351" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-352"><a href="#cb18-352" aria-hidden="true" tabindex="-1"></a><span class="fu">### Ecuación de Kepler: dónde está un cuerpo en su órbita</span></span>
+<span id="cb18-353"><a href="#cb18-353" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-354"><a href="#cb18-354" aria-hidden="true" tabindex="-1"></a>Para una órbita elíptica, la posición en el tiempo se obtiene resolviendo</span>
+<span id="cb18-355"><a href="#cb18-355" aria-hidden="true" tabindex="-1"></a>la **ecuación de Kepler**, que no tiene solución algebraica:</span>
+<span id="cb18-356"><a href="#cb18-356" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-357"><a href="#cb18-357" aria-hidden="true" tabindex="-1"></a>$$M = E - e \sin E$$</span>
+<span id="cb18-358"><a href="#cb18-358" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-359"><a href="#cb18-359" aria-hidden="true" tabindex="-1"></a>donde $M$ (anomalía media) crece uniformemente con el tiempo y $E$</span>
+<span id="cb18-360"><a href="#cb18-360" aria-hidden="true" tabindex="-1"></a>(anomalía excéntrica) da la posición. La resolvemos con el método de Newton.</span>
+<span id="cb18-361"><a href="#cb18-361" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-364"><a href="#cb18-364" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb18-365"><a href="#cb18-365" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-halley</span></span>
+<span id="cb18-366"><a href="#cb18-366" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Órbita del cometa Halley con su posición cada 2 años"</span></span>
+<span id="cb18-367"><a href="#cb18-367" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-368"><a href="#cb18-368" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb18-369"><a href="#cb18-369" aria-hidden="true" tabindex="-1"></a><span class="co"># Propagar la órbita del cometa Halley resolviendo la ecuación de Kepler</span></span>
+<span id="cb18-370"><a href="#cb18-370" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb18-371"><a href="#cb18-371" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-372"><a href="#cb18-372" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb18-373"><a href="#cb18-373" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb18-374"><a href="#cb18-374" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-375"><a href="#cb18-375" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> resolver_kepler(M, e, tolerancia<span class="op">=</span><span class="fl">1e-12</span>):</span>
+<span id="cb18-376"><a href="#cb18-376" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Resuelve M = E - e·sin(E) para E con el método de Newton-Raphson."""</span></span>
+<span id="cb18-377"><a href="#cb18-377" aria-hidden="true" tabindex="-1"></a>    E <span class="op">=</span> np.where(e <span class="op">&lt;</span> <span class="fl">0.8</span>, M, np.pi)              <span class="co"># valor inicial recomendado</span></span>
+<span id="cb18-378"><a href="#cb18-378" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">100</span>):</span>
+<span id="cb18-379"><a href="#cb18-379" aria-hidden="true" tabindex="-1"></a>        delta <span class="op">=</span> (E <span class="op">-</span> e <span class="op">*</span> np.sin(E) <span class="op">-</span> M) <span class="op">/</span> (<span class="dv">1</span> <span class="op">-</span> e <span class="op">*</span> np.cos(E))</span>
+<span id="cb18-380"><a href="#cb18-380" aria-hidden="true" tabindex="-1"></a>        E <span class="op">=</span> E <span class="op">-</span> delta</span>
+<span id="cb18-381"><a href="#cb18-381" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> np.<span class="bu">all</span>(np.<span class="bu">abs</span>(delta) <span class="op">&lt;</span> tolerancia):</span>
+<span id="cb18-382"><a href="#cb18-382" aria-hidden="true" tabindex="-1"></a>            <span class="cf">break</span></span>
+<span id="cb18-383"><a href="#cb18-383" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> E</span>
+<span id="cb18-384"><a href="#cb18-384" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-385"><a href="#cb18-385" aria-hidden="true" tabindex="-1"></a><span class="co"># Elementos orbitales del Halley</span></span>
+<span id="cb18-386"><a href="#cb18-386" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> <span class="fl">17.83</span> <span class="op">*</span> u.au        <span class="co"># semieje mayor</span></span>
+<span id="cb18-387"><a href="#cb18-387" aria-hidden="true" tabindex="-1"></a>e <span class="op">=</span> <span class="fl">0.967</span>               <span class="co"># excentricidad (muy alargada)</span></span>
+<span id="cb18-388"><a href="#cb18-388" aria-hidden="true" tabindex="-1"></a>P <span class="op">=</span> periodo(a)          <span class="co"># período con la tercera ley</span></span>
+<span id="cb18-389"><a href="#cb18-389" aria-hidden="true" tabindex="-1"></a>perihelio <span class="op">=</span> Time(<span class="st">'1986-02-09'</span>)</span>
+<span id="cb18-390"><a href="#cb18-390" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-391"><a href="#cb18-391" aria-hidden="true" tabindex="-1"></a><span class="co"># Posiciones cada 2 años durante una órbita completa</span></span>
+<span id="cb18-392"><a href="#cb18-392" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> perihelio <span class="op">+</span> np.arange(<span class="dv">0</span>, P.to_value(u.yr), <span class="dv">2</span>) <span class="op">*</span> u.yr</span>
+<span id="cb18-393"><a href="#cb18-393" aria-hidden="true" tabindex="-1"></a>M <span class="op">=</span> <span class="dv">2</span> <span class="op">*</span> np.pi <span class="op">*</span> ((t <span class="op">-</span> perihelio) <span class="op">/</span> P).decompose().value   <span class="co"># anomalía media</span></span>
+<span id="cb18-394"><a href="#cb18-394" aria-hidden="true" tabindex="-1"></a>E <span class="op">=</span> resolver_kepler(M <span class="op">%</span> (<span class="dv">2</span> <span class="op">*</span> np.pi), e)</span>
+<span id="cb18-395"><a href="#cb18-395" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-396"><a href="#cb18-396" aria-hidden="true" tabindex="-1"></a><span class="co"># Coordenadas en el plano de la órbita (Sol en el foco)</span></span>
+<span id="cb18-397"><a href="#cb18-397" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> a <span class="op">*</span> (np.cos(E) <span class="op">-</span> e)</span>
+<span id="cb18-398"><a href="#cb18-398" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> a <span class="op">*</span> np.sqrt(<span class="dv">1</span> <span class="op">-</span> e<span class="op">**</span><span class="dv">2</span>) <span class="op">*</span> np.sin(E)</span>
+<span id="cb18-399"><a href="#cb18-399" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> np.hypot(x, y)</span>
+<span id="cb18-400"><a href="#cb18-400" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-401"><a href="#cb18-401" aria-hidden="true" tabindex="-1"></a><span class="co"># Órbita completa para dibujar la elipse</span></span>
+<span id="cb18-402"><a href="#cb18-402" aria-hidden="true" tabindex="-1"></a>E_lin <span class="op">=</span> np.linspace(<span class="dv">0</span>, <span class="dv">2</span> <span class="op">*</span> np.pi, <span class="dv">400</span>)</span>
+<span id="cb18-403"><a href="#cb18-403" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">9</span>, <span class="dv">4</span>))</span>
+<span id="cb18-404"><a href="#cb18-404" aria-hidden="true" tabindex="-1"></a>ax.plot(a <span class="op">*</span> (np.cos(E_lin) <span class="op">-</span> e), a <span class="op">*</span> np.sqrt(<span class="dv">1</span> <span class="op">-</span> e<span class="op">**</span><span class="dv">2</span>) <span class="op">*</span> np.sin(E_lin), <span class="st">'gray'</span>, lw<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb18-405"><a href="#cb18-405" aria-hidden="true" tabindex="-1"></a>ax.scatter(x, y, c<span class="op">=</span><span class="st">'C0'</span>, s<span class="op">=</span><span class="dv">25</span>, zorder<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb18-406"><a href="#cb18-406" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> ti, xi, yi <span class="kw">in</span> <span class="bu">zip</span>(t[::<span class="dv">5</span>], x[::<span class="dv">5</span>], y[::<span class="dv">5</span>]):</span>
+<span id="cb18-407"><a href="#cb18-407" aria-hidden="true" tabindex="-1"></a>    ax.annotate(ti.iso[:<span class="dv">4</span>], (xi.value, yi.value), fontsize<span class="op">=</span><span class="dv">8</span>, xytext<span class="op">=</span>(<span class="dv">3</span>, <span class="dv">5</span>),</span>
+<span id="cb18-408"><a href="#cb18-408" aria-hidden="true" tabindex="-1"></a>                textcoords<span class="op">=</span><span class="st">'offset points'</span>)</span>
+<span id="cb18-409"><a href="#cb18-409" aria-hidden="true" tabindex="-1"></a>ax.plot(<span class="dv">0</span>, <span class="dv">0</span>, <span class="st">'o'</span>, color<span class="op">=</span><span class="st">'gold'</span>, ms<span class="op">=</span><span class="dv">10</span>)</span>
+<span id="cb18-410"><a href="#cb18-410" aria-hidden="true" tabindex="-1"></a>ax.set_aspect(<span class="st">'equal'</span>)<span class="op">;</span> ax.set_xlabel(<span class="st">'x [UA]'</span>)<span class="op">;</span> ax.set_ylabel(<span class="st">'y [UA]'</span>)</span>
+<span id="cb18-411"><a href="#cb18-411" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="ss">f'Cometa Halley: P = </span><span class="sc">{</span>P<span class="sc">:.1f}</span><span class="ss">, e = </span><span class="sc">{</span>e<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb18-412"><a href="#cb18-412" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb18-413"><a href="#cb18-413" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-414"><a href="#cb18-414" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Distancia en el perihelio: </span><span class="sc">{</span>a <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> e)<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb18-415"><a href="#cb18-415" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Distancia en el afelio   : </span><span class="sc">{</span>a <span class="op">*</span> (<span class="dv">1</span> <span class="op">+</span> e)<span class="sc">:.1f}</span><span class="ss">"</span>)</span>
+<span id="cb18-416"><a href="#cb18-416" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb18-417"><a href="#cb18-417" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-418"><a href="#cb18-418" aria-hidden="true" tabindex="-1"></a>Los puntos están muy juntos cerca del afelio y muy separados cerca del Sol:</span>
+<span id="cb18-419"><a href="#cb18-419" aria-hidden="true" tabindex="-1"></a>es la **segunda ley de Kepler** (áreas iguales en tiempos iguales). El</span>
+<span id="cb18-420"><a href="#cb18-420" aria-hidden="true" tabindex="-1"></a>Halley pasa décadas lejos y solo unos meses cerca del Sol.</span>
+<span id="cb18-421"><a href="#cb18-421" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-422"><a href="#cb18-422" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb18-423"><a href="#cb18-423" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-424"><a href="#cb18-424" aria-hidden="true" tabindex="-1"></a><span class="fu">## Ejercicio</span></span>
+<span id="cb18-425"><a href="#cb18-425" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-426"><a href="#cb18-426" aria-hidden="true" tabindex="-1"></a>La **oposición** de Marte ocurre cuando la Tierra queda entre el Sol y</span>
+<span id="cb18-427"><a href="#cb18-427" aria-hidden="true" tabindex="-1"></a>Marte: la elongación Sol–Marte es ~180°. Es el mejor momento para observarlo.</span>
+<span id="cb18-428"><a href="#cb18-428" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-429"><a href="#cb18-429" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Calcula la elongación (separación Sol–Marte) para cada día entre</span>
+<span id="cb18-430"><a href="#cb18-430" aria-hidden="true" tabindex="-1"></a>   2026-06-01 y 2028-06-01</span>
+<span id="cb18-431"><a href="#cb18-431" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Encuentra la fecha de la oposición (elongación máxima)</span>
+<span id="cb18-432"><a href="#cb18-432" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Ese día, ¿a qué distancia está Marte y en qué constelación aparece?</span>
+<span id="cb18-433"><a href="#cb18-433" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-434"><a href="#cb18-434" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip collapse="true"}</span>
+<span id="cb18-435"><a href="#cb18-435" aria-hidden="true" tabindex="-1"></a><span class="fu">## Ver solución</span></span>
+<span id="cb18-436"><a href="#cb18-436" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-439"><a href="#cb18-439" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb18-440"><a href="#cb18-440" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb18-441"><a href="#cb18-441" aria-hidden="true" tabindex="-1"></a><span class="co"># SOLUCIÓN: próxima oposición de Marte</span></span>
+<span id="cb18-442"><a href="#cb18-442" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb18-443"><a href="#cb18-443" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-444"><a href="#cb18-444" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb18-445"><a href="#cb18-445" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-446"><a href="#cb18-446" aria-hidden="true" tabindex="-1"></a><span class="co"># Paso 1: rejilla diaria de dos años</span></span>
+<span id="cb18-447"><a href="#cb18-447" aria-hidden="true" tabindex="-1"></a>dias <span class="op">=</span> Time(<span class="st">'2026-06-01'</span>) <span class="op">+</span> np.arange(<span class="dv">0</span>, <span class="dv">731</span>) <span class="op">*</span> u.day</span>
+<span id="cb18-448"><a href="#cb18-448" aria-hidden="true" tabindex="-1"></a>sol   <span class="op">=</span> get_body(<span class="st">'sun'</span>, dias)</span>
+<span id="cb18-449"><a href="#cb18-449" aria-hidden="true" tabindex="-1"></a>marte <span class="op">=</span> get_body(<span class="st">'mars'</span>, dias)</span>
+<span id="cb18-450"><a href="#cb18-450" aria-hidden="true" tabindex="-1"></a>elong <span class="op">=</span> sol.separation(marte).deg</span>
+<span id="cb18-451"><a href="#cb18-451" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-452"><a href="#cb18-452" aria-hidden="true" tabindex="-1"></a><span class="co"># Paso 2: el día de elongación máxima</span></span>
+<span id="cb18-453"><a href="#cb18-453" aria-hidden="true" tabindex="-1"></a>i <span class="op">=</span> np.argmax(elong)</span>
+<span id="cb18-454"><a href="#cb18-454" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Oposición de Marte: </span><span class="sc">{</span>dias[i]<span class="sc">.</span>iso[:<span class="dv">10</span>]<span class="sc">}</span><span class="ss"> (elongación </span><span class="sc">{</span>elong[i]<span class="sc">:.1f}</span><span class="ss">°)"</span>)</span>
+<span id="cb18-455"><a href="#cb18-455" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-456"><a href="#cb18-456" aria-hidden="true" tabindex="-1"></a><span class="co"># Paso 3: distancia y constelación ese día</span></span>
+<span id="cb18-457"><a href="#cb18-457" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Distancia a la Tierra: </span><span class="sc">{</span>marte[i]<span class="sc">.</span>distance<span class="sc">.</span>to(u.au)<span class="sc">:.3f}</span><span class="ss">"</span>)</span>
+<span id="cb18-458"><a href="#cb18-458" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"                     = </span><span class="sc">{</span>marte[i]<span class="sc">.</span>distance<span class="sc">.</span>to(u.km)<span class="sc">:.3e}</span><span class="ss">"</span>)</span>
+<span id="cb18-459"><a href="#cb18-459" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Constelación         : </span><span class="sc">{</span>get_constellation(marte[i])<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb18-460"><a href="#cb18-460" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-461"><a href="#cb18-461" aria-hidden="true" tabindex="-1"></a><span class="co"># ¿Por qué la elongación no llega exactamente a 180°? Porque la órbita de</span></span>
+<span id="cb18-462"><a href="#cb18-462" aria-hidden="true" tabindex="-1"></a><span class="co"># Marte está inclinada ~1.85° respecto a la de la Tierra: en la oposición</span></span>
+<span id="cb18-463"><a href="#cb18-463" aria-hidden="true" tabindex="-1"></a><span class="co"># Marte suele quedar un poco por encima o por debajo de la línea Sol–Tierra.</span></span>
+<span id="cb18-464"><a href="#cb18-464" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb18-465"><a href="#cb18-465" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb18-466"><a href="#cb18-466" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-467"><a href="#cb18-467" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb18-468"><a href="#cb18-468" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-469"><a href="#cb18-469" aria-hidden="true" tabindex="-1"></a><span class="fu">## ¿Qué aprendiste en este módulo? {.seccion-aprendiste}</span></span>
+<span id="cb18-470"><a href="#cb18-470" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-471"><a href="#cb18-471" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Obtener posiciones del Sol, la Luna y los planetas con <span class="in">`get_body`</span></span>
+<span id="cb18-472"><a href="#cb18-472" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Saber en qué constelación está un objeto con <span class="in">`get_constellation`</span></span>
+<span id="cb18-473"><a href="#cb18-473" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Calcular curvas de altura y horarios de crepúsculo para un observatorio</span>
+<span id="cb18-474"><a href="#cb18-474" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Estimar la fase lunar a partir de la elongación</span>
+<span id="cb18-475"><a href="#cb18-475" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Reproducir el movimiento retrógrado de Marte y explicarlo con <span class="in">`get_body_barycentric`</span></span>
+<span id="cb18-476"><a href="#cb18-476" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Aplicar la tercera ley de Kepler con unidades</span>
+<span id="cb18-477"><a href="#cb18-477" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Resolver la ecuación de Kepler para propagar una órbita</span>
+<span id="cb18-478"><a href="#cb18-478" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-479"><a href="#cb18-479" aria-hidden="true" tabindex="-1"></a>**Siguiente módulo →** <span class="co">[</span><span class="ot">15 · Series temporales astronómicas</span><span class="co">](15-series-temporales.qmd)</span></span>
+</code></pre></div><button title="Copiar al portapapeles" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<p>Blog hecho con Quarto</p>
+<p>AstroPy en Español · Blog de astronomía computacional</p>
 </div>   
     <div class="nav-footer-center">
       &nbsp;
     </div>
     <div class="nav-footer-right">
-<p>Datos: Astropy Project</p>
+<p>Hecho con <a href="https://quarto.org">Quarto</a> y <a href="https://www.astropy.org">Astropy</a></p>
 </div>
   </div>
 </footer>

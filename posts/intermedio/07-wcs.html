@@ -1,14 +1,15 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
 
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.9.37">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="description" content="Proximo modulo en preparacion">
+<meta name="author" content="Blog AstroPy en Español">
+<meta name="description" content="Aprende qué es el World Coordinate System y cómo convertir posiciones en píxeles a coordenadas celestes (y viceversa) con astropy.wcs">
 
-<title>07 - WCS del pixel al cielo – AstroPy en Español</title>
+<title>07 · WCS: del píxel al cielo – AstroPy en Español</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -69,6 +70,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../">
+<link href="../../posts/intermedio/08-fotometria.html" rel="next">
+<link href="../../posts/intermedio/06-fits.html" rel="prev">
 <link href="../../assets/logos/favicon.ico" rel="icon">
 <script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -76,14 +79,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-acf12a64177840b8d86f2d4f01b2e9fb.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-23bbe8b5e4efc1e257f6d59dce478b08.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-acf12a64177840b8d86f2d4f01b2e9fb.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-46c2da4921da100f2e8b760b91ba26ad.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-13f4910f51bb414f8177eb12ee348383.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../../site_libs/bootstrap/bootstrap-dark-c414a890e2011809a78d515def34b275.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../../site_libs/bootstrap/bootstrap-13f4910f51bb414f8177eb12ee348383.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-815cd9e140545d7958d81bc583beecec.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -98,187 +97,54 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   ],
   "show-item-context": false,
   "language": {
-    "search-no-results-text": "No results",
-    "search-matching-documents-text": "matching documents",
-    "search-copy-link-title": "Copy link to search",
-    "search-hide-matches-text": "Hide additional matches",
-    "search-more-match-text": "more match in this document",
-    "search-more-matches-text": "more matches in this document",
-    "search-clear-button-title": "Clear",
+    "search-no-results-text": "No se han encontrado resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
     "search-text-placeholder": "",
-    "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit",
-    "search-label": "Search"
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
   }
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
-<body class="nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
-    const toggleBodyColorMode = (bsSheetEl) => {
-      const mode = bsSheetEl.getAttribute("data-mode");
-      const bodyEl = window.document.querySelector("body");
-      if (mode === "dark") {
-        bodyEl.classList.add("quarto-dark");
-        bodyEl.classList.remove("quarto-light");
-      } else {
-        bodyEl.classList.add("quarto-light");
-        bodyEl.classList.remove("quarto-dark");
-      }
-    }
-    const toggleBodyColorPrimary = () => {
-      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
-      if (bsSheetEl) {
-        toggleBodyColorMode(bsSheetEl);
-      }
-    }
-    const setColorSchemeToggle = (alternate) => {
-      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
-      for (let i=0; i < toggles.length; i++) {
-        const toggle = toggles[i];
-        if (toggle) {
-          if (alternate) {
-            toggle.classList.add("alternate");
-          } else {
-            toggle.classList.remove("alternate");
-          }
-        }
-      }
-    };
-    const toggleColorMode = (alternate) => {
-      // Switch the stylesheets
-      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
-      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
-      manageTransitions('#quarto-margin-sidebar .nav-link', false);
-      if (alternate) {
-        // note: dark is layered on light, we don't disable primary!
-        enableStylesheet(alternateStylesheets);
-        for (const sheetNode of alternateStylesheets) {
-          if (sheetNode.id === "quarto-bootstrap") {
-            toggleBodyColorMode(sheetNode);
-          }
-        }
-      } else {
-        disableStylesheet(alternateStylesheets);
-        enableStylesheet(primaryStylesheets)
-        toggleBodyColorPrimary();
-      }
-      manageTransitions('#quarto-margin-sidebar .nav-link', true);
-      // Switch the toggles
-      setColorSchemeToggle(alternate)
-      // Hack to workaround the fact that safari doesn't
-      // properly recolor the scrollbar when toggling (#1455)
-      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
-        manageTransitions("body", false);
-        window.scrollTo(0, 1);
-        setTimeout(() => {
-          window.scrollTo(0, 0);
-          manageTransitions("body", true);
-        }, 40);
-      }
-    }
-    const disableStylesheet = (stylesheets) => {
-      for (let i=0; i < stylesheets.length; i++) {
-        const stylesheet = stylesheets[i];
-        stylesheet.rel = 'disabled-stylesheet';
-      }
-    }
-    const enableStylesheet = (stylesheets) => {
-      for (let i=0; i < stylesheets.length; i++) {
-        const stylesheet = stylesheets[i];
-        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
-          stylesheet.rel = 'stylesheet';
-        }
-      }
-    }
-    const manageTransitions = (selector, allowTransitions) => {
-      const els = window.document.querySelectorAll(selector);
-      for (let i=0; i < els.length; i++) {
-        const el = els[i];
-        if (allowTransitions) {
-          el.classList.remove('notransition');
-        } else {
-          el.classList.add('notransition');
-        }
-      }
-    }
-    const isFileUrl = () => {
-      return window.location.protocol === 'file:';
-    }
-    const hasAlternateSentinel = () => {
-      let styleSentinel = getColorSchemeSentinel();
-      if (styleSentinel !== null) {
-        return styleSentinel === "alternate";
-      } else {
-        return false;
-      }
-    }
-    const setStyleSentinel = (alternate) => {
-      const value = alternate ? "alternate" : "default";
-      if (!isFileUrl()) {
-        window.localStorage.setItem("quarto-color-scheme", value);
-      } else {
-        localAlternateSentinel = value;
-      }
-    }
-    const getColorSchemeSentinel = () => {
-      if (!isFileUrl()) {
-        const storageValue = window.localStorage.getItem("quarto-color-scheme");
-        return storageValue != null ? storageValue : localAlternateSentinel;
-      } else {
-        return localAlternateSentinel;
-      }
-    }
-    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
-      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
-      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
-      let newTheme = '';
-      if(authorPrefersDark) {
-        newTheme = isAlternate ? baseTheme : alternateTheme;
-      } else {
-        newTheme = isAlternate ? alternateTheme : baseTheme;
-      }
-      const changeGiscusTheme = () => {
-        // From: https://github.com/giscus/giscus/issues/336
-        const sendMessage = (message) => {
-          const iframe = document.querySelector('iframe.giscus-frame');
-          if (!iframe) return;
-          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
-        }
-        sendMessage({
-          setConfig: {
-            theme: newTheme
-          }
-        });
-      }
-      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
-      if (isGiscussLoaded) {
-        changeGiscusTheme();
-      }
-    };
-    const authorPrefersDark = false;
-    const darkModeDefault = authorPrefersDark;
-      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
-      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
-    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
-    // Dark / light mode switch
-    window.quartoToggleColorScheme = () => {
-      // Read the current dark / light value
-      let toAlternate = !hasAlternateSentinel();
-      toggleColorMode(toAlternate);
-      setStyleSentinel(toAlternate);
-      toggleGiscusIfUsed(toAlternate, darkModeDefault);
-      window.dispatchEvent(new Event('resize'));
-    };
-    // Switch to dark mode if need be
-    if (hasAlternateSentinel()) {
-      toggleColorMode(true);
-    } else {
-      toggleColorMode(false);
-    }
-  </script>
+<body class="nav-sidebar docked nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -289,105 +155,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <span class="navbar-title">AstroPy en Español</span>
     </a>
   </div>
-            <div id="quarto-search" class="" title="Search"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+            <div id="quarto-search" class="" title="Buscar"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Navegación de palanca" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../../index.html"> 
-<span class="menu-text">Inicio</span></a>
+    <a class="nav-link active" href="../../posts/basico/01-introduccion.html" aria-current="page"> 
+<span class="menu-text">Módulos</span></a>
   </li>  
-  <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-basico" role="link" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">Basico</span>
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-basico">    
-        <li>
-    <a class="dropdown-item" href="../../posts/basico/01-introduccion.html">
- <span class="dropdown-text">01 - Introduccion a Astropy</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/basico/02-unidades.html">
- <span class="dropdown-text">02 - Unidades y constantes</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/basico/03-tiempo.html">
- <span class="dropdown-text">03 - Tiempo astronomico</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/basico/04-coordenadas.html">
- <span class="dropdown-text">04 - Coordenadas celestes</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/basico/05-tablas.html">
- <span class="dropdown-text">05 - Tablas astronomicas</span></a>
-  </li>  
-    </ul>
-  </li>
-  <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-intermedio" role="link" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">Intermedio</span>
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-intermedio">    
-        <li>
-    <a class="dropdown-item" href="../../posts/intermedio/06-fits.html">
- <span class="dropdown-text">06 - Archivos FITS</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/intermedio/07-wcs.html">
- <span class="dropdown-text">07 - WCS del pixel al cielo</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/intermedio/08-fotometria.html">
- <span class="dropdown-text">08 - Fotometria de apertura</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/intermedio/09-visualizacion.html">
- <span class="dropdown-text">09 - Visualizacion astronomica</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/intermedio/10-estadistica.html">
- <span class="dropdown-text">10 - Estadistica y modelado</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/intermedio/11-catalogos.html">
- <span class="dropdown-text">11 - Catalogos en linea</span></a>
-  </li>  
-    </ul>
-  </li>
-  <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-avanzado" role="link" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">Avanzado</span>
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-avanzado">    
-        <li>
-    <a class="dropdown-item" href="../../posts/avanzado/12-espectroscopia.html">
- <span class="dropdown-text">12 - Espectroscopia</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/avanzado/13-cosmologia.html">
- <span class="dropdown-text">13 - Cosmologia computacional</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/avanzado/14-orbital.html">
- <span class="dropdown-text">14 - Mecanica orbital</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/avanzado/15-series-temporales.html">
- <span class="dropdown-text">15 - Series temporales</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/avanzado/16-extensiones.html">
- <span class="dropdown-text">16 - Extensiones propias</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../posts/avanzado/17-pipeline.html">
- <span class="dropdown-text">17 - Pipeline completo</span></a>
-  </li>  
-    </ul>
-  </li>
   <li class="nav-item">
     <a class="nav-link" href="../../sobre.html"> 
 <span class="menu-text">Sobre el blog</span></a>
@@ -395,32 +172,215 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/tu-usuario/astropy-blog"> <i class="bi bi-github" role="img" aria-label="GitHub">
+    <a class="nav-link" href="https://github.com/fvelez78/astropy-blog"> <i class="bi bi-github" role="img" aria-label="GitHub">
 </i> 
 <span class="menu-text"></span></a>
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
-  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
 </div>
       </div> <!-- /container-fluid -->
     </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../posts/intermedio/06-fits.html">Nivel 2 · Intermedio</a></li><li class="breadcrumb-item"><a href="../../posts/intermedio/07-wcs.html">07 · WCS: del píxel al cielo</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Buscar" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
 </header>
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Buscar"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Inicio</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Nivel 1 · Básico</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/basico/01-introduccion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">01 · ¿Qué es Astropy y por qué usarlo?</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/basico/02-unidades.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">02 · Unidades y constantes físicas</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/basico/03-tiempo.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">03 · Tiempo astronómico con astropy.time</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/basico/04-coordenadas.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">04 · Coordenadas celestes con SkyCoord</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/basico/05-tablas.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">05 · Tablas astronómicas con astropy.table</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Nivel 2 · Intermedio</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/intermedio/06-fits.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">06 · Lectura y manipulación de archivos FITS</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/intermedio/07-wcs.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">07 · WCS: del píxel al cielo</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/intermedio/08-fotometria.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">08 · Fotometría de apertura</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/intermedio/09-visualizacion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">09 · Visualización astronómica</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/intermedio/10-estadistica.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">10 · Estadística y modelado</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/intermedio/11-catalogos.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">11 · Consultas a catálogos en línea</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Nivel 3 · Avanzado</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/avanzado/12-espectroscopia.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">12 · Espectroscopía con specutils</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/avanzado/13-cosmologia.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">13 · Cosmología computacional</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/avanzado/14-orbital.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">14 · Mecánica orbital y efemérides</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/avanzado/15-series-temporales.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">15 · Series temporales astronómicas</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/avanzado/16-extensiones.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">16 · Extensiones y modelos propios</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/avanzado/17-pipeline.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">17 · Pipeline completo de reducción</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">En esta página</h2>
+   
+  <ul>
+  <li><a href="#el-problema-una-imagen-no-sabe-dónde-está" id="toc-el-problema-una-imagen-no-sabe-dónde-está" class="nav-link active" data-scroll-target="#el-problema-una-imagen-no-sabe-dónde-está"><span class="header-section-number">1</span> El problema: una imagen no sabe dónde está</a></li>
+  <li><a href="#las-claves-del-wcs-en-el-encabezado" id="toc-las-claves-del-wcs-en-el-encabezado" class="nav-link" data-scroll-target="#las-claves-del-wcs-en-el-encabezado"><span class="header-section-number">2</span> Las claves del WCS en el encabezado</a></li>
+  <li><a href="#crear-un-wcs-desde-cero" id="toc-crear-un-wcs-desde-cero" class="nav-link" data-scroll-target="#crear-un-wcs-desde-cero"><span class="header-section-number">3</span> Crear un WCS desde cero</a></li>
+  <li><a href="#convertir-píxel-cielo" id="toc-convertir-píxel-cielo" class="nav-link" data-scroll-target="#convertir-píxel-cielo"><span class="header-section-number">4</span> Convertir píxel → cielo</a></li>
+  <li><a href="#convertir-cielo-píxel" id="toc-convertir-cielo-píxel" class="nav-link" data-scroll-target="#convertir-cielo-píxel"><span class="header-section-number">5</span> Convertir cielo → píxel</a></li>
+  <li><a href="#el-wcs-en-un-archivo-fits" id="toc-el-wcs-en-un-archivo-fits" class="nav-link" data-scroll-target="#el-wcs-en-un-archivo-fits"><span class="header-section-number">6</span> El WCS en un archivo FITS</a>
+  <ul class="collapse">
+  <li><a href="#guardar-el-wcs-en-el-encabezado" id="toc-guardar-el-wcs-en-el-encabezado" class="nav-link" data-scroll-target="#guardar-el-wcs-en-el-encabezado"><span class="header-section-number">6.1</span> Guardar el WCS en el encabezado</a></li>
+  <li><a href="#leer-el-wcs-desde-un-fits" id="toc-leer-el-wcs-desde-un-fits" class="nav-link" data-scroll-target="#leer-el-wcs-desde-un-fits"><span class="header-section-number">6.2</span> Leer el WCS desde un FITS</a></li>
+  </ul></li>
+  <li><a href="#información-útil-del-wcs" id="toc-información-útil-del-wcs" class="nav-link" data-scroll-target="#información-útil-del-wcs"><span class="header-section-number">7</span> Información útil del WCS</a></li>
+  <li><a href="#aplicación-práctica-escala-de-una-cámara-real" id="toc-aplicación-práctica-escala-de-una-cámara-real" class="nav-link" data-scroll-target="#aplicación-práctica-escala-de-una-cámara-real"><span class="header-section-number">8</span> Aplicación práctica: escala de una cámara real</a></li>
+  <li><a href="#ejercicio" id="toc-ejercicio" class="nav-link" data-scroll-target="#ejercicio"><span class="header-section-number">9</span> Ejercicio</a></li>
+  <li><a href="#qué-aprendiste-en-este-módulo" id="toc-qué-aprendiste-en-este-módulo" class="nav-link" data-scroll-target="#qué-aprendiste-en-este-módulo"><span class="header-section-number">10</span> ¿Qué aprendiste en este módulo?</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../posts/intermedio/06-fits.html">Nivel 2 · Intermedio</a></li><li class="breadcrumb-item"><a href="../../posts/intermedio/07-wcs.html">07 · WCS: del píxel al cielo</a></li></ol></nav>
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title">07 - WCS del pixel al cielo</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<div class="quarto-title-block"><div><h1 class="title">07 · WCS: del píxel al cielo</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Código</button></div></div>
   <div class="quarto-categories">
     <div class="quarto-category">intermedio</div>
   </div>
@@ -428,14 +388,26 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <div>
   <div class="description">
-    Proximo modulo en preparacion
+    Aprende qué es el World Coordinate System y cómo convertir posiciones en píxeles a coordenadas celestes (y viceversa) con astropy.wcs
   </div>
 </div>
 
 
 <div class="quarto-title-meta">
 
+    <div>
+    <div class="quarto-title-meta-heading">Autor/a</div>
+    <div class="quarto-title-meta-contents">
+             <p>Blog AstroPy en Español </p>
+          </div>
+  </div>
     
+    <div>
+    <div class="quarto-title-meta-heading">Fecha de publicación</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">1 de noviembre de 2026</p>
+    </div>
+  </div>
   
     
   </div>
@@ -445,41 +417,469 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p><span class="badge-intermedio">Intermedio</span></p>
+<p><span class="badge-inter">🔭 Intermedio</span></p>
+<section id="el-problema-una-imagen-no-sabe-dónde-está" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="el-problema-una-imagen-no-sabe-dónde-está"><span class="header-section-number">1</span> El problema: una imagen no sabe dónde está</h2>
+<p>En el módulo 06 trabajamos con una imagen como un simple arreglo de números. Pero un astrónomo necesita saber: <em>“¿qué estrella es la que está en el píxel (90, 110)?”</em>. Para eso hace falta un “mapa” que traduzca:</p>
+<p><span class="math display">\[\text{píxel } (x, y) \;\longleftrightarrow\; \text{cielo } (\alpha, \delta)\]</span></p>
+<p>Ese mapa se llama <strong>WCS</strong> (<em>World Coordinate System</em>) y vive en el encabezado del FITS, en un conjunto de claves estándar. Con <code>astropy.wcs</code> leemos esas claves y hacemos las conversiones automáticamente.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Requisitos previos
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>Módulo 04 (coordenadas con <code>SkyCoord</code>)</li>
+<li>Módulo 06 (archivos FITS)</li>
+</ul>
+</div>
+</div>
+<hr>
+</section>
+<section id="las-claves-del-wcs-en-el-encabezado" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="las-claves-del-wcs-en-el-encabezado"><span class="header-section-number">2</span> Las claves del WCS en el encabezado</h2>
+<p>Un WCS celeste básico se describe con estas claves:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Clave</th>
+<th>Significado</th>
+<th>Ejemplo</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>CTYPE1</code>, <code>CTYPE2</code></td>
+<td>Tipo de coordenada y proyección</td>
+<td><code>RA---TAN</code>, <code>DEC--TAN</code></td>
+</tr>
+<tr class="even">
+<td><code>CRVAL1</code>, <code>CRVAL2</code></td>
+<td>Coordenada del cielo del píxel de referencia (grados)</td>
+<td><code>83.82</code>, <code>-5.39</code></td>
+</tr>
+<tr class="odd">
+<td><code>CRPIX1</code>, <code>CRPIX2</code></td>
+<td>Píxel de referencia (¡cuenta desde 1!)</td>
+<td><code>100.5</code>, <code>100.5</code></td>
+</tr>
+<tr class="even">
+<td><code>CDELT1</code>, <code>CDELT2</code></td>
+<td>Tamaño del píxel en grados</td>
+<td><code>-0.0002778</code>, <code>0.0002778</code></td>
+</tr>
+<tr class="odd">
+<td><code>CUNIT1</code>, <code>CUNIT2</code></td>
+<td>Unidades</td>
+<td><code>deg</code></td>
+</tr>
+</tbody>
+</table>
+<p>El sufijo <code>TAN</code> indica la <strong>proyección gnomónica (tangente)</strong>: la forma de “aplanar” un trozo de la esfera celeste sobre el plano del detector. Es la que usan casi todas las cámaras CCD.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>¿Por qué CDELT1 es negativo?
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>En el cielo, la ascensión recta <strong>crece hacia el este</strong>, que en una imagen con el norte arriba queda <strong>a la izquierda</strong>. Por eso el paso en RA suele ser negativo: al avanzar a la derecha en x, la RA disminuye.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="crear-un-wcs-desde-cero" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="crear-un-wcs-desde-cero"><span class="header-section-number">3</span> Crear un WCS desde cero</h2>
+<div id="8ab1d077" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Construir un WCS para una imagen de 200×200 píxeles centrada en M42</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.wcs <span class="im">import</span> WCS</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># naxis=2 → WCS para una imagen de 2 dimensiones</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>w <span class="op">=</span> WCS(naxis<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Píxel de referencia: el centro de la imagen (convención FITS, base 1)</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>w.wcs.crpix <span class="op">=</span> [<span class="fl">100.5</span>, <span class="fl">100.5</span>]</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Coordenadas del cielo en ese píxel: Nebulosa de Orión (RA, Dec en grados)</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>w.wcs.crval <span class="op">=</span> [<span class="fl">83.8221</span>, <span class="op">-</span><span class="fl">5.3911</span>]</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Escala: 1 segundo de arco por píxel = 1/3600 grados</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="co"># RA negativo porque crece hacia la izquierda (este)</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>w.wcs.cdelt <span class="op">=</span> [<span class="op">-</span><span class="dv">1</span><span class="op">/</span><span class="dv">3600</span>, <span class="dv">1</span><span class="op">/</span><span class="dv">3600</span>]</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Proyección tangente para RA y Dec</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>w.wcs.ctype <span class="op">=</span> [<span class="st">"RA---TAN"</span>, <span class="st">"DEC--TAN"</span>]</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Mostrar un resumen del WCS</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(w)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>WCS Keywords
+
+Number of WCS axes: 2
+CTYPE : 'RA---TAN' 'DEC--TAN'
+CUNIT : '' ''
+CRVAL : 83.8221 -5.3911
+CRPIX : 100.5 100.5
+PC1_1 PC1_2  : 1.0 0.0
+PC2_1 PC2_2  : 0.0 1.0
+CDELT : -0.0002777777777777778 0.0002777777777777778
+NAXIS : 0  0</code></pre>
+</div>
+</div>
+<hr>
+</section>
+<section id="convertir-píxel-cielo" class="level2" data-number="4">
+<h2 data-number="4" class="anchored" data-anchor-id="convertir-píxel-cielo"><span class="header-section-number">4</span> Convertir píxel → cielo</h2>
+<div id="d4e02ee5" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># pixel_to_world() recibe (x, y) en convención numpy (base 0)</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># y devuelve un objeto SkyCoord listo para usar</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> astropy.units <span class="im">as</span> u</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Centro de la imagen (base 0): 99.5, 99.5 equivale a 100.5 en base FITS</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>centro <span class="op">=</span> w.pixel_to_world(<span class="fl">99.5</span>, <span class="fl">99.5</span>)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Centro de la imagen   : </span><span class="sc">{</span>centro<span class="sc">.</span>to_string(<span class="st">'hmsdms'</span>, precision<span class="op">=</span><span class="dv">2</span>)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Esquina inferior izquierda (píxel 0, 0)</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>esquina <span class="op">=</span> w.pixel_to_world(<span class="dv">0</span>, <span class="dv">0</span>)</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Esquina inferior izq. : </span><span class="sc">{</span>esquina<span class="sc">.</span>to_string(<span class="st">'hmsdms'</span>, precision<span class="op">=</span><span class="dv">2</span>)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Distancia angular entre el centro y la esquina (módulo 04)</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Separación            : </span><span class="sc">{</span>centro<span class="sc">.</span>separation(esquina)<span class="sc">.</span>to(u.arcsec)<span class="sc">:.1f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Centro de la imagen   : 05h35m17.30s -05d23m27.96s
+Esquina inferior izq. : 05h35m23.97s -05d25m07.46s
+Separación            : 140.7 arcsec</code></pre>
+</div>
+</div>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Warning</span>Modulo en construccion
+<span class="screen-reader-only">Advertencia</span>Base 0 vs base 1
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Este modulo esta siendo preparado. Vuelve pronto.</p>
+<p><code>pixel_to_world()</code> y <code>world_to_pixel()</code> usan <strong>base 0</strong> (como numpy), mientras que <code>CRPIX</code> en el encabezado usa <strong>base 1</strong> (como FITS). Astropy hace la traducción internamente: tú solo usa índices de numpy.</p>
 </div>
 </div>
+<div id="b18923b1" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># También funciona con muchos píxeles a la vez (arreglos)</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Posiciones de las 5 estrellas de la imagen sintética del módulo 06</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>x_estrellas <span class="op">=</span> np.array([<span class="dv">50</span>, <span class="dv">120</span>, <span class="dv">160</span>, <span class="dv">90</span>, <span class="dv">30</span>])</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>y_estrellas <span class="op">=</span> np.array([<span class="dv">60</span>, <span class="dv">140</span>, <span class="dv">40</span>, <span class="dv">110</span>, <span class="dv">170</span>])</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Una sola llamada convierte todas las posiciones</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>coords <span class="op">=</span> w.pixel_to_world(x_estrellas, y_estrellas)</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, c <span class="kw">in</span> <span class="bu">enumerate</span>(coords, start<span class="op">=</span><span class="dv">1</span>):</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Estrella </span><span class="sc">{</span>i<span class="sc">}</span><span class="ss">: RA = </span><span class="sc">{</span>c<span class="sc">.</span>ra<span class="sc">.</span>deg<span class="sc">:.5f}</span><span class="ss">°,  Dec = </span><span class="sc">{</span>c<span class="sc">.</span>dec<span class="sc">.</span>deg<span class="sc">:.5f}</span><span class="ss">°"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Estrella 1: RA = 83.83591°,  Dec = -5.40207°
+Estrella 2: RA = 83.81638°,  Dec = -5.37985°
+Estrella 3: RA = 83.80522°,  Dec = -5.40763°
+Estrella 4: RA = 83.82475°,  Dec = -5.38818°
+Estrella 5: RA = 83.84149°,  Dec = -5.37152°</code></pre>
+</div>
+</div>
+<hr>
+</section>
+<section id="convertir-cielo-píxel" class="level2" data-number="5">
+<h2 data-number="5" class="anchored" data-anchor-id="convertir-cielo-píxel"><span class="header-section-number">5</span> Convertir cielo → píxel</h2>
+<div id="1bfd5950" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co"># world_to_pixel() responde: ¿en qué píxel cae esta coordenada del cielo?</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.coordinates <span class="im">import</span> SkyCoord</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> astropy.units <span class="im">as</span> u</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Posición aproximada de θ¹ Ori C, la estrella principal del Trapecio</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>trapecio <span class="op">=</span> SkyCoord(<span class="st">'05h35m16.46s'</span>, <span class="st">'-05d23m22.8s'</span>, frame<span class="op">=</span><span class="st">'icrs'</span>)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>x, y <span class="op">=</span> w.world_to_pixel(trapecio)</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"El Trapecio cae en el píxel x = </span><span class="sc">{</span>x<span class="sc">:.1f}</span><span class="ss">, y = </span><span class="sc">{</span>y<span class="sc">:.1f}</span><span class="ss">"</span>)</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="co"># ¿Está dentro de la imagen de 200×200?</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>dentro <span class="op">=</span> (<span class="dv">0</span> <span class="op">&lt;=</span> x <span class="op">&lt;</span> <span class="dv">200</span>) <span class="kw">and</span> (<span class="dv">0</span> <span class="op">&lt;=</span> y <span class="op">&lt;</span> <span class="dv">200</span>)</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"¿Dentro de la imagen? </span><span class="sc">{</span><span class="st">'Sí ✓'</span> <span class="cf">if</span> dentro <span class="cf">else</span> <span class="st">'No ✗'</span><span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>El Trapecio cae en el píxel x = 112.1, y = 104.7
+¿Dentro de la imagen? Sí ✓</code></pre>
+</div>
+</div>
+<hr>
+</section>
+<section id="el-wcs-en-un-archivo-fits" class="level2" data-number="6">
+<h2 data-number="6" class="anchored" data-anchor-id="el-wcs-en-un-archivo-fits"><span class="header-section-number">6</span> El WCS en un archivo FITS</h2>
+<section id="guardar-el-wcs-en-el-encabezado" class="level3" data-number="6.1">
+<h3 data-number="6.1" class="anchored" data-anchor-id="guardar-el-wcs-en-el-encabezado"><span class="header-section-number">6.1</span> Guardar el WCS en el encabezado</h3>
+<div id="ac6224cc" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Crear una imagen sintética y guardarla con su WCS en el encabezado</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.io <span class="im">import</span> fits</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Imagen sintética: fondo + ruido + estrellas (igual que en el módulo 06)</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> np.random.default_rng(seed<span class="op">=</span><span class="dv">7</span>)</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>imagen <span class="op">=</span> <span class="dv">100</span> <span class="op">+</span> rng.normal(<span class="dv">0</span>, <span class="dv">5</span>, (<span class="dv">200</span>, <span class="dv">200</span>))</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>yy, xx <span class="op">=</span> np.mgrid[<span class="dv">0</span>:<span class="dv">200</span>, <span class="dv">0</span>:<span class="dv">200</span>]</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> x0, y0, b <span class="kw">in</span> <span class="bu">zip</span>(x_estrellas, y_estrellas, [<span class="dv">800</span>, <span class="dv">1500</span>, <span class="dv">600</span>, <span class="dv">2500</span>, <span class="dv">400</span>]):</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    imagen <span class="op">+=</span> b <span class="op">*</span> np.exp(<span class="op">-</span>((xx <span class="op">-</span> x0)<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> (yy <span class="op">-</span> y0)<span class="op">**</span><span class="dv">2</span>) <span class="op">/</span> (<span class="dv">2</span> <span class="op">*</span> <span class="fl">2.5</span><span class="op">**</span><span class="dv">2</span>))</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="co"># w.to_header() convierte el WCS en claves de encabezado FITS</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>encabezado <span class="op">=</span> w.to_header()</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>encabezado[<span class="st">'OBJECT'</span>] <span class="op">=</span> <span class="st">'M42 simulado'</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>fits.writeto(<span class="st">'m42_con_wcs.fits'</span>, imagen.astype(np.float32),</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>             header<span class="op">=</span>encabezado, overwrite<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Claves WCS escritas en el encabezado:"</span>)</span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">repr</span>(encabezado))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Claves WCS escritas en el encabezado:
+WCSAXES =                    2 / Number of coordinate axes                      
+CRPIX1  =                100.5 / Pixel coordinate of reference point            
+CRPIX2  =                100.5 / Pixel coordinate of reference point            
+CDELT1  = -0.00027777777777778 / [deg] Coordinate increment at reference point  
+CDELT2  =  0.00027777777777778 / [deg] Coordinate increment at reference point  
+CUNIT1  = 'deg'                / Units of coordinate increment and value        
+CUNIT2  = 'deg'                / Units of coordinate increment and value        
+CTYPE1  = 'RA---TAN'           / Right ascension, gnomonic projection           
+CTYPE2  = 'DEC--TAN'           / Declination, gnomonic projection               
+CRVAL1  =              83.8221 / [deg] Coordinate value at reference point      
+CRVAL2  =              -5.3911 / [deg] Coordinate value at reference point      
+LONPOLE =                180.0 / [deg] Native longitude of celestial pole       
+LATPOLE =              -5.3911 / [deg] Native latitude of celestial pole        
+MJDREF  =                  0.0 / [d] MJD of fiducial time                       
+RADESYS = 'ICRS'               / Equatorial coordinate system                   
+OBJECT  = 'M42 simulado'                                                        </code></pre>
+</div>
+</div>
+</section>
+<section id="leer-el-wcs-desde-un-fits" class="level3" data-number="6.2">
+<h3 data-number="6.2" class="anchored" data-anchor-id="leer-el-wcs-desde-un-fits"><span class="header-section-number">6.2</span> Leer el WCS desde un FITS</h3>
+<div id="5f1f8332" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Lo habitual con datos reales: leer el WCS directamente del encabezado</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.io <span class="im">import</span> fits</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.wcs <span class="im">import</span> WCS</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>datos, hdr <span class="op">=</span> fits.getdata(<span class="st">'m42_con_wcs.fits'</span>, header<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Basta con pasar el encabezado a WCS()</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>w_leido <span class="op">=</span> WCS(hdr)</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Comprobamos que funciona igual que el original</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>c <span class="op">=</span> w_leido.pixel_to_world(<span class="dv">90</span>, <span class="dv">110</span>)</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Píxel (90, 110) → </span><span class="sc">{</span>c<span class="sc">.</span>to_string(<span class="st">'hmsdms'</span>, precision<span class="op">=</span><span class="dv">2</span>)<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Píxel (90, 110) → 05h35m17.94s -05d23m17.46s</code></pre>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="información-útil-del-wcs" class="level2" data-number="7">
+<h2 data-number="7" class="anchored" data-anchor-id="información-útil-del-wcs"><span class="header-section-number">7</span> Información útil del WCS</h2>
+<div id="c2574955" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Escala de píxel, huella (footprint) y tamaño del campo de visión</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.wcs.utils <span class="im">import</span> proj_plane_pixel_scales</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> astropy.units <span class="im">as</span> u</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Escala en grados/píxel para cada eje → convertimos a arcsec/píxel</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>escalas <span class="op">=</span> proj_plane_pixel_scales(w_leido) <span class="op">*</span> u.deg</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Escala de píxel: </span><span class="sc">{</span>escalas<span class="sc">.</span>to(u.arcsec)<span class="sc">}</span><span class="ss"> por píxel"</span>)</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Campo de visión = número de píxeles × escala</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>ny, nx <span class="op">=</span> datos.shape</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>campo_x <span class="op">=</span> (nx <span class="op">*</span> escalas[<span class="dv">0</span>]).to(u.arcmin)</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>campo_y <span class="op">=</span> (ny <span class="op">*</span> escalas[<span class="dv">1</span>]).to(u.arcmin)</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Campo de visión: </span><span class="sc">{</span>campo_x<span class="sc">:.2f}</span><span class="ss"> × </span><span class="sc">{</span>campo_y<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Footprint: coordenadas (RA, Dec) de las 4 esquinas de la imagen</span></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>esquinas <span class="op">=</span> w_leido.calc_footprint()</span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Esquinas de la imagen (RA, Dec en grados):"</span>)</span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> ra, dec <span class="kw">in</span> esquinas:</span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  (</span><span class="sc">{</span>ra<span class="sc">:.5f}</span><span class="ss">, </span><span class="sc">{</span>dec<span class="sc">:.5f}</span><span class="ss">)"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Escala de píxel: [1. 1.] arcsec por píxel
+Campo de visión: 3.33 arcmin × 3.33 arcmin
+
+Esquinas de la imagen (RA, Dec en grados):
+  (83.84986, -5.41874)
+  (83.84986, -5.36346)
+  (83.79434, -5.36346)
+  (83.79434, -5.41874)</code></pre>
+</div>
+</div>
+<hr>
+</section>
+<section id="aplicación-práctica-escala-de-una-cámara-real" class="level2" data-number="8">
+<h2 data-number="8" class="anchored" data-anchor-id="aplicación-práctica-escala-de-una-cámara-real"><span class="header-section-number">8</span> Aplicación práctica: escala de una cámara real</h2>
+<p>La escala de píxel de un telescopio con cámara se calcula con:</p>
+<p><span class="math display">\[\text{escala}\;[''/\text{px}] = 206.265 \times \frac{\text{tamaño de píxel}\;[\mu m]}{\text{distancia focal}\;[mm]}\]</span></p>
+<div id="380b746b" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Calcular la escala de píxel y construir el WCS de un equipo real</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Ejemplo: telescopio de 800 mm de focal + cámara con píxeles de 3.76 µm</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> astropy.units <span class="im">as</span> u</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.wcs <span class="im">import</span> WCS</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>focal      <span class="op">=</span> <span class="dv">800</span> <span class="op">*</span> u.mm       <span class="co"># distancia focal del telescopio</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>tam_pixel  <span class="op">=</span> <span class="fl">3.76</span> <span class="op">*</span> u.um      <span class="co"># tamaño físico del píxel del sensor</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>n_x, n_y   <span class="op">=</span> <span class="dv">6248</span>, <span class="dv">4176</span>       <span class="co"># resolución del sensor</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a><span class="co"># 206265 es el número de segundos de arco en un radián</span></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>escala <span class="op">=</span> (<span class="dv">206265</span> <span class="op">*</span> u.arcsec <span class="op">*</span> (tam_pixel <span class="op">/</span> focal).decompose())</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Escala de píxel   : </span><span class="sc">{</span>escala<span class="sc">:.3f}</span><span class="ss"> por píxel"</span>)</span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Campo de visión total</span></span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Campo de visión   : </span><span class="sc">{</span>(n_x <span class="op">*</span> escala)<span class="sc">.</span>to(u.deg)<span class="sc">:.2f}</span><span class="ss"> × </span><span class="sc">{</span>(n_y <span class="op">*</span> escala)<span class="sc">.</span>to(u.deg)<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a><span class="co"># WCS de ese equipo apuntando a la Galaxia de Andrómeda (M31)</span></span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>w_equipo <span class="op">=</span> WCS(naxis<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>w_equipo.wcs.crpix <span class="op">=</span> [n_x <span class="op">/</span> <span class="dv">2</span> <span class="op">+</span> <span class="fl">0.5</span>, n_y <span class="op">/</span> <span class="dv">2</span> <span class="op">+</span> <span class="fl">0.5</span>]</span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>w_equipo.wcs.crval <span class="op">=</span> [<span class="fl">10.6847</span>, <span class="fl">41.2690</span>]</span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>s <span class="op">=</span> escala.to(u.deg).value</span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>w_equipo.wcs.cdelt <span class="op">=</span> [<span class="op">-</span>s, s]</span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a>w_equipo.wcs.ctype <span class="op">=</span> [<span class="st">"RA---TAN"</span>, <span class="st">"DEC--TAN"</span>]</span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a>centro <span class="op">=</span> w_equipo.pixel_to_world(n_x <span class="op">/</span> <span class="dv">2</span>, n_y <span class="op">/</span> <span class="dv">2</span>)</span>
+<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Centro de la toma : </span><span class="sc">{</span>centro<span class="sc">.</span>to_string(<span class="st">'hmsdms'</span>, precision<span class="op">=</span><span class="dv">2</span>)<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Escala de píxel   : 0.969 arcsec por píxel
+Campo de visión   : 1.68 deg × 1.12 deg
+Centro de la toma : 00h42m44.29s +41d16m08.88s</code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>WCS de tus propias fotos
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Si haces astrofotografía, servicios como <a href="https://nova.astrometry.net">astrometry.net</a> analizan tu imagen, reconocen las estrellas y te devuelven un FITS con el WCS ya incluido (<em>plate solving</em>). Después lo lees con <code>WCS(header)</code>.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="ejercicio" class="level2" data-number="9">
+<h2 data-number="9" class="anchored" data-anchor-id="ejercicio"><span class="header-section-number">9</span> Ejercicio</h2>
+<p>Usando el archivo <code>m42_con_wcs.fits</code>:</p>
+<ol type="1">
+<li>Lee la imagen y su WCS</li>
+<li>Encuentra el píxel más brillante con <code>np.unravel_index(np.argmax(datos), datos.shape)</code></li>
+<li>Convierte esa posición a coordenadas celestes</li>
+<li>Calcula a cuántos arcosegundos está del centro de la imagen</li>
+</ol>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Ver solución
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div id="093672b2" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="co"># SOLUCIÓN: coordenadas del píxel más brillante</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> astropy.units <span class="im">as</span> u</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.io <span class="im">import</span> fits</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.wcs <span class="im">import</span> WCS</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Paso 1: leer imagen y WCS</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>datos, hdr <span class="op">=</span> fits.getdata(<span class="st">'m42_con_wcs.fits'</span>, header<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>w <span class="op">=</span> WCS(hdr)</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Paso 2: índice del máximo → unravel_index devuelve (fila, columna) = (y, x)</span></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>y_max, x_max <span class="op">=</span> np.unravel_index(np.argmax(datos), datos.shape)</span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Píxel más brillante: x = </span><span class="sc">{</span>x_max<span class="sc">}</span><span class="ss">, y = </span><span class="sc">{</span>y_max<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Paso 3: convertir a cielo (pixel_to_world recibe x, y)</span></span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>coord_max <span class="op">=</span> w.pixel_to_world(x_max, y_max)</span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Coordenadas        : </span><span class="sc">{</span>coord_max<span class="sc">.</span>to_string(<span class="st">'hmsdms'</span>, precision<span class="op">=</span><span class="dv">2</span>)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Paso 4: distancia al centro de la imagen</span></span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a>centro <span class="op">=</span> w.pixel_to_world(datos.shape[<span class="dv">1</span>] <span class="op">/</span> <span class="dv">2</span> <span class="op">-</span> <span class="fl">0.5</span>, datos.shape[<span class="dv">0</span>] <span class="op">/</span> <span class="dv">2</span> <span class="op">-</span> <span class="fl">0.5</span>)</span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Distancia al centro: </span><span class="sc">{</span>coord_max<span class="sc">.</span>separation(centro)<span class="sc">.</span>to(u.arcsec)<span class="sc">:.1f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Píxel más brillante: x = 90, y = 110
+Coordenadas        : 05h35m17.94s -05d23m17.46s
+Distancia al centro: 14.2 arcsec</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</section>
+<section id="qué-aprendiste-en-este-módulo" class="level2 seccion-aprendiste" data-number="10">
+<h2 class="seccion-aprendiste anchored" data-number="10" data-anchor-id="qué-aprendiste-en-este-módulo"><span class="header-section-number">10</span> ¿Qué aprendiste en este módulo?</h2>
+<ul>
+<li>✅ Qué es el WCS y qué claves lo definen (<code>CTYPE</code>, <code>CRVAL</code>, <code>CRPIX</code>, <code>CDELT</code>)</li>
+<li>✅ Crear un WCS desde cero con <code>astropy.wcs.WCS</code></li>
+<li>✅ Convertir píxel → cielo con <code>pixel_to_world()</code></li>
+<li>✅ Convertir cielo → píxel con <code>world_to_pixel()</code></li>
+<li>✅ Guardar y leer el WCS en encabezados FITS</li>
+<li>✅ Calcular escala de píxel, campo de visión y huella de la imagen</li>
+<li>✅ Las diferencias entre base 0 (numpy) y base 1 (FITS)</li>
+</ul>
+<p><strong>Siguiente módulo →</strong> <a href="../../posts/intermedio/08-fotometria.html">08 · Fotometría de apertura</a></p>
 
 
 <!-- -->
 
+</section>
 
-</main> <!-- /main -->
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Volver arriba</a></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
-    // Ensure there is a toggle, if there isn't float one in the top right
-    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
-      const a = window.document.createElement('a');
-      a.classList.add('top-right');
-      a.classList.add('quarto-color-scheme-toggle');
-      a.href = "";
-      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
-      const i = window.document.createElement("i");
-      i.classList.add('bi');
-      a.appendChild(i);
-      window.document.body.appendChild(a);
-    }
-    setColorSchemeToggle(hasAlternateSentinel())
     const icon = "";
     const anchorJS = new window.AnchorJS();
     anchorJS.options = {
@@ -503,12 +903,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       // flash "checked"
       button.classList.add('code-copy-button-checked');
       var currentTitle = button.getAttribute("title");
-      button.setAttribute("title", "Copied!");
+      button.setAttribute("title", "Copiado");
       let tooltip;
       if (window.bootstrap) {
         button.setAttribute("data-bs-toggle", "tooltip");
         button.setAttribute("data-bs-placement", "left");
-        button.setAttribute("data-bs-title", "Copied!");
+        button.setAttribute("data-bs-title", "Copiado");
         tooltip = new bootstrap.Tooltip(button, 
           { trigger: "manual", 
             customClass: "code-copy-button-tooltip",
@@ -602,7 +1002,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/fvelez78\.github\.io\/astropy-blog\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
@@ -928,35 +1328,378 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       }
     }
   });
-  </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "07 - WCS del pixel al cielo"</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="an">description:</span><span class="co"> "Proximo modulo en preparacion"</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="an">categories:</span><span class="co"> [intermedio]</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="an">toc:</span><span class="co"> true</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co">  echo: true</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">  warning: false</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">span</span><span class="ot"> class</span><span class="op">=</span><span class="st">"badge-intermedio"</span><span class="dt">&gt;</span>Intermedio<span class="dt">&lt;/</span><span class="kw">span</span><span class="dt">&gt;</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>::: {.callout-warning}</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">## Modulo en construccion</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>Este modulo esta siendo preparado. Vuelve pronto.</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>:::</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../../posts/intermedio/06-fits.html" class="pagination-link" aria-label="06 · Lectura y manipulación de archivos FITS">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">06 · Lectura y manipulación de archivos FITS</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../../posts/intermedio/08-fotometria.html" class="pagination-link" aria-label="08 · Fotometría de apertura">
+        <span class="nav-page-text">08 · Fotometría de apertura</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Ejecutar el código</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "07 · WCS: del píxel al cielo"</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="an">description:</span><span class="co"> "Aprende qué es el World Coordinate System y cómo convertir posiciones en píxeles a coordenadas celestes (y viceversa) con astropy.wcs"</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span><span class="co"> "Blog AstroPy en Español"</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> "2026-11-01"</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="an">categories:</span><span class="co"> [intermedio]</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="an">toc:</span><span class="co"> true</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="an">toc-depth:</span><span class="co"> 3</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="an">number-sections:</span><span class="co"> true</span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a><span class="co">  echo: true</span></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a><span class="co">  warning: false</span></span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a><span class="co">  message: false</span></span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">span</span><span class="ot"> class</span><span class="op">=</span><span class="st">"badge-inter"</span><span class="dt">&gt;</span>🔭 Intermedio<span class="dt">&lt;/</span><span class="kw">span</span><span class="dt">&gt;</span></span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a><span class="fu">## El problema: una imagen no sabe dónde está</span></span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>En el módulo 06 trabajamos con una imagen como un simple arreglo de</span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a>números. Pero un astrónomo necesita saber: *"¿qué estrella es la que está</span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a>en el píxel (90, 110)?"*. Para eso hace falta un "mapa" que traduzca:</span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a>$$\text{píxel } (x, y) \;\longleftrightarrow\; \text{cielo } (\alpha, \delta)$$</span>
+<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a>Ese mapa se llama **WCS** (*World Coordinate System*) y vive en el</span>
+<span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a>encabezado del FITS, en un conjunto de claves estándar. Con <span class="in">`astropy.wcs`</span></span>
+<span id="cb19-28"><a href="#cb19-28" aria-hidden="true" tabindex="-1"></a>leemos esas claves y hacemos las conversiones automáticamente.</span>
+<span id="cb19-29"><a href="#cb19-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-30"><a href="#cb19-30" aria-hidden="true" tabindex="-1"></a>::: {.callout-note}</span>
+<span id="cb19-31"><a href="#cb19-31" aria-hidden="true" tabindex="-1"></a><span class="fu">## Requisitos previos</span></span>
+<span id="cb19-32"><a href="#cb19-32" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Módulo 04 (coordenadas con <span class="in">`SkyCoord`</span>)</span>
+<span id="cb19-33"><a href="#cb19-33" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Módulo 06 (archivos FITS)</span>
+<span id="cb19-34"><a href="#cb19-34" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb19-35"><a href="#cb19-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-36"><a href="#cb19-36" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb19-37"><a href="#cb19-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-38"><a href="#cb19-38" aria-hidden="true" tabindex="-1"></a><span class="fu">## Las claves del WCS en el encabezado</span></span>
+<span id="cb19-39"><a href="#cb19-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-40"><a href="#cb19-40" aria-hidden="true" tabindex="-1"></a>Un WCS celeste básico se describe con estas claves:</span>
+<span id="cb19-41"><a href="#cb19-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-42"><a href="#cb19-42" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Clave <span class="pp">|</span> Significado <span class="pp">|</span> Ejemplo <span class="pp">|</span></span>
+<span id="cb19-43"><a href="#cb19-43" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|---|</span></span>
+<span id="cb19-44"><a href="#cb19-44" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`CTYPE1`</span>, <span class="in">`CTYPE2`</span> <span class="pp">|</span> Tipo de coordenada y proyección <span class="pp">|</span> <span class="in">`RA---TAN`</span>, <span class="in">`DEC--TAN`</span> <span class="pp">|</span></span>
+<span id="cb19-45"><a href="#cb19-45" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`CRVAL1`</span>, <span class="in">`CRVAL2`</span> <span class="pp">|</span> Coordenada del cielo del píxel de referencia (grados) <span class="pp">|</span> <span class="in">`83.82`</span>, <span class="in">`-5.39`</span> <span class="pp">|</span></span>
+<span id="cb19-46"><a href="#cb19-46" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`CRPIX1`</span>, <span class="in">`CRPIX2`</span> <span class="pp">|</span> Píxel de referencia (¡cuenta desde 1!) <span class="pp">|</span> <span class="in">`100.5`</span>, <span class="in">`100.5`</span> <span class="pp">|</span></span>
+<span id="cb19-47"><a href="#cb19-47" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`CDELT1`</span>, <span class="in">`CDELT2`</span> <span class="pp">|</span> Tamaño del píxel en grados <span class="pp">|</span> <span class="in">`-0.0002778`</span>, <span class="in">`0.0002778`</span> <span class="pp">|</span></span>
+<span id="cb19-48"><a href="#cb19-48" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`CUNIT1`</span>, <span class="in">`CUNIT2`</span> <span class="pp">|</span> Unidades <span class="pp">|</span> <span class="in">`deg`</span> <span class="pp">|</span></span>
+<span id="cb19-49"><a href="#cb19-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-50"><a href="#cb19-50" aria-hidden="true" tabindex="-1"></a>El sufijo <span class="in">`TAN`</span> indica la **proyección gnomónica (tangente)**: la forma de</span>
+<span id="cb19-51"><a href="#cb19-51" aria-hidden="true" tabindex="-1"></a>"aplanar" un trozo de la esfera celeste sobre el plano del detector. Es la</span>
+<span id="cb19-52"><a href="#cb19-52" aria-hidden="true" tabindex="-1"></a>que usan casi todas las cámaras CCD.</span>
+<span id="cb19-53"><a href="#cb19-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-54"><a href="#cb19-54" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip}</span>
+<span id="cb19-55"><a href="#cb19-55" aria-hidden="true" tabindex="-1"></a><span class="fu">## ¿Por qué CDELT1 es negativo?</span></span>
+<span id="cb19-56"><a href="#cb19-56" aria-hidden="true" tabindex="-1"></a>En el cielo, la ascensión recta **crece hacia el este**, que en una imagen</span>
+<span id="cb19-57"><a href="#cb19-57" aria-hidden="true" tabindex="-1"></a>con el norte arriba queda **a la izquierda**. Por eso el paso en RA suele ser</span>
+<span id="cb19-58"><a href="#cb19-58" aria-hidden="true" tabindex="-1"></a>negativo: al avanzar a la derecha en x, la RA disminuye.</span>
+<span id="cb19-59"><a href="#cb19-59" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb19-60"><a href="#cb19-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-61"><a href="#cb19-61" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb19-62"><a href="#cb19-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-63"><a href="#cb19-63" aria-hidden="true" tabindex="-1"></a><span class="fu">## Crear un WCS desde cero</span></span>
+<span id="cb19-64"><a href="#cb19-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-67"><a href="#cb19-67" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb19-68"><a href="#cb19-68" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-69"><a href="#cb19-69" aria-hidden="true" tabindex="-1"></a><span class="co"># Construir un WCS para una imagen de 200×200 píxeles centrada en M42</span></span>
+<span id="cb19-70"><a href="#cb19-70" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-71"><a href="#cb19-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-72"><a href="#cb19-72" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.wcs <span class="im">import</span> WCS</span>
+<span id="cb19-73"><a href="#cb19-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-74"><a href="#cb19-74" aria-hidden="true" tabindex="-1"></a><span class="co"># naxis=2 → WCS para una imagen de 2 dimensiones</span></span>
+<span id="cb19-75"><a href="#cb19-75" aria-hidden="true" tabindex="-1"></a>w <span class="op">=</span> WCS(naxis<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb19-76"><a href="#cb19-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-77"><a href="#cb19-77" aria-hidden="true" tabindex="-1"></a><span class="co"># Píxel de referencia: el centro de la imagen (convención FITS, base 1)</span></span>
+<span id="cb19-78"><a href="#cb19-78" aria-hidden="true" tabindex="-1"></a>w.wcs.crpix <span class="op">=</span> [<span class="fl">100.5</span>, <span class="fl">100.5</span>]</span>
+<span id="cb19-79"><a href="#cb19-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-80"><a href="#cb19-80" aria-hidden="true" tabindex="-1"></a><span class="co"># Coordenadas del cielo en ese píxel: Nebulosa de Orión (RA, Dec en grados)</span></span>
+<span id="cb19-81"><a href="#cb19-81" aria-hidden="true" tabindex="-1"></a>w.wcs.crval <span class="op">=</span> [<span class="fl">83.8221</span>, <span class="op">-</span><span class="fl">5.3911</span>]</span>
+<span id="cb19-82"><a href="#cb19-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-83"><a href="#cb19-83" aria-hidden="true" tabindex="-1"></a><span class="co"># Escala: 1 segundo de arco por píxel = 1/3600 grados</span></span>
+<span id="cb19-84"><a href="#cb19-84" aria-hidden="true" tabindex="-1"></a><span class="co"># RA negativo porque crece hacia la izquierda (este)</span></span>
+<span id="cb19-85"><a href="#cb19-85" aria-hidden="true" tabindex="-1"></a>w.wcs.cdelt <span class="op">=</span> [<span class="op">-</span><span class="dv">1</span><span class="op">/</span><span class="dv">3600</span>, <span class="dv">1</span><span class="op">/</span><span class="dv">3600</span>]</span>
+<span id="cb19-86"><a href="#cb19-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-87"><a href="#cb19-87" aria-hidden="true" tabindex="-1"></a><span class="co"># Proyección tangente para RA y Dec</span></span>
+<span id="cb19-88"><a href="#cb19-88" aria-hidden="true" tabindex="-1"></a>w.wcs.ctype <span class="op">=</span> [<span class="st">"RA---TAN"</span>, <span class="st">"DEC--TAN"</span>]</span>
+<span id="cb19-89"><a href="#cb19-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-90"><a href="#cb19-90" aria-hidden="true" tabindex="-1"></a><span class="co"># Mostrar un resumen del WCS</span></span>
+<span id="cb19-91"><a href="#cb19-91" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(w)</span>
+<span id="cb19-92"><a href="#cb19-92" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-93"><a href="#cb19-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-94"><a href="#cb19-94" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb19-95"><a href="#cb19-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-96"><a href="#cb19-96" aria-hidden="true" tabindex="-1"></a><span class="fu">## Convertir píxel → cielo</span></span>
+<span id="cb19-97"><a href="#cb19-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-100"><a href="#cb19-100" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb19-101"><a href="#cb19-101" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-102"><a href="#cb19-102" aria-hidden="true" tabindex="-1"></a><span class="co"># pixel_to_world() recibe (x, y) en convención numpy (base 0)</span></span>
+<span id="cb19-103"><a href="#cb19-103" aria-hidden="true" tabindex="-1"></a><span class="co"># y devuelve un objeto SkyCoord listo para usar</span></span>
+<span id="cb19-104"><a href="#cb19-104" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-105"><a href="#cb19-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-106"><a href="#cb19-106" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> astropy.units <span class="im">as</span> u</span>
+<span id="cb19-107"><a href="#cb19-107" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-108"><a href="#cb19-108" aria-hidden="true" tabindex="-1"></a><span class="co"># Centro de la imagen (base 0): 99.5, 99.5 equivale a 100.5 en base FITS</span></span>
+<span id="cb19-109"><a href="#cb19-109" aria-hidden="true" tabindex="-1"></a>centro <span class="op">=</span> w.pixel_to_world(<span class="fl">99.5</span>, <span class="fl">99.5</span>)</span>
+<span id="cb19-110"><a href="#cb19-110" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Centro de la imagen   : </span><span class="sc">{</span>centro<span class="sc">.</span>to_string(<span class="st">'hmsdms'</span>, precision<span class="op">=</span><span class="dv">2</span>)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb19-111"><a href="#cb19-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-112"><a href="#cb19-112" aria-hidden="true" tabindex="-1"></a><span class="co"># Esquina inferior izquierda (píxel 0, 0)</span></span>
+<span id="cb19-113"><a href="#cb19-113" aria-hidden="true" tabindex="-1"></a>esquina <span class="op">=</span> w.pixel_to_world(<span class="dv">0</span>, <span class="dv">0</span>)</span>
+<span id="cb19-114"><a href="#cb19-114" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Esquina inferior izq. : </span><span class="sc">{</span>esquina<span class="sc">.</span>to_string(<span class="st">'hmsdms'</span>, precision<span class="op">=</span><span class="dv">2</span>)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb19-115"><a href="#cb19-115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-116"><a href="#cb19-116" aria-hidden="true" tabindex="-1"></a><span class="co"># Distancia angular entre el centro y la esquina (módulo 04)</span></span>
+<span id="cb19-117"><a href="#cb19-117" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Separación            : </span><span class="sc">{</span>centro<span class="sc">.</span>separation(esquina)<span class="sc">.</span>to(u.arcsec)<span class="sc">:.1f}</span><span class="ss">"</span>)</span>
+<span id="cb19-118"><a href="#cb19-118" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-119"><a href="#cb19-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-120"><a href="#cb19-120" aria-hidden="true" tabindex="-1"></a>::: {.callout-warning}</span>
+<span id="cb19-121"><a href="#cb19-121" aria-hidden="true" tabindex="-1"></a><span class="fu">## Base 0 vs base 1</span></span>
+<span id="cb19-122"><a href="#cb19-122" aria-hidden="true" tabindex="-1"></a><span class="in">`pixel_to_world()`</span> y <span class="in">`world_to_pixel()`</span> usan **base 0** (como numpy),</span>
+<span id="cb19-123"><a href="#cb19-123" aria-hidden="true" tabindex="-1"></a>mientras que <span class="in">`CRPIX`</span> en el encabezado usa **base 1** (como FITS). Astropy</span>
+<span id="cb19-124"><a href="#cb19-124" aria-hidden="true" tabindex="-1"></a>hace la traducción internamente: tú solo usa índices de numpy.</span>
+<span id="cb19-125"><a href="#cb19-125" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb19-126"><a href="#cb19-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-129"><a href="#cb19-129" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb19-130"><a href="#cb19-130" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-131"><a href="#cb19-131" aria-hidden="true" tabindex="-1"></a><span class="co"># También funciona con muchos píxeles a la vez (arreglos)</span></span>
+<span id="cb19-132"><a href="#cb19-132" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-133"><a href="#cb19-133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-134"><a href="#cb19-134" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb19-135"><a href="#cb19-135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-136"><a href="#cb19-136" aria-hidden="true" tabindex="-1"></a><span class="co"># Posiciones de las 5 estrellas de la imagen sintética del módulo 06</span></span>
+<span id="cb19-137"><a href="#cb19-137" aria-hidden="true" tabindex="-1"></a>x_estrellas <span class="op">=</span> np.array([<span class="dv">50</span>, <span class="dv">120</span>, <span class="dv">160</span>, <span class="dv">90</span>, <span class="dv">30</span>])</span>
+<span id="cb19-138"><a href="#cb19-138" aria-hidden="true" tabindex="-1"></a>y_estrellas <span class="op">=</span> np.array([<span class="dv">60</span>, <span class="dv">140</span>, <span class="dv">40</span>, <span class="dv">110</span>, <span class="dv">170</span>])</span>
+<span id="cb19-139"><a href="#cb19-139" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-140"><a href="#cb19-140" aria-hidden="true" tabindex="-1"></a><span class="co"># Una sola llamada convierte todas las posiciones</span></span>
+<span id="cb19-141"><a href="#cb19-141" aria-hidden="true" tabindex="-1"></a>coords <span class="op">=</span> w.pixel_to_world(x_estrellas, y_estrellas)</span>
+<span id="cb19-142"><a href="#cb19-142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-143"><a href="#cb19-143" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, c <span class="kw">in</span> <span class="bu">enumerate</span>(coords, start<span class="op">=</span><span class="dv">1</span>):</span>
+<span id="cb19-144"><a href="#cb19-144" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Estrella </span><span class="sc">{</span>i<span class="sc">}</span><span class="ss">: RA = </span><span class="sc">{</span>c<span class="sc">.</span>ra<span class="sc">.</span>deg<span class="sc">:.5f}</span><span class="ss">°,  Dec = </span><span class="sc">{</span>c<span class="sc">.</span>dec<span class="sc">.</span>deg<span class="sc">:.5f}</span><span class="ss">°"</span>)</span>
+<span id="cb19-145"><a href="#cb19-145" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-146"><a href="#cb19-146" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-147"><a href="#cb19-147" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb19-148"><a href="#cb19-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-149"><a href="#cb19-149" aria-hidden="true" tabindex="-1"></a><span class="fu">## Convertir cielo → píxel</span></span>
+<span id="cb19-150"><a href="#cb19-150" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-153"><a href="#cb19-153" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb19-154"><a href="#cb19-154" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-155"><a href="#cb19-155" aria-hidden="true" tabindex="-1"></a><span class="co"># world_to_pixel() responde: ¿en qué píxel cae esta coordenada del cielo?</span></span>
+<span id="cb19-156"><a href="#cb19-156" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-157"><a href="#cb19-157" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-158"><a href="#cb19-158" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.coordinates <span class="im">import</span> SkyCoord</span>
+<span id="cb19-159"><a href="#cb19-159" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> astropy.units <span class="im">as</span> u</span>
+<span id="cb19-160"><a href="#cb19-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-161"><a href="#cb19-161" aria-hidden="true" tabindex="-1"></a><span class="co"># Posición aproximada de θ¹ Ori C, la estrella principal del Trapecio</span></span>
+<span id="cb19-162"><a href="#cb19-162" aria-hidden="true" tabindex="-1"></a>trapecio <span class="op">=</span> SkyCoord(<span class="st">'05h35m16.46s'</span>, <span class="st">'-05d23m22.8s'</span>, frame<span class="op">=</span><span class="st">'icrs'</span>)</span>
+<span id="cb19-163"><a href="#cb19-163" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-164"><a href="#cb19-164" aria-hidden="true" tabindex="-1"></a>x, y <span class="op">=</span> w.world_to_pixel(trapecio)</span>
+<span id="cb19-165"><a href="#cb19-165" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"El Trapecio cae en el píxel x = </span><span class="sc">{</span>x<span class="sc">:.1f}</span><span class="ss">, y = </span><span class="sc">{</span>y<span class="sc">:.1f}</span><span class="ss">"</span>)</span>
+<span id="cb19-166"><a href="#cb19-166" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-167"><a href="#cb19-167" aria-hidden="true" tabindex="-1"></a><span class="co"># ¿Está dentro de la imagen de 200×200?</span></span>
+<span id="cb19-168"><a href="#cb19-168" aria-hidden="true" tabindex="-1"></a>dentro <span class="op">=</span> (<span class="dv">0</span> <span class="op">&lt;=</span> x <span class="op">&lt;</span> <span class="dv">200</span>) <span class="kw">and</span> (<span class="dv">0</span> <span class="op">&lt;=</span> y <span class="op">&lt;</span> <span class="dv">200</span>)</span>
+<span id="cb19-169"><a href="#cb19-169" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"¿Dentro de la imagen? </span><span class="sc">{</span><span class="st">'Sí ✓'</span> <span class="cf">if</span> dentro <span class="cf">else</span> <span class="st">'No ✗'</span><span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb19-170"><a href="#cb19-170" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-171"><a href="#cb19-171" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-172"><a href="#cb19-172" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb19-173"><a href="#cb19-173" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-174"><a href="#cb19-174" aria-hidden="true" tabindex="-1"></a><span class="fu">## El WCS en un archivo FITS</span></span>
+<span id="cb19-175"><a href="#cb19-175" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-176"><a href="#cb19-176" aria-hidden="true" tabindex="-1"></a><span class="fu">### Guardar el WCS en el encabezado</span></span>
+<span id="cb19-177"><a href="#cb19-177" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-180"><a href="#cb19-180" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb19-181"><a href="#cb19-181" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-182"><a href="#cb19-182" aria-hidden="true" tabindex="-1"></a><span class="co"># Crear una imagen sintética y guardarla con su WCS en el encabezado</span></span>
+<span id="cb19-183"><a href="#cb19-183" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-184"><a href="#cb19-184" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-185"><a href="#cb19-185" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb19-186"><a href="#cb19-186" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.io <span class="im">import</span> fits</span>
+<span id="cb19-187"><a href="#cb19-187" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-188"><a href="#cb19-188" aria-hidden="true" tabindex="-1"></a><span class="co"># Imagen sintética: fondo + ruido + estrellas (igual que en el módulo 06)</span></span>
+<span id="cb19-189"><a href="#cb19-189" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> np.random.default_rng(seed<span class="op">=</span><span class="dv">7</span>)</span>
+<span id="cb19-190"><a href="#cb19-190" aria-hidden="true" tabindex="-1"></a>imagen <span class="op">=</span> <span class="dv">100</span> <span class="op">+</span> rng.normal(<span class="dv">0</span>, <span class="dv">5</span>, (<span class="dv">200</span>, <span class="dv">200</span>))</span>
+<span id="cb19-191"><a href="#cb19-191" aria-hidden="true" tabindex="-1"></a>yy, xx <span class="op">=</span> np.mgrid[<span class="dv">0</span>:<span class="dv">200</span>, <span class="dv">0</span>:<span class="dv">200</span>]</span>
+<span id="cb19-192"><a href="#cb19-192" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> x0, y0, b <span class="kw">in</span> <span class="bu">zip</span>(x_estrellas, y_estrellas, [<span class="dv">800</span>, <span class="dv">1500</span>, <span class="dv">600</span>, <span class="dv">2500</span>, <span class="dv">400</span>]):</span>
+<span id="cb19-193"><a href="#cb19-193" aria-hidden="true" tabindex="-1"></a>    imagen <span class="op">+=</span> b <span class="op">*</span> np.exp(<span class="op">-</span>((xx <span class="op">-</span> x0)<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> (yy <span class="op">-</span> y0)<span class="op">**</span><span class="dv">2</span>) <span class="op">/</span> (<span class="dv">2</span> <span class="op">*</span> <span class="fl">2.5</span><span class="op">**</span><span class="dv">2</span>))</span>
+<span id="cb19-194"><a href="#cb19-194" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-195"><a href="#cb19-195" aria-hidden="true" tabindex="-1"></a><span class="co"># w.to_header() convierte el WCS en claves de encabezado FITS</span></span>
+<span id="cb19-196"><a href="#cb19-196" aria-hidden="true" tabindex="-1"></a>encabezado <span class="op">=</span> w.to_header()</span>
+<span id="cb19-197"><a href="#cb19-197" aria-hidden="true" tabindex="-1"></a>encabezado[<span class="st">'OBJECT'</span>] <span class="op">=</span> <span class="st">'M42 simulado'</span></span>
+<span id="cb19-198"><a href="#cb19-198" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-199"><a href="#cb19-199" aria-hidden="true" tabindex="-1"></a>fits.writeto(<span class="st">'m42_con_wcs.fits'</span>, imagen.astype(np.float32),</span>
+<span id="cb19-200"><a href="#cb19-200" aria-hidden="true" tabindex="-1"></a>             header<span class="op">=</span>encabezado, overwrite<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb19-201"><a href="#cb19-201" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-202"><a href="#cb19-202" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Claves WCS escritas en el encabezado:"</span>)</span>
+<span id="cb19-203"><a href="#cb19-203" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">repr</span>(encabezado))</span>
+<span id="cb19-204"><a href="#cb19-204" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-205"><a href="#cb19-205" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-206"><a href="#cb19-206" aria-hidden="true" tabindex="-1"></a><span class="fu">### Leer el WCS desde un FITS</span></span>
+<span id="cb19-207"><a href="#cb19-207" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-210"><a href="#cb19-210" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb19-211"><a href="#cb19-211" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-212"><a href="#cb19-212" aria-hidden="true" tabindex="-1"></a><span class="co"># Lo habitual con datos reales: leer el WCS directamente del encabezado</span></span>
+<span id="cb19-213"><a href="#cb19-213" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-214"><a href="#cb19-214" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-215"><a href="#cb19-215" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.io <span class="im">import</span> fits</span>
+<span id="cb19-216"><a href="#cb19-216" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.wcs <span class="im">import</span> WCS</span>
+<span id="cb19-217"><a href="#cb19-217" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-218"><a href="#cb19-218" aria-hidden="true" tabindex="-1"></a>datos, hdr <span class="op">=</span> fits.getdata(<span class="st">'m42_con_wcs.fits'</span>, header<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb19-219"><a href="#cb19-219" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-220"><a href="#cb19-220" aria-hidden="true" tabindex="-1"></a><span class="co"># Basta con pasar el encabezado a WCS()</span></span>
+<span id="cb19-221"><a href="#cb19-221" aria-hidden="true" tabindex="-1"></a>w_leido <span class="op">=</span> WCS(hdr)</span>
+<span id="cb19-222"><a href="#cb19-222" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-223"><a href="#cb19-223" aria-hidden="true" tabindex="-1"></a><span class="co"># Comprobamos que funciona igual que el original</span></span>
+<span id="cb19-224"><a href="#cb19-224" aria-hidden="true" tabindex="-1"></a>c <span class="op">=</span> w_leido.pixel_to_world(<span class="dv">90</span>, <span class="dv">110</span>)</span>
+<span id="cb19-225"><a href="#cb19-225" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Píxel (90, 110) → </span><span class="sc">{</span>c<span class="sc">.</span>to_string(<span class="st">'hmsdms'</span>, precision<span class="op">=</span><span class="dv">2</span>)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb19-226"><a href="#cb19-226" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-227"><a href="#cb19-227" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-228"><a href="#cb19-228" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb19-229"><a href="#cb19-229" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-230"><a href="#cb19-230" aria-hidden="true" tabindex="-1"></a><span class="fu">## Información útil del WCS</span></span>
+<span id="cb19-231"><a href="#cb19-231" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-234"><a href="#cb19-234" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb19-235"><a href="#cb19-235" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-236"><a href="#cb19-236" aria-hidden="true" tabindex="-1"></a><span class="co"># Escala de píxel, huella (footprint) y tamaño del campo de visión</span></span>
+<span id="cb19-237"><a href="#cb19-237" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-238"><a href="#cb19-238" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-239"><a href="#cb19-239" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.wcs.utils <span class="im">import</span> proj_plane_pixel_scales</span>
+<span id="cb19-240"><a href="#cb19-240" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> astropy.units <span class="im">as</span> u</span>
+<span id="cb19-241"><a href="#cb19-241" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-242"><a href="#cb19-242" aria-hidden="true" tabindex="-1"></a><span class="co"># Escala en grados/píxel para cada eje → convertimos a arcsec/píxel</span></span>
+<span id="cb19-243"><a href="#cb19-243" aria-hidden="true" tabindex="-1"></a>escalas <span class="op">=</span> proj_plane_pixel_scales(w_leido) <span class="op">*</span> u.deg</span>
+<span id="cb19-244"><a href="#cb19-244" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Escala de píxel: </span><span class="sc">{</span>escalas<span class="sc">.</span>to(u.arcsec)<span class="sc">}</span><span class="ss"> por píxel"</span>)</span>
+<span id="cb19-245"><a href="#cb19-245" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-246"><a href="#cb19-246" aria-hidden="true" tabindex="-1"></a><span class="co"># Campo de visión = número de píxeles × escala</span></span>
+<span id="cb19-247"><a href="#cb19-247" aria-hidden="true" tabindex="-1"></a>ny, nx <span class="op">=</span> datos.shape</span>
+<span id="cb19-248"><a href="#cb19-248" aria-hidden="true" tabindex="-1"></a>campo_x <span class="op">=</span> (nx <span class="op">*</span> escalas[<span class="dv">0</span>]).to(u.arcmin)</span>
+<span id="cb19-249"><a href="#cb19-249" aria-hidden="true" tabindex="-1"></a>campo_y <span class="op">=</span> (ny <span class="op">*</span> escalas[<span class="dv">1</span>]).to(u.arcmin)</span>
+<span id="cb19-250"><a href="#cb19-250" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Campo de visión: </span><span class="sc">{</span>campo_x<span class="sc">:.2f}</span><span class="ss"> × </span><span class="sc">{</span>campo_y<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb19-251"><a href="#cb19-251" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-252"><a href="#cb19-252" aria-hidden="true" tabindex="-1"></a><span class="co"># Footprint: coordenadas (RA, Dec) de las 4 esquinas de la imagen</span></span>
+<span id="cb19-253"><a href="#cb19-253" aria-hidden="true" tabindex="-1"></a>esquinas <span class="op">=</span> w_leido.calc_footprint()</span>
+<span id="cb19-254"><a href="#cb19-254" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Esquinas de la imagen (RA, Dec en grados):"</span>)</span>
+<span id="cb19-255"><a href="#cb19-255" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> ra, dec <span class="kw">in</span> esquinas:</span>
+<span id="cb19-256"><a href="#cb19-256" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  (</span><span class="sc">{</span>ra<span class="sc">:.5f}</span><span class="ss">, </span><span class="sc">{</span>dec<span class="sc">:.5f}</span><span class="ss">)"</span>)</span>
+<span id="cb19-257"><a href="#cb19-257" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-258"><a href="#cb19-258" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-259"><a href="#cb19-259" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb19-260"><a href="#cb19-260" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-261"><a href="#cb19-261" aria-hidden="true" tabindex="-1"></a><span class="fu">## Aplicación práctica: escala de una cámara real</span></span>
+<span id="cb19-262"><a href="#cb19-262" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-263"><a href="#cb19-263" aria-hidden="true" tabindex="-1"></a>La escala de píxel de un telescopio con cámara se calcula con:</span>
+<span id="cb19-264"><a href="#cb19-264" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-265"><a href="#cb19-265" aria-hidden="true" tabindex="-1"></a>$$\text{escala}\;<span class="co">[</span><span class="ot">''/\text{px}</span><span class="co">]</span> = 206.265 \times \frac{\text{tamaño de píxel}\;<span class="co">[</span><span class="ot">\mu m</span><span class="co">]</span>}{\text{distancia focal}\;<span class="co">[</span><span class="ot">mm</span><span class="co">]</span>}$$</span>
+<span id="cb19-266"><a href="#cb19-266" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-269"><a href="#cb19-269" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb19-270"><a href="#cb19-270" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-271"><a href="#cb19-271" aria-hidden="true" tabindex="-1"></a><span class="co"># Calcular la escala de píxel y construir el WCS de un equipo real</span></span>
+<span id="cb19-272"><a href="#cb19-272" aria-hidden="true" tabindex="-1"></a><span class="co"># Ejemplo: telescopio de 800 mm de focal + cámara con píxeles de 3.76 µm</span></span>
+<span id="cb19-273"><a href="#cb19-273" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-274"><a href="#cb19-274" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-275"><a href="#cb19-275" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> astropy.units <span class="im">as</span> u</span>
+<span id="cb19-276"><a href="#cb19-276" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.wcs <span class="im">import</span> WCS</span>
+<span id="cb19-277"><a href="#cb19-277" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-278"><a href="#cb19-278" aria-hidden="true" tabindex="-1"></a>focal      <span class="op">=</span> <span class="dv">800</span> <span class="op">*</span> u.mm       <span class="co"># distancia focal del telescopio</span></span>
+<span id="cb19-279"><a href="#cb19-279" aria-hidden="true" tabindex="-1"></a>tam_pixel  <span class="op">=</span> <span class="fl">3.76</span> <span class="op">*</span> u.um      <span class="co"># tamaño físico del píxel del sensor</span></span>
+<span id="cb19-280"><a href="#cb19-280" aria-hidden="true" tabindex="-1"></a>n_x, n_y   <span class="op">=</span> <span class="dv">6248</span>, <span class="dv">4176</span>       <span class="co"># resolución del sensor</span></span>
+<span id="cb19-281"><a href="#cb19-281" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-282"><a href="#cb19-282" aria-hidden="true" tabindex="-1"></a><span class="co"># 206265 es el número de segundos de arco en un radián</span></span>
+<span id="cb19-283"><a href="#cb19-283" aria-hidden="true" tabindex="-1"></a>escala <span class="op">=</span> (<span class="dv">206265</span> <span class="op">*</span> u.arcsec <span class="op">*</span> (tam_pixel <span class="op">/</span> focal).decompose())</span>
+<span id="cb19-284"><a href="#cb19-284" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Escala de píxel   : </span><span class="sc">{</span>escala<span class="sc">:.3f}</span><span class="ss"> por píxel"</span>)</span>
+<span id="cb19-285"><a href="#cb19-285" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-286"><a href="#cb19-286" aria-hidden="true" tabindex="-1"></a><span class="co"># Campo de visión total</span></span>
+<span id="cb19-287"><a href="#cb19-287" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Campo de visión   : </span><span class="sc">{</span>(n_x <span class="op">*</span> escala)<span class="sc">.</span>to(u.deg)<span class="sc">:.2f}</span><span class="ss"> × </span><span class="sc">{</span>(n_y <span class="op">*</span> escala)<span class="sc">.</span>to(u.deg)<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb19-288"><a href="#cb19-288" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-289"><a href="#cb19-289" aria-hidden="true" tabindex="-1"></a><span class="co"># WCS de ese equipo apuntando a la Galaxia de Andrómeda (M31)</span></span>
+<span id="cb19-290"><a href="#cb19-290" aria-hidden="true" tabindex="-1"></a>w_equipo <span class="op">=</span> WCS(naxis<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb19-291"><a href="#cb19-291" aria-hidden="true" tabindex="-1"></a>w_equipo.wcs.crpix <span class="op">=</span> [n_x <span class="op">/</span> <span class="dv">2</span> <span class="op">+</span> <span class="fl">0.5</span>, n_y <span class="op">/</span> <span class="dv">2</span> <span class="op">+</span> <span class="fl">0.5</span>]</span>
+<span id="cb19-292"><a href="#cb19-292" aria-hidden="true" tabindex="-1"></a>w_equipo.wcs.crval <span class="op">=</span> [<span class="fl">10.6847</span>, <span class="fl">41.2690</span>]</span>
+<span id="cb19-293"><a href="#cb19-293" aria-hidden="true" tabindex="-1"></a>s <span class="op">=</span> escala.to(u.deg).value</span>
+<span id="cb19-294"><a href="#cb19-294" aria-hidden="true" tabindex="-1"></a>w_equipo.wcs.cdelt <span class="op">=</span> [<span class="op">-</span>s, s]</span>
+<span id="cb19-295"><a href="#cb19-295" aria-hidden="true" tabindex="-1"></a>w_equipo.wcs.ctype <span class="op">=</span> [<span class="st">"RA---TAN"</span>, <span class="st">"DEC--TAN"</span>]</span>
+<span id="cb19-296"><a href="#cb19-296" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-297"><a href="#cb19-297" aria-hidden="true" tabindex="-1"></a>centro <span class="op">=</span> w_equipo.pixel_to_world(n_x <span class="op">/</span> <span class="dv">2</span>, n_y <span class="op">/</span> <span class="dv">2</span>)</span>
+<span id="cb19-298"><a href="#cb19-298" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Centro de la toma : </span><span class="sc">{</span>centro<span class="sc">.</span>to_string(<span class="st">'hmsdms'</span>, precision<span class="op">=</span><span class="dv">2</span>)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb19-299"><a href="#cb19-299" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-300"><a href="#cb19-300" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-301"><a href="#cb19-301" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip}</span>
+<span id="cb19-302"><a href="#cb19-302" aria-hidden="true" tabindex="-1"></a><span class="fu">## WCS de tus propias fotos</span></span>
+<span id="cb19-303"><a href="#cb19-303" aria-hidden="true" tabindex="-1"></a>Si haces astrofotografía, servicios como <span class="co">[</span><span class="ot">astrometry.net</span><span class="co">](https://nova.astrometry.net)</span></span>
+<span id="cb19-304"><a href="#cb19-304" aria-hidden="true" tabindex="-1"></a>analizan tu imagen, reconocen las estrellas y te devuelven un FITS con el</span>
+<span id="cb19-305"><a href="#cb19-305" aria-hidden="true" tabindex="-1"></a>WCS ya incluido (*plate solving*). Después lo lees con <span class="in">`WCS(header)`</span>.</span>
+<span id="cb19-306"><a href="#cb19-306" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb19-307"><a href="#cb19-307" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-308"><a href="#cb19-308" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb19-309"><a href="#cb19-309" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-310"><a href="#cb19-310" aria-hidden="true" tabindex="-1"></a><span class="fu">## Ejercicio</span></span>
+<span id="cb19-311"><a href="#cb19-311" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-312"><a href="#cb19-312" aria-hidden="true" tabindex="-1"></a>Usando el archivo <span class="in">`m42_con_wcs.fits`</span>:</span>
+<span id="cb19-313"><a href="#cb19-313" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-314"><a href="#cb19-314" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Lee la imagen y su WCS</span>
+<span id="cb19-315"><a href="#cb19-315" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Encuentra el píxel más brillante con <span class="in">`np.unravel_index(np.argmax(datos), datos.shape)`</span></span>
+<span id="cb19-316"><a href="#cb19-316" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Convierte esa posición a coordenadas celestes</span>
+<span id="cb19-317"><a href="#cb19-317" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Calcula a cuántos arcosegundos está del centro de la imagen</span>
+<span id="cb19-318"><a href="#cb19-318" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-319"><a href="#cb19-319" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip collapse="true"}</span>
+<span id="cb19-320"><a href="#cb19-320" aria-hidden="true" tabindex="-1"></a><span class="fu">## Ver solución</span></span>
+<span id="cb19-321"><a href="#cb19-321" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-324"><a href="#cb19-324" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb19-325"><a href="#cb19-325" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-326"><a href="#cb19-326" aria-hidden="true" tabindex="-1"></a><span class="co"># SOLUCIÓN: coordenadas del píxel más brillante</span></span>
+<span id="cb19-327"><a href="#cb19-327" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb19-328"><a href="#cb19-328" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-329"><a href="#cb19-329" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb19-330"><a href="#cb19-330" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> astropy.units <span class="im">as</span> u</span>
+<span id="cb19-331"><a href="#cb19-331" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.io <span class="im">import</span> fits</span>
+<span id="cb19-332"><a href="#cb19-332" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.wcs <span class="im">import</span> WCS</span>
+<span id="cb19-333"><a href="#cb19-333" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-334"><a href="#cb19-334" aria-hidden="true" tabindex="-1"></a><span class="co"># Paso 1: leer imagen y WCS</span></span>
+<span id="cb19-335"><a href="#cb19-335" aria-hidden="true" tabindex="-1"></a>datos, hdr <span class="op">=</span> fits.getdata(<span class="st">'m42_con_wcs.fits'</span>, header<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb19-336"><a href="#cb19-336" aria-hidden="true" tabindex="-1"></a>w <span class="op">=</span> WCS(hdr)</span>
+<span id="cb19-337"><a href="#cb19-337" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-338"><a href="#cb19-338" aria-hidden="true" tabindex="-1"></a><span class="co"># Paso 2: índice del máximo → unravel_index devuelve (fila, columna) = (y, x)</span></span>
+<span id="cb19-339"><a href="#cb19-339" aria-hidden="true" tabindex="-1"></a>y_max, x_max <span class="op">=</span> np.unravel_index(np.argmax(datos), datos.shape)</span>
+<span id="cb19-340"><a href="#cb19-340" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Píxel más brillante: x = </span><span class="sc">{</span>x_max<span class="sc">}</span><span class="ss">, y = </span><span class="sc">{</span>y_max<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb19-341"><a href="#cb19-341" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-342"><a href="#cb19-342" aria-hidden="true" tabindex="-1"></a><span class="co"># Paso 3: convertir a cielo (pixel_to_world recibe x, y)</span></span>
+<span id="cb19-343"><a href="#cb19-343" aria-hidden="true" tabindex="-1"></a>coord_max <span class="op">=</span> w.pixel_to_world(x_max, y_max)</span>
+<span id="cb19-344"><a href="#cb19-344" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Coordenadas        : </span><span class="sc">{</span>coord_max<span class="sc">.</span>to_string(<span class="st">'hmsdms'</span>, precision<span class="op">=</span><span class="dv">2</span>)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb19-345"><a href="#cb19-345" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-346"><a href="#cb19-346" aria-hidden="true" tabindex="-1"></a><span class="co"># Paso 4: distancia al centro de la imagen</span></span>
+<span id="cb19-347"><a href="#cb19-347" aria-hidden="true" tabindex="-1"></a>centro <span class="op">=</span> w.pixel_to_world(datos.shape[<span class="dv">1</span>] <span class="op">/</span> <span class="dv">2</span> <span class="op">-</span> <span class="fl">0.5</span>, datos.shape[<span class="dv">0</span>] <span class="op">/</span> <span class="dv">2</span> <span class="op">-</span> <span class="fl">0.5</span>)</span>
+<span id="cb19-348"><a href="#cb19-348" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Distancia al centro: </span><span class="sc">{</span>coord_max<span class="sc">.</span>separation(centro)<span class="sc">.</span>to(u.arcsec)<span class="sc">:.1f}</span><span class="ss">"</span>)</span>
+<span id="cb19-349"><a href="#cb19-349" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-350"><a href="#cb19-350" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb19-351"><a href="#cb19-351" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-352"><a href="#cb19-352" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb19-353"><a href="#cb19-353" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-354"><a href="#cb19-354" aria-hidden="true" tabindex="-1"></a><span class="fu">## ¿Qué aprendiste en este módulo? {.seccion-aprendiste}</span></span>
+<span id="cb19-355"><a href="#cb19-355" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-356"><a href="#cb19-356" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Qué es el WCS y qué claves lo definen (<span class="in">`CTYPE`</span>, <span class="in">`CRVAL`</span>, <span class="in">`CRPIX`</span>, <span class="in">`CDELT`</span>)</span>
+<span id="cb19-357"><a href="#cb19-357" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Crear un WCS desde cero con <span class="in">`astropy.wcs.WCS`</span></span>
+<span id="cb19-358"><a href="#cb19-358" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Convertir píxel → cielo con <span class="in">`pixel_to_world()`</span></span>
+<span id="cb19-359"><a href="#cb19-359" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Convertir cielo → píxel con <span class="in">`world_to_pixel()`</span></span>
+<span id="cb19-360"><a href="#cb19-360" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Guardar y leer el WCS en encabezados FITS</span>
+<span id="cb19-361"><a href="#cb19-361" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Calcular escala de píxel, campo de visión y huella de la imagen</span>
+<span id="cb19-362"><a href="#cb19-362" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Las diferencias entre base 0 (numpy) y base 1 (FITS)</span>
+<span id="cb19-363"><a href="#cb19-363" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-364"><a href="#cb19-364" aria-hidden="true" tabindex="-1"></a>**Siguiente módulo →** <span class="co">[</span><span class="ot">08 · Fotometría de apertura</span><span class="co">](08-fotometria.qmd)</span></span>
+</code></pre></div><button title="Copiar al portapapeles" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<p>Blog hecho con Quarto</p>
+<p>AstroPy en Español · Blog de astronomía computacional</p>
 </div>   
     <div class="nav-footer-center">
       &nbsp;
     </div>
     <div class="nav-footer-right">
-<p>Datos: Astropy Project</p>
+<p>Hecho con <a href="https://quarto.org">Quarto</a> y <a href="https://www.astropy.org">Astropy</a></p>
 </div>
   </div>
 </footer>
