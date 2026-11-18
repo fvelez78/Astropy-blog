@@ -1,5 +1,7 @@
 ---
 pagetitle: "AstroPy en Español"
+description: "Aprende astronomía computacional con Python y Astropy: 17 módulos prácticos, de cero a un pipeline de reducción de datos."
+image: assets/images/tarjeta-redes.png
 page-layout: full
 toc: false
 sidebar: false

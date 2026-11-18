@@ -13,6 +13,12 @@ website:
   title: "AstroPy en Español"
   description: "Aprende astronomía computacional con Python y Astropy, desde cero hasta análisis profesional"
   favicon: assets/logos/favicon.ico
+
+  # ── Vista previa al compartir en redes (LinkedIn, Facebook, X, WhatsApp) ────
+  site-url: https://fvelez78.github.io/astropy-blog/   # dirección pública del blog
+  image: assets/images/tarjeta-redes.png               # imagen 1200×630 por defecto
+  open-graph: true                                     # LinkedIn, Facebook, WhatsApp
+  twitter-card: true                                   # X (Twitter)
   page-navigation: true       # enlaces "anterior / siguiente" al pie de cada módulo
   back-to-top-navigation: true
 
