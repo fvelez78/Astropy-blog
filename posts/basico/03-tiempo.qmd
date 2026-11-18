@@ -31,7 +31,7 @@ con precisión de nanosegundos.
 
 ::: {.callout-note}
 ## Requisitos previos
-- Módulos 01 y 02 completados
+- Secciones 01 y 02 completadas
 - `astropy.units` (ya instalado con Astropy)
 :::
 
@@ -392,7 +392,7 @@ print(f"  Años restantes     : {anios_restantes:.1f}")
 
 ---
 
-## ¿Qué aprendiste en este módulo? {.seccion-aprendiste}
+## ¿Qué aprendiste en esta sección? {.seccion-aprendiste}
 
 - ✅ Crear objetos `Time` en distintos formatos: ISO, JD, MJD, Unix
 - ✅ Convertir entre formatos accediendo al atributo correspondiente
@@ -403,4 +403,4 @@ print(f"  Años restantes     : {anios_restantes:.1f}")
 - ✅ Manejar arreglos de fechas de manera eficiente
 - ✅ Aplicar todo en un contexto real: hitos cósmicos y cometas
 
-**Siguiente módulo →** [04 · Coordenadas celestes con `SkyCoord`](04-coordenadas.qmd)
+**Siguiente sección →** [04 · Coordenadas celestes con `SkyCoord`](04-coordenadas.qmd)

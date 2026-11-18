@@ -19,8 +19,8 @@ execute:
 
 En astronomía casi todo son tablas: catálogos de estrellas con millones
 de filas, listas de exoplanetas, resultados de observaciones, datos de
-telescopios espaciales. El formato más común es FITS (lo veremos en el
-módulo 06), pero también abundan CSV, VOTable y ECSV.
+telescopios espaciales. El formato más común es FITS (lo veremos en la
+sección 06), pero también abundan CSV, VOTable y ECSV.
 
 `astropy.table` ofrece una clase `Table` que:
 
@@ -31,7 +31,7 @@ módulo 06), pero también abundan CSV, VOTable y ECSV.
 
 ::: {.callout-note}
 ## Requisitos previos
-- Módulos 01 al 04 completados
+- Secciones 01 a 04 completadas
 - Astropy instalada: `pip install astropy`
 :::
 
@@ -420,7 +420,7 @@ print(f"  a {estrellas['distancia_ly'][idx_lejana]:.0f} años luz")
 |---|---|---|---|
 | CSV simple | `.csv` | `'csv'` | Sin unidades |
 | ECSV | `.ecsv` | `'ascii.ecsv'` | Con unidades y tipos |
-| FITS | `.fits` | `'fits'` | Módulo 06 |
+| FITS | `.fits` | `'fits'` | Sección 06 |
 | VOTable | `.xml`, `.vot` | `'votable'` | Catálogos virtuales |
 | HTML | `.html` | `'html'` | Para web |
 | LaTeX | `.tex` | `'latex'` | Para publicaciones |
@@ -507,7 +507,7 @@ print(planetas['nombre', 'densidad_kgm3'])
 
 ---
 
-## ¿Qué aprendiste en este módulo? {.seccion-aprendiste}
+## ¿Qué aprendiste en esta sección? {.seccion-aprendiste}
 
 - ✅ Crear tablas con `Table` a partir de diccionarios y listas
 - ✅ Asignar unidades y descripciones a columnas con `Column`
@@ -519,4 +519,4 @@ print(planetas['nombre', 'densidad_kgm3'])
 - ✅ Combinar tablas con `vstack`, `hstack` y `join`
 - ✅ Calcular estadísticas sobre columnas
 
-**Siguiente módulo →** [06 · Lectura y manipulación de archivos FITS](../intermedio/06-fits.qmd)
+**Siguiente sección →** [06 · Lectura y manipulación de archivos FITS](../intermedio/06-fits.qmd)

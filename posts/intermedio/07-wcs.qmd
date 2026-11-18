@@ -17,7 +17,7 @@ execute:
 
 ## El problema: una imagen no sabe dónde está
 
-En el módulo 06 trabajamos con una imagen como un simple arreglo de
+En la sección 06 trabajamos con una imagen como un simple arreglo de
 números. Pero un astrónomo necesita saber: *"¿qué estrella es la que está
 en el píxel (90, 110)?"*. Para eso hace falta un "mapa" que traduzca:
 
@@ -29,8 +29,8 @@ leemos esas claves y hacemos las conversiones automáticamente.
 
 ::: {.callout-note}
 ## Requisitos previos
-- Módulo 04 (coordenadas con `SkyCoord`)
-- Módulo 06 (archivos FITS)
+- Sección 04 (coordenadas con `SkyCoord`)
+- Sección 06 (archivos FITS)
 :::
 
 ---
@@ -109,7 +109,7 @@ print(f"Centro de la imagen   : {centro.to_string('hmsdms', precision=2)}")
 esquina = w.pixel_to_world(0, 0)
 print(f"Esquina inferior izq. : {esquina.to_string('hmsdms', precision=2)}")
 
-# Distancia angular entre el centro y la esquina (módulo 04)
+# Distancia angular entre el centro y la esquina (sección 04)
 print(f"Separación            : {centro.separation(esquina).to(u.arcsec):.1f}")
 ```
 
@@ -127,7 +127,7 @@ hace la traducción internamente: tú solo usa índices de numpy.
 
 import numpy as np
 
-# Posiciones de las 5 estrellas de la imagen sintética del módulo 06
+# Posiciones de las 5 estrellas de la imagen sintética de la sección 06
 x_estrellas = np.array([50, 120, 160, 90, 30])
 y_estrellas = np.array([60, 140, 40, 110, 170])
 
@@ -175,7 +175,7 @@ print(f"¿Dentro de la imagen? {'Sí ✓' if dentro else 'No ✗'}")
 import numpy as np
 from astropy.io import fits
 
-# Imagen sintética: fondo + ruido + estrellas (igual que en el módulo 06)
+# Imagen sintética: fondo + ruido + estrellas (igual que en la sección 06)
 rng = np.random.default_rng(seed=7)
 imagen = 100 + rng.normal(0, 5, (200, 200))
 yy, xx = np.mgrid[0:200, 0:200]
@@ -333,7 +333,7 @@ print(f"Distancia al centro: {coord_max.separation(centro).to(u.arcsec):.1f}")
 
 ---
 
-## ¿Qué aprendiste en este módulo? {.seccion-aprendiste}
+## ¿Qué aprendiste en esta sección? {.seccion-aprendiste}
 
 - ✅ Qué es el WCS y qué claves lo definen (`CTYPE`, `CRVAL`, `CRPIX`, `CDELT`)
 - ✅ Crear un WCS desde cero con `astropy.wcs.WCS`
@@ -343,4 +343,4 @@ print(f"Distancia al centro: {coord_max.separation(centro).to(u.arcsec):.1f}")
 - ✅ Calcular escala de píxel, campo de visión y huella de la imagen
 - ✅ Las diferencias entre base 0 (numpy) y base 1 (FITS)
 
-**Siguiente módulo →** [08 · Fotometría de apertura](08-fotometria.qmd)
+**Siguiente sección →** [08 · Fotometría de apertura](08-fotometria.qmd)

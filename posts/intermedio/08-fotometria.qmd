@@ -116,7 +116,7 @@ Para esto usamos **photutils**, una librería afiliada a Astropy.
 
 ::: {.callout-note}
 ## Requisitos previos
-- Módulos 06 (FITS) y 07 (WCS)
+- Secciones 06 (FITS) y 07 (WCS)
 - Instalar photutils: `pip install photutils`
 :::
 
@@ -411,7 +411,7 @@ Una apertura finita nunca captura el 100 % de la luz (la PSF tiene "alas").
 En trabajo profesional se aplica una **corrección de apertura** midiendo
 estrellas brillantes con aperturas cada vez más grandes. Para fotometría
 **diferencial** (comparar una estrella con otras de la misma imagen, como
-en el módulo 17) este efecto se cancela.
+en la sección 17) este efecto se cancela.
 :::
 
 ---
@@ -485,7 +485,7 @@ from astropy.nddata import Cutout2D
 i_max = np.argmax(flujo)
 x_est, y_est = posiciones[i_max]
 
-# Cutout2D (módulo 06): ventana de 25×25 píxeles centrada en la estrella
+# Cutout2D (sección 06): ventana de 25×25 píxeles centrada en la estrella
 recorte = Cutout2D(imagen, position=(x_est, y_est), size=(25, 25))
 
 # Restamos el fondo del cielo para que la "montaña" arranque desde cero
@@ -501,7 +501,7 @@ print(f"Brillo máximo sobre el fondo: {datos_3d.max():.0f} cuentas")
 
 ### Paso 2: ajustar un modelo gaussiano 2D
 
-Usamos `astropy.modeling` (lo veremos a fondo en el módulo 10): una
+Usamos `astropy.modeling` (lo veremos a fondo en la sección 10): una
 gaussiana 2D para la estrella más una constante para el fondo residual.
 
 ```{python}
@@ -735,7 +735,7 @@ print("  mejor S/N en estrellas débiles porque incluye menos ruido de cielo.")
 
 ---
 
-## ¿Qué aprendiste en este módulo? {.seccion-aprendiste}
+## ¿Qué aprendiste en esta sección? {.seccion-aprendiste}
 
 - ✅ El principio de la fotometría de apertura
 - ✅ Estimar el fondo con `sigma_clipped_stats`
@@ -745,4 +745,4 @@ print("  mejor S/N en estrellas débiles porque incluye menos ruido de cielo.")
 - ✅ Calcular S/N, magnitudes instrumentales y sus errores
 - ✅ Elegir el radio de apertura con la curva de crecimiento
 
-**Siguiente módulo →** [09 · Visualización astronómica](09-visualizacion.qmd)
+**Siguiente sección →** [09 · Visualización astronómica](09-visualizacion.qmd)

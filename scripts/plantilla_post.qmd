@@ -8,12 +8,12 @@
 #   2. Rellena los campos del encabezado YAML (entre los ---)
 #   3. Reemplaza el contenido de ejemplo con el tuyo
 # ─────────────────────────────────────────────────────────────────────────────
-title: "XX - Titulo del modulo"
+title: "XX - Titulo de la seccion"
 description: "Descripcion corta (aparece en listados y buscadores)"
 author: "Tu nombre"
 date: "2025-01-01"
 categories: [basico]        # opciones: basico | intermedio | avanzado
-image: "../../assets/images/modulo-XX.png"
+image: "../../assets/images/seccion-XX.png"
 toc: true
 toc-depth: 3
 number-sections: true
@@ -28,12 +28,12 @@ execute:
 
 ## Introduccion
 
-Explica en 2 o 3 parrafos que problema resuelve este modulo y por que es util.
+Explica en 2 o 3 parrafos que problema resuelve esta seccion y por que es util.
 Escribe como si le hablaras a alguien que nunca vio Astropy.
 
 ::: {.callout-note}
 ## Requisitos previos
-- Modulo anterior completado
+- Seccion anterior completada
 - Libreria X instalada: `pip install X`
 :::
 
@@ -64,7 +64,7 @@ print(masa_sol)
 
 ### Subtema 2
 
-Continua con el siguiente concepto del modulo.
+Continua con el siguiente concepto de la seccion.
 
 ```{python}
 # ─────────────────────────────────────────────────────────────────────────────
@@ -107,10 +107,10 @@ print(f"Distancia Tierra-Sol: {distancia_ua:.4f}")
 
 ---
 
-## Que aprendiste en este modulo {.seccion-aprendiste}
+## Que aprendiste en esta seccion {.seccion-aprendiste}
 
 - Concepto A aplicado con Astropy
 - Concepto B: como se usa en la practica
 - Concepto C: errores comunes y como evitarlos
 
-**Siguiente modulo** [Titulo del siguiente](../siguiente.qmd)
+**Siguiente seccion** [Titulo del siguiente](../siguiente.qmd)

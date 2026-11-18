@@ -19,7 +19,7 @@ execute:
 
 Astropy es muy completo, pero tarde o temprano necesitarás algo propio:
 una unidad que usa tu grupo de investigación, una conversión especial,
-o un modelo físico que no existe en `astropy.modeling`. Este módulo
+o un modelo físico que no existe en `astropy.modeling`. Esta sección
 muestra cómo **extender** Astropy de forma limpia:
 
 1. Unidades personalizadas y unidades logarítmicas (magnitudes)
@@ -30,7 +30,7 @@ muestra cómo **extender** Astropy de forma limpia:
 
 ::: {.callout-note}
 ## Requisitos previos
-- Módulos 02 (unidades) y 10 (modelado)
+- Secciones 02 (unidades) y 10 (modelado)
 - Saber definir funciones y clases básicas en Python
 :::
 
@@ -115,7 +115,7 @@ temperatura ↔ energía. Astropy las llama **equivalencias**.
 
 import astropy.units as u
 
-# 1. Espectral: λ ↔ ν ↔ E  (lo usamos en el módulo 12)
+# 1. Espectral: λ ↔ ν ↔ E  (lo usamos en la sección 12)
 print(f"Hα (656.28 nm) = {(656.28 * u.nm).to(u.eV, equivalencies=u.spectral()):.3f}")
 
 # 2. Paralaje ↔ distancia  (d [pc] = 1 / p [arcsec])
@@ -157,7 +157,7 @@ def hubble(H0=Planck18.H0):
 print(f"Galaxia a 100 Mpc → v = {(100 * u.Mpc).to(u.km / u.s, equivalencies=hubble()):.0f}")
 print(f"Galaxia a 5548 km/s → d = {(5548 * u.km / u.s).to(u.Mpc, equivalencies=hubble()):.1f}")
 
-# Y con otro valor de H0 (la "tensión de Hubble" del módulo 13)
+# Y con otro valor de H0 (la "tensión de Hubble" de la sección 13)
 h73 = hubble(73 * u.km / u.s / u.Mpc)
 print(f"Con H0 = 73: 5548 km/s → d = {(5548 * u.km / u.s).to(u.Mpc, equivalencies=h73):.1f}")
 ```
@@ -165,7 +165,7 @@ print(f"Con H0 = 73: 5548 km/s → d = {(5548 * u.km / u.s).to(u.Mpc, equivalenc
 ::: {.callout-warning}
 ## Úsala solo donde tiene sentido
 Esta equivalencia (ley de Hubble lineal) solo vale para galaxias cercanas
-(z < 0.1). Para distancias mayores usa `astropy.cosmology` (módulo 13).
+(z < 0.1). Para distancias mayores usa `astropy.cosmology` (sección 13).
 :::
 
 ---
@@ -174,7 +174,7 @@ Esta equivalencia (ley de Hubble lineal) solo vale para galaxias cercanas
 
 El decorador `@u.quantity_input` comprueba automáticamente que los
 argumentos tengan unidades compatibles. Es la mejor defensa contra el tipo
-de error que destruyó el Mars Climate Orbiter (módulo 02).
+de error que destruyó el Mars Climate Orbiter (sección 02).
 
 ```{python}
 # ─────────────────────────────────────────────────────────────────────────────
@@ -275,7 +275,7 @@ print(CurvaSupernova())
 #| fig-cap: "Curva de luz de una supernova simulada y el ajuste del modelo de Bazin"
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Datos simulados + ajuste por mínimos cuadrados (módulo 10)
+# Datos simulados + ajuste por mínimos cuadrados (sección 10)
 # ─────────────────────────────────────────────────────────────────────────────
 
 import numpy as np
@@ -503,7 +503,7 @@ plt.show()
 
 ---
 
-## ¿Qué aprendiste en este módulo? {.seccion-aprendiste}
+## ¿Qué aprendiste en esta sección? {.seccion-aprendiste}
 
 - ✅ Crear y registrar unidades propias con `def_unit` y `add_enabled_units`
 - ✅ Trabajar con magnitudes AB como unidades logarítmicas
@@ -512,4 +512,4 @@ plt.show()
 - ✅ Definir modelos con `@custom_model` y con subclases de `Fittable1DModel`
 - ✅ Implementar un MCMC de Metropolis–Hastings y leer posteriores y correlaciones
 
-**Siguiente módulo →** [17 · Pipeline completo de reducción](17-pipeline.qmd)
+**Siguiente sección →** [17 · Pipeline completo de reducción](17-pipeline.qmd)

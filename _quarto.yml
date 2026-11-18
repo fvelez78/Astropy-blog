@@ -19,7 +19,7 @@ website:
   image: assets/images/tarjeta-redes.png               # imagen 1200×630 por defecto
   open-graph: true                                     # LinkedIn, Facebook, WhatsApp
   twitter-card: true                                   # X (Twitter)
-  page-navigation: true       # enlaces "anterior / siguiente" al pie de cada módulo
+  page-navigation: true       # enlaces "anterior / siguiente" al pie de cada sección
   back-to-top-navigation: true
 
   # ── Barra superior ──────────────────────────────────────────────────────────
@@ -27,7 +27,7 @@ website:
     # El título "AstroPy en Español" ya lleva a la página de inicio
     left:
       - href: posts/basico/01-introduccion.qmd
-        text: Módulos
+        text: Secciones
       - href: sobre.qmd
         text: Sobre el blog
     right:
@@ -36,7 +36,7 @@ website:
         aria-label: GitHub
 
   # ── Menú lateral con los tres niveles ───────────────────────────────────────
-  # Los títulos de cada módulo se toman automáticamente de su encabezado YAML
+  # Los títulos de cada sección se toman automáticamente de su encabezado YAML
   sidebar:
     style: "docked"
     search: true

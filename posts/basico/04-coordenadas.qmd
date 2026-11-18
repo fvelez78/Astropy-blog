@@ -29,7 +29,7 @@ con pocas líneas de código.
 
 ::: {.callout-note}
 ## Requisitos previos
-- Módulos 01, 02 y 03 completados
+- Secciones 01, 02 y 03 completadas
 - Astropy instalada: `pip install astropy`
 :::
 
@@ -453,7 +453,7 @@ else:
 
 ---
 
-## ¿Qué aprendiste en este módulo? {.seccion-aprendiste}
+## ¿Qué aprendiste en esta sección? {.seccion-aprendiste}
 
 - ✅ Crear posiciones en el cielo con `SkyCoord` en formato grados y h:m:s
 - ✅ El sistema ecuatorial: Ascensión Recta y Declinación
@@ -463,4 +463,4 @@ else:
 - ✅ Medir la distancia angular entre objetos con `.separation()`
 - ✅ Resolver nombres de objetos a coordenadas con `SkyCoord.from_name()`
 
-**Siguiente módulo →** [05 · Tablas astronómicas con `astropy.table`](05-tablas.qmd)
+**Siguiente sección →** [05 · Tablas astronómicas con `astropy.table`](05-tablas.qmd)

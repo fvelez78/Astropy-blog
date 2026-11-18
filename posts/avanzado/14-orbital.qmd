@@ -27,11 +27,11 @@ Astropy incluye:
   Tierra (o desde un observatorio concreto)
 - **`get_body_barycentric`**: posición en el espacio respecto al centro de
   masa del Sistema Solar
-- Toda la maquinaria de `SkyCoord`, `AltAz` y `Time` de los módulos 03 y 04
+- Toda la maquinaria de `SkyCoord`, `AltAz` y `Time` de las secciones 03 y 04
 
 ::: {.callout-note}
 ## Requisitos previos
-- Módulos 03 (tiempo) y 04 (coordenadas)
+- Secciones 03 (tiempo) y 04 (coordenadas)
 - Sin instalaciones extra: usamos la efeméride integrada (`builtin`) de Astropy
 :::
 
@@ -448,7 +448,7 @@ print(f"Constelación         : {get_constellation(marte[i])}")
 
 ---
 
-## ¿Qué aprendiste en este módulo? {.seccion-aprendiste}
+## ¿Qué aprendiste en esta sección? {.seccion-aprendiste}
 
 - ✅ Obtener posiciones del Sol, la Luna y los planetas con `get_body`
 - ✅ Saber en qué constelación está un objeto con `get_constellation`
@@ -458,4 +458,4 @@ print(f"Constelación         : {get_constellation(marte[i])}")
 - ✅ Aplicar la tercera ley de Kepler con unidades
 - ✅ Resolver la ecuación de Kepler para propagar una órbita
 
-**Siguiente módulo →** [15 · Series temporales astronómicas](15-series-temporales.qmd)
+**Siguiente sección →** [15 · Series temporales astronómicas](15-series-temporales.qmd)

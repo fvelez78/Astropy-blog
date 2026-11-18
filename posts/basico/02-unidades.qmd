@@ -29,7 +29,7 @@ unidad viajan juntos** y las conversiones son automáticas.
 
 ::: {.callout-note}
 ## Requisitos previos
-- Módulo 01 completado
+- Sección 01 completada
 - Astropy instalada: `pip install astropy`
 :::
 
@@ -394,7 +394,7 @@ print(f"  En minutos  : {tiempo_min:.2f}")
 
 ---
 
-## ¿Qué aprendiste en este módulo? {.seccion-aprendiste}
+## ¿Qué aprendiste en esta sección? {.seccion-aprendiste}
 
 - ✅ Crear cantidades físicas con `valor * u.unidad`
 - ✅ Convertir entre unidades con `.to()`
@@ -405,4 +405,4 @@ print(f"  En minutos  : {tiempo_min:.2f}")
 - ✅ Acceder a constantes físicas oficiales con `astropy.constants`
 - ✅ Aplicar todo en un cálculo real: velocidad de escape de planetas
 
-**Siguiente módulo →** [03 · Tiempo astronómico con `astropy.time`](03-tiempo.qmd)
+**Siguiente sección →** [03 · Tiempo astronómico con `astropy.time`](03-tiempo.qmd)

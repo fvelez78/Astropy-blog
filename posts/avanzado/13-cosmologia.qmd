@@ -34,8 +34,8 @@ hace estos cálculos (integrales nada triviales) en una línea.
 
 ::: {.callout-note}
 ## Requisitos previos
-- Módulos 02 (unidades) y 03 (tiempo)
-- En el módulo 01 vimos que `H0` **no está** en `astropy.constants`: aquí es donde vive
+- Secciones 02 (unidades) y 03 (tiempo)
+- En la sección 01 vimos que `H0` **no está** en `astropy.constants`: aquí es donde vive
 :::
 
 ---
@@ -50,7 +50,7 @@ hace estos cálculos (integrales nada triviales) en una línea.
 
 from astropy.cosmology import Planck18, WMAP9
 
-cosmo = Planck18     # modelo que usaremos en todo el módulo
+cosmo = Planck18     # modelo que usaremos en toda la sección
 
 print(f"Modelo           : {cosmo.name}")
 print(f"H0               : {cosmo.H0}")                 # constante de Hubble
@@ -98,7 +98,7 @@ energía oscura.
 
 ## Distancias para un corrimiento al rojo
 
-En el módulo 12 medimos $z = 0.0185$ para una galaxia. Veamos qué
+En la sección 12 medimos $z = 0.0185$ para una galaxia. Veamos qué
 significa eso, junto con objetos más lejanos.
 
 ```{python}
@@ -110,7 +110,7 @@ import numpy as np
 from astropy.table import Table
 
 objetos = {
-    'Galaxia del módulo 12': 0.0185,
+    'Galaxia de la sección 12': 0.0185,
     'Cúmulo de Coma'       : 0.0231,
     'Cuásar 3C 273'        : 0.158,
     'Galaxia típica (z=1)' : 1.0,
@@ -195,8 +195,8 @@ for nombre, zz in eventos.items():
     print(f"{nombre:<30} {zz:>7} {edad_txt:>19} {hace.to(u.Gyr):>12.2f}")
 ```
 
-Esta es la forma correcta de hacer la "línea de tiempo cósmica" que en el
-módulo 03 tuvimos que simplificar: `astropy.time.Time` no sirve para miles
+Esta es la forma correcta de hacer la "línea de tiempo cósmica" que en la
+sección 03 tuvimos que simplificar: `astropy.time.Time` no sirve para miles
 de millones de años, pero `astropy.cosmology` sí.
 
 ---
@@ -385,7 +385,7 @@ plt.show()
 
 ---
 
-## ¿Qué aprendiste en este módulo? {.seccion-aprendiste}
+## ¿Qué aprendiste en esta sección? {.seccion-aprendiste}
 
 - ✅ Usar los modelos cosmológicos incluidos (`Planck18`, `WMAP9`)
 - ✅ Crear modelos propios con `FlatLambdaCDM`
@@ -395,4 +395,4 @@ plt.show()
 - ✅ Escala angular (kpc/arcsec) y módulo de distancia
 - ✅ Reproducir el diagrama de Hubble que reveló la energía oscura
 
-**Siguiente módulo →** [14 · Mecánica orbital y efemérides](14-orbital.qmd)
+**Siguiente sección →** [14 · Mecánica orbital y efemérides](14-orbital.qmd)

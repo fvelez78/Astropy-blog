@@ -33,7 +33,7 @@ Un espectro típico tiene:
 
 ::: {.callout-note}
 ## Requisitos previos
-- Módulos 02 (unidades) y 10 (modelado)
+- Secciones 02 (unidades) y 10 (modelado)
 - Instalar: `pip install specutils`
 :::
 
@@ -307,7 +307,7 @@ print(f"La región de Hα va de {v_eje[0]:.0f} a {v_eje[-1]:.0f}")
 ## Ajustar el triplete Hα + [NII]
 
 Hα y las dos líneas de [NII] están muy juntas y se superponen. Para medir
-cada una se ajustan **tres gaussianas simultáneamente** (módulo 10).
+cada una se ajustan **tres gaussianas simultáneamente** (sección 10).
 
 ```{python}
 #| label: fig-triplete
@@ -415,7 +415,7 @@ else:
 
 ---
 
-## ¿Qué aprendiste en este módulo? {.seccion-aprendiste}
+## ¿Qué aprendiste en esta sección? {.seccion-aprendiste}
 
 - ✅ Las partes de un espectro: continuo, emisión y absorción
 - ✅ Crear un `Spectrum` con unidades e incertidumbres
@@ -425,4 +425,4 @@ else:
 - ✅ Calcular corrimiento al rojo y velocidad con `u.doppler_optical`
 - ✅ Ajustar líneas superpuestas con `fit_lines`
 
-**Siguiente módulo →** [13 · Cosmología computacional](13-cosmologia.qmd)
+**Siguiente sección →** [13 · Cosmología computacional](13-cosmologia.qmd)

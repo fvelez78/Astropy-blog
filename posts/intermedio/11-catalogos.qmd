@@ -23,7 +23,7 @@ brillo de millones de estrellas, y todo está disponible gratis en internet.
 
 **astroquery** es la librería afiliada a Astropy que conecta Python con
 decenas de estos servicios. Todas las consultas devuelven una `Table` de
-Astropy (módulo 05), así que ya sabes trabajar con los resultados.
+Astropy (sección 05), así que ya sabes trabajar con los resultados.
 
 | Servicio | Qué contiene | Módulo de astroquery |
 |---|---|---|
@@ -35,14 +35,14 @@ Astropy (módulo 05), así que ya sabes trabajar con los resultados.
 
 ::: {.callout-note}
 ## Requisitos previos
-- Módulos 04 (coordenadas) y 05 (tablas)
+- Secciones 04 (coordenadas) y 05 (tablas)
 - Instalar: `pip install astroquery`
 - **Conexión a internet**
 :::
 
 ::: {.callout-tip}
 ## Buena práctica: consulta una vez, guarda siempre
-Los servicios en línea pueden estar lentos o caídos. En este módulo usamos
+Los servicios en línea pueden estar lentos o caídos. En esta sección usamos
 un patrón profesional: **si el archivo ya existe en disco, lo leemos; si no,
 consultamos y lo guardamos**. Así tu análisis es reproducible y no
 dependes de la red cada vez que ejecutas el código.
@@ -178,7 +178,7 @@ if pleyades is not None:
     print(f"Distancia media        : {miembros['dist_pc'].mean():.1f} pc")
     print(f"                       = {(miembros['dist_pc'].mean() * u.pc).to(u.lyr):.0f}")
 else:
-    print("Sin datos: ejecuta este módulo con conexión a internet.")
+    print("Sin datos: ejecuta esta sección con conexión a internet.")
 ```
 
 ### Diagrama color–magnitud (Hertzsprung–Russell)
@@ -220,7 +220,7 @@ if pleyades is not None:
     ax.legend()
     plt.show()
 else:
-    print("Sin datos: ejecuta este módulo con conexión a internet.")
+    print("Sin datos: ejecuta esta sección con conexión a internet.")
 ```
 
 ---
@@ -295,7 +295,7 @@ if exo is not None:
     ax.legend(fontsize=8)
     plt.show()
 else:
-    print("Sin datos: ejecuta este módulo con conexión a internet.")
+    print("Sin datos: ejecuta esta sección con conexión a internet.")
 ```
 
 ::: {.callout-tip}
@@ -372,13 +372,13 @@ if exo is not None:
     por_anio = df['disc_year'].value_counts()
     print(f"Año récord: {int(por_anio.idxmax())} con {por_anio.max()} planetas")
 else:
-    print("Sin datos: ejecuta este módulo con conexión a internet.")
+    print("Sin datos: ejecuta esta sección con conexión a internet.")
 ```
 :::
 
 ---
 
-## ¿Qué aprendiste en este módulo? {.seccion-aprendiste}
+## ¿Qué aprendiste en esta sección? {.seccion-aprendiste}
 
 - ✅ Qué servicios astronómicos existen y qué contienen
 - ✅ Consultar objetos por nombre y por región en Simbad
@@ -388,4 +388,4 @@ else:
 - ✅ Escribir consultas ADQL para Gaia
 - ✅ El patrón "consulta una vez y guarda en disco" para análisis reproducibles
 
-**Siguiente módulo →** [12 · Espectroscopía con specutils](../avanzado/12-espectroscopia.qmd)
+**Siguiente sección →** [12 · Espectroscopía con specutils](../avanzado/12-espectroscopia.qmd)

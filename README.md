@@ -14,14 +14,14 @@ astropy-blog/
 ├── requirements.txt            <- Dependencias de Python
 │
 ├── posts/
-│   ├── basico/                 <- Modulos 01 al 05
+│   ├── basico/                 <- Secciones 01 a 05
 │   │   ├── 01-introduccion.qmd
 │   │   ├── 02-unidades.qmd
 │   │   ├── 03-tiempo.qmd
 │   │   ├── 04-coordenadas.qmd
 │   │   └── 05-tablas.qmd
 │   │
-│   ├── intermedio/             <- Modulos 06 al 11
+│   ├── intermedio/             <- Secciones 06 a 11
 │   │   ├── 06-fits.qmd
 │   │   ├── 07-wcs.qmd
 │   │   ├── 08-fotometria.qmd
@@ -29,7 +29,7 @@ astropy-blog/
 │   │   ├── 10-estadistica.qmd
 │   │   └── 11-catalogos.qmd
 │   │
-│   └── avanzado/              <- Modulos 12 al 17
+│   └── avanzado/              <- Secciones 12 a 17
 │       ├── 12-espectroscopia.qmd
 │       ├── 13-cosmologia.qmd
 │       ├── 14-orbital.qmd
@@ -40,13 +40,13 @@ astropy-blog/
 ├── assets/
 │   ├── css/
 │   │   └── estilo-blog.scss    <- Estilos personalizados (colores, fuentes)
-│   ├── images/                 <- Imagenes de portada de cada modulo
+│   ├── images/                 <- Imagenes de portada de cada seccion
 │   └── logos/                  <- Logo del blog y favicon
 │
 ├── data/                       <- Archivos de datos de ejemplo (.fits, .csv)
 ├── notebooks/                  <- Notebooks de desarrollo y pruebas
 └── scripts/
-    └── plantilla_post.qmd      <- Plantilla para crear nuevos modulos
+    └── plantilla_post.qmd      <- Plantilla para crear nuevas secciones
 ```
 
 ## Inicio rapido
@@ -69,15 +69,15 @@ quarto preview
 quarto publish gh-pages
 ```
 
-## Crear un nuevo modulo
+## Crear una nueva seccion
 
 ```bash
 # Copia la plantilla al nivel correspondiente
-cp scripts/plantilla_post.qmd posts/basico/nuevo-modulo.qmd
+cp scripts/plantilla_post.qmd posts/basico/nueva-seccion.qmd
 
 # Abre el archivo y edita el encabezado YAML y el contenido
 # Luego previsualiza con:
-quarto preview posts/basico/nuevo-modulo.qmd
+quarto preview posts/basico/nueva-seccion.qmd
 ```
 
 ## Convenciones de codigo

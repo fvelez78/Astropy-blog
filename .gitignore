@@ -24,3 +24,8 @@ data/*.fits.gz
 
 *.fits
 noche_simulada/
+
+# Archivos temporales que genera Quarto y datos que crean las secciones al ejecutarse
+*.quarto_ipynb*
+posts/**/*.ecsv
+posts/**/*.csv

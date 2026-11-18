@@ -37,12 +37,12 @@ archivo.fits
 
 ::: {.callout-note}
 ## Requisitos previos
-- Módulos 01 al 05 completados (especialmente el 05 de tablas)
+- Secciones 01 a 05 completadas (especialmente la 05 de tablas)
 - `numpy`, `matplotlib` y `astropy` instalados
 :::
 
 ::: {.callout-tip}
-## Sobre los datos de este módulo
+## Sobre los datos de esta sección
 Para que puedas ejecutar todo sin descargar nada, **fabricamos nuestra propia
 imagen FITS** con estrellas simuladas. Al final verás cómo abrir archivos
 reales descargados de archivos públicos.
@@ -273,7 +273,7 @@ with fits.open('imagen_sintetica.fits', mode='update') as hdul:
     hdr['OBSERVER'] = ('Blog AstroPy', 'Nombre del observador')   # agregar
     hdr['EXPTIME']  = 120.0                                        # cambiar valor
     hdr.add_history('Exposicion corregida a 120 s')                # registro HISTORY
-    hdr.add_comment('Archivo de practica del modulo 06')          # línea COMMENT
+    hdr.add_comment('Archivo de practica de la seccion 06')          # línea COMMENT
 
     # Borrar una clave (si existe)
     if 'INSTRUME' in hdr:
@@ -376,7 +376,7 @@ with fits.open('campo_multiext.fits') as hdul:
     errores = hdul['ERROR'].data
     print(f"Mapa de error: forma {errores.shape}, mediana {errores.mean():.2f}")
 
-# Las tablas FITS se leen directamente como Table de Astropy (módulo 05)
+# Las tablas FITS se leen directamente como Table de Astropy (sección 05)
 cat = Table.read('campo_multiext.fits', hdu='CATALOGO')
 print("\nCatálogo leído desde la extensión CATALOGO:")
 print(cat)
@@ -448,7 +448,7 @@ sin problemas.
 
 ## Ejercicio
 
-Usando el archivo `campo_multiext.fits` creado en este módulo:
+Usando el archivo `campo_multiext.fits` creado en esta sección:
 
 1. Lee la extensión `CATALOGO` como tabla
 2. Para cada estrella, mide el valor del píxel central en la imagen (HDU 0)
@@ -484,7 +484,7 @@ print("\nGuardado en 'catalogo_medido.fits' ✓")
 
 ---
 
-## ¿Qué aprendiste en este módulo? {.seccion-aprendiste}
+## ¿Qué aprendiste en esta sección? {.seccion-aprendiste}
 
 - ✅ La estructura de un FITS: HDU, encabezado y datos
 - ✅ Crear y escribir archivos FITS con `PrimaryHDU` y `writeto()`
@@ -494,4 +494,4 @@ print("\nGuardado en 'catalogo_medido.fits' ✓")
 - ✅ Recortar regiones con `Cutout2D`
 - ✅ La trampa del orden de ejes `[y, x]`
 
-**Siguiente módulo →** [07 · WCS: del píxel al cielo](07-wcs.qmd)
+**Siguiente sección →** [07 · WCS: del píxel al cielo](07-wcs.qmd)

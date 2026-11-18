@@ -22,7 +22,7 @@ cósmicos, píxeles calientes, satélites que cruzan el campo. En un catálogo
 hay estrellas mal medidas. Si calculamos un **promedio** simple, un solo
 valor extremo lo arruina.
 
-En este módulo veremos dos submódulos:
+En esta sección veremos dos submódulos:
 
 - **`astropy.stats`**: estimadores robustos, recorte sigma, bootstrap,
   intervalos de confianza para conteos de fotones
@@ -31,7 +31,7 @@ En este módulo veremos dos submódulos:
 
 ::: {.callout-note}
 ## Requisitos previos
-- Módulos 01 al 08
+- Secciones 01 a 08
 - Conocer qué son media, mediana y desviación estándar
 :::
 
@@ -94,7 +94,7 @@ print(f"Puntos rechazados    : {recortado.mask.sum()}")
 print(f"Media tras el recorte: {recortado.mean():.2f}")
 print(f"Desv. tras el recorte: {recortado.std():.2f}")
 
-# Atajo: las tres estadísticas en una línea (lo usamos en el módulo 08)
+# Atajo: las tres estadísticas en una línea (lo usamos en la sección 08)
 media, mediana, desv = sigma_clipped_stats(fondo, sigma=3)
 print(f"\nsigma_clipped_stats → media={media:.2f}, mediana={mediana:.2f}, desv={desv:.2f}")
 ```
@@ -349,7 +349,7 @@ Los residuos deben parecer **ruido sin estructura**. Si se ve un patrón
 | `Sersic1D`, `Sersic2D` | Perfiles de brillo de galaxias |
 | `BlackBody` | Emisión térmica de estrellas |
 
-En el módulo 16 aprenderemos a **crear modelos propios**.
+En la sección 16 aprenderemos a **crear modelos propios**.
 
 ---
 
@@ -412,7 +412,7 @@ plt.show()
 
 ---
 
-## ¿Qué aprendiste en este módulo? {.seccion-aprendiste}
+## ¿Qué aprendiste en esta sección? {.seccion-aprendiste}
 
 - ✅ Estimadores robustos: mediana, `mad_std`, biweight
 - ✅ Recorte sigma con `sigma_clip` y `sigma_clipped_stats`
@@ -422,4 +422,4 @@ plt.show()
 - ✅ Ajustar modelos 1D y 2D con `astropy.modeling` y obtener errores
 - ✅ Evaluar el ajuste con χ² reducido y residuos
 
-**Siguiente módulo →** [11 · Consultas a catálogos en línea](11-catalogos.qmd)
+**Siguiente sección →** [11 · Consultas a catálogos en línea](11-catalogos.qmd)

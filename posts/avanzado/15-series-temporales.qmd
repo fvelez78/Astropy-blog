@@ -38,7 +38,7 @@ diseñados para muestreo irregular.
 
 ::: {.callout-note}
 ## Requisitos previos
-- Módulos 03 (tiempo), 05 (tablas) y 10 (estadística)
+- Secciones 03 (tiempo), 05 (tablas) y 10 (estadística)
 :::
 
 ---
@@ -373,7 +373,7 @@ M_estrella = 1.02 * const.M_sun
 R_planeta = np.sqrt(prof_bls) * R_estrella
 print(f"Radio del planeta: {R_planeta.to(u.R_jup):.2f} = {R_planeta.to(u.R_earth):.1f}")
 
-# Semieje mayor con la tercera ley de Kepler (módulo 14)
+# Semieje mayor con la tercera ley de Kepler (sección 14)
 a = ((const.G * M_estrella * P_bls**2 / (4 * np.pi**2)) ** (1 / 3)).to(u.au)
 print(f"Distancia a la estrella: {a:.4f}")
 print("→ Un planeta del tamaño de Júpiter muy cerca de su estrella: un 'Júpiter caliente'")
@@ -423,7 +423,7 @@ print(f"\nTránsitos individuales detectados: {len(stats['transit_times'])}")
 
 ---
 
-## ¿Qué aprendiste en este módulo? {.seccion-aprendiste}
+## ¿Qué aprendiste en esta sección? {.seccion-aprendiste}
 
 - ✅ Crear y manejar `TimeSeries` con tiempos astronómicos
 - ✅ Encontrar períodos en datos irregulares con `LombScargle`
@@ -433,4 +433,4 @@ print(f"\nTránsitos individuales detectados: {len(stats['transit_times'])}")
 - ✅ Quitar tendencias lentas antes de buscar tránsitos
 - ✅ Detectar y caracterizar un exoplaneta con `BoxLeastSquares`
 
-**Siguiente módulo →** [16 · Extensiones y modelos propios](16-extensiones.qmd)
+**Siguiente sección →** [16 · Extensiones y modelos propios](16-extensiones.qmd)

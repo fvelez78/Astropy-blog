@@ -28,7 +28,7 @@ mostramos los valores tal cual, vemos un punto blanco sobre negro y nada más.
 
 ::: {.callout-note}
 ## Requisitos previos
-- Módulos 06 (FITS) y 07 (WCS)
+- Secciones 06 (FITS) y 07 (WCS)
 - `matplotlib` instalado
 :::
 
@@ -154,14 +154,14 @@ plt.show()
 ::: {.callout-tip}
 ## Atajo: `simple_norm`
 Para no importar tantas clases, `simple_norm(imagen, 'asinh', percent=99.9)`
-crea la normalización en una línea. Lo usamos en el módulo 08.
+crea la normalización en una línea. Lo usamos en la sección 08.
 :::
 
 ---
 
 ## Ejes con coordenadas celestes: WCSAxes
 
-Con un WCS (módulo 07) podemos pedirle a matplotlib que dibuje **RA y Dec**
+Con un WCS (sección 07) podemos pedirle a matplotlib que dibuje **RA y Dec**
 en vez de números de píxel. Basta con `projection=wcs`.
 
 ```{python}
@@ -408,7 +408,7 @@ por eso aparecen a latitudes altas.
 
 ## Ejercicio
 
-Con la imagen `imagen` y el `wcs` de este módulo:
+Con la imagen `imagen` y el `wcs` de esta sección:
 
 1. Muéstrala con `ZScaleInterval` y `LogStretch` usando WCSAxes
 2. Agrega una barra de color
@@ -454,7 +454,7 @@ plt.show()
 
 ---
 
-## ¿Qué aprendiste en este módulo? {.seccion-aprendiste}
+## ¿Qué aprendiste en esta sección? {.seccion-aprendiste}
 
 - ✅ Por qué la escala lineal no sirve para imágenes astronómicas
 - ✅ Combinar intervalos y estiramientos con `ImageNormalize` y `simple_norm`
@@ -464,4 +464,4 @@ plt.show()
 - ✅ Dibujar contornos y crear imágenes RGB con `make_lupton_rgb`
 - ✅ Hacer mapas del cielo completo con proyección Mollweide
 
-**Siguiente módulo →** [10 · Estadística y modelado](10-estadistica.qmd)
+**Siguiente sección →** [10 · Estadística y modelado](10-estadistica.qmd)

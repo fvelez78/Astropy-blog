@@ -1,6 +1,6 @@
 ---
 pagetitle: "AstroPy en Español"
-description: "Aprende astronomía computacional con Python y Astropy: 17 módulos prácticos, de cero a un pipeline de reducción de datos."
+description: "Aprende astronomía computacional con Python y Astropy: 17 secciones prácticas, de cero a un pipeline de reducción de datos."
 image: assets/images/tarjeta-redes.png
 page-layout: full
 toc: false
@@ -13,10 +13,10 @@ code-tools: false
 
 [Aprende Astropy desde cero]{.hero-title}
 
-[Del primer `import` a un pipeline de reducción de datos: 17 módulos prácticos, con código comentado línea a línea y ejemplos que puedes ejecutar en tu computador.]{.hero-lead}
+[Del primer `import` a un pipeline de reducción de datos: 17 secciones prácticas, con código comentado línea a línea y ejemplos que puedes ejecutar en tu computador.]{.hero-lead}
 
-[Empezar por el módulo 01](posts/basico/01-introduccion.qmd){.btn .btn-primary .btn-lg}
-[Ver los módulos](#niveles){.btn .btn-outline-secondary .btn-lg}
+[Empezar por la sección 01](posts/basico/01-introduccion.qmd){.btn .btn-primary .btn-lg}
+[Ver las secciones](#niveles){.btn .btn-outline-secondary .btn-lg}
 :::
 
 ::: {.seccion-home #niveles}
@@ -24,7 +24,7 @@ code-tools: false
 
 ::: {.niveles}
 ::: {.nivel-card .nivel-basico}
-[Nivel 1 · 5 módulos]{.nivel-tag}
+[Nivel 1 · 5 secciones]{.nivel-tag}
 
 **Básico**
 
@@ -34,7 +34,7 @@ Unidades, tiempo, coordenadas y tablas: el idioma de Astropy antes de tocar dato
 :::
 
 ::: {.nivel-card .nivel-inter}
-[Nivel 2 · 6 módulos]{.nivel-tag}
+[Nivel 2 · 6 secciones]{.nivel-tag}
 
 **Intermedio**
 
@@ -44,7 +44,7 @@ Imágenes FITS, WCS, fotometría, visualización, estadística y catálogos en l
 :::
 
 ::: {.nivel-card .nivel-avanzado}
-[Nivel 3 · 6 módulos]{.nivel-tag}
+[Nivel 3 · 6 secciones]{.nivel-tag}
 
 **Avanzado**
 
@@ -62,19 +62,19 @@ Espectroscopía, cosmología, órbitas, exoplanetas y un pipeline completo de re
 ::: {.destacado}
 ![](assets/images/destacado-estrella3d.png)
 
-**Una estrella en 3D** · modelo y residuos de su luz · [Módulo 08](posts/intermedio/08-fotometria.qmd)
+**Una estrella en 3D** · modelo y residuos de su luz · [Sección 08](posts/intermedio/08-fotometria.qmd)
 :::
 
 ::: {.destacado}
 ![](assets/images/destacado-marte.png)
 
-**El bucle de Marte** · movimiento retrógrado real · [Módulo 14](posts/avanzado/14-orbital.qmd)
+**El bucle de Marte** · movimiento retrógrado real · [Sección 14](posts/avanzado/14-orbital.qmd)
 :::
 
 ::: {.destacado}
 ![](assets/images/destacado-exoplaneta.png)
 
-**Un exoplaneta** · detectado por su tránsito · [Módulo 15](posts/avanzado/15-series-temporales.qmd)
+**Un exoplaneta** · detectado por su tránsito · [Sección 15](posts/avanzado/15-series-temporales.qmd)
 :::
 :::
 :::
