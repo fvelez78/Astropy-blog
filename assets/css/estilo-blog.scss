@@ -53,6 +53,11 @@ $texto-suave: #9fb0c1;         // texto secundario
 $borde: #1f3347;
 $tarjeta: #0f1f30;             // fondo de tarjetas y figuras
 
+// Ancho de las columnas de la página (valores de Quarto por defecto: 250 / 800 / 250)
+$grid-sidebar-width: 310px;    // menú lateral izquierdo: más ancho para títulos largos
+$grid-body-width: 820px;       // columna central de contenido
+$grid-margin-width: 280px;     // índice "En esta página" a la derecha
+
 // Colores de los tres niveles
 $color-basico: #1D9E75;
 $color-inter: #378ADD;
@@ -71,6 +76,13 @@ $color-avanzado: #7F77DD;
 }
 .sidebar-link.active { font-weight: 600; }
 
+// Barras de desplazamiento oscuras (antes salía una barra blanca junto al menú)
+* { scrollbar-color: #2a4258 transparent; scrollbar-width: thin; }
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #2a4258; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #3a5a78; }
+
 // ─── Títulos de las páginas ──────────────────────────────────────────────────
 h1.title { font-family: $headings-font-family; letter-spacing: -.01em; }
 
@@ -83,8 +95,10 @@ div.sourceCode {
   border-radius: 8px;
   background-color: $code-block-bg;
   margin-left: 0;            // Quarto lo desplaza a la izquierda: lo alineamos con la salida
-  margin-bottom: 0;
+  margin-bottom: 1.2rem;     // espacio antes del texto que sigue
 }
+// Dentro de una celda ejecutada, el código va pegado a su salida
+.cell div.sourceCode { margin-bottom: 0; }
 div.sourceCode::before {
   content: "Código";
   display: block;
