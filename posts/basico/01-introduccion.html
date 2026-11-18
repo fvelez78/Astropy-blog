@@ -142,7 +142,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
     <a class="nav-link active" href="../../posts/basico/01-introduccion.html" aria-current="page"> 
-<span class="menu-text">Módulos</span></a>
+<span class="menu-text">Secciones</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../../sobre.html"> 
@@ -354,7 +354,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </ul></li>
   <li><a href="#resumen-qué-acabas-de-ver" id="toc-resumen-qué-acabas-de-ver" class="nav-link" data-scroll-target="#resumen-qué-acabas-de-ver"><span class="header-section-number">5</span> Resumen: ¿qué acabas de ver?</a></li>
   <li><a href="#ejercicio" id="toc-ejercicio" class="nav-link" data-scroll-target="#ejercicio"><span class="header-section-number">6</span> Ejercicio</a></li>
-  <li><a href="#qué-aprendiste-en-este-módulo" id="toc-qué-aprendiste-en-este-módulo" class="nav-link" data-scroll-target="#qué-aprendiste-en-este-módulo"><span class="header-section-number">7</span> ¿Qué aprendiste en este módulo?</a></li>
+  <li><a href="#qué-aprendiste-en-esta-sección" id="toc-qué-aprendiste-en-esta-sección" class="nav-link" data-scroll-target="#qué-aprendiste-en-esta-sección"><span class="header-section-number">7</span> ¿Qué aprendiste en esta sección?</a></li>
   </ul>
 </nav>
     </div>
@@ -446,26 +446,26 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tr class="odd">
 <td><code>astropy</code></td>
 <td>Núcleo: unidades, tiempo, coordenadas, FITS</td>
-<td>Desde el módulo 01</td>
+<td>Desde la sección 01</td>
 </tr>
 <tr class="even">
 <td><code>photutils</code></td>
 <td>Fotometría (medir el brillo de estrellas)</td>
-<td>Módulo 08</td>
+<td>Sección 08</td>
 </tr>
 <tr class="odd">
 <td><code>astroquery</code></td>
 <td>Consultar catálogos en línea (Simbad, NED)</td>
-<td>Módulo 11</td>
+<td>Sección 11</td>
 </tr>
 <tr class="even">
 <td><code>specutils</code></td>
 <td>Analizar espectros de luz</td>
-<td>Módulo 12</td>
+<td>Sección 12</td>
 </tr>
 </tbody>
 </table>
-<p>En este primer módulo nos enfocamos solo en el núcleo: <code>astropy</code>.</p>
+<p>En esta primera sección nos enfocamos solo en el núcleo: <code>astropy</code>.</p>
 <hr>
 </section>
 <section id="instalación" class="level2" data-number="3">
@@ -483,7 +483,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="tu-primer-script-con-astropy" class="level2" data-number="4">
 <h2 data-number="4" class="anchored" data-anchor-id="tu-primer-script-con-astropy"><span class="header-section-number">4</span> Tu primer script con Astropy</h2>
-<p>Vamos a escribir nuestro primer código. No te preocupes si no entiendes todo todavía — los módulos siguientes explican cada cosa en detalle. El objetivo aquí es ver qué <em>se puede hacer</em> con Astropy.</p>
+<p>Vamos a escribir nuestro primer código. No te preocupes si no entiendes todo todavía — las secciones siguientes explican cada cosa en detalle. El objetivo aquí es ver qué <em>se puede hacer</em> con Astropy.</p>
 <section id="verificar-la-instalación-desde-python" class="level3" data-number="4.1">
 <h3 data-number="4.1" class="anchored" data-anchor-id="verificar-la-instalación-desde-python"><span class="header-section-number">4.1</span> Verificar la instalación desde Python</h3>
 <div id="bcd2582b" class="cell" data-execution_count="2">
@@ -507,7 +507,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> astropy.units <span class="im">as</span> u                 <span class="co"># el subpaquete completo, con un alias corto</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.time <span class="im">import</span> Time             <span class="co"># solo una clase de un subpaquete</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.coordinates <span class="im">import</span> SkyCoord</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Estos son los subpaquetes del núcleo, agrupados por el tipo de problema que resuelven, y el módulo del blog donde se usa cada uno:</p>
+<p>Estos son los subpaquetes del núcleo, agrupados por el tipo de problema que resuelven, y la sección del blog donde se usa cada uno:</p>
 <p><strong>Fundamentos físicos</strong></p>
 <table class="caption-top table">
 <colgroup>
@@ -725,7 +725,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tr>
 </tbody>
 </table>
-<p>Los marcados con “—” no tienen un módulo propio en el blog, pero es bueno saber que existen para cuando los necesites.</p>
+<p>Los marcados con “—” no tienen una sección propia en el blog, pero es bueno saber que existen para cuando los necesites.</p>
 <p>Puedes comprobar qué subpaquetes trae la versión que tienes instalada:</p>
 <div id="e92eee52" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -792,11 +792,10 @@ Dentro de astropy.io: ascii, fits, misc, registry, votable</code></pre>
 </section>
 <section id="primera-exploración-cuatro-subpaquetes-esenciales" class="level3" data-number="4.3">
 <h3 data-number="4.3" class="anchored" data-anchor-id="primera-exploración-cuatro-subpaquetes-esenciales"><span class="header-section-number">4.3</span> Primera exploración: cuatro subpaquetes esenciales</h3>
-<p>Ahora que conoces el mapa completo, probamos cuatro subpaquetes que usarás en casi cualquier proyecto astronómico: <code>units</code>, <code>coordinates</code>, <code>time</code> y <code>constants</code>. Para cada uno verás qué es, cuál es su pieza principal y un ejemplo corto. Cada uno tiene después su propio módulo en el blog, donde se explica a fondo.</p>
+<p>Ahora que conoces el mapa completo, probamos cuatro subpaquetes que usarás en casi cualquier proyecto astronómico: <code>units</code>, <code>coordinates</code>, <code>time</code> y <code>constants</code>. Para cada uno verás qué es, cuál es su pieza principal y un ejemplo corto. Cada uno tiene después su propia sección en el blog, donde se explica a fondo.</p>
 <section id="unidades-físicas-con-astropy.units" class="level4" data-number="4.3.1">
 <h4 data-number="4.3.1" class="anchored" data-anchor-id="unidades-físicas-con-astropy.units"><span class="header-section-number">4.3.1</span> Unidades físicas con <code>astropy.units</code></h4>
-<p><strong>Qué es:</strong> el subpaquete que asocia una unidad física a cada número. Su pieza central es la <strong>cantidad</strong> (<code>Quantity</code>): un valor junto con su unidad, que se crea multiplicando por la unidad (<code>5 * u.km</code>) y se convierte a otra con <code>.to()</code>. Las unidades viajan con el número en cada operación, así que los errores de conversión se detectan solos. → Módulo 02.</p>
-<p>Uno de los problemas más frecuentes en ciencia es confundir unidades. En 1999 la NASA perdió una sonda espacial de 327 millones de dólares por un error de conversión entre libras-fuerza y newtons. Astropy resuelve esto de raíz:</p>
+<p>Este subpaquete asocia una unidad física a cada número. Su pieza central es la <strong>cantidad</strong> (<code>Quantity</code>): un valor junto con su unidad, que se crea multiplicando por la unidad (<code>5 * u.km</code>) y se convierte a otra con <code>.to()</code>. Las unidades viajan con el número en cada operación, así que los errores de conversión se detectan solos. → Sección 02.</p>
 <div id="5e4141f2" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Ejemplo de unidades físicas con Astropy</span></span>
@@ -828,7 +827,7 @@ Dentro de astropy.io: ascii, fits, misc, registry, votable</code></pre>
 </section>
 <section id="coordenadas-celestes-con-astropy.coordinates" class="level4" data-number="4.3.2">
 <h4 data-number="4.3.2" class="anchored" data-anchor-id="coordenadas-celestes-con-astropy.coordinates"><span class="header-section-number">4.3.2</span> Coordenadas celestes con <code>astropy.coordinates</code></h4>
-<p><strong>Qué es:</strong> el subpaquete que representa posiciones en el cielo y las transforma entre sistemas de referencia: ecuatorial (ascensión recta y declinación), galáctico, eclíptico u horizontal (altura y acimut desde un lugar de la Tierra). Su clase principal es <code>SkyCoord</code>, que guarda una posición y sabe convertirla a cualquier otro sistema. → Módulos 04 y 14.</p>
+<p>Este subpaquete representa posiciones en el cielo y las transforma entre sistemas de referencia: ecuatorial (ascensión recta y declinación), galáctico, eclíptico u horizontal (altura y acimut desde un lugar de la Tierra). Su clase principal es <code>SkyCoord</code>, que guarda una posición y sabe convertirla a cualquier otro sistema. → Secciones 04 y 14.</p>
 <div id="e995b546" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Ejemplo de coordenadas celestes</span></span>
@@ -864,7 +863,7 @@ Dentro de astropy.io: ascii, fits, misc, registry, votable</code></pre>
 </section>
 <section id="tiempo-astronómico-con-astropy.time" class="level4" data-number="4.3.3">
 <h4 data-number="4.3.3" class="anchored" data-anchor-id="tiempo-astronómico-con-astropy.time"><span class="header-section-number">4.3.3</span> Tiempo astronómico con <code>astropy.time</code></h4>
-<p><strong>Qué es:</strong> el subpaquete que maneja instantes de tiempo con precisión de nanosegundos. Su clase principal es <code>Time</code>, que entiende muchos <strong>formatos</strong> (fecha ISO, fecha juliana, MJD…) y <strong>escalas de tiempo</strong> (UTC, TAI, TT, TDB…), y permite restar fechas o sumarles duraciones. Es más preciso que un reloj normal porque tiene en cuenta los segundos intercalares y la relatividad. → Módulo 03.</p>
+<p>Este subpaquete maneja instantes de tiempo con precisión de nanosegundos. Su clase principal es <code>Time</code>, que entiende muchos <strong>formatos</strong> (fecha ISO, fecha juliana, MJD…) y <strong>escalas de tiempo</strong> (UTC, TAI, TT, TDB…), y permite restar fechas o sumarles duraciones. Es más preciso que un reloj normal porque tiene en cuenta los segundos intercalares y la relatividad. → Sección 03.</p>
 <div id="d5615b0f" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Ejemplo de tiempo astronómico</span></span>
@@ -900,7 +899,7 @@ Dentro de astropy.io: ascii, fits, misc, registry, votable</code></pre>
 </section>
 <section id="constantes-físicas-con-astropy.constants" class="level4" data-number="4.3.4">
 <h4 data-number="4.3.4" class="anchored" data-anchor-id="constantes-físicas-con-astropy.constants"><span class="header-section-number">4.3.4</span> Constantes físicas con <code>astropy.constants</code></h4>
-<p><strong>Qué es:</strong> el subpaquete que reúne las constantes físicas y astronómicas con sus valores oficiales (CODATA para la física, IAU para la astronomía): la velocidad de la luz, la constante de gravitación, la masa del Sol… Cada constante es una cantidad con unidad, incertidumbre y referencia bibliográfica, lista para usar directamente en los cálculos. → Módulo 02.</p>
+<p>Este subpaquete reúne las constantes físicas y astronómicas con sus valores oficiales (CODATA para la física, IAU para la astronomía): la velocidad de la luz, la constante de gravitación, la masa del Sol… Cada constante es una cantidad con unidad, incertidumbre y referencia bibliográfica, lista para usar directamente en los cálculos. → Sección 02.</p>
 <div id="9b90a11b" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Constantes físicas y astronómicas incluidas en Astropy</span></span>
@@ -979,12 +978,12 @@ Tiempo que tarda la luz Sol → Tierra: 8.32 min</code></pre>
 </tr>
 </tbody>
 </table>
-<p>Cada una de estas herramientas tiene su propio módulo en este blog. Por ahora, lo importante es que viste cómo Astropy convierte operaciones complejas (convertir unidades, manejar coordenadas, calcular tiempos) en pocas líneas de código legible.</p>
+<p>Cada una de estas herramientas tiene su propia sección en este blog. Por ahora, lo importante es que viste cómo Astropy convierte operaciones complejas (convertir unidades, manejar coordenadas, calcular tiempos) en pocas líneas de código legible.</p>
 <hr>
 </section>
 <section id="ejercicio" class="level2" data-number="6">
 <h2 data-number="6" class="anchored" data-anchor-id="ejercicio"><span class="header-section-number">6</span> Ejercicio</h2>
-<p>Usando lo que viste en este módulo, calcula cuánto tiempo tarda la luz en llegar desde Neptuno hasta la Tierra. La distancia media de Neptuno al Sol es de <strong>30.07 UA</strong>.</p>
+<p>Usando lo que viste en esta sección, calcula cuánto tiempo tarda la luz en llegar desde Neptuno hasta la Tierra. La distancia media de Neptuno al Sol es de <strong>30.07 UA</strong>.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -1033,8 +1032,8 @@ Tiempo de viaje de la luz  : 241.8 min
 </div>
 <hr>
 </section>
-<section id="qué-aprendiste-en-este-módulo" class="level2 seccion-aprendiste" data-number="7">
-<h2 class="seccion-aprendiste anchored" data-number="7" data-anchor-id="qué-aprendiste-en-este-módulo"><span class="header-section-number">7</span> ¿Qué aprendiste en este módulo?</h2>
+<section id="qué-aprendiste-en-esta-sección" class="level2 seccion-aprendiste" data-number="7">
+<h2 class="seccion-aprendiste anchored" data-number="7" data-anchor-id="qué-aprendiste-en-esta-sección"><span class="header-section-number">7</span> ¿Qué aprendiste en esta sección?</h2>
 <ul>
 <li>✅ Qué es Astropy y para qué sirve en la práctica</li>
 <li>✅ Cómo instalarla con <code>pip</code> o <code>conda</code></li>
@@ -1044,7 +1043,7 @@ Tiempo de viaje de la luz  : 241.8 min
 <li>✅ Cómo manejar fechas astronómicas con <code>Time</code></li>
 <li>✅ Cómo acceder a constantes físicas con <code>astropy.constants</code></li>
 </ul>
-<p><strong>Siguiente módulo →</strong> <a href="../../posts/basico/02-unidades.html">02 · Unidades y constantes físicas</a></p>
+<p><strong>Siguiente sección →</strong> <a href="../../posts/basico/02-unidades.html">02 · Unidades y constantes físicas</a></p>
 
 
 <!-- -->
@@ -1565,12 +1564,12 @@ Tiempo de viaje de la luz  : 241.8 min
 <span id="cb18-48"><a href="#cb18-48" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-49"><a href="#cb18-49" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Librería <span class="pp">|</span> ¿Para qué sirve? <span class="pp">|</span> ¿Cuándo la usaremos? <span class="pp">|</span></span>
 <span id="cb18-50"><a href="#cb18-50" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|---|</span></span>
-<span id="cb18-51"><a href="#cb18-51" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`astropy`</span> <span class="pp">|</span> Núcleo: unidades, tiempo, coordenadas, FITS <span class="pp">|</span> Desde el módulo 01 <span class="pp">|</span></span>
-<span id="cb18-52"><a href="#cb18-52" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`photutils`</span> <span class="pp">|</span> Fotometría (medir el brillo de estrellas) <span class="pp">|</span> Módulo 08 <span class="pp">|</span></span>
-<span id="cb18-53"><a href="#cb18-53" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`astroquery`</span> <span class="pp">|</span> Consultar catálogos en línea (Simbad, NED) <span class="pp">|</span> Módulo 11 <span class="pp">|</span></span>
-<span id="cb18-54"><a href="#cb18-54" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`specutils`</span> <span class="pp">|</span> Analizar espectros de luz <span class="pp">|</span> Módulo 12 <span class="pp">|</span></span>
+<span id="cb18-51"><a href="#cb18-51" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`astropy`</span> <span class="pp">|</span> Núcleo: unidades, tiempo, coordenadas, FITS <span class="pp">|</span> Desde la sección 01 <span class="pp">|</span></span>
+<span id="cb18-52"><a href="#cb18-52" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`photutils`</span> <span class="pp">|</span> Fotometría (medir el brillo de estrellas) <span class="pp">|</span> Sección 08 <span class="pp">|</span></span>
+<span id="cb18-53"><a href="#cb18-53" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`astroquery`</span> <span class="pp">|</span> Consultar catálogos en línea (Simbad, NED) <span class="pp">|</span> Sección 11 <span class="pp">|</span></span>
+<span id="cb18-54"><a href="#cb18-54" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`specutils`</span> <span class="pp">|</span> Analizar espectros de luz <span class="pp">|</span> Sección 12 <span class="pp">|</span></span>
 <span id="cb18-55"><a href="#cb18-55" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-56"><a href="#cb18-56" aria-hidden="true" tabindex="-1"></a>En este primer módulo nos enfocamos solo en el núcleo: <span class="in">`astropy`</span>.</span>
+<span id="cb18-56"><a href="#cb18-56" aria-hidden="true" tabindex="-1"></a>En esta primera sección nos enfocamos solo en el núcleo: <span class="in">`astropy`</span>.</span>
 <span id="cb18-57"><a href="#cb18-57" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-58"><a href="#cb18-58" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb18-59"><a href="#cb18-59" aria-hidden="true" tabindex="-1"></a></span>
@@ -1600,7 +1599,7 @@ Tiempo de viaje de la luz  : 241.8 min
 <span id="cb18-83"><a href="#cb18-83" aria-hidden="true" tabindex="-1"></a><span class="fu">## Tu primer script con Astropy</span></span>
 <span id="cb18-84"><a href="#cb18-84" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-85"><a href="#cb18-85" aria-hidden="true" tabindex="-1"></a>Vamos a escribir nuestro primer código. No te preocupes si no entiendes</span>
-<span id="cb18-86"><a href="#cb18-86" aria-hidden="true" tabindex="-1"></a>todo todavía — los módulos siguientes explican cada cosa en detalle.</span>
+<span id="cb18-86"><a href="#cb18-86" aria-hidden="true" tabindex="-1"></a>todo todavía — las secciones siguientes explican cada cosa en detalle.</span>
 <span id="cb18-87"><a href="#cb18-87" aria-hidden="true" tabindex="-1"></a>El objetivo aquí es ver qué *se puede hacer* con Astropy.</span>
 <span id="cb18-88"><a href="#cb18-88" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-89"><a href="#cb18-89" aria-hidden="true" tabindex="-1"></a><span class="fu">### Verificar la instalación desde Python</span></span>
@@ -1632,7 +1631,7 @@ Tiempo de viaje de la luz  : 241.8 min
 <span id="cb18-117"><a href="#cb18-117" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb18-118"><a href="#cb18-118" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-119"><a href="#cb18-119" aria-hidden="true" tabindex="-1"></a>Estos son los subpaquetes del núcleo, agrupados por el tipo de problema</span>
-<span id="cb18-120"><a href="#cb18-120" aria-hidden="true" tabindex="-1"></a>que resuelven, y el módulo del blog donde se usa cada uno:</span>
+<span id="cb18-120"><a href="#cb18-120" aria-hidden="true" tabindex="-1"></a>que resuelven, y la sección del blog donde se usa cada uno:</span>
 <span id="cb18-121"><a href="#cb18-121" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-122"><a href="#cb18-122" aria-hidden="true" tabindex="-1"></a>**Fundamentos físicos**</span>
 <span id="cb18-123"><a href="#cb18-123" aria-hidden="true" tabindex="-1"></a></span>
@@ -1687,7 +1686,7 @@ Tiempo de viaje de la luz  : 241.8 min
 <span id="cb18-172"><a href="#cb18-172" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`astropy.config`</span> <span class="pp">|</span> Configuración de Astropy (carpeta de caché, opciones) <span class="pp">|</span> — <span class="pp">|</span></span>
 <span id="cb18-173"><a href="#cb18-173" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`astropy.logger`</span> <span class="pp">|</span> Mensajes y advertencias que muestra Astropy (es un módulo suelto, no un subpaquete) <span class="pp">|</span> — <span class="pp">|</span></span>
 <span id="cb18-174"><a href="#cb18-174" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-175"><a href="#cb18-175" aria-hidden="true" tabindex="-1"></a>Los marcados con "—" no tienen un módulo propio en el blog, pero es bueno</span>
+<span id="cb18-175"><a href="#cb18-175" aria-hidden="true" tabindex="-1"></a>Los marcados con "—" no tienen una sección propia en el blog, pero es bueno</span>
 <span id="cb18-176"><a href="#cb18-176" aria-hidden="true" tabindex="-1"></a>saber que existen para cuando los necesites.</span>
 <span id="cb18-177"><a href="#cb18-177" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-178"><a href="#cb18-178" aria-hidden="true" tabindex="-1"></a>Puedes comprobar qué subpaquetes trae la versión que tienes instalada:</span>
@@ -1731,223 +1730,219 @@ Tiempo de viaje de la luz  : 241.8 min
 <span id="cb18-218"><a href="#cb18-218" aria-hidden="true" tabindex="-1"></a>Ahora que conoces el mapa completo, probamos cuatro subpaquetes que usarás en</span>
 <span id="cb18-219"><a href="#cb18-219" aria-hidden="true" tabindex="-1"></a>casi cualquier proyecto astronómico: <span class="in">`units`</span>, <span class="in">`coordinates`</span>, <span class="in">`time`</span> y</span>
 <span id="cb18-220"><a href="#cb18-220" aria-hidden="true" tabindex="-1"></a><span class="in">`constants`</span>. Para cada uno verás qué es, cuál es su pieza principal y un</span>
-<span id="cb18-221"><a href="#cb18-221" aria-hidden="true" tabindex="-1"></a>ejemplo corto. Cada uno tiene después su propio módulo en el blog, donde se</span>
+<span id="cb18-221"><a href="#cb18-221" aria-hidden="true" tabindex="-1"></a>ejemplo corto. Cada uno tiene después su propia sección en el blog, donde se</span>
 <span id="cb18-222"><a href="#cb18-222" aria-hidden="true" tabindex="-1"></a>explica a fondo.</span>
 <span id="cb18-223"><a href="#cb18-223" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-224"><a href="#cb18-224" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Unidades físicas con `astropy.units`</span></span>
 <span id="cb18-225"><a href="#cb18-225" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-226"><a href="#cb18-226" aria-hidden="true" tabindex="-1"></a>**Qué es:** el subpaquete que asocia una unidad física a cada número. Su pieza</span>
+<span id="cb18-226"><a href="#cb18-226" aria-hidden="true" tabindex="-1"></a>Este subpaquete asocia una unidad física a cada número. Su pieza</span>
 <span id="cb18-227"><a href="#cb18-227" aria-hidden="true" tabindex="-1"></a>central es la **cantidad** (<span class="in">`Quantity`</span>): un valor junto con su unidad, que se</span>
 <span id="cb18-228"><a href="#cb18-228" aria-hidden="true" tabindex="-1"></a>crea multiplicando por la unidad (<span class="in">`5 * u.km`</span>) y se convierte a otra con <span class="in">`.to()`</span>.</span>
 <span id="cb18-229"><a href="#cb18-229" aria-hidden="true" tabindex="-1"></a>Las unidades viajan con el número en cada operación, así que los errores de</span>
-<span id="cb18-230"><a href="#cb18-230" aria-hidden="true" tabindex="-1"></a>conversión se detectan solos. → Módulo 02.</span>
+<span id="cb18-230"><a href="#cb18-230" aria-hidden="true" tabindex="-1"></a>conversión se detectan solos. → Sección 02.</span>
 <span id="cb18-231"><a href="#cb18-231" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-232"><a href="#cb18-232" aria-hidden="true" tabindex="-1"></a>Uno de los problemas más frecuentes en ciencia es confundir unidades.</span>
-<span id="cb18-233"><a href="#cb18-233" aria-hidden="true" tabindex="-1"></a>En 1999 la NASA perdió una sonda espacial de 327 millones de dólares por</span>
-<span id="cb18-234"><a href="#cb18-234" aria-hidden="true" tabindex="-1"></a>un error de conversión entre libras-fuerza y newtons. Astropy resuelve</span>
-<span id="cb18-235"><a href="#cb18-235" aria-hidden="true" tabindex="-1"></a>esto de raíz:</span>
-<span id="cb18-236"><a href="#cb18-236" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-239"><a href="#cb18-239" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb18-240"><a href="#cb18-240" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
-<span id="cb18-241"><a href="#cb18-241" aria-hidden="true" tabindex="-1"></a><span class="co"># Ejemplo de unidades físicas con Astropy</span></span>
-<span id="cb18-242"><a href="#cb18-242" aria-hidden="true" tabindex="-1"></a><span class="co"># Las unidades viajan junto al número — imposible confundirlas</span></span>
-<span id="cb18-243"><a href="#cb18-243" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
-<span id="cb18-244"><a href="#cb18-244" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-245"><a href="#cb18-245" aria-hidden="true" tabindex="-1"></a><span class="co"># Importamos el submódulo de unidades</span></span>
-<span id="cb18-246"><a href="#cb18-246" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> astropy.units <span class="im">as</span> u</span>
-<span id="cb18-247"><a href="#cb18-247" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-248"><a href="#cb18-248" aria-hidden="true" tabindex="-1"></a><span class="co"># Definimos la distancia de la Tierra al Sol</span></span>
-<span id="cb18-249"><a href="#cb18-249" aria-hidden="true" tabindex="-1"></a><span class="co"># El número 1 seguido de * u.au significa "1 unidad astronómica"</span></span>
-<span id="cb18-250"><a href="#cb18-250" aria-hidden="true" tabindex="-1"></a><span class="co"># 1 UA = distancia media Tierra-Sol ≈ 150 millones de km</span></span>
-<span id="cb18-251"><a href="#cb18-251" aria-hidden="true" tabindex="-1"></a>distancia_tierra_sol <span class="op">=</span> <span class="dv">1</span> <span class="op">*</span> u.au</span>
+<span id="cb18-232"><a href="#cb18-232" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-235"><a href="#cb18-235" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb18-236"><a href="#cb18-236" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb18-237"><a href="#cb18-237" aria-hidden="true" tabindex="-1"></a><span class="co"># Ejemplo de unidades físicas con Astropy</span></span>
+<span id="cb18-238"><a href="#cb18-238" aria-hidden="true" tabindex="-1"></a><span class="co"># Las unidades viajan junto al número — imposible confundirlas</span></span>
+<span id="cb18-239"><a href="#cb18-239" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb18-240"><a href="#cb18-240" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-241"><a href="#cb18-241" aria-hidden="true" tabindex="-1"></a><span class="co"># Importamos el submódulo de unidades</span></span>
+<span id="cb18-242"><a href="#cb18-242" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> astropy.units <span class="im">as</span> u</span>
+<span id="cb18-243"><a href="#cb18-243" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-244"><a href="#cb18-244" aria-hidden="true" tabindex="-1"></a><span class="co"># Definimos la distancia de la Tierra al Sol</span></span>
+<span id="cb18-245"><a href="#cb18-245" aria-hidden="true" tabindex="-1"></a><span class="co"># El número 1 seguido de * u.au significa "1 unidad astronómica"</span></span>
+<span id="cb18-246"><a href="#cb18-246" aria-hidden="true" tabindex="-1"></a><span class="co"># 1 UA = distancia media Tierra-Sol ≈ 150 millones de km</span></span>
+<span id="cb18-247"><a href="#cb18-247" aria-hidden="true" tabindex="-1"></a>distancia_tierra_sol <span class="op">=</span> <span class="dv">1</span> <span class="op">*</span> u.au</span>
+<span id="cb18-248"><a href="#cb18-248" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-249"><a href="#cb18-249" aria-hidden="true" tabindex="-1"></a><span class="co"># Convertimos automáticamente a kilómetros con el método .to()</span></span>
+<span id="cb18-250"><a href="#cb18-250" aria-hidden="true" tabindex="-1"></a><span class="co"># Astropy conoce la equivalencia entre UA y km</span></span>
+<span id="cb18-251"><a href="#cb18-251" aria-hidden="true" tabindex="-1"></a>distancia_en_km <span class="op">=</span> distancia_tierra_sol.to(u.km)</span>
 <span id="cb18-252"><a href="#cb18-252" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-253"><a href="#cb18-253" aria-hidden="true" tabindex="-1"></a><span class="co"># Convertimos automáticamente a kilómetros con el método .to()</span></span>
-<span id="cb18-254"><a href="#cb18-254" aria-hidden="true" tabindex="-1"></a><span class="co"># Astropy conoce la equivalencia entre UA y km</span></span>
-<span id="cb18-255"><a href="#cb18-255" aria-hidden="true" tabindex="-1"></a>distancia_en_km <span class="op">=</span> distancia_tierra_sol.to(u.km)</span>
-<span id="cb18-256"><a href="#cb18-256" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-257"><a href="#cb18-257" aria-hidden="true" tabindex="-1"></a><span class="co"># Mostramos ambos valores — Astropy siempre muestra el número y la unidad</span></span>
-<span id="cb18-258"><a href="#cb18-258" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Distancia Tierra-Sol:"</span>)</span>
-<span id="cb18-259"><a href="#cb18-259" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  En unidades astronómicas : </span><span class="sc">{</span>distancia_tierra_sol<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb18-260"><a href="#cb18-260" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  En kilómetros            : </span><span class="sc">{</span>distancia_en_km<span class="sc">:.2e}</span><span class="ss">"</span>)</span>
-<span id="cb18-261"><a href="#cb18-261" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb18-262"><a href="#cb18-262" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-263"><a href="#cb18-263" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Coordenadas celestes con `astropy.coordinates`</span></span>
-<span id="cb18-264"><a href="#cb18-264" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-265"><a href="#cb18-265" aria-hidden="true" tabindex="-1"></a>**Qué es:** el subpaquete que representa posiciones en el cielo y las</span>
-<span id="cb18-266"><a href="#cb18-266" aria-hidden="true" tabindex="-1"></a>transforma entre sistemas de referencia: ecuatorial (ascensión recta y</span>
-<span id="cb18-267"><a href="#cb18-267" aria-hidden="true" tabindex="-1"></a>declinación), galáctico, eclíptico u horizontal (altura y acimut desde un</span>
-<span id="cb18-268"><a href="#cb18-268" aria-hidden="true" tabindex="-1"></a>lugar de la Tierra). Su clase principal es <span class="in">`SkyCoord`</span>, que guarda una</span>
-<span id="cb18-269"><a href="#cb18-269" aria-hidden="true" tabindex="-1"></a>posición y sabe convertirla a cualquier otro sistema. → Módulos 04 y 14.</span>
-<span id="cb18-270"><a href="#cb18-270" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-273"><a href="#cb18-273" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb18-274"><a href="#cb18-274" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
-<span id="cb18-275"><a href="#cb18-275" aria-hidden="true" tabindex="-1"></a><span class="co"># Ejemplo de coordenadas celestes</span></span>
-<span id="cb18-276"><a href="#cb18-276" aria-hidden="true" tabindex="-1"></a><span class="co"># SkyCoord es la clase que representa una posición en el cielo</span></span>
-<span id="cb18-277"><a href="#cb18-277" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
-<span id="cb18-278"><a href="#cb18-278" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-279"><a href="#cb18-279" aria-hidden="true" tabindex="-1"></a><span class="co"># Importamos SkyCoord para manejar posiciones en el cielo</span></span>
-<span id="cb18-280"><a href="#cb18-280" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.coordinates <span class="im">import</span> SkyCoord</span>
-<span id="cb18-281"><a href="#cb18-281" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-282"><a href="#cb18-282" aria-hidden="true" tabindex="-1"></a><span class="co"># Importamos units para acompañar los ángulos con su unidad</span></span>
-<span id="cb18-283"><a href="#cb18-283" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> astropy.units <span class="im">as</span> u</span>
-<span id="cb18-284"><a href="#cb18-284" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-285"><a href="#cb18-285" aria-hidden="true" tabindex="-1"></a><span class="co"># Creamos la posición de la famosa nebulosa de Orión (M42)</span></span>
-<span id="cb18-286"><a href="#cb18-286" aria-hidden="true" tabindex="-1"></a><span class="co"># ra  = ascensión recta  (equivale a la "longitud" en el cielo)</span></span>
-<span id="cb18-287"><a href="#cb18-287" aria-hidden="true" tabindex="-1"></a><span class="co"># dec = declinación      (equivale a la "latitud" en el cielo)</span></span>
-<span id="cb18-288"><a href="#cb18-288" aria-hidden="true" tabindex="-1"></a><span class="co"># frame='icrs' es el sistema de referencia astronómico estándar</span></span>
-<span id="cb18-289"><a href="#cb18-289" aria-hidden="true" tabindex="-1"></a>nebulosa_orion <span class="op">=</span> SkyCoord(</span>
-<span id="cb18-290"><a href="#cb18-290" aria-hidden="true" tabindex="-1"></a>    ra<span class="op">=</span><span class="fl">83.8221</span> <span class="op">*</span> u.degree,   <span class="co"># posición horizontal en el cielo</span></span>
-<span id="cb18-291"><a href="#cb18-291" aria-hidden="true" tabindex="-1"></a>    dec<span class="op">=-</span><span class="fl">5.3911</span> <span class="op">*</span> u.degree,  <span class="co"># posición vertical en el cielo</span></span>
-<span id="cb18-292"><a href="#cb18-292" aria-hidden="true" tabindex="-1"></a>    frame<span class="op">=</span><span class="st">'icrs'</span>             <span class="co"># sistema de coordenadas estándar</span></span>
-<span id="cb18-293"><a href="#cb18-293" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb18-294"><a href="#cb18-294" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-295"><a href="#cb18-295" aria-hidden="true" tabindex="-1"></a><span class="co"># Mostramos la posición en formato clásico de astronomía (horas:minutos:segundos)</span></span>
-<span id="cb18-296"><a href="#cb18-296" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Nebulosa de Orión (M42):"</span>)</span>
-<span id="cb18-297"><a href="#cb18-297" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Ascensión recta  : </span><span class="sc">{</span>nebulosa_orion<span class="sc">.</span>ra<span class="sc">.</span>to_string(unit<span class="op">=</span>u.hour)<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb18-298"><a href="#cb18-298" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Declinación      : </span><span class="sc">{</span>nebulosa_orion<span class="sc">.</span>dec<span class="sc">.</span>to_string()<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb18-299"><a href="#cb18-299" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb18-300"><a href="#cb18-300" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-301"><a href="#cb18-301" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Tiempo astronómico con `astropy.time`</span></span>
-<span id="cb18-302"><a href="#cb18-302" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-303"><a href="#cb18-303" aria-hidden="true" tabindex="-1"></a>**Qué es:** el subpaquete que maneja instantes de tiempo con precisión de</span>
-<span id="cb18-304"><a href="#cb18-304" aria-hidden="true" tabindex="-1"></a>nanosegundos. Su clase principal es <span class="in">`Time`</span>, que entiende muchos **formatos**</span>
-<span id="cb18-305"><a href="#cb18-305" aria-hidden="true" tabindex="-1"></a>(fecha ISO, fecha juliana, MJD...) y **escalas de tiempo** (UTC, TAI, TT,</span>
-<span id="cb18-306"><a href="#cb18-306" aria-hidden="true" tabindex="-1"></a>TDB...), y permite restar fechas o sumarles duraciones. Es más preciso que un</span>
-<span id="cb18-307"><a href="#cb18-307" aria-hidden="true" tabindex="-1"></a>reloj normal porque tiene en cuenta los segundos intercalares y la relatividad.</span>
-<span id="cb18-308"><a href="#cb18-308" aria-hidden="true" tabindex="-1"></a>→ Módulo 03.</span>
-<span id="cb18-309"><a href="#cb18-309" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-312"><a href="#cb18-312" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb18-313"><a href="#cb18-313" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
-<span id="cb18-314"><a href="#cb18-314" aria-hidden="true" tabindex="-1"></a><span class="co"># Ejemplo de tiempo astronómico</span></span>
-<span id="cb18-315"><a href="#cb18-315" aria-hidden="true" tabindex="-1"></a><span class="co"># En astronomía necesitamos precisión de microsegundos y formatos especiales</span></span>
-<span id="cb18-316"><a href="#cb18-316" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
-<span id="cb18-317"><a href="#cb18-317" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-318"><a href="#cb18-318" aria-hidden="true" tabindex="-1"></a><span class="co"># Importamos la clase Time para manejar tiempos astronómicos</span></span>
-<span id="cb18-319"><a href="#cb18-319" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.time <span class="im">import</span> Time</span>
-<span id="cb18-320"><a href="#cb18-320" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-321"><a href="#cb18-321" aria-hidden="true" tabindex="-1"></a><span class="co"># Creamos un objeto de tiempo con la fecha del lanzamiento del telescopio</span></span>
-<span id="cb18-322"><a href="#cb18-322" aria-hidden="true" tabindex="-1"></a><span class="co"># espacial James Webb (25 de diciembre de 2021)</span></span>
-<span id="cb18-323"><a href="#cb18-323" aria-hidden="true" tabindex="-1"></a><span class="co"># format='iso' indica que el texto está en formato AAAA-MM-DD HH:MM:SS</span></span>
-<span id="cb18-324"><a href="#cb18-324" aria-hidden="true" tabindex="-1"></a>lanzamiento_webb <span class="op">=</span> Time(<span class="st">'2021-12-25 12:20:00'</span>, <span class="bu">format</span><span class="op">=</span><span class="st">'iso'</span>, scale<span class="op">=</span><span class="st">'utc'</span>)</span>
-<span id="cb18-325"><a href="#cb18-325" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-326"><a href="#cb18-326" aria-hidden="true" tabindex="-1"></a><span class="co"># Convertimos a Fecha Juliana — el sistema de fechas que usan los astrónomos</span></span>
-<span id="cb18-327"><a href="#cb18-327" aria-hidden="true" tabindex="-1"></a><span class="co"># cuenta los días desde el 1 de enero del año 4713 a.C.</span></span>
-<span id="cb18-328"><a href="#cb18-328" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Lanzamiento del telescopio James Webb:"</span>)</span>
-<span id="cb18-329"><a href="#cb18-329" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Fecha normal    : </span><span class="sc">{</span>lanzamiento_webb<span class="sc">.</span>iso<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb18-330"><a href="#cb18-330" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Fecha Juliana   : </span><span class="sc">{</span>lanzamiento_webb<span class="sc">.</span>jd<span class="sc">:.4f}</span><span class="ss"> días"</span>)</span>
+<span id="cb18-253"><a href="#cb18-253" aria-hidden="true" tabindex="-1"></a><span class="co"># Mostramos ambos valores — Astropy siempre muestra el número y la unidad</span></span>
+<span id="cb18-254"><a href="#cb18-254" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Distancia Tierra-Sol:"</span>)</span>
+<span id="cb18-255"><a href="#cb18-255" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  En unidades astronómicas : </span><span class="sc">{</span>distancia_tierra_sol<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb18-256"><a href="#cb18-256" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  En kilómetros            : </span><span class="sc">{</span>distancia_en_km<span class="sc">:.2e}</span><span class="ss">"</span>)</span>
+<span id="cb18-257"><a href="#cb18-257" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb18-258"><a href="#cb18-258" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-259"><a href="#cb18-259" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Coordenadas celestes con `astropy.coordinates`</span></span>
+<span id="cb18-260"><a href="#cb18-260" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-261"><a href="#cb18-261" aria-hidden="true" tabindex="-1"></a>Este subpaquete representa posiciones en el cielo y las</span>
+<span id="cb18-262"><a href="#cb18-262" aria-hidden="true" tabindex="-1"></a>transforma entre sistemas de referencia: ecuatorial (ascensión recta y</span>
+<span id="cb18-263"><a href="#cb18-263" aria-hidden="true" tabindex="-1"></a>declinación), galáctico, eclíptico u horizontal (altura y acimut desde un</span>
+<span id="cb18-264"><a href="#cb18-264" aria-hidden="true" tabindex="-1"></a>lugar de la Tierra). Su clase principal es <span class="in">`SkyCoord`</span>, que guarda una</span>
+<span id="cb18-265"><a href="#cb18-265" aria-hidden="true" tabindex="-1"></a>posición y sabe convertirla a cualquier otro sistema. → Secciones 04 y 14.</span>
+<span id="cb18-266"><a href="#cb18-266" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-269"><a href="#cb18-269" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb18-270"><a href="#cb18-270" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb18-271"><a href="#cb18-271" aria-hidden="true" tabindex="-1"></a><span class="co"># Ejemplo de coordenadas celestes</span></span>
+<span id="cb18-272"><a href="#cb18-272" aria-hidden="true" tabindex="-1"></a><span class="co"># SkyCoord es la clase que representa una posición en el cielo</span></span>
+<span id="cb18-273"><a href="#cb18-273" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb18-274"><a href="#cb18-274" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-275"><a href="#cb18-275" aria-hidden="true" tabindex="-1"></a><span class="co"># Importamos SkyCoord para manejar posiciones en el cielo</span></span>
+<span id="cb18-276"><a href="#cb18-276" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.coordinates <span class="im">import</span> SkyCoord</span>
+<span id="cb18-277"><a href="#cb18-277" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-278"><a href="#cb18-278" aria-hidden="true" tabindex="-1"></a><span class="co"># Importamos units para acompañar los ángulos con su unidad</span></span>
+<span id="cb18-279"><a href="#cb18-279" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> astropy.units <span class="im">as</span> u</span>
+<span id="cb18-280"><a href="#cb18-280" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-281"><a href="#cb18-281" aria-hidden="true" tabindex="-1"></a><span class="co"># Creamos la posición de la famosa nebulosa de Orión (M42)</span></span>
+<span id="cb18-282"><a href="#cb18-282" aria-hidden="true" tabindex="-1"></a><span class="co"># ra  = ascensión recta  (equivale a la "longitud" en el cielo)</span></span>
+<span id="cb18-283"><a href="#cb18-283" aria-hidden="true" tabindex="-1"></a><span class="co"># dec = declinación      (equivale a la "latitud" en el cielo)</span></span>
+<span id="cb18-284"><a href="#cb18-284" aria-hidden="true" tabindex="-1"></a><span class="co"># frame='icrs' es el sistema de referencia astronómico estándar</span></span>
+<span id="cb18-285"><a href="#cb18-285" aria-hidden="true" tabindex="-1"></a>nebulosa_orion <span class="op">=</span> SkyCoord(</span>
+<span id="cb18-286"><a href="#cb18-286" aria-hidden="true" tabindex="-1"></a>    ra<span class="op">=</span><span class="fl">83.8221</span> <span class="op">*</span> u.degree,   <span class="co"># posición horizontal en el cielo</span></span>
+<span id="cb18-287"><a href="#cb18-287" aria-hidden="true" tabindex="-1"></a>    dec<span class="op">=-</span><span class="fl">5.3911</span> <span class="op">*</span> u.degree,  <span class="co"># posición vertical en el cielo</span></span>
+<span id="cb18-288"><a href="#cb18-288" aria-hidden="true" tabindex="-1"></a>    frame<span class="op">=</span><span class="st">'icrs'</span>             <span class="co"># sistema de coordenadas estándar</span></span>
+<span id="cb18-289"><a href="#cb18-289" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb18-290"><a href="#cb18-290" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-291"><a href="#cb18-291" aria-hidden="true" tabindex="-1"></a><span class="co"># Mostramos la posición en formato clásico de astronomía (horas:minutos:segundos)</span></span>
+<span id="cb18-292"><a href="#cb18-292" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Nebulosa de Orión (M42):"</span>)</span>
+<span id="cb18-293"><a href="#cb18-293" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Ascensión recta  : </span><span class="sc">{</span>nebulosa_orion<span class="sc">.</span>ra<span class="sc">.</span>to_string(unit<span class="op">=</span>u.hour)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb18-294"><a href="#cb18-294" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Declinación      : </span><span class="sc">{</span>nebulosa_orion<span class="sc">.</span>dec<span class="sc">.</span>to_string()<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb18-295"><a href="#cb18-295" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb18-296"><a href="#cb18-296" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-297"><a href="#cb18-297" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Tiempo astronómico con `astropy.time`</span></span>
+<span id="cb18-298"><a href="#cb18-298" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-299"><a href="#cb18-299" aria-hidden="true" tabindex="-1"></a>Este subpaquete maneja instantes de tiempo con precisión de</span>
+<span id="cb18-300"><a href="#cb18-300" aria-hidden="true" tabindex="-1"></a>nanosegundos. Su clase principal es <span class="in">`Time`</span>, que entiende muchos **formatos**</span>
+<span id="cb18-301"><a href="#cb18-301" aria-hidden="true" tabindex="-1"></a>(fecha ISO, fecha juliana, MJD...) y **escalas de tiempo** (UTC, TAI, TT,</span>
+<span id="cb18-302"><a href="#cb18-302" aria-hidden="true" tabindex="-1"></a>TDB...), y permite restar fechas o sumarles duraciones. Es más preciso que un</span>
+<span id="cb18-303"><a href="#cb18-303" aria-hidden="true" tabindex="-1"></a>reloj normal porque tiene en cuenta los segundos intercalares y la relatividad.</span>
+<span id="cb18-304"><a href="#cb18-304" aria-hidden="true" tabindex="-1"></a>→ Sección 03.</span>
+<span id="cb18-305"><a href="#cb18-305" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-308"><a href="#cb18-308" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb18-309"><a href="#cb18-309" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb18-310"><a href="#cb18-310" aria-hidden="true" tabindex="-1"></a><span class="co"># Ejemplo de tiempo astronómico</span></span>
+<span id="cb18-311"><a href="#cb18-311" aria-hidden="true" tabindex="-1"></a><span class="co"># En astronomía necesitamos precisión de microsegundos y formatos especiales</span></span>
+<span id="cb18-312"><a href="#cb18-312" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb18-313"><a href="#cb18-313" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-314"><a href="#cb18-314" aria-hidden="true" tabindex="-1"></a><span class="co"># Importamos la clase Time para manejar tiempos astronómicos</span></span>
+<span id="cb18-315"><a href="#cb18-315" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.time <span class="im">import</span> Time</span>
+<span id="cb18-316"><a href="#cb18-316" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-317"><a href="#cb18-317" aria-hidden="true" tabindex="-1"></a><span class="co"># Creamos un objeto de tiempo con la fecha del lanzamiento del telescopio</span></span>
+<span id="cb18-318"><a href="#cb18-318" aria-hidden="true" tabindex="-1"></a><span class="co"># espacial James Webb (25 de diciembre de 2021)</span></span>
+<span id="cb18-319"><a href="#cb18-319" aria-hidden="true" tabindex="-1"></a><span class="co"># format='iso' indica que el texto está en formato AAAA-MM-DD HH:MM:SS</span></span>
+<span id="cb18-320"><a href="#cb18-320" aria-hidden="true" tabindex="-1"></a>lanzamiento_webb <span class="op">=</span> Time(<span class="st">'2021-12-25 12:20:00'</span>, <span class="bu">format</span><span class="op">=</span><span class="st">'iso'</span>, scale<span class="op">=</span><span class="st">'utc'</span>)</span>
+<span id="cb18-321"><a href="#cb18-321" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-322"><a href="#cb18-322" aria-hidden="true" tabindex="-1"></a><span class="co"># Convertimos a Fecha Juliana — el sistema de fechas que usan los astrónomos</span></span>
+<span id="cb18-323"><a href="#cb18-323" aria-hidden="true" tabindex="-1"></a><span class="co"># cuenta los días desde el 1 de enero del año 4713 a.C.</span></span>
+<span id="cb18-324"><a href="#cb18-324" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Lanzamiento del telescopio James Webb:"</span>)</span>
+<span id="cb18-325"><a href="#cb18-325" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Fecha normal    : </span><span class="sc">{</span>lanzamiento_webb<span class="sc">.</span>iso<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb18-326"><a href="#cb18-326" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Fecha Juliana   : </span><span class="sc">{</span>lanzamiento_webb<span class="sc">.</span>jd<span class="sc">:.4f}</span><span class="ss"> días"</span>)</span>
+<span id="cb18-327"><a href="#cb18-327" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-328"><a href="#cb18-328" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculamos cuántos días han pasado desde el lanzamiento hasta hoy</span></span>
+<span id="cb18-329"><a href="#cb18-329" aria-hidden="true" tabindex="-1"></a>ahora <span class="op">=</span> Time.now()                          <span class="co"># tiempo actual del sistema</span></span>
+<span id="cb18-330"><a href="#cb18-330" aria-hidden="true" tabindex="-1"></a>dias_transcurridos <span class="op">=</span> (ahora <span class="op">-</span> lanzamiento_webb).to(u.day)</span>
 <span id="cb18-331"><a href="#cb18-331" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-332"><a href="#cb18-332" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculamos cuántos días han pasado desde el lanzamiento hasta hoy</span></span>
-<span id="cb18-333"><a href="#cb18-333" aria-hidden="true" tabindex="-1"></a>ahora <span class="op">=</span> Time.now()                          <span class="co"># tiempo actual del sistema</span></span>
-<span id="cb18-334"><a href="#cb18-334" aria-hidden="true" tabindex="-1"></a>dias_transcurridos <span class="op">=</span> (ahora <span class="op">-</span> lanzamiento_webb).to(u.day)</span>
-<span id="cb18-335"><a href="#cb18-335" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-336"><a href="#cb18-336" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Días en órbita  : </span><span class="sc">{</span>dias_transcurridos<span class="sc">:.0f}</span><span class="ss">"</span>)</span>
-<span id="cb18-337"><a href="#cb18-337" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb18-338"><a href="#cb18-338" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-339"><a href="#cb18-339" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Constantes físicas con `astropy.constants`</span></span>
-<span id="cb18-340"><a href="#cb18-340" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-341"><a href="#cb18-341" aria-hidden="true" tabindex="-1"></a>**Qué es:** el subpaquete que reúne las constantes físicas y astronómicas con</span>
-<span id="cb18-342"><a href="#cb18-342" aria-hidden="true" tabindex="-1"></a>sus valores oficiales (CODATA para la física, IAU para la astronomía): la</span>
-<span id="cb18-343"><a href="#cb18-343" aria-hidden="true" tabindex="-1"></a>velocidad de la luz, la constante de gravitación, la masa del Sol... Cada</span>
-<span id="cb18-344"><a href="#cb18-344" aria-hidden="true" tabindex="-1"></a>constante es una cantidad con unidad, incertidumbre y referencia</span>
-<span id="cb18-345"><a href="#cb18-345" aria-hidden="true" tabindex="-1"></a>bibliográfica, lista para usar directamente en los cálculos. → Módulo 02.</span>
-<span id="cb18-346"><a href="#cb18-346" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-349"><a href="#cb18-349" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb18-350"><a href="#cb18-350" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
-<span id="cb18-351"><a href="#cb18-351" aria-hidden="true" tabindex="-1"></a><span class="co"># Constantes físicas y astronómicas incluidas en Astropy</span></span>
-<span id="cb18-352"><a href="#cb18-352" aria-hidden="true" tabindex="-1"></a><span class="co"># No necesitas buscarlas en Wikipedia ni copiar números a mano</span></span>
-<span id="cb18-353"><a href="#cb18-353" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
-<span id="cb18-354"><a href="#cb18-354" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-355"><a href="#cb18-355" aria-hidden="true" tabindex="-1"></a><span class="co"># Importamos el módulo de constantes físicas</span></span>
-<span id="cb18-356"><a href="#cb18-356" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy <span class="im">import</span> constants <span class="im">as</span> const</span>
-<span id="cb18-357"><a href="#cb18-357" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-358"><a href="#cb18-358" aria-hidden="true" tabindex="-1"></a><span class="co"># El módulo de cosmología (que veremos más adelante) tiene constantes adicionales</span></span>
-<span id="cb18-359"><a href="#cb18-359" aria-hidden="true" tabindex="-1"></a><span class="co"># como H0 (constante de Hubble). Por ahora usamos las del módulo constants:</span></span>
-<span id="cb18-360"><a href="#cb18-360" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Constantes físicas incluidas en Astropy:"</span>)</span>
-<span id="cb18-361"><a href="#cb18-361" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Velocidad de la luz  : </span><span class="sc">{</span>const<span class="sc">.</span>c<span class="sc">:.4e}</span><span class="ss">"</span>)   <span class="co"># c</span></span>
-<span id="cb18-362"><a href="#cb18-362" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Masa del Sol         : </span><span class="sc">{</span>const<span class="sc">.</span>M_sun<span class="sc">:.4e}</span><span class="ss">"</span>)  <span class="co"># M☉</span></span>
-<span id="cb18-363"><a href="#cb18-363" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Radio de la Tierra   : </span><span class="sc">{</span>const<span class="sc">.</span>R_earth<span class="sc">:.4e}</span><span class="ss">"</span>)  <span class="co"># R⊕</span></span>
-<span id="cb18-364"><a href="#cb18-364" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Constante gravitacional: </span><span class="sc">{</span>const<span class="sc">.</span>G<span class="sc">:.4e}</span><span class="ss">"</span>)  <span class="co"># G</span></span>
-<span id="cb18-365"><a href="#cb18-365" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-366"><a href="#cb18-366" aria-hidden="true" tabindex="-1"></a><span class="co"># Ejemplo: calculamos cuánto tarda la luz en llegar del Sol a la Tierra</span></span>
-<span id="cb18-367"><a href="#cb18-367" aria-hidden="true" tabindex="-1"></a><span class="co"># Física básica: tiempo = distancia / velocidad</span></span>
-<span id="cb18-368"><a href="#cb18-368" aria-hidden="true" tabindex="-1"></a>distancia_sol <span class="op">=</span> <span class="dv">1</span> <span class="op">*</span> u.au             <span class="co"># distancia en unidades astronómicas</span></span>
-<span id="cb18-369"><a href="#cb18-369" aria-hidden="true" tabindex="-1"></a>velocidad_luz <span class="op">=</span> const.c              <span class="co"># velocidad de la luz</span></span>
-<span id="cb18-370"><a href="#cb18-370" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-371"><a href="#cb18-371" aria-hidden="true" tabindex="-1"></a><span class="co"># El método .to() convierte el resultado a minutos</span></span>
-<span id="cb18-372"><a href="#cb18-372" aria-hidden="true" tabindex="-1"></a>tiempo_luz <span class="op">=</span> (distancia_sol <span class="op">/</span> velocidad_luz).to(u.minute)</span>
-<span id="cb18-373"><a href="#cb18-373" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Tiempo que tarda la luz Sol → Tierra: </span><span class="sc">{</span>tiempo_luz<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
-<span id="cb18-374"><a href="#cb18-374" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb18-332"><a href="#cb18-332" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Días en órbita  : </span><span class="sc">{</span>dias_transcurridos<span class="sc">:.0f}</span><span class="ss">"</span>)</span>
+<span id="cb18-333"><a href="#cb18-333" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb18-334"><a href="#cb18-334" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-335"><a href="#cb18-335" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Constantes físicas con `astropy.constants`</span></span>
+<span id="cb18-336"><a href="#cb18-336" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-337"><a href="#cb18-337" aria-hidden="true" tabindex="-1"></a>Este subpaquete reúne las constantes físicas y astronómicas con</span>
+<span id="cb18-338"><a href="#cb18-338" aria-hidden="true" tabindex="-1"></a>sus valores oficiales (CODATA para la física, IAU para la astronomía): la</span>
+<span id="cb18-339"><a href="#cb18-339" aria-hidden="true" tabindex="-1"></a>velocidad de la luz, la constante de gravitación, la masa del Sol... Cada</span>
+<span id="cb18-340"><a href="#cb18-340" aria-hidden="true" tabindex="-1"></a>constante es una cantidad con unidad, incertidumbre y referencia</span>
+<span id="cb18-341"><a href="#cb18-341" aria-hidden="true" tabindex="-1"></a>bibliográfica, lista para usar directamente en los cálculos. → Sección 02.</span>
+<span id="cb18-342"><a href="#cb18-342" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-345"><a href="#cb18-345" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb18-346"><a href="#cb18-346" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb18-347"><a href="#cb18-347" aria-hidden="true" tabindex="-1"></a><span class="co"># Constantes físicas y astronómicas incluidas en Astropy</span></span>
+<span id="cb18-348"><a href="#cb18-348" aria-hidden="true" tabindex="-1"></a><span class="co"># No necesitas buscarlas en Wikipedia ni copiar números a mano</span></span>
+<span id="cb18-349"><a href="#cb18-349" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb18-350"><a href="#cb18-350" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-351"><a href="#cb18-351" aria-hidden="true" tabindex="-1"></a><span class="co"># Importamos el módulo de constantes físicas</span></span>
+<span id="cb18-352"><a href="#cb18-352" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy <span class="im">import</span> constants <span class="im">as</span> const</span>
+<span id="cb18-353"><a href="#cb18-353" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-354"><a href="#cb18-354" aria-hidden="true" tabindex="-1"></a><span class="co"># El módulo de cosmología (que veremos más adelante) tiene constantes adicionales</span></span>
+<span id="cb18-355"><a href="#cb18-355" aria-hidden="true" tabindex="-1"></a><span class="co"># como H0 (constante de Hubble). Por ahora usamos las del módulo constants:</span></span>
+<span id="cb18-356"><a href="#cb18-356" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Constantes físicas incluidas en Astropy:"</span>)</span>
+<span id="cb18-357"><a href="#cb18-357" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Velocidad de la luz  : </span><span class="sc">{</span>const<span class="sc">.</span>c<span class="sc">:.4e}</span><span class="ss">"</span>)   <span class="co"># c</span></span>
+<span id="cb18-358"><a href="#cb18-358" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Masa del Sol         : </span><span class="sc">{</span>const<span class="sc">.</span>M_sun<span class="sc">:.4e}</span><span class="ss">"</span>)  <span class="co"># M☉</span></span>
+<span id="cb18-359"><a href="#cb18-359" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Radio de la Tierra   : </span><span class="sc">{</span>const<span class="sc">.</span>R_earth<span class="sc">:.4e}</span><span class="ss">"</span>)  <span class="co"># R⊕</span></span>
+<span id="cb18-360"><a href="#cb18-360" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Constante gravitacional: </span><span class="sc">{</span>const<span class="sc">.</span>G<span class="sc">:.4e}</span><span class="ss">"</span>)  <span class="co"># G</span></span>
+<span id="cb18-361"><a href="#cb18-361" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-362"><a href="#cb18-362" aria-hidden="true" tabindex="-1"></a><span class="co"># Ejemplo: calculamos cuánto tarda la luz en llegar del Sol a la Tierra</span></span>
+<span id="cb18-363"><a href="#cb18-363" aria-hidden="true" tabindex="-1"></a><span class="co"># Física básica: tiempo = distancia / velocidad</span></span>
+<span id="cb18-364"><a href="#cb18-364" aria-hidden="true" tabindex="-1"></a>distancia_sol <span class="op">=</span> <span class="dv">1</span> <span class="op">*</span> u.au             <span class="co"># distancia en unidades astronómicas</span></span>
+<span id="cb18-365"><a href="#cb18-365" aria-hidden="true" tabindex="-1"></a>velocidad_luz <span class="op">=</span> const.c              <span class="co"># velocidad de la luz</span></span>
+<span id="cb18-366"><a href="#cb18-366" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-367"><a href="#cb18-367" aria-hidden="true" tabindex="-1"></a><span class="co"># El método .to() convierte el resultado a minutos</span></span>
+<span id="cb18-368"><a href="#cb18-368" aria-hidden="true" tabindex="-1"></a>tiempo_luz <span class="op">=</span> (distancia_sol <span class="op">/</span> velocidad_luz).to(u.minute)</span>
+<span id="cb18-369"><a href="#cb18-369" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Tiempo que tarda la luz Sol → Tierra: </span><span class="sc">{</span>tiempo_luz<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb18-370"><a href="#cb18-370" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb18-371"><a href="#cb18-371" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-372"><a href="#cb18-372" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb18-373"><a href="#cb18-373" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-374"><a href="#cb18-374" aria-hidden="true" tabindex="-1"></a><span class="fu">## Resumen: ¿qué acabas de ver?</span></span>
 <span id="cb18-375"><a href="#cb18-375" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-376"><a href="#cb18-376" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb18-376"><a href="#cb18-376" aria-hidden="true" tabindex="-1"></a>En este primer contacto con Astropy usamos cuatro de sus herramientas principales:</span>
 <span id="cb18-377"><a href="#cb18-377" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-378"><a href="#cb18-378" aria-hidden="true" tabindex="-1"></a><span class="fu">## Resumen: ¿qué acabas de ver?</span></span>
-<span id="cb18-379"><a href="#cb18-379" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-380"><a href="#cb18-380" aria-hidden="true" tabindex="-1"></a>En este primer contacto con Astropy usamos cuatro de sus herramientas principales:</span>
-<span id="cb18-381"><a href="#cb18-381" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-382"><a href="#cb18-382" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Herramienta <span class="pp">|</span> Módulo <span class="pp">|</span> Lo que hace <span class="pp">|</span></span>
-<span id="cb18-383"><a href="#cb18-383" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|---|</span></span>
-<span id="cb18-384"><a href="#cb18-384" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Unidades <span class="pp">|</span> <span class="in">`astropy.units`</span> <span class="pp">|</span> Adjunta unidades a los números <span class="pp">|</span></span>
-<span id="cb18-385"><a href="#cb18-385" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Coordenadas <span class="pp">|</span> <span class="in">`astropy.coordinates`</span> <span class="pp">|</span> Ubica objetos en el cielo <span class="pp">|</span></span>
-<span id="cb18-386"><a href="#cb18-386" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Tiempo <span class="pp">|</span> <span class="in">`astropy.time`</span> <span class="pp">|</span> Maneja fechas astronómicas <span class="pp">|</span></span>
-<span id="cb18-387"><a href="#cb18-387" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Constantes <span class="pp">|</span> <span class="in">`astropy.constants`</span> <span class="pp">|</span> Provee constantes físicas oficiales <span class="pp">|</span></span>
-<span id="cb18-388"><a href="#cb18-388" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-389"><a href="#cb18-389" aria-hidden="true" tabindex="-1"></a>Cada una de estas herramientas tiene su propio módulo en este blog. Por ahora,</span>
-<span id="cb18-390"><a href="#cb18-390" aria-hidden="true" tabindex="-1"></a>lo importante es que viste cómo Astropy convierte operaciones complejas</span>
-<span id="cb18-391"><a href="#cb18-391" aria-hidden="true" tabindex="-1"></a>(convertir unidades, manejar coordenadas, calcular tiempos) en pocas</span>
-<span id="cb18-392"><a href="#cb18-392" aria-hidden="true" tabindex="-1"></a>líneas de código legible.</span>
+<span id="cb18-378"><a href="#cb18-378" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Herramienta <span class="pp">|</span> Módulo <span class="pp">|</span> Lo que hace <span class="pp">|</span></span>
+<span id="cb18-379"><a href="#cb18-379" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|---|</span></span>
+<span id="cb18-380"><a href="#cb18-380" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Unidades <span class="pp">|</span> <span class="in">`astropy.units`</span> <span class="pp">|</span> Adjunta unidades a los números <span class="pp">|</span></span>
+<span id="cb18-381"><a href="#cb18-381" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Coordenadas <span class="pp">|</span> <span class="in">`astropy.coordinates`</span> <span class="pp">|</span> Ubica objetos en el cielo <span class="pp">|</span></span>
+<span id="cb18-382"><a href="#cb18-382" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Tiempo <span class="pp">|</span> <span class="in">`astropy.time`</span> <span class="pp">|</span> Maneja fechas astronómicas <span class="pp">|</span></span>
+<span id="cb18-383"><a href="#cb18-383" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Constantes <span class="pp">|</span> <span class="in">`astropy.constants`</span> <span class="pp">|</span> Provee constantes físicas oficiales <span class="pp">|</span></span>
+<span id="cb18-384"><a href="#cb18-384" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-385"><a href="#cb18-385" aria-hidden="true" tabindex="-1"></a>Cada una de estas herramientas tiene su propia sección en este blog. Por ahora,</span>
+<span id="cb18-386"><a href="#cb18-386" aria-hidden="true" tabindex="-1"></a>lo importante es que viste cómo Astropy convierte operaciones complejas</span>
+<span id="cb18-387"><a href="#cb18-387" aria-hidden="true" tabindex="-1"></a>(convertir unidades, manejar coordenadas, calcular tiempos) en pocas</span>
+<span id="cb18-388"><a href="#cb18-388" aria-hidden="true" tabindex="-1"></a>líneas de código legible.</span>
+<span id="cb18-389"><a href="#cb18-389" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-390"><a href="#cb18-390" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb18-391"><a href="#cb18-391" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-392"><a href="#cb18-392" aria-hidden="true" tabindex="-1"></a><span class="fu">## Ejercicio</span></span>
 <span id="cb18-393"><a href="#cb18-393" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-394"><a href="#cb18-394" aria-hidden="true" tabindex="-1"></a>---</span>
-<span id="cb18-395"><a href="#cb18-395" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-396"><a href="#cb18-396" aria-hidden="true" tabindex="-1"></a><span class="fu">## Ejercicio</span></span>
+<span id="cb18-394"><a href="#cb18-394" aria-hidden="true" tabindex="-1"></a>Usando lo que viste en esta sección, calcula cuánto tiempo tarda la luz</span>
+<span id="cb18-395"><a href="#cb18-395" aria-hidden="true" tabindex="-1"></a>en llegar desde Neptuno hasta la Tierra. La distancia media de Neptuno</span>
+<span id="cb18-396"><a href="#cb18-396" aria-hidden="true" tabindex="-1"></a>al Sol es de **30.07 UA**.</span>
 <span id="cb18-397"><a href="#cb18-397" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-398"><a href="#cb18-398" aria-hidden="true" tabindex="-1"></a>Usando lo que viste en este módulo, calcula cuánto tiempo tarda la luz</span>
-<span id="cb18-399"><a href="#cb18-399" aria-hidden="true" tabindex="-1"></a>en llegar desde Neptuno hasta la Tierra. La distancia media de Neptuno</span>
-<span id="cb18-400"><a href="#cb18-400" aria-hidden="true" tabindex="-1"></a>al Sol es de **30.07 UA**.</span>
-<span id="cb18-401"><a href="#cb18-401" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-402"><a href="#cb18-402" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip collapse="true"}</span>
-<span id="cb18-403"><a href="#cb18-403" aria-hidden="true" tabindex="-1"></a><span class="fu">## Ver solución</span></span>
-<span id="cb18-404"><a href="#cb18-404" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-407"><a href="#cb18-407" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb18-408"><a href="#cb18-408" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
-<span id="cb18-409"><a href="#cb18-409" aria-hidden="true" tabindex="-1"></a><span class="co"># SOLUCIÓN: tiempo que tarda la luz de Neptuno en llegar a la Tierra</span></span>
-<span id="cb18-410"><a href="#cb18-410" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
-<span id="cb18-411"><a href="#cb18-411" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-412"><a href="#cb18-412" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy <span class="im">import</span> constants <span class="im">as</span> const</span>
-<span id="cb18-413"><a href="#cb18-413" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> astropy.units <span class="im">as</span> u</span>
-<span id="cb18-414"><a href="#cb18-414" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-415"><a href="#cb18-415" aria-hidden="true" tabindex="-1"></a><span class="co"># Distancia de Neptuno al Sol (dato del enunciado)</span></span>
-<span id="cb18-416"><a href="#cb18-416" aria-hidden="true" tabindex="-1"></a>distancia_neptuno_sol <span class="op">=</span> <span class="fl">30.07</span> <span class="op">*</span> u.au</span>
-<span id="cb18-417"><a href="#cb18-417" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-418"><a href="#cb18-418" aria-hidden="true" tabindex="-1"></a><span class="co"># Distancia de la Tierra al Sol (1 UA por definición)</span></span>
-<span id="cb18-419"><a href="#cb18-419" aria-hidden="true" tabindex="-1"></a>distancia_tierra_sol <span class="op">=</span> <span class="fl">1.0</span> <span class="op">*</span> u.au</span>
+<span id="cb18-398"><a href="#cb18-398" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip collapse="true"}</span>
+<span id="cb18-399"><a href="#cb18-399" aria-hidden="true" tabindex="-1"></a><span class="fu">## Ver solución</span></span>
+<span id="cb18-400"><a href="#cb18-400" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-403"><a href="#cb18-403" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb18-404"><a href="#cb18-404" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb18-405"><a href="#cb18-405" aria-hidden="true" tabindex="-1"></a><span class="co"># SOLUCIÓN: tiempo que tarda la luz de Neptuno en llegar a la Tierra</span></span>
+<span id="cb18-406"><a href="#cb18-406" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
+<span id="cb18-407"><a href="#cb18-407" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-408"><a href="#cb18-408" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy <span class="im">import</span> constants <span class="im">as</span> const</span>
+<span id="cb18-409"><a href="#cb18-409" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> astropy.units <span class="im">as</span> u</span>
+<span id="cb18-410"><a href="#cb18-410" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-411"><a href="#cb18-411" aria-hidden="true" tabindex="-1"></a><span class="co"># Distancia de Neptuno al Sol (dato del enunciado)</span></span>
+<span id="cb18-412"><a href="#cb18-412" aria-hidden="true" tabindex="-1"></a>distancia_neptuno_sol <span class="op">=</span> <span class="fl">30.07</span> <span class="op">*</span> u.au</span>
+<span id="cb18-413"><a href="#cb18-413" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-414"><a href="#cb18-414" aria-hidden="true" tabindex="-1"></a><span class="co"># Distancia de la Tierra al Sol (1 UA por definición)</span></span>
+<span id="cb18-415"><a href="#cb18-415" aria-hidden="true" tabindex="-1"></a>distancia_tierra_sol <span class="op">=</span> <span class="fl">1.0</span> <span class="op">*</span> u.au</span>
+<span id="cb18-416"><a href="#cb18-416" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-417"><a href="#cb18-417" aria-hidden="true" tabindex="-1"></a><span class="co"># Distancia aproximada Neptuno → Tierra</span></span>
+<span id="cb18-418"><a href="#cb18-418" aria-hidden="true" tabindex="-1"></a><span class="co"># (usamos la diferencia — ambos en el mismo lado del Sol en promedio)</span></span>
+<span id="cb18-419"><a href="#cb18-419" aria-hidden="true" tabindex="-1"></a>distancia_neptuno_tierra <span class="op">=</span> distancia_neptuno_sol <span class="op">-</span> distancia_tierra_sol</span>
 <span id="cb18-420"><a href="#cb18-420" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-421"><a href="#cb18-421" aria-hidden="true" tabindex="-1"></a><span class="co"># Distancia aproximada Neptuno → Tierra</span></span>
-<span id="cb18-422"><a href="#cb18-422" aria-hidden="true" tabindex="-1"></a><span class="co"># (usamos la diferencia — ambos en el mismo lado del Sol en promedio)</span></span>
-<span id="cb18-423"><a href="#cb18-423" aria-hidden="true" tabindex="-1"></a>distancia_neptuno_tierra <span class="op">=</span> distancia_neptuno_sol <span class="op">-</span> distancia_tierra_sol</span>
+<span id="cb18-421"><a href="#cb18-421" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculamos el tiempo usando tiempo = distancia / velocidad</span></span>
+<span id="cb18-422"><a href="#cb18-422" aria-hidden="true" tabindex="-1"></a><span class="co"># .to(u.minute) convierte el resultado a minutos automáticamente</span></span>
+<span id="cb18-423"><a href="#cb18-423" aria-hidden="true" tabindex="-1"></a>tiempo <span class="op">=</span> (distancia_neptuno_tierra <span class="op">/</span> const.c).to(u.minute)</span>
 <span id="cb18-424"><a href="#cb18-424" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-425"><a href="#cb18-425" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculamos el tiempo usando tiempo = distancia / velocidad</span></span>
-<span id="cb18-426"><a href="#cb18-426" aria-hidden="true" tabindex="-1"></a><span class="co"># .to(u.minute) convierte el resultado a minutos automáticamente</span></span>
-<span id="cb18-427"><a href="#cb18-427" aria-hidden="true" tabindex="-1"></a>tiempo <span class="op">=</span> (distancia_neptuno_tierra <span class="op">/</span> const.c).to(u.minute)</span>
-<span id="cb18-428"><a href="#cb18-428" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-429"><a href="#cb18-429" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Distancia Neptuno - Tierra : </span><span class="sc">{</span>distancia_neptuno_tierra<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
-<span id="cb18-430"><a href="#cb18-430" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Tiempo de viaje de la luz  : </span><span class="sc">{</span>tiempo<span class="sc">:.1f}</span><span class="ss">"</span>)</span>
-<span id="cb18-431"><a href="#cb18-431" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"                           : </span><span class="sc">{</span>tiempo<span class="sc">.</span>to(u.hour)<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
-<span id="cb18-432"><a href="#cb18-432" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb18-433"><a href="#cb18-433" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb18-425"><a href="#cb18-425" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Distancia Neptuno - Tierra : </span><span class="sc">{</span>distancia_neptuno_tierra<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb18-426"><a href="#cb18-426" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Tiempo de viaje de la luz  : </span><span class="sc">{</span>tiempo<span class="sc">:.1f}</span><span class="ss">"</span>)</span>
+<span id="cb18-427"><a href="#cb18-427" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"                           : </span><span class="sc">{</span>tiempo<span class="sc">.</span>to(u.hour)<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb18-428"><a href="#cb18-428" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb18-429"><a href="#cb18-429" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb18-430"><a href="#cb18-430" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-431"><a href="#cb18-431" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb18-432"><a href="#cb18-432" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-433"><a href="#cb18-433" aria-hidden="true" tabindex="-1"></a><span class="fu">## ¿Qué aprendiste en esta sección? {.seccion-aprendiste}</span></span>
 <span id="cb18-434"><a href="#cb18-434" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-435"><a href="#cb18-435" aria-hidden="true" tabindex="-1"></a>---</span>
-<span id="cb18-436"><a href="#cb18-436" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-437"><a href="#cb18-437" aria-hidden="true" tabindex="-1"></a><span class="fu">## ¿Qué aprendiste en este módulo? {.seccion-aprendiste}</span></span>
-<span id="cb18-438"><a href="#cb18-438" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-439"><a href="#cb18-439" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Qué es Astropy y para qué sirve en la práctica</span>
-<span id="cb18-440"><a href="#cb18-440" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Cómo instalarla con <span class="in">`pip`</span> o <span class="in">`conda`</span></span>
-<span id="cb18-441"><a href="#cb18-441" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Cómo está organizada Astropy en subpaquetes y para qué sirve cada uno</span>
-<span id="cb18-442"><a href="#cb18-442" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Cómo usar unidades físicas para evitar errores de conversión</span>
-<span id="cb18-443"><a href="#cb18-443" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Cómo representar posiciones en el cielo con <span class="in">`SkyCoord`</span></span>
-<span id="cb18-444"><a href="#cb18-444" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Cómo manejar fechas astronómicas con <span class="in">`Time`</span></span>
-<span id="cb18-445"><a href="#cb18-445" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Cómo acceder a constantes físicas con <span class="in">`astropy.constants`</span></span>
-<span id="cb18-446"><a href="#cb18-446" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-447"><a href="#cb18-447" aria-hidden="true" tabindex="-1"></a>**Siguiente módulo →** <span class="co">[</span><span class="ot">02 · Unidades y constantes físicas</span><span class="co">](02-unidades.qmd)</span></span>
+<span id="cb18-435"><a href="#cb18-435" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Qué es Astropy y para qué sirve en la práctica</span>
+<span id="cb18-436"><a href="#cb18-436" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Cómo instalarla con <span class="in">`pip`</span> o <span class="in">`conda`</span></span>
+<span id="cb18-437"><a href="#cb18-437" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Cómo está organizada Astropy en subpaquetes y para qué sirve cada uno</span>
+<span id="cb18-438"><a href="#cb18-438" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Cómo usar unidades físicas para evitar errores de conversión</span>
+<span id="cb18-439"><a href="#cb18-439" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Cómo representar posiciones en el cielo con <span class="in">`SkyCoord`</span></span>
+<span id="cb18-440"><a href="#cb18-440" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Cómo manejar fechas astronómicas con <span class="in">`Time`</span></span>
+<span id="cb18-441"><a href="#cb18-441" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Cómo acceder a constantes físicas con <span class="in">`astropy.constants`</span></span>
+<span id="cb18-442"><a href="#cb18-442" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-443"><a href="#cb18-443" aria-hidden="true" tabindex="-1"></a>**Siguiente sección →** <span class="co">[</span><span class="ot">02 · Unidades y constantes físicas</span><span class="co">](02-unidades.qmd)</span></span>
 </code></pre></div><button title="Copiar al portapapeles" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

@@ -175,7 +175,7 @@ window.Quarto = {
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
     <a class="nav-link active" href="../../posts/basico/01-introduccion.html" aria-current="page"> 
-<span class="menu-text">Módulos</span></a>
+<span class="menu-text">Secciones</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../../sobre.html"> 
@@ -388,7 +388,7 @@ window.Quarto = {
   <li><a href="#versión-interactiva-para-girar-con-el-ratón" id="toc-versión-interactiva-para-girar-con-el-ratón" class="nav-link" data-scroll-target="#versión-interactiva-para-girar-con-el-ratón"><span class="header-section-number">10.5</span> Versión interactiva (para girar con el ratón)</a></li>
   </ul></li>
   <li><a href="#ejercicio" id="toc-ejercicio" class="nav-link" data-scroll-target="#ejercicio"><span class="header-section-number">11</span> Ejercicio</a></li>
-  <li><a href="#qué-aprendiste-en-este-módulo" id="toc-qué-aprendiste-en-este-módulo" class="nav-link" data-scroll-target="#qué-aprendiste-en-este-módulo"><span class="header-section-number">12</span> ¿Qué aprendiste en este módulo?</a></li>
+  <li><a href="#qué-aprendiste-en-esta-sección" id="toc-qué-aprendiste-en-esta-sección" class="nav-link" data-scroll-target="#qué-aprendiste-en-esta-sección"><span class="header-section-number">12</span> ¿Qué aprendiste en esta sección?</a></li>
   </ul>
 </nav>
     </div>
@@ -545,7 +545,7 @@ Figura&nbsp;1: Izquierda: una estrella con la apertura (círculo ámbar) y el an
 </div>
 <div class="callout-body-container callout-body">
 <ul>
-<li>Módulos 06 (FITS) y 07 (WCS)</li>
+<li>Secciones 06 (FITS) y 07 (WCS)</li>
 <li>Instalar photutils: <code>pip install photutils</code></li>
 </ul>
 </div>
@@ -555,7 +555,7 @@ Figura&nbsp;1: Izquierda: una estrella con la apertura (círculo ámbar) y el an
 <section id="preparar-una-imagen-de-prueba" class="level2" data-number="2">
 <h2 data-number="2" class="anchored" data-anchor-id="preparar-una-imagen-de-prueba"><span class="header-section-number">2</span> Preparar una imagen de prueba</h2>
 <p>Fabricamos una imagen con 12 estrellas de brillo conocido. Así podremos comprobar al final si nuestras mediciones son correctas.</p>
-<div id="3eeba4a6" class="cell" data-execution_count="2">
+<div id="d0e9caf0" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Imagen sintética con estrellas de flujo CONOCIDO</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Saber la respuesta correcta nos permite validar el método</span></span>
@@ -630,7 +630,7 @@ Figura&nbsp;2: Imagen de prueba para fotometría
 <section id="paso-1-estadísticas-del-fondo" class="level2" data-number="3">
 <h2 data-number="3" class="anchored" data-anchor-id="paso-1-estadísticas-del-fondo"><span class="header-section-number">3</span> Paso 1: estadísticas del fondo</h2>
 <p>Antes de buscar estrellas necesitamos saber cuánto vale el cielo y cuánto ruido tiene. La función <code>sigma_clipped_stats</code> calcula media, mediana y desviación estándar <strong>ignorando los píxeles de las estrellas</strong> (los descarta iterativamente por estar muy por encima del resto).</p>
-<div id="4e25e679" class="cell" data-execution_count="4">
+<div id="947c2513" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Estadísticas robustas del fondo con recorte sigma</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -654,7 +654,7 @@ Ruido del fondo   : 14.89</code></pre>
 <section id="paso-2-detectar-las-estrellas" class="level2" data-number="4">
 <h2 data-number="4" class="anchored" data-anchor-id="paso-2-detectar-las-estrellas"><span class="header-section-number">4</span> Paso 2: detectar las estrellas</h2>
 <p><code>DAOStarFinder</code> busca manchas con forma de estrella que sobresalgan del fondo por encima de un umbral. Usamos el clásico criterio de <strong>5 sigma</strong>.</p>
-<div id="5003e082" class="cell" data-execution_count="5">
+<div id="6e3c45ad" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Detección automática de estrellas con DAOStarFinder</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -702,7 +702,7 @@ Ruido del fondo   : 14.89</code></pre>
 </section>
 <section id="paso-3-definir-aperturas-y-anillos" class="level2" data-number="5">
 <h2 data-number="5" class="anchored" data-anchor-id="paso-3-definir-aperturas-y-anillos"><span class="header-section-number">5</span> Paso 3: definir aperturas y anillos</h2>
-<div id="d52f7265" class="cell" data-execution_count="6">
+<div id="5238fb97" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Crear una apertura circular y un anillo de fondo para cada estrella</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -762,7 +762,7 @@ Figura&nbsp;3: Aperturas (blanco) y anillos de fondo (rojo) sobre las estrellas 
 </section>
 <section id="paso-4-medir-el-flujo" class="level2" data-number="6">
 <h2 data-number="6" class="anchored" data-anchor-id="paso-4-medir-el-flujo"><span class="header-section-number">6</span> Paso 4: medir el flujo</h2>
-<div id="c14f43f1" class="cell" data-execution_count="8">
+<div id="be0041e6" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Fotometría: suma dentro de la apertura menos el fondo local</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -812,7 +812,7 @@ Figura&nbsp;3: Aperturas (blanco) y anillos de fondo (rojo) sobre las estrellas 
 <p>La <strong>magnitud</strong> es una escala logarítmica inventada por los griegos: estrellas más brillantes tienen magnitudes <strong>más pequeñas</strong>.</p>
 <p><span class="math display">\[m_{inst} = -2.5 \log_{10}(\text{flujo})\]</span></p>
 <p>La relación señal/ruido (S/N) nos dice qué tan confiable es cada medición. Una S/N de 100 equivale a un error de ~0.01 magnitudes.</p>
-<div id="f07795ad" class="cell" data-execution_count="9">
+<div id="63b69ff1" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Error de cada medición (ecuación simplificada del CCD) y magnitudes</span></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -913,7 +913,7 @@ Figura&nbsp;4: Flujo medido vs flujo real: los puntos deben caer sobre la línea
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Una apertura finita nunca captura el 100 % de la luz (la PSF tiene “alas”). En trabajo profesional se aplica una <strong>corrección de apertura</strong> midiendo estrellas brillantes con aperturas cada vez más grandes. Para fotometría <strong>diferencial</strong> (comparar una estrella con otras de la misma imagen, como en el módulo 17) este efecto se cancela.</p>
+<p>Una apertura finita nunca captura el 100 % de la luz (la PSF tiene “alas”). En trabajo profesional se aplica una <strong>corrección de apertura</strong> midiendo estrellas brillantes con aperturas cada vez más grandes. Para fotometría <strong>diferencial</strong> (comparar una estrella con otras de la misma imagen, como en la sección 17) este efecto se cancela.</p>
 </div>
 </div>
 <hr>
@@ -980,7 +980,7 @@ Figura&nbsp;5: Curva de crecimiento: el flujo deja de crecer cuando la apertura 
 </ul>
 <section id="paso-1-recortar-la-estrella-más-brillante" class="level3" data-number="10.1">
 <h3 data-number="10.1" class="anchored" data-anchor-id="paso-1-recortar-la-estrella-más-brillante"><span class="header-section-number">10.1</span> Paso 1: recortar la estrella más brillante</h3>
-<div id="9d423b72" class="cell" data-execution_count="12">
+<div id="a7f62dfd" class="cell" data-execution_count="12">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Recortar una ventana pequeña alrededor de la estrella más brillante</span></span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -992,7 +992,7 @@ Figura&nbsp;5: Curva de crecimiento: el flujo deja de crecer cuando la apertura 
 <span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>i_max <span class="op">=</span> np.argmax(flujo)</span>
 <span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>x_est, y_est <span class="op">=</span> posiciones[i_max]</span>
 <span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Cutout2D (módulo 06): ventana de 25×25 píxeles centrada en la estrella</span></span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Cutout2D (sección 06): ventana de 25×25 píxeles centrada en la estrella</span></span>
 <span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>recorte <span class="op">=</span> Cutout2D(imagen, position<span class="op">=</span>(x_est, y_est), size<span class="op">=</span>(<span class="dv">25</span>, <span class="dv">25</span>))</span>
 <span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Restamos el fondo del cielo para que la "montaña" arranque desde cero</span></span>
@@ -1013,8 +1013,8 @@ Brillo máximo sobre el fondo: 2251 cuentas</code></pre>
 </section>
 <section id="paso-2-ajustar-un-modelo-gaussiano-2d" class="level3" data-number="10.2">
 <h3 data-number="10.2" class="anchored" data-anchor-id="paso-2-ajustar-un-modelo-gaussiano-2d"><span class="header-section-number">10.2</span> Paso 2: ajustar un modelo gaussiano 2D</h3>
-<p>Usamos <code>astropy.modeling</code> (lo veremos a fondo en el módulo 10): una gaussiana 2D para la estrella más una constante para el fondo residual.</p>
-<div id="2bbbde02" class="cell" data-execution_count="13">
+<p>Usamos <code>astropy.modeling</code> (lo veremos a fondo en la sección 10): una gaussiana 2D para la estrella más una constante para el fondo residual.</p>
+<div id="bd6804da" class="cell" data-execution_count="13">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Ajustar Gaussian2D + Const2D a la estrella recortada</span></span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -1187,7 +1187,7 @@ Figura&nbsp;7: Residuos de un modelo correcto (izquierda) frente a un modelo con
 <section id="versión-interactiva-para-girar-con-el-ratón" class="level3" data-number="10.5">
 <h3 data-number="10.5" class="anchored" data-anchor-id="versión-interactiva-para-girar-con-el-ratón"><span class="header-section-number">10.5</span> Versión interactiva (para girar con el ratón)</h3>
 <p>Con la librería <strong>plotly</strong> las superficies se pueden rotar, acercar y explorar directamente en el navegador. Quarto las inserta en el blog automáticamente. Requiere instalarla: <code>pip install plotly</code>.</p>
-<div id="dcb0e942" class="cell" data-execution_count="16">
+<div id="20cf70ec" class="cell" data-execution_count="16">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Superficies 3D interactivas con plotly</span></span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Si plotly no está instalado, el bloque muestra un aviso y no falla</span></span>
@@ -1245,7 +1245,7 @@ Figura&nbsp;7: Residuos de un modelo correcto (izquierda) frente a un modelo con
 </div>
 <div id="callout-4" class="callout-4-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="7dd8d071" class="cell" data-execution_count="17">
+<div id="e69c1831" class="cell" data-execution_count="17">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="co"># SOLUCIÓN: comparar dos radios de apertura</span></span>
 <span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -1291,8 +1291,8 @@ Estrella más débil:
 </div>
 <hr>
 </section>
-<section id="qué-aprendiste-en-este-módulo" class="level2 seccion-aprendiste" data-number="12">
-<h2 class="seccion-aprendiste anchored" data-number="12" data-anchor-id="qué-aprendiste-en-este-módulo"><span class="header-section-number">12</span> ¿Qué aprendiste en este módulo?</h2>
+<section id="qué-aprendiste-en-esta-sección" class="level2 seccion-aprendiste" data-number="12">
+<h2 class="seccion-aprendiste anchored" data-number="12" data-anchor-id="qué-aprendiste-en-esta-sección"><span class="header-section-number">12</span> ¿Qué aprendiste en esta sección?</h2>
 <ul>
 <li>✅ El principio de la fotometría de apertura</li>
 <li>✅ Estimar el fondo con <code>sigma_clipped_stats</code></li>
@@ -1302,7 +1302,7 @@ Estrella más débil:
 <li>✅ Calcular S/N, magnitudes instrumentales y sus errores</li>
 <li>✅ Elegir el radio de apertura con la curva de crecimiento</li>
 </ul>
-<p><strong>Siguiente módulo →</strong> <a href="../../posts/intermedio/09-visualizacion.html">09 · Visualización astronómica</a></p>
+<p><strong>Siguiente sección →</strong> <a href="../../posts/intermedio/09-visualizacion.html">09 · Visualización astronómica</a></p>
 
 
 <!-- -->
@@ -1891,7 +1891,7 @@ Estrella más débil:
 <span id="cb31-118"><a href="#cb31-118" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-119"><a href="#cb31-119" aria-hidden="true" tabindex="-1"></a>::: {.callout-note}</span>
 <span id="cb31-120"><a href="#cb31-120" aria-hidden="true" tabindex="-1"></a><span class="fu">## Requisitos previos</span></span>
-<span id="cb31-121"><a href="#cb31-121" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Módulos 06 (FITS) y 07 (WCS)</span>
+<span id="cb31-121"><a href="#cb31-121" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Secciones 06 (FITS) y 07 (WCS)</span>
 <span id="cb31-122"><a href="#cb31-122" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Instalar photutils: <span class="in">`pip install photutils`</span></span>
 <span id="cb31-123"><a href="#cb31-123" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb31-124"><a href="#cb31-124" aria-hidden="true" tabindex="-1"></a></span>
@@ -2186,7 +2186,7 @@ Estrella más débil:
 <span id="cb31-431"><a href="#cb31-431" aria-hidden="true" tabindex="-1"></a>En trabajo profesional se aplica una **corrección de apertura** midiendo</span>
 <span id="cb31-432"><a href="#cb31-432" aria-hidden="true" tabindex="-1"></a>estrellas brillantes con aperturas cada vez más grandes. Para fotometría</span>
 <span id="cb31-433"><a href="#cb31-433" aria-hidden="true" tabindex="-1"></a>**diferencial** (comparar una estrella con otras de la misma imagen, como</span>
-<span id="cb31-434"><a href="#cb31-434" aria-hidden="true" tabindex="-1"></a>en el módulo 17) este efecto se cancela.</span>
+<span id="cb31-434"><a href="#cb31-434" aria-hidden="true" tabindex="-1"></a>en la sección 17) este efecto se cancela.</span>
 <span id="cb31-435"><a href="#cb31-435" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb31-436"><a href="#cb31-436" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-437"><a href="#cb31-437" aria-hidden="true" tabindex="-1"></a>---</span>
@@ -2260,7 +2260,7 @@ Estrella más débil:
 <span id="cb31-509"><a href="#cb31-509" aria-hidden="true" tabindex="-1"></a>i_max <span class="op">=</span> np.argmax(flujo)</span>
 <span id="cb31-510"><a href="#cb31-510" aria-hidden="true" tabindex="-1"></a>x_est, y_est <span class="op">=</span> posiciones[i_max]</span>
 <span id="cb31-511"><a href="#cb31-511" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-512"><a href="#cb31-512" aria-hidden="true" tabindex="-1"></a><span class="co"># Cutout2D (módulo 06): ventana de 25×25 píxeles centrada en la estrella</span></span>
+<span id="cb31-512"><a href="#cb31-512" aria-hidden="true" tabindex="-1"></a><span class="co"># Cutout2D (sección 06): ventana de 25×25 píxeles centrada en la estrella</span></span>
 <span id="cb31-513"><a href="#cb31-513" aria-hidden="true" tabindex="-1"></a>recorte <span class="op">=</span> Cutout2D(imagen, position<span class="op">=</span>(x_est, y_est), size<span class="op">=</span>(<span class="dv">25</span>, <span class="dv">25</span>))</span>
 <span id="cb31-514"><a href="#cb31-514" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-515"><a href="#cb31-515" aria-hidden="true" tabindex="-1"></a><span class="co"># Restamos el fondo del cielo para que la "montaña" arranque desde cero</span></span>
@@ -2276,7 +2276,7 @@ Estrella más débil:
 <span id="cb31-525"><a href="#cb31-525" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-526"><a href="#cb31-526" aria-hidden="true" tabindex="-1"></a><span class="fu">### Paso 2: ajustar un modelo gaussiano 2D</span></span>
 <span id="cb31-527"><a href="#cb31-527" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-528"><a href="#cb31-528" aria-hidden="true" tabindex="-1"></a>Usamos <span class="in">`astropy.modeling`</span> (lo veremos a fondo en el módulo 10): una</span>
+<span id="cb31-528"><a href="#cb31-528" aria-hidden="true" tabindex="-1"></a>Usamos <span class="in">`astropy.modeling`</span> (lo veremos a fondo en la sección 10): una</span>
 <span id="cb31-529"><a href="#cb31-529" aria-hidden="true" tabindex="-1"></a>gaussiana 2D para la estrella más una constante para el fondo residual.</span>
 <span id="cb31-530"><a href="#cb31-530" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-533"><a href="#cb31-533" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
@@ -2510,7 +2510,7 @@ Estrella más débil:
 <span id="cb31-769"><a href="#cb31-769" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-770"><a href="#cb31-770" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb31-771"><a href="#cb31-771" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-772"><a href="#cb31-772" aria-hidden="true" tabindex="-1"></a><span class="fu">## ¿Qué aprendiste en este módulo? {.seccion-aprendiste}</span></span>
+<span id="cb31-772"><a href="#cb31-772" aria-hidden="true" tabindex="-1"></a><span class="fu">## ¿Qué aprendiste en esta sección? {.seccion-aprendiste}</span></span>
 <span id="cb31-773"><a href="#cb31-773" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-774"><a href="#cb31-774" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ El principio de la fotometría de apertura</span>
 <span id="cb31-775"><a href="#cb31-775" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Estimar el fondo con <span class="in">`sigma_clipped_stats`</span></span>
@@ -2520,7 +2520,7 @@ Estrella más débil:
 <span id="cb31-779"><a href="#cb31-779" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Calcular S/N, magnitudes instrumentales y sus errores</span>
 <span id="cb31-780"><a href="#cb31-780" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Elegir el radio de apertura con la curva de crecimiento</span>
 <span id="cb31-781"><a href="#cb31-781" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-782"><a href="#cb31-782" aria-hidden="true" tabindex="-1"></a>**Siguiente módulo →** <span class="co">[</span><span class="ot">09 · Visualización astronómica</span><span class="co">](09-visualizacion.qmd)</span></span>
+<span id="cb31-782"><a href="#cb31-782" aria-hidden="true" tabindex="-1"></a>**Siguiente sección →** <span class="co">[</span><span class="ot">09 · Visualización astronómica</span><span class="co">](09-visualizacion.qmd)</span></span>
 </code></pre></div><button title="Copiar al portapapeles" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

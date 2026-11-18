@@ -171,7 +171,7 @@ window.Quarto = {
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
     <a class="nav-link active" href="../../posts/basico/01-introduccion.html" aria-current="page"> 
-<span class="menu-text">Módulos</span></a>
+<span class="menu-text">Secciones</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../../sobre.html"> 
@@ -379,7 +379,7 @@ window.Quarto = {
   <li><a href="#información-útil-del-wcs" id="toc-información-útil-del-wcs" class="nav-link" data-scroll-target="#información-útil-del-wcs"><span class="header-section-number">7</span> Información útil del WCS</a></li>
   <li><a href="#aplicación-práctica-escala-de-una-cámara-real" id="toc-aplicación-práctica-escala-de-una-cámara-real" class="nav-link" data-scroll-target="#aplicación-práctica-escala-de-una-cámara-real"><span class="header-section-number">8</span> Aplicación práctica: escala de una cámara real</a></li>
   <li><a href="#ejercicio" id="toc-ejercicio" class="nav-link" data-scroll-target="#ejercicio"><span class="header-section-number">9</span> Ejercicio</a></li>
-  <li><a href="#qué-aprendiste-en-este-módulo" id="toc-qué-aprendiste-en-este-módulo" class="nav-link" data-scroll-target="#qué-aprendiste-en-este-módulo"><span class="header-section-number">10</span> ¿Qué aprendiste en este módulo?</a></li>
+  <li><a href="#qué-aprendiste-en-esta-sección" id="toc-qué-aprendiste-en-esta-sección" class="nav-link" data-scroll-target="#qué-aprendiste-en-esta-sección"><span class="header-section-number">10</span> ¿Qué aprendiste en esta sección?</a></li>
   </ul>
 </nav>
     </div>
@@ -428,7 +428,7 @@ window.Quarto = {
 <p><span class="badge-inter">🔭 Intermedio</span></p>
 <section id="el-problema-una-imagen-no-sabe-dónde-está" class="level2" data-number="1">
 <h2 data-number="1" class="anchored" data-anchor-id="el-problema-una-imagen-no-sabe-dónde-está"><span class="header-section-number">1</span> El problema: una imagen no sabe dónde está</h2>
-<p>En el módulo 06 trabajamos con una imagen como un simple arreglo de números. Pero un astrónomo necesita saber: <em>“¿qué estrella es la que está en el píxel (90, 110)?”</em>. Para eso hace falta un “mapa” que traduzca:</p>
+<p>En la sección 06 trabajamos con una imagen como un simple arreglo de números. Pero un astrónomo necesita saber: <em>“¿qué estrella es la que está en el píxel (90, 110)?”</em>. Para eso hace falta un “mapa” que traduzca:</p>
 <p><span class="math display">\[\text{píxel } (x, y) \;\longleftrightarrow\; \text{cielo } (\alpha, \delta)\]</span></p>
 <p>Ese mapa se llama <strong>WCS</strong> (<em>World Coordinate System</em>) y vive en el encabezado del FITS, en un conjunto de claves estándar. Con <code>astropy.wcs</code> leemos esas claves y hacemos las conversiones automáticamente.</p>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -442,8 +442,8 @@ window.Quarto = {
 </div>
 <div class="callout-body-container callout-body">
 <ul>
-<li>Módulo 04 (coordenadas con <code>SkyCoord</code>)</li>
-<li>Módulo 06 (archivos FITS)</li>
+<li>Sección 04 (coordenadas con <code>SkyCoord</code>)</li>
+<li>Sección 06 (archivos FITS)</li>
 </ul>
 </div>
 </div>
@@ -511,7 +511,7 @@ window.Quarto = {
 </section>
 <section id="crear-un-wcs-desde-cero" class="level2" data-number="3">
 <h2 data-number="3" class="anchored" data-anchor-id="crear-un-wcs-desde-cero"><span class="header-section-number">3</span> Crear un WCS desde cero</h2>
-<div id="8ab1d077" class="cell" data-execution_count="1">
+<div id="96b32e0b" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Construir un WCS para una imagen de 200×200 píxeles centrada en M42</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -554,7 +554,7 @@ NAXIS : 0  0</code></pre>
 </section>
 <section id="convertir-píxel-cielo" class="level2" data-number="4">
 <h2 data-number="4" class="anchored" data-anchor-id="convertir-píxel-cielo"><span class="header-section-number">4</span> Convertir píxel → cielo</h2>
-<div id="d4e02ee5" class="cell" data-execution_count="2">
+<div id="c1960620" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># pixel_to_world() recibe (x, y) en convención numpy (base 0)</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># y devuelve un objeto SkyCoord listo para usar</span></span>
@@ -570,7 +570,7 @@ NAXIS : 0  0</code></pre>
 <span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>esquina <span class="op">=</span> w.pixel_to_world(<span class="dv">0</span>, <span class="dv">0</span>)</span>
 <span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Esquina inferior izq. : </span><span class="sc">{</span>esquina<span class="sc">.</span>to_string(<span class="st">'hmsdms'</span>, precision<span class="op">=</span><span class="dv">2</span>)<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Distancia angular entre el centro y la esquina (módulo 04)</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Distancia angular entre el centro y la esquina (sección 04)</span></span>
 <span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Separación            : </span><span class="sc">{</span>centro<span class="sc">.</span>separation(esquina)<span class="sc">.</span>to(u.arcsec)<span class="sc">:.1f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Centro de la imagen   : 05h35m17.30s -05d23m27.96s
@@ -591,14 +591,14 @@ Separación            : 140.7 arcsec</code></pre>
 <p><code>pixel_to_world()</code> y <code>world_to_pixel()</code> usan <strong>base 0</strong> (como numpy), mientras que <code>CRPIX</code> en el encabezado usa <strong>base 1</strong> (como FITS). Astropy hace la traducción internamente: tú solo usa índices de numpy.</p>
 </div>
 </div>
-<div id="b18923b1" class="cell" data-execution_count="3">
+<div id="e18a9d98" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># También funciona con muchos píxeles a la vez (arreglos)</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Posiciones de las 5 estrellas de la imagen sintética del módulo 06</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Posiciones de las 5 estrellas de la imagen sintética de la sección 06</span></span>
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>x_estrellas <span class="op">=</span> np.array([<span class="dv">50</span>, <span class="dv">120</span>, <span class="dv">160</span>, <span class="dv">90</span>, <span class="dv">30</span>])</span>
 <span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>y_estrellas <span class="op">=</span> np.array([<span class="dv">60</span>, <span class="dv">140</span>, <span class="dv">40</span>, <span class="dv">110</span>, <span class="dv">170</span>])</span>
 <span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
@@ -619,7 +619,7 @@ Estrella 5: RA = 83.84149°,  Dec = -5.37152°</code></pre>
 </section>
 <section id="convertir-cielo-píxel" class="level2" data-number="5">
 <h2 data-number="5" class="anchored" data-anchor-id="convertir-cielo-píxel"><span class="header-section-number">5</span> Convertir cielo → píxel</h2>
-<div id="1bfd5950" class="cell" data-execution_count="4">
+<div id="20a87634" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co"># world_to_pixel() responde: ¿en qué píxel cae esta coordenada del cielo?</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -647,7 +647,7 @@ Estrella 5: RA = 83.84149°,  Dec = -5.37152°</code></pre>
 <h2 data-number="6" class="anchored" data-anchor-id="el-wcs-en-un-archivo-fits"><span class="header-section-number">6</span> El WCS en un archivo FITS</h2>
 <section id="guardar-el-wcs-en-el-encabezado" class="level3" data-number="6.1">
 <h3 data-number="6.1" class="anchored" data-anchor-id="guardar-el-wcs-en-el-encabezado"><span class="header-section-number">6.1</span> Guardar el WCS en el encabezado</h3>
-<div id="ac6224cc" class="cell" data-execution_count="5">
+<div id="c96433f9" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Crear una imagen sintética y guardarla con su WCS en el encabezado</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -655,7 +655,7 @@ Estrella 5: RA = 83.84149°,  Dec = -5.37152°</code></pre>
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.io <span class="im">import</span> fits</span>
 <span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Imagen sintética: fondo + ruido + estrellas (igual que en el módulo 06)</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Imagen sintética: fondo + ruido + estrellas (igual que en la sección 06)</span></span>
 <span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> np.random.default_rng(seed<span class="op">=</span><span class="dv">7</span>)</span>
 <span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>imagen <span class="op">=</span> <span class="dv">100</span> <span class="op">+</span> rng.normal(<span class="dv">0</span>, <span class="dv">5</span>, (<span class="dv">200</span>, <span class="dv">200</span>))</span>
 <span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>yy, xx <span class="op">=</span> np.mgrid[<span class="dv">0</span>:<span class="dv">200</span>, <span class="dv">0</span>:<span class="dv">200</span>]</span>
@@ -694,7 +694,7 @@ OBJECT  = 'M42 simulado'                                                        
 </section>
 <section id="leer-el-wcs-desde-un-fits" class="level3" data-number="6.2">
 <h3 data-number="6.2" class="anchored" data-anchor-id="leer-el-wcs-desde-un-fits"><span class="header-section-number">6.2</span> Leer el WCS desde un FITS</h3>
-<div id="5f1f8332" class="cell" data-execution_count="6">
+<div id="2884c6ba" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Lo habitual con datos reales: leer el WCS directamente del encabezado</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -719,7 +719,7 @@ OBJECT  = 'M42 simulado'                                                        
 </section>
 <section id="información-útil-del-wcs" class="level2" data-number="7">
 <h2 data-number="7" class="anchored" data-anchor-id="información-útil-del-wcs"><span class="header-section-number">7</span> Información útil del WCS</h2>
-<div id="c2574955" class="cell" data-execution_count="7">
+<div id="96ea8ab6" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Escala de píxel, huella (footprint) y tamaño del campo de visión</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -759,7 +759,7 @@ Esquinas de la imagen (RA, Dec en grados):
 <h2 data-number="8" class="anchored" data-anchor-id="aplicación-práctica-escala-de-una-cámara-real"><span class="header-section-number">8</span> Aplicación práctica: escala de una cámara real</h2>
 <p>La escala de píxel de un telescopio con cámara se calcula con:</p>
 <p><span class="math display">\[\text{escala}\;[''/\text{px}] = 206.265 \times \frac{\text{tamaño de píxel}\;[\mu m]}{\text{distancia focal}\;[mm]}\]</span></p>
-<div id="380b746b" class="cell" data-execution_count="8">
+<div id="c8902588" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Calcular la escala de píxel y construir el WCS de un equipo real</span></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Ejemplo: telescopio de 800 mm de focal + cámara con píxeles de 3.76 µm</span></span>
@@ -831,7 +831,7 @@ Centro de la toma : 00h42m44.29s +41d16m08.88s</code></pre>
 </div>
 <div id="callout-5" class="callout-5-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="093672b2" class="cell" data-execution_count="9">
+<div id="7cd4fb9a" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="co"># SOLUCIÓN: coordenadas del píxel más brillante</span></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -867,8 +867,8 @@ Distancia al centro: 14.2 arcsec</code></pre>
 </div>
 <hr>
 </section>
-<section id="qué-aprendiste-en-este-módulo" class="level2 seccion-aprendiste" data-number="10">
-<h2 class="seccion-aprendiste anchored" data-number="10" data-anchor-id="qué-aprendiste-en-este-módulo"><span class="header-section-number">10</span> ¿Qué aprendiste en este módulo?</h2>
+<section id="qué-aprendiste-en-esta-sección" class="level2 seccion-aprendiste" data-number="10">
+<h2 class="seccion-aprendiste anchored" data-number="10" data-anchor-id="qué-aprendiste-en-esta-sección"><span class="header-section-number">10</span> ¿Qué aprendiste en esta sección?</h2>
 <ul>
 <li>✅ Qué es el WCS y qué claves lo definen (<code>CTYPE</code>, <code>CRVAL</code>, <code>CRPIX</code>, <code>CDELT</code>)</li>
 <li>✅ Crear un WCS desde cero con <code>astropy.wcs.WCS</code></li>
@@ -878,7 +878,7 @@ Distancia al centro: 14.2 arcsec</code></pre>
 <li>✅ Calcular escala de píxel, campo de visión y huella de la imagen</li>
 <li>✅ Las diferencias entre base 0 (numpy) y base 1 (FITS)</li>
 </ul>
-<p><strong>Siguiente módulo →</strong> <a href="../../posts/intermedio/08-fotometria.html">08 · Fotometría de apertura</a></p>
+<p><strong>Siguiente sección →</strong> <a href="../../posts/intermedio/08-fotometria.html">08 · Fotometría de apertura</a></p>
 
 
 <!-- -->
@@ -1368,7 +1368,7 @@ Distancia al centro: 14.2 arcsec</code></pre>
 <span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a><span class="fu">## El problema: una imagen no sabe dónde está</span></span>
 <span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>En el módulo 06 trabajamos con una imagen como un simple arreglo de</span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>En la sección 06 trabajamos con una imagen como un simple arreglo de</span>
 <span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a>números. Pero un astrónomo necesita saber: *"¿qué estrella es la que está</span>
 <span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a>en el píxel (90, 110)?"*. Para eso hace falta un "mapa" que traduzca:</span>
 <span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a></span>
@@ -1380,8 +1380,8 @@ Distancia al centro: 14.2 arcsec</code></pre>
 <span id="cb19-29"><a href="#cb19-29" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-30"><a href="#cb19-30" aria-hidden="true" tabindex="-1"></a>::: {.callout-note}</span>
 <span id="cb19-31"><a href="#cb19-31" aria-hidden="true" tabindex="-1"></a><span class="fu">## Requisitos previos</span></span>
-<span id="cb19-32"><a href="#cb19-32" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Módulo 04 (coordenadas con <span class="in">`SkyCoord`</span>)</span>
-<span id="cb19-33"><a href="#cb19-33" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Módulo 06 (archivos FITS)</span>
+<span id="cb19-32"><a href="#cb19-32" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Sección 04 (coordenadas con <span class="in">`SkyCoord`</span>)</span>
+<span id="cb19-33"><a href="#cb19-33" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Sección 06 (archivos FITS)</span>
 <span id="cb19-34"><a href="#cb19-34" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb19-35"><a href="#cb19-35" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-36"><a href="#cb19-36" aria-hidden="true" tabindex="-1"></a>---</span>
@@ -1460,7 +1460,7 @@ Distancia al centro: 14.2 arcsec</code></pre>
 <span id="cb19-113"><a href="#cb19-113" aria-hidden="true" tabindex="-1"></a>esquina <span class="op">=</span> w.pixel_to_world(<span class="dv">0</span>, <span class="dv">0</span>)</span>
 <span id="cb19-114"><a href="#cb19-114" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Esquina inferior izq. : </span><span class="sc">{</span>esquina<span class="sc">.</span>to_string(<span class="st">'hmsdms'</span>, precision<span class="op">=</span><span class="dv">2</span>)<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb19-115"><a href="#cb19-115" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-116"><a href="#cb19-116" aria-hidden="true" tabindex="-1"></a><span class="co"># Distancia angular entre el centro y la esquina (módulo 04)</span></span>
+<span id="cb19-116"><a href="#cb19-116" aria-hidden="true" tabindex="-1"></a><span class="co"># Distancia angular entre el centro y la esquina (sección 04)</span></span>
 <span id="cb19-117"><a href="#cb19-117" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Separación            : </span><span class="sc">{</span>centro<span class="sc">.</span>separation(esquina)<span class="sc">.</span>to(u.arcsec)<span class="sc">:.1f}</span><span class="ss">"</span>)</span>
 <span id="cb19-118"><a href="#cb19-118" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb19-119"><a href="#cb19-119" aria-hidden="true" tabindex="-1"></a></span>
@@ -1478,7 +1478,7 @@ Distancia al centro: 14.2 arcsec</code></pre>
 <span id="cb19-133"><a href="#cb19-133" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-134"><a href="#cb19-134" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb19-135"><a href="#cb19-135" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-136"><a href="#cb19-136" aria-hidden="true" tabindex="-1"></a><span class="co"># Posiciones de las 5 estrellas de la imagen sintética del módulo 06</span></span>
+<span id="cb19-136"><a href="#cb19-136" aria-hidden="true" tabindex="-1"></a><span class="co"># Posiciones de las 5 estrellas de la imagen sintética de la sección 06</span></span>
 <span id="cb19-137"><a href="#cb19-137" aria-hidden="true" tabindex="-1"></a>x_estrellas <span class="op">=</span> np.array([<span class="dv">50</span>, <span class="dv">120</span>, <span class="dv">160</span>, <span class="dv">90</span>, <span class="dv">30</span>])</span>
 <span id="cb19-138"><a href="#cb19-138" aria-hidden="true" tabindex="-1"></a>y_estrellas <span class="op">=</span> np.array([<span class="dv">60</span>, <span class="dv">140</span>, <span class="dv">40</span>, <span class="dv">110</span>, <span class="dv">170</span>])</span>
 <span id="cb19-139"><a href="#cb19-139" aria-hidden="true" tabindex="-1"></a></span>
@@ -1526,7 +1526,7 @@ Distancia al centro: 14.2 arcsec</code></pre>
 <span id="cb19-185"><a href="#cb19-185" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb19-186"><a href="#cb19-186" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.io <span class="im">import</span> fits</span>
 <span id="cb19-187"><a href="#cb19-187" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-188"><a href="#cb19-188" aria-hidden="true" tabindex="-1"></a><span class="co"># Imagen sintética: fondo + ruido + estrellas (igual que en el módulo 06)</span></span>
+<span id="cb19-188"><a href="#cb19-188" aria-hidden="true" tabindex="-1"></a><span class="co"># Imagen sintética: fondo + ruido + estrellas (igual que en la sección 06)</span></span>
 <span id="cb19-189"><a href="#cb19-189" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> np.random.default_rng(seed<span class="op">=</span><span class="dv">7</span>)</span>
 <span id="cb19-190"><a href="#cb19-190" aria-hidden="true" tabindex="-1"></a>imagen <span class="op">=</span> <span class="dv">100</span> <span class="op">+</span> rng.normal(<span class="dv">0</span>, <span class="dv">5</span>, (<span class="dv">200</span>, <span class="dv">200</span>))</span>
 <span id="cb19-191"><a href="#cb19-191" aria-hidden="true" tabindex="-1"></a>yy, xx <span class="op">=</span> np.mgrid[<span class="dv">0</span>:<span class="dv">200</span>, <span class="dv">0</span>:<span class="dv">200</span>]</span>
@@ -1684,7 +1684,7 @@ Distancia al centro: 14.2 arcsec</code></pre>
 <span id="cb19-351"><a href="#cb19-351" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-352"><a href="#cb19-352" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb19-353"><a href="#cb19-353" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-354"><a href="#cb19-354" aria-hidden="true" tabindex="-1"></a><span class="fu">## ¿Qué aprendiste en este módulo? {.seccion-aprendiste}</span></span>
+<span id="cb19-354"><a href="#cb19-354" aria-hidden="true" tabindex="-1"></a><span class="fu">## ¿Qué aprendiste en esta sección? {.seccion-aprendiste}</span></span>
 <span id="cb19-355"><a href="#cb19-355" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-356"><a href="#cb19-356" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Qué es el WCS y qué claves lo definen (<span class="in">`CTYPE`</span>, <span class="in">`CRVAL`</span>, <span class="in">`CRPIX`</span>, <span class="in">`CDELT`</span>)</span>
 <span id="cb19-357"><a href="#cb19-357" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Crear un WCS desde cero con <span class="in">`astropy.wcs.WCS`</span></span>
@@ -1694,7 +1694,7 @@ Distancia al centro: 14.2 arcsec</code></pre>
 <span id="cb19-361"><a href="#cb19-361" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Calcular escala de píxel, campo de visión y huella de la imagen</span>
 <span id="cb19-362"><a href="#cb19-362" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Las diferencias entre base 0 (numpy) y base 1 (FITS)</span>
 <span id="cb19-363"><a href="#cb19-363" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-364"><a href="#cb19-364" aria-hidden="true" tabindex="-1"></a>**Siguiente módulo →** <span class="co">[</span><span class="ot">08 · Fotometría de apertura</span><span class="co">](08-fotometria.qmd)</span></span>
+<span id="cb19-364"><a href="#cb19-364" aria-hidden="true" tabindex="-1"></a>**Siguiente sección →** <span class="co">[</span><span class="ot">08 · Fotometría de apertura</span><span class="co">](08-fotometria.qmd)</span></span>
 </code></pre></div><button title="Copiar al portapapeles" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

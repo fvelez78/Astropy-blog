@@ -142,7 +142,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
     <a class="nav-link active" href="../../posts/basico/01-introduccion.html" aria-current="page"> 
-<span class="menu-text">Módulos</span></a>
+<span class="menu-text">Secciones</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../../sobre.html"> 
@@ -353,7 +353,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#estadísticas-básicas-sobre-columnas" id="toc-estadísticas-básicas-sobre-columnas" class="nav-link" data-scroll-target="#estadísticas-básicas-sobre-columnas"><span class="header-section-number">9</span> Estadísticas básicas sobre columnas</a></li>
   <li><a href="#resumen-de-formatos-soportados" id="toc-resumen-de-formatos-soportados" class="nav-link" data-scroll-target="#resumen-de-formatos-soportados"><span class="header-section-number">10</span> Resumen de formatos soportados</a></li>
   <li><a href="#ejercicio" id="toc-ejercicio" class="nav-link" data-scroll-target="#ejercicio"><span class="header-section-number">11</span> Ejercicio</a></li>
-  <li><a href="#qué-aprendiste-en-este-módulo" id="toc-qué-aprendiste-en-este-módulo" class="nav-link" data-scroll-target="#qué-aprendiste-en-este-módulo"><span class="header-section-number">12</span> ¿Qué aprendiste en este módulo?</a></li>
+  <li><a href="#qué-aprendiste-en-esta-sección" id="toc-qué-aprendiste-en-esta-sección" class="nav-link" data-scroll-target="#qué-aprendiste-en-esta-sección"><span class="header-section-number">12</span> ¿Qué aprendiste en esta sección?</a></li>
   </ul>
 </nav>
     </div>
@@ -402,7 +402,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><span class="badge-basico">🌱 Básico</span></p>
 <section id="por-qué-tablas-astronómicas" class="level2" data-number="1">
 <h2 data-number="1" class="anchored" data-anchor-id="por-qué-tablas-astronómicas"><span class="header-section-number">1</span> ¿Por qué tablas astronómicas?</h2>
-<p>En astronomía casi todo son tablas: catálogos de estrellas con millones de filas, listas de exoplanetas, resultados de observaciones, datos de telescopios espaciales. El formato más común es FITS (lo veremos en el módulo 06), pero también abundan CSV, VOTable y ECSV.</p>
+<p>En astronomía casi todo son tablas: catálogos de estrellas con millones de filas, listas de exoplanetas, resultados de observaciones, datos de telescopios espaciales. El formato más común es FITS (lo veremos en la sección 06), pero también abundan CSV, VOTable y ECSV.</p>
 <p><code>astropy.table</code> ofrece una clase <code>Table</code> que:</p>
 <ul>
 <li>Lee y escribe múltiples formatos (CSV, FITS, VOTable, HTML, LaTeX…)</li>
@@ -421,7 +421,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div class="callout-body-container callout-body">
 <ul>
-<li>Módulos 01 al 04 completados</li>
+<li>Secciones 01 a 04 completadas</li>
 <li>Astropy instalada: <code>pip install astropy</code></li>
 </ul>
 </div>
@@ -430,7 +430,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="crear-una-tabla-desde-cero" class="level2" data-number="2">
 <h2 data-number="2" class="anchored" data-anchor-id="crear-una-tabla-desde-cero"><span class="header-section-number">2</span> Crear una tabla desde cero</h2>
-<div id="809758a7" class="cell" data-execution_count="1">
+<div id="809758a7" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Crear una Table de Astropy con datos de estrellas brillantes</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -465,7 +465,7 @@ Rigil Kent.      -0.27         4.37            G2V
        Vega       0.03        25.04            A0V</code></pre>
 </div>
 </div>
-<div id="0401f33a" class="cell" data-execution_count="2">
+<div id="0401f33a" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Agregar unidades a las columnas para que la tabla sea más informativa</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Las unidades viajan con la columna igual que con astropy.units</span></span>
@@ -517,7 +517,7 @@ Unidades por columna:
 </section>
 <section id="acceder-a-filas-y-columnas" class="level2" data-number="3">
 <h2 data-number="3" class="anchored" data-anchor-id="acceder-a-filas-y-columnas"><span class="header-section-number">3</span> Acceder a filas y columnas</h2>
-<div id="627c8a72" class="cell" data-execution_count="3">
+<div id="627c8a72" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Acceder a columnas, filas y celdas individuales</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># La sintaxis es similar a numpy y pandas</span></span>
@@ -579,7 +579,7 @@ Rigil Kent.      -0.27         4.37  G2V</code></pre>
 </section>
 <section id="filtrar-filas-con-condiciones" class="level2" data-number="4">
 <h2 data-number="4" class="anchored" data-anchor-id="filtrar-filas-con-condiciones"><span class="header-section-number">4</span> Filtrar filas con condiciones</h2>
-<div id="c7b3206a" class="cell" data-execution_count="4">
+<div id="c7b3206a" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Filtrar filas usando condiciones booleanas</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Muy útil para seleccionar subconjuntos de un catálogo</span></span>
@@ -646,7 +646,7 @@ Rigil Kent.      -0.27         4.37
 </section>
 <section id="ordenar-una-tabla" class="level2" data-number="5">
 <h2 data-number="5" class="anchored" data-anchor-id="ordenar-una-tabla"><span class="header-section-number">5</span> Ordenar una tabla</h2>
-<div id="80485487" class="cell" data-execution_count="5">
+<div id="80485487" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co"># sort() ordena la tabla por una o varias columnas</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Por defecto ordena de menor a mayor</span></span>
@@ -701,7 +701,7 @@ Rigil Kent.         4.37
 </section>
 <section id="agregar-y-eliminar-columnas" class="level2" data-number="6">
 <h2 data-number="6" class="anchored" data-anchor-id="agregar-y-eliminar-columnas"><span class="header-section-number">6</span> Agregar y eliminar columnas</h2>
-<div id="ebdedc47" class="cell" data-execution_count="6">
+<div id="ebdedc47" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Agregar columnas calculadas a partir de las existentes</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -762,7 +762,7 @@ Después de eliminar 'distancia_ly':
 <h2 data-number="7" class="anchored" data-anchor-id="leer-y-escribir-archivos"><span class="header-section-number">7</span> Leer y escribir archivos</h2>
 <section id="guardar-en-csv" class="level3" data-number="7.1">
 <h3 data-number="7.1" class="anchored" data-anchor-id="guardar-en-csv"><span class="header-section-number">7.1</span> Guardar en CSV</h3>
-<div id="6eb1f2b5" class="cell" data-execution_count="7">
+<div id="6eb1f2b5" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Escribir la tabla a distintos formatos con write()</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co"># El parámetro overwrite=True permite sobreescribir si ya existe el archivo</span></span>
@@ -806,7 +806,7 @@ Vega,0.03,7.68
 </section>
 <section id="leer-desde-csv" class="level3" data-number="7.2">
 <h3 data-number="7.2" class="anchored" data-anchor-id="leer-desde-csv"><span class="header-section-number">7.2</span> Leer desde CSV</h3>
-<div id="89ec5706" class="cell" data-execution_count="8">
+<div id="89ec5706" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Leer una tabla desde un archivo CSV con read()</span></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -837,7 +837,7 @@ Nombres de columnas: ['nombre', 'magnitud_V', 'distancia_pc']</code></pre>
 </section>
 <section id="leer-desde-ecsv-con-unidades-preservadas" class="level3" data-number="7.3">
 <h3 data-number="7.3" class="anchored" data-anchor-id="leer-desde-ecsv-con-unidades-preservadas"><span class="header-section-number">7.3</span> Leer desde ECSV (con unidades preservadas)</h3>
-<div id="86a8f375" class="cell" data-execution_count="9">
+<div id="86a8f375" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="co"># ECSV (Enhanced CSV) preserva las unidades y los tipos de datos</span></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Es el formato recomendado para intercambiar tablas astronómicas en texto</span></span>
@@ -876,7 +876,7 @@ Unidades de cada columna:
 </section>
 <section id="combinar-tablas" class="level2" data-number="8">
 <h2 data-number="8" class="anchored" data-anchor-id="combinar-tablas"><span class="header-section-number">8</span> Combinar tablas</h2>
-<div id="03471f05" class="cell" data-execution_count="10">
+<div id="03471f05" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="co"># vstack: apilar tablas verticalmente (agregar más filas)</span></span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="co"># hstack: apilar tablas horizontalmente (agregar más columnas)</span></span>
@@ -940,7 +940,7 @@ Arcturus      -0.05      Norte         36.7
 </section>
 <section id="estadísticas-básicas-sobre-columnas" class="level2" data-number="9">
 <h2 data-number="9" class="anchored" data-anchor-id="estadísticas-básicas-sobre-columnas"><span class="header-section-number">9</span> Estadísticas básicas sobre columnas</h2>
-<div id="996ef119" class="cell" data-execution_count="11">
+<div id="996ef119" class="cell" data-execution_count="12">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Las columnas de una Table se comportan como arrays de numpy</span></span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Podemos calcular estadísticas directamente</span></span>
@@ -1013,7 +1013,7 @@ Estrella más lejana    : Rigel
 <td>FITS</td>
 <td><code>.fits</code></td>
 <td><code>'fits'</code></td>
-<td>Módulo 06</td>
+<td>Sección 06</td>
 </tr>
 <tr class="even">
 <td>VOTable</td>
@@ -1070,7 +1070,7 @@ Estrella más lejana    : Rigel
 </div>
 <div id="callout-2" class="callout-2-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="3180b059" class="cell" data-execution_count="12">
+<div id="3180b059" class="cell" data-execution_count="13">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="co"># SOLUCIÓN: tabla de planetas del Sistema Solar</span></span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -1167,8 +1167,8 @@ Mercurio        5426.8
 </div>
 <hr>
 </section>
-<section id="qué-aprendiste-en-este-módulo" class="level2 seccion-aprendiste" data-number="12">
-<h2 class="seccion-aprendiste anchored" data-number="12" data-anchor-id="qué-aprendiste-en-este-módulo"><span class="header-section-number">12</span> ¿Qué aprendiste en este módulo?</h2>
+<section id="qué-aprendiste-en-esta-sección" class="level2 seccion-aprendiste" data-number="12">
+<h2 class="seccion-aprendiste anchored" data-number="12" data-anchor-id="qué-aprendiste-en-esta-sección"><span class="header-section-number">12</span> ¿Qué aprendiste en esta sección?</h2>
 <ul>
 <li>✅ Crear tablas con <code>Table</code> a partir de diccionarios y listas</li>
 <li>✅ Asignar unidades y descripciones a columnas con <code>Column</code></li>
@@ -1180,7 +1180,7 @@ Mercurio        5426.8
 <li>✅ Combinar tablas con <code>vstack</code>, <code>hstack</code> y <code>join</code></li>
 <li>✅ Calcular estadísticas sobre columnas</li>
 </ul>
-<p><strong>Siguiente módulo →</strong> <a href="../../posts/intermedio/06-fits.html">06 · Lectura y manipulación de archivos FITS</a></p>
+<p><strong>Siguiente sección →</strong> <a href="../../posts/intermedio/06-fits.html">06 · Lectura y manipulación de archivos FITS</a></p>
 
 
 <!-- -->
@@ -1672,8 +1672,8 @@ Mercurio        5426.8
 <span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a>En astronomía casi todo son tablas: catálogos de estrellas con millones</span>
 <span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a>de filas, listas de exoplanetas, resultados de observaciones, datos de</span>
-<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a>telescopios espaciales. El formato más común es FITS (lo veremos en el</span>
-<span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a>módulo 06), pero también abundan CSV, VOTable y ECSV.</span>
+<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a>telescopios espaciales. El formato más común es FITS (lo veremos en la</span>
+<span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a>sección 06), pero también abundan CSV, VOTable y ECSV.</span>
 <span id="cb25-24"><a href="#cb25-24" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-25"><a href="#cb25-25" aria-hidden="true" tabindex="-1"></a><span class="in">`astropy.table`</span> ofrece una clase <span class="in">`Table`</span> que:</span>
 <span id="cb25-26"><a href="#cb25-26" aria-hidden="true" tabindex="-1"></a></span>
@@ -1684,7 +1684,7 @@ Mercurio        5426.8
 <span id="cb25-31"><a href="#cb25-31" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-32"><a href="#cb25-32" aria-hidden="true" tabindex="-1"></a>::: {.callout-note}</span>
 <span id="cb25-33"><a href="#cb25-33" aria-hidden="true" tabindex="-1"></a><span class="fu">## Requisitos previos</span></span>
-<span id="cb25-34"><a href="#cb25-34" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Módulos 01 al 04 completados</span>
+<span id="cb25-34"><a href="#cb25-34" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Secciones 01 a 04 completadas</span>
 <span id="cb25-35"><a href="#cb25-35" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Astropy instalada: <span class="in">`pip install astropy`</span></span>
 <span id="cb25-36"><a href="#cb25-36" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb25-37"><a href="#cb25-37" aria-hidden="true" tabindex="-1"></a></span>
@@ -2073,7 +2073,7 @@ Mercurio        5426.8
 <span id="cb25-442"><a href="#cb25-442" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|---|---|</span></span>
 <span id="cb25-443"><a href="#cb25-443" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> CSV simple <span class="pp">|</span> <span class="in">`.csv`</span> <span class="pp">|</span> <span class="in">`'csv'`</span> <span class="pp">|</span> Sin unidades <span class="pp">|</span></span>
 <span id="cb25-444"><a href="#cb25-444" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> ECSV <span class="pp">|</span> <span class="in">`.ecsv`</span> <span class="pp">|</span> <span class="in">`'ascii.ecsv'`</span> <span class="pp">|</span> Con unidades y tipos <span class="pp">|</span></span>
-<span id="cb25-445"><a href="#cb25-445" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> FITS <span class="pp">|</span> <span class="in">`.fits`</span> <span class="pp">|</span> <span class="in">`'fits'`</span> <span class="pp">|</span> Módulo 06 <span class="pp">|</span></span>
+<span id="cb25-445"><a href="#cb25-445" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> FITS <span class="pp">|</span> <span class="in">`.fits`</span> <span class="pp">|</span> <span class="in">`'fits'`</span> <span class="pp">|</span> Sección 06 <span class="pp">|</span></span>
 <span id="cb25-446"><a href="#cb25-446" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> VOTable <span class="pp">|</span> <span class="in">`.xml`</span>, <span class="in">`.vot`</span> <span class="pp">|</span> <span class="in">`'votable'`</span> <span class="pp">|</span> Catálogos virtuales <span class="pp">|</span></span>
 <span id="cb25-447"><a href="#cb25-447" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> HTML <span class="pp">|</span> <span class="in">`.html`</span> <span class="pp">|</span> <span class="in">`'html'`</span> <span class="pp">|</span> Para web <span class="pp">|</span></span>
 <span id="cb25-448"><a href="#cb25-448" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> LaTeX <span class="pp">|</span> <span class="in">`.tex`</span> <span class="pp">|</span> <span class="in">`'latex'`</span> <span class="pp">|</span> Para publicaciones <span class="pp">|</span></span>
@@ -2160,7 +2160,7 @@ Mercurio        5426.8
 <span id="cb25-531"><a href="#cb25-531" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-532"><a href="#cb25-532" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb25-533"><a href="#cb25-533" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-534"><a href="#cb25-534" aria-hidden="true" tabindex="-1"></a><span class="fu">## ¿Qué aprendiste en este módulo? {.seccion-aprendiste}</span></span>
+<span id="cb25-534"><a href="#cb25-534" aria-hidden="true" tabindex="-1"></a><span class="fu">## ¿Qué aprendiste en esta sección? {.seccion-aprendiste}</span></span>
 <span id="cb25-535"><a href="#cb25-535" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-536"><a href="#cb25-536" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Crear tablas con <span class="in">`Table`</span> a partir de diccionarios y listas</span>
 <span id="cb25-537"><a href="#cb25-537" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Asignar unidades y descripciones a columnas con <span class="in">`Column`</span></span>
@@ -2172,7 +2172,7 @@ Mercurio        5426.8
 <span id="cb25-543"><a href="#cb25-543" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Combinar tablas con <span class="in">`vstack`</span>, <span class="in">`hstack`</span> y <span class="in">`join`</span></span>
 <span id="cb25-544"><a href="#cb25-544" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Calcular estadísticas sobre columnas</span>
 <span id="cb25-545"><a href="#cb25-545" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-546"><a href="#cb25-546" aria-hidden="true" tabindex="-1"></a>**Siguiente módulo →** <span class="co">[</span><span class="ot">06 · Lectura y manipulación de archivos FITS</span><span class="co">](../intermedio/06-fits.qmd)</span></span>
+<span id="cb25-546"><a href="#cb25-546" aria-hidden="true" tabindex="-1"></a>**Siguiente sección →** <span class="co">[</span><span class="ot">06 · Lectura y manipulación de archivos FITS</span><span class="co">](../intermedio/06-fits.qmd)</span></span>
 </code></pre></div><button title="Copiar al portapapeles" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

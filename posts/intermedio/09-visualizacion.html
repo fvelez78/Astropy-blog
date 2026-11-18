@@ -146,7 +146,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
     <a class="nav-link active" href="../../posts/basico/01-introduccion.html" aria-current="page"> 
-<span class="menu-text">Módulos</span></a>
+<span class="menu-text">Secciones</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../../sobre.html"> 
@@ -356,7 +356,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#imagen-en-color-rgb" id="toc-imagen-en-color-rgb" class="nav-link" data-scroll-target="#imagen-en-color-rgb"><span class="header-section-number">7</span> Imagen en color (RGB)</a></li>
   <li><a href="#mapas-del-cielo-completo" id="toc-mapas-del-cielo-completo" class="nav-link" data-scroll-target="#mapas-del-cielo-completo"><span class="header-section-number">8</span> Mapas del cielo completo</a></li>
   <li><a href="#ejercicio" id="toc-ejercicio" class="nav-link" data-scroll-target="#ejercicio"><span class="header-section-number">9</span> Ejercicio</a></li>
-  <li><a href="#qué-aprendiste-en-este-módulo" id="toc-qué-aprendiste-en-este-módulo" class="nav-link" data-scroll-target="#qué-aprendiste-en-este-módulo"><span class="header-section-number">10</span> ¿Qué aprendiste en este módulo?</a></li>
+  <li><a href="#qué-aprendiste-en-esta-sección" id="toc-qué-aprendiste-en-esta-sección" class="nav-link" data-scroll-target="#qué-aprendiste-en-esta-sección"><span class="header-section-number">10</span> ¿Qué aprendiste en esta sección?</a></li>
   </ul>
 </nav>
     </div>
@@ -422,7 +422,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div class="callout-body-container callout-body">
 <ul>
-<li>Módulos 06 (FITS) y 07 (WCS)</li>
+<li>Secciones 06 (FITS) y 07 (WCS)</li>
 <li><code>matplotlib</code> instalado</li>
 </ul>
 </div>
@@ -431,7 +431,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="una-galaxia-sintética-para-practicar" class="level2" data-number="2">
 <h2 data-number="2" class="anchored" data-anchor-id="una-galaxia-sintética-para-practicar"><span class="header-section-number">2</span> Una galaxia sintética para practicar</h2>
-<div id="c0f94505" class="cell" data-execution_count="1">
+<div id="c0f94505" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Construir una imagen con mucho rango dinámico:</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># una galaxia con núcleo muy brillante + disco tenue + estrellas de campo</span></span>
@@ -477,7 +477,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="el-problema-escala-lineal" class="level2" data-number="3">
 <h2 data-number="3" class="anchored" data-anchor-id="el-problema-escala-lineal"><span class="header-section-number">3</span> El problema: escala lineal</h2>
-<div id="cell-fig-lineal" class="cell" data-execution_count="2">
+<div id="cell-fig-lineal" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Mostrar la imagen sin ningún ajuste</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -563,7 +563,7 @@ Figura&nbsp;1: Con escala lineal solo se ve el núcleo
 </tr>
 </tbody>
 </table>
-<div id="cell-fig-estiramientos" class="cell" data-execution_count="3">
+<div id="cell-fig-estiramientos" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Comparar combinaciones con ImageNormalize</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -614,15 +614,15 @@ Figura&nbsp;2: El mismo dato con cuatro combinaciones de intervalo y estiramient
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Para no importar tantas clases, <code>simple_norm(imagen, 'asinh', percent=99.9)</code> crea la normalización en una línea. Lo usamos en el módulo 08.</p>
+<p>Para no importar tantas clases, <code>simple_norm(imagen, 'asinh', percent=99.9)</code> crea la normalización en una línea. Lo usamos en la sección 08.</p>
 </div>
 </div>
 <hr>
 </section>
 <section id="ejes-con-coordenadas-celestes-wcsaxes" class="level2" data-number="5">
 <h2 data-number="5" class="anchored" data-anchor-id="ejes-con-coordenadas-celestes-wcsaxes"><span class="header-section-number">5</span> Ejes con coordenadas celestes: WCSAxes</h2>
-<p>Con un WCS (módulo 07) podemos pedirle a matplotlib que dibuje <strong>RA y Dec</strong> en vez de números de píxel. Basta con <code>projection=wcs</code>.</p>
-<div id="94619333" class="cell" data-execution_count="4">
+<p>Con un WCS (sección 07) podemos pedirle a matplotlib que dibuje <strong>RA y Dec</strong> en vez de números de píxel. Basta con <code>projection=wcs</code>.</p>
+<div id="94619333" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Crear el WCS de nuestra galaxia (la ubicamos donde está M51)</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -635,7 +635,7 @@ Figura&nbsp;2: El mismo dato con cuatro combinaciones de intervalo y estiramient
 <span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>wcs.wcs.cdelt <span class="op">=</span> [<span class="op">-</span><span class="fl">1.5</span><span class="op">/</span><span class="dv">3600</span>, <span class="fl">1.5</span><span class="op">/</span><span class="dv">3600</span>]    <span class="co"># 1.5 segundos de arco por píxel</span></span>
 <span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>wcs.wcs.ctype <span class="op">=</span> [<span class="st">"RA---TAN"</span>, <span class="st">"DEC--TAN"</span>]</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="cell-fig-wcsaxes" class="cell" data-execution_count="5">
+<div id="cell-fig-wcsaxes" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Imagen con ejes celestes y cuadrícula de coordenadas</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -678,7 +678,7 @@ Figura&nbsp;3: Imagen con ejes en ascensión recta y declinación
 </div>
 <section id="superponer-coordenadas-galácticas" class="level3" data-number="5.1">
 <h3 data-number="5.1" class="anchored" data-anchor-id="superponer-coordenadas-galácticas"><span class="header-section-number">5.1</span> Superponer coordenadas galácticas</h3>
-<div id="cell-fig-overlay-galactico" class="cell" data-execution_count="6">
+<div id="cell-fig-overlay-galactico" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co"># get_coords_overlay() añade una segunda cuadrícula en otro sistema</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -715,7 +715,7 @@ Figura&nbsp;4: Cuadrícula ecuatorial (blanco) y galáctica (cian) sobre la mism
 </section>
 <section id="superponer-un-catálogo-sobre-la-imagen" class="level2" data-number="6">
 <h2 data-number="6" class="anchored" data-anchor-id="superponer-un-catálogo-sobre-la-imagen"><span class="header-section-number">6</span> Superponer un catálogo sobre la imagen</h2>
-<div id="cell-fig-catalogo" class="cell" data-execution_count="7">
+<div id="cell-fig-catalogo" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Marcar posiciones dadas en RA/Dec usando transform=ax.get_transform('world')</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -765,7 +765,7 @@ Figura&nbsp;5: Objetos de un catálogo marcados por sus coordenadas celestes
 </div>
 <section id="contornos-de-brillo" class="level3" data-number="6.1">
 <h3 data-number="6.1" class="anchored" data-anchor-id="contornos-de-brillo"><span class="header-section-number">6.1</span> Contornos de brillo</h3>
-<div id="cell-fig-contornos" class="cell" data-execution_count="8">
+<div id="cell-fig-contornos" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Las líneas de contorno muestran la forma de la galaxia a distintos niveles</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -800,7 +800,7 @@ Figura&nbsp;6: Contornos logarítmicos de brillo superficial
 </section>
 <section id="imagen-en-color-rgb" class="level2" data-number="7">
 <h2 data-number="7" class="anchored" data-anchor-id="imagen-en-color-rgb"><span class="header-section-number">7</span> Imagen en color (RGB)</h2>
-<div id="cell-fig-rgb" class="cell" data-execution_count="9">
+<div id="cell-fig-rgb" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co"># make_rgb_image combina tres imágenes (filtros) en una imagen a color</span></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Usa el método de Lupton et al. (2004), el mismo del Sloan Digital Sky Survey</span></span>
@@ -843,7 +843,7 @@ Figura&nbsp;7: Composición en color a partir de tres filtros simulados
 <section id="mapas-del-cielo-completo" class="level2" data-number="8">
 <h2 data-number="8" class="anchored" data-anchor-id="mapas-del-cielo-completo"><span class="header-section-number">8</span> Mapas del cielo completo</h2>
 <p>Para mostrar objetos repartidos por todo el cielo se usan proyecciones como <strong>Aitoff</strong> o <strong>Mollweide</strong>, que dibujan la esfera celeste completa en un óvalo.</p>
-<div id="cell-fig-cielo-completo" class="cell" data-execution_count="10">
+<div id="cell-fig-cielo-completo" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Mapa de todo el cielo en coordenadas galácticas</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -907,7 +907,7 @@ Figura&nbsp;8: Objetos Messier brillantes en coordenadas galácticas (proyecció
 </section>
 <section id="ejercicio" class="level2" data-number="9">
 <h2 data-number="9" class="anchored" data-anchor-id="ejercicio"><span class="header-section-number">9</span> Ejercicio</h2>
-<p>Con la imagen <code>imagen</code> y el <code>wcs</code> de este módulo:</p>
+<p>Con la imagen <code>imagen</code> y el <code>wcs</code> de esta sección:</p>
 <ol type="1">
 <li>Muéstrala con <code>ZScaleInterval</code> y <code>LogStretch</code> usando WCSAxes</li>
 <li>Agrega una barra de color</li>
@@ -925,7 +925,7 @@ Figura&nbsp;8: Objetos Messier brillantes en coordenadas galácticas (proyecció
 </div>
 <div id="callout-3" class="callout-3-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="cell-fig-ejercicio-09" class="cell" data-execution_count="11">
+<div id="cell-fig-ejercicio-09" class="cell" data-execution_count="12">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co"># SOLUCIÓN: ZScale + Log, barra de color y círculo de 1 arcmin</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -971,8 +971,8 @@ Figura&nbsp;9: Solución del ejercicio
 </div>
 <hr>
 </section>
-<section id="qué-aprendiste-en-este-módulo" class="level2 seccion-aprendiste" data-number="10">
-<h2 class="seccion-aprendiste anchored" data-number="10" data-anchor-id="qué-aprendiste-en-este-módulo"><span class="header-section-number">10</span> ¿Qué aprendiste en este módulo?</h2>
+<section id="qué-aprendiste-en-esta-sección" class="level2 seccion-aprendiste" data-number="10">
+<h2 class="seccion-aprendiste anchored" data-number="10" data-anchor-id="qué-aprendiste-en-esta-sección"><span class="header-section-number">10</span> ¿Qué aprendiste en esta sección?</h2>
 <ul>
 <li>✅ Por qué la escala lineal no sirve para imágenes astronómicas</li>
 <li>✅ Combinar intervalos y estiramientos con <code>ImageNormalize</code> y <code>simple_norm</code></li>
@@ -982,7 +982,7 @@ Figura&nbsp;9: Solución del ejercicio
 <li>✅ Dibujar contornos y crear imágenes RGB con <code>make_lupton_rgb</code></li>
 <li>✅ Hacer mapas del cielo completo con proyección Mollweide</li>
 </ul>
-<p><strong>Siguiente módulo →</strong> <a href="../../posts/intermedio/10-estadistica.html">10 · Estadística y modelado</a></p>
+<p><strong>Siguiente sección →</strong> <a href="../../posts/intermedio/10-estadistica.html">10 · Estadística y modelado</a></p>
 
 
 <!-- -->
@@ -1483,7 +1483,7 @@ Figura&nbsp;9: Solución del ejercicio
 <span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a>::: {.callout-note}</span>
 <span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a><span class="fu">## Requisitos previos</span></span>
-<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Módulos 06 (FITS) y 07 (WCS)</span>
+<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Secciones 06 (FITS) y 07 (WCS)</span>
 <span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`matplotlib`</span> instalado</span>
 <span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb13-34"><a href="#cb13-34" aria-hidden="true" tabindex="-1"></a></span>
@@ -1609,14 +1609,14 @@ Figura&nbsp;9: Solución del ejercicio
 <span id="cb13-160"><a href="#cb13-160" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip}</span>
 <span id="cb13-161"><a href="#cb13-161" aria-hidden="true" tabindex="-1"></a><span class="fu">## Atajo: `simple_norm`</span></span>
 <span id="cb13-162"><a href="#cb13-162" aria-hidden="true" tabindex="-1"></a>Para no importar tantas clases, <span class="in">`simple_norm(imagen, 'asinh', percent=99.9)`</span></span>
-<span id="cb13-163"><a href="#cb13-163" aria-hidden="true" tabindex="-1"></a>crea la normalización en una línea. Lo usamos en el módulo 08.</span>
+<span id="cb13-163"><a href="#cb13-163" aria-hidden="true" tabindex="-1"></a>crea la normalización en una línea. Lo usamos en la sección 08.</span>
 <span id="cb13-164"><a href="#cb13-164" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb13-165"><a href="#cb13-165" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-166"><a href="#cb13-166" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb13-167"><a href="#cb13-167" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-168"><a href="#cb13-168" aria-hidden="true" tabindex="-1"></a><span class="fu">## Ejes con coordenadas celestes: WCSAxes</span></span>
 <span id="cb13-169"><a href="#cb13-169" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-170"><a href="#cb13-170" aria-hidden="true" tabindex="-1"></a>Con un WCS (módulo 07) podemos pedirle a matplotlib que dibuje **RA y Dec**</span>
+<span id="cb13-170"><a href="#cb13-170" aria-hidden="true" tabindex="-1"></a>Con un WCS (sección 07) podemos pedirle a matplotlib que dibuje **RA y Dec**</span>
 <span id="cb13-171"><a href="#cb13-171" aria-hidden="true" tabindex="-1"></a>en vez de números de píxel. Basta con <span class="in">`projection=wcs`</span>.</span>
 <span id="cb13-172"><a href="#cb13-172" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-175"><a href="#cb13-175" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
@@ -1863,7 +1863,7 @@ Figura&nbsp;9: Solución del ejercicio
 <span id="cb13-428"><a href="#cb13-428" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-429"><a href="#cb13-429" aria-hidden="true" tabindex="-1"></a><span class="fu">## Ejercicio</span></span>
 <span id="cb13-430"><a href="#cb13-430" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-431"><a href="#cb13-431" aria-hidden="true" tabindex="-1"></a>Con la imagen <span class="in">`imagen`</span> y el <span class="in">`wcs`</span> de este módulo:</span>
+<span id="cb13-431"><a href="#cb13-431" aria-hidden="true" tabindex="-1"></a>Con la imagen <span class="in">`imagen`</span> y el <span class="in">`wcs`</span> de esta sección:</span>
 <span id="cb13-432"><a href="#cb13-432" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-433"><a href="#cb13-433" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Muéstrala con <span class="in">`ZScaleInterval`</span> y <span class="in">`LogStretch`</span> usando WCSAxes</span>
 <span id="cb13-434"><a href="#cb13-434" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Agrega una barra de color</span>
@@ -1909,7 +1909,7 @@ Figura&nbsp;9: Solución del ejercicio
 <span id="cb13-476"><a href="#cb13-476" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-477"><a href="#cb13-477" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb13-478"><a href="#cb13-478" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-479"><a href="#cb13-479" aria-hidden="true" tabindex="-1"></a><span class="fu">## ¿Qué aprendiste en este módulo? {.seccion-aprendiste}</span></span>
+<span id="cb13-479"><a href="#cb13-479" aria-hidden="true" tabindex="-1"></a><span class="fu">## ¿Qué aprendiste en esta sección? {.seccion-aprendiste}</span></span>
 <span id="cb13-480"><a href="#cb13-480" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-481"><a href="#cb13-481" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Por qué la escala lineal no sirve para imágenes astronómicas</span>
 <span id="cb13-482"><a href="#cb13-482" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Combinar intervalos y estiramientos con <span class="in">`ImageNormalize`</span> y <span class="in">`simple_norm`</span></span>
@@ -1919,7 +1919,7 @@ Figura&nbsp;9: Solución del ejercicio
 <span id="cb13-486"><a href="#cb13-486" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Dibujar contornos y crear imágenes RGB con <span class="in">`make_lupton_rgb`</span></span>
 <span id="cb13-487"><a href="#cb13-487" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Hacer mapas del cielo completo con proyección Mollweide</span>
 <span id="cb13-488"><a href="#cb13-488" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-489"><a href="#cb13-489" aria-hidden="true" tabindex="-1"></a>**Siguiente módulo →** <span class="co">[</span><span class="ot">10 · Estadística y modelado</span><span class="co">](10-estadistica.qmd)</span></span>
+<span id="cb13-489"><a href="#cb13-489" aria-hidden="true" tabindex="-1"></a>**Siguiente sección →** <span class="co">[</span><span class="ot">10 · Estadística y modelado</span><span class="co">](10-estadistica.qmd)</span></span>
 </code></pre></div><button title="Copiar al portapapeles" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

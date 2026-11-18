@@ -175,7 +175,7 @@ window.Quarto = {
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
     <a class="nav-link active" href="../../posts/basico/01-introduccion.html" aria-current="page"> 
-<span class="menu-text">Módulos</span></a>
+<span class="menu-text">Secciones</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../../sobre.html"> 
@@ -382,7 +382,7 @@ window.Quarto = {
   <li><a href="#ajustar-el-triplete-hα-nii" id="toc-ajustar-el-triplete-hα-nii" class="nav-link" data-scroll-target="#ajustar-el-triplete-hα-nii"><span class="header-section-number">7</span> Ajustar el triplete Hα + [NII]</a></li>
   <li><a href="#leer-espectros-reales" id="toc-leer-espectros-reales" class="nav-link" data-scroll-target="#leer-espectros-reales"><span class="header-section-number">8</span> Leer espectros reales</a></li>
   <li><a href="#ejercicio" id="toc-ejercicio" class="nav-link" data-scroll-target="#ejercicio"><span class="header-section-number">9</span> Ejercicio</a></li>
-  <li><a href="#qué-aprendiste-en-este-módulo" id="toc-qué-aprendiste-en-este-módulo" class="nav-link" data-scroll-target="#qué-aprendiste-en-este-módulo"><span class="header-section-number">10</span> ¿Qué aprendiste en este módulo?</a></li>
+  <li><a href="#qué-aprendiste-en-esta-sección" id="toc-qué-aprendiste-en-esta-sección" class="nav-link" data-scroll-target="#qué-aprendiste-en-esta-sección"><span class="header-section-number">10</span> ¿Qué aprendiste en esta sección?</a></li>
   </ul>
 </nav>
     </div>
@@ -450,7 +450,7 @@ window.Quarto = {
 </div>
 <div class="callout-body-container callout-body">
 <ul>
-<li>Módulos 02 (unidades) y 10 (modelado)</li>
+<li>Secciones 02 (unidades) y 10 (modelado)</li>
 <li>Instalar: <code>pip install specutils</code></li>
 </ul>
 </div>
@@ -473,7 +473,7 @@ window.Quarto = {
 <section id="crear-un-espectro" class="level2" data-number="2">
 <h2 data-number="2" class="anchored" data-anchor-id="crear-un-espectro"><span class="header-section-number">2</span> Crear un espectro</h2>
 <p>Simulamos el espectro de una <strong>galaxia con formación estelar</strong> a corrimiento al rojo <span class="math inline">\(z = 0.0185\)</span> (unos 80 Mpc de distancia). Sus líneas de emisión vienen del gas ionizado por estrellas jóvenes.</p>
-<div id="cb5d8339" class="cell" data-execution_count="1">
+<div id="cb5d8339" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Importar la clase de espectro según la versión instalada de specutils</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -537,7 +537,7 @@ Spectral Axis=[4700. 4701. 4702. ... 6997. 6998. 6999.] Angstrom,  mean=5849.500
 Uncertainty=StdDevUncertainty ([1.5 1.5 1.5 ... 1.5 1.5 1.5] 1e-17 erg / (Angstrom s cm2))</code></pre>
 </div>
 </div>
-<div id="cell-fig-espectro" class="cell" data-execution_count="2">
+<div id="cell-fig-espectro" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Graficar el espectro marcando las líneas</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -573,7 +573,7 @@ Figura&nbsp;1: Espectro simulado de una galaxia con formación estelar
 </section>
 <section id="operaciones-básicas-con-espectros" class="level2" data-number="3">
 <h2 data-number="3" class="anchored" data-anchor-id="operaciones-básicas-con-espectros"><span class="header-section-number">3</span> Operaciones básicas con espectros</h2>
-<div id="2bc687f4" class="cell" data-execution_count="3">
+<div id="2bc687f4" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Un espectro se comporta como un arreglo con unidades:</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># se puede recortar, convertir de unidad y operar aritméticamente</span></span>
@@ -606,7 +606,7 @@ Puntos en la región de Hα      : 121</code></pre>
 <section id="ajustar-y-restar-el-continuo" class="level2" data-number="4">
 <h2 data-number="4" class="anchored" data-anchor-id="ajustar-y-restar-el-continuo"><span class="header-section-number">4</span> Ajustar y restar el continuo</h2>
 <p>Para medir las líneas primero hay que modelar el continuo <strong>sin</strong> ellas. Excluimos las zonas con líneas y ajustamos un modelo suave.</p>
-<div id="cell-fig-continuo" class="cell" data-execution_count="4">
+<div id="cell-fig-continuo" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co"># fit_generic_continuum ajusta un polinomio de Chebyshev al continuo</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -655,7 +655,7 @@ Figura&nbsp;2: Arriba: espectro y continuo ajustado. Abajo: espectro normalizado
 </section>
 <section id="medir-líneas-espectrales" class="level2" data-number="5">
 <h2 data-number="5" class="anchored" data-anchor-id="medir-líneas-espectrales"><span class="header-section-number">5</span> Medir líneas espectrales</h2>
-<div id="b74bd364" class="cell" data-execution_count="5">
+<div id="b74bd364" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Mediciones sobre la línea Hα: flujo, centroide, ancho y ancho equivalente</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -710,7 +710,7 @@ Figura&nbsp;2: Arriba: espectro y continuo ajustado. Abajo: espectro normalizado
 <section id="corrimiento-al-rojo-y-velocidad" class="level2" data-number="6">
 <h2 data-number="6" class="anchored" data-anchor-id="corrimiento-al-rojo-y-velocidad"><span class="header-section-number">6</span> Corrimiento al rojo y velocidad</h2>
 <p><span class="math display">\[z = \frac{\lambda_{obs} - \lambda_{reposo}}{\lambda_{reposo}}, \qquad v \approx c\,z \;\; (\text{si } z \ll 1)\]</span></p>
-<div id="5ff71652" class="cell" data-execution_count="6">
+<div id="5ff71652" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Medir z con varias líneas y promediar</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -748,7 +748,7 @@ Velocidad de recesión ≈ 5548 km / s</code></pre>
 </div>
 <section id="la-forma-elegante-equivalencias-doppler" class="level3" data-number="6.1">
 <h3 data-number="6.1" class="anchored" data-anchor-id="la-forma-elegante-equivalencias-doppler"><span class="header-section-number">6.1</span> La forma elegante: equivalencias Doppler</h3>
-<div id="4d15b2c5" class="cell" data-execution_count="7">
+<div id="4d15b2c5" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Astropy convierte longitud de onda ↔ velocidad con u.doppler_optical</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co"># indicando la longitud de onda en reposo de la línea</span></span>
@@ -776,8 +776,8 @@ La región de Hα va de 2613 km / s a 8095 km / s</code></pre>
 </section>
 <section id="ajustar-el-triplete-hα-nii" class="level2" data-number="7">
 <h2 data-number="7" class="anchored" data-anchor-id="ajustar-el-triplete-hα-nii"><span class="header-section-number">7</span> Ajustar el triplete Hα + [NII]</h2>
-<p>Hα y las dos líneas de [NII] están muy juntas y se superponen. Para medir cada una se ajustan <strong>tres gaussianas simultáneamente</strong> (módulo 10).</p>
-<div id="cell-fig-triplete" class="cell" data-execution_count="8">
+<p>Hα y las dos líneas de [NII] están muy juntas y se superponen. Para medir cada una se ajustan <strong>tres gaussianas simultáneamente</strong> (sección 10).</p>
+<div id="cell-fig-triplete" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co"># fit_lines de specutils usa modelos de astropy.modeling</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -842,7 +842,7 @@ Figura&nbsp;3: Ajuste simultáneo de Hα y el doblete de [NII]
 <section id="leer-espectros-reales" class="level2" data-number="8">
 <h2 data-number="8" class="anchored" data-anchor-id="leer-espectros-reales"><span class="header-section-number">8</span> Leer espectros reales</h2>
 <p>specutils lee directamente muchos formatos (SDSS, JWST, archivos FITS genéricos). Por ejemplo, un espectro del Sloan Digital Sky Survey:</p>
-<div id="632ab074" class="cell" data-execution_count="9">
+<div id="632ab074" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Ejemplo (no se ejecuta en el blog): leer un espectro de SDSS</span></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Descárgalo desde https://dr18.sdss.org → buscar una galaxia → "Download spectrum"</span></span>
@@ -873,7 +873,7 @@ Figura&nbsp;3: Ajuste simultáneo de Hα y el doblete de [NII]
 </div>
 <div id="callout-4" class="callout-4-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="de0fdcc9" class="cell" data-execution_count="10">
+<div id="de0fdcc9" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="co"># SOLUCIÓN: densidad del gas con el doblete de [SII]</span></span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -907,8 +907,8 @@ Cociente R = 1.49
 </div>
 <hr>
 </section>
-<section id="qué-aprendiste-en-este-módulo" class="level2 seccion-aprendiste" data-number="10">
-<h2 class="seccion-aprendiste anchored" data-number="10" data-anchor-id="qué-aprendiste-en-este-módulo"><span class="header-section-number">10</span> ¿Qué aprendiste en este módulo?</h2>
+<section id="qué-aprendiste-en-esta-sección" class="level2 seccion-aprendiste" data-number="10">
+<h2 class="seccion-aprendiste anchored" data-number="10" data-anchor-id="qué-aprendiste-en-esta-sección"><span class="header-section-number">10</span> ¿Qué aprendiste en esta sección?</h2>
 <ul>
 <li>✅ Las partes de un espectro: continuo, emisión y absorción</li>
 <li>✅ Crear un <code>Spectrum</code> con unidades e incertidumbres</li>
@@ -918,7 +918,7 @@ Cociente R = 1.49
 <li>✅ Calcular corrimiento al rojo y velocidad con <code>u.doppler_optical</code></li>
 <li>✅ Ajustar líneas superpuestas con <code>fit_lines</code></li>
 </ul>
-<p><strong>Siguiente módulo →</strong> <a href="../../posts/avanzado/13-cosmologia.html">13 · Cosmología computacional</a></p>
+<p><strong>Siguiente sección →</strong> <a href="../../posts/avanzado/13-cosmologia.html">13 · Cosmología computacional</a></p>
 
 
 <!-- -->
@@ -1424,7 +1424,7 @@ Cociente R = 1.49
 <span id="cb18-33"><a href="#cb18-33" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-34"><a href="#cb18-34" aria-hidden="true" tabindex="-1"></a>::: {.callout-note}</span>
 <span id="cb18-35"><a href="#cb18-35" aria-hidden="true" tabindex="-1"></a><span class="fu">## Requisitos previos</span></span>
-<span id="cb18-36"><a href="#cb18-36" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Módulos 02 (unidades) y 10 (modelado)</span>
+<span id="cb18-36"><a href="#cb18-36" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Secciones 02 (unidades) y 10 (modelado)</span>
 <span id="cb18-37"><a href="#cb18-37" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Instalar: <span class="in">`pip install specutils`</span></span>
 <span id="cb18-38"><a href="#cb18-38" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb18-39"><a href="#cb18-39" aria-hidden="true" tabindex="-1"></a></span>
@@ -1698,7 +1698,7 @@ Cociente R = 1.49
 <span id="cb18-321"><a href="#cb18-321" aria-hidden="true" tabindex="-1"></a><span class="fu">## Ajustar el triplete Hα + [NII]</span></span>
 <span id="cb18-322"><a href="#cb18-322" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-323"><a href="#cb18-323" aria-hidden="true" tabindex="-1"></a>Hα y las dos líneas de <span class="co">[</span><span class="ot">NII</span><span class="co">]</span> están muy juntas y se superponen. Para medir</span>
-<span id="cb18-324"><a href="#cb18-324" aria-hidden="true" tabindex="-1"></a>cada una se ajustan **tres gaussianas simultáneamente** (módulo 10).</span>
+<span id="cb18-324"><a href="#cb18-324" aria-hidden="true" tabindex="-1"></a>cada una se ajustan **tres gaussianas simultáneamente** (sección 10).</span>
 <span id="cb18-325"><a href="#cb18-325" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-328"><a href="#cb18-328" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
 <span id="cb18-329"><a href="#cb18-329" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-triplete</span></span>
@@ -1806,7 +1806,7 @@ Cociente R = 1.49
 <span id="cb18-435"><a href="#cb18-435" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-436"><a href="#cb18-436" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb18-437"><a href="#cb18-437" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-438"><a href="#cb18-438" aria-hidden="true" tabindex="-1"></a><span class="fu">## ¿Qué aprendiste en este módulo? {.seccion-aprendiste}</span></span>
+<span id="cb18-438"><a href="#cb18-438" aria-hidden="true" tabindex="-1"></a><span class="fu">## ¿Qué aprendiste en esta sección? {.seccion-aprendiste}</span></span>
 <span id="cb18-439"><a href="#cb18-439" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-440"><a href="#cb18-440" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Las partes de un espectro: continuo, emisión y absorción</span>
 <span id="cb18-441"><a href="#cb18-441" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Crear un <span class="in">`Spectrum`</span> con unidades e incertidumbres</span>
@@ -1816,7 +1816,7 @@ Cociente R = 1.49
 <span id="cb18-445"><a href="#cb18-445" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Calcular corrimiento al rojo y velocidad con <span class="in">`u.doppler_optical`</span></span>
 <span id="cb18-446"><a href="#cb18-446" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Ajustar líneas superpuestas con <span class="in">`fit_lines`</span></span>
 <span id="cb18-447"><a href="#cb18-447" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-448"><a href="#cb18-448" aria-hidden="true" tabindex="-1"></a>**Siguiente módulo →** <span class="co">[</span><span class="ot">13 · Cosmología computacional</span><span class="co">](13-cosmologia.qmd)</span></span>
+<span id="cb18-448"><a href="#cb18-448" aria-hidden="true" tabindex="-1"></a>**Siguiente sección →** <span class="co">[</span><span class="ot">13 · Cosmología computacional</span><span class="co">](13-cosmologia.qmd)</span></span>
 </code></pre></div><button title="Copiar al portapapeles" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

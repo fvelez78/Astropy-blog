@@ -174,7 +174,7 @@ window.Quarto = {
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
     <a class="nav-link active" href="../../posts/basico/01-introduccion.html" aria-current="page"> 
-<span class="menu-text">Módulos</span></a>
+<span class="menu-text">Secciones</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../../sobre.html"> 
@@ -430,7 +430,7 @@ window.Quarto = {
 <p><span class="badge-avanzado">🚀 Avanzado</span></p>
 <section id="el-proyecto" class="level2" data-number="1">
 <h2 data-number="1" class="anchored" data-anchor-id="el-proyecto"><span class="header-section-number">1</span> El proyecto</h2>
-<p>Este módulo une todo el blog en un solo proyecto realista. Partimos de lo que entrega una cámara CCD tras una noche de observación —<strong>imágenes crudas</strong>— y terminamos con un resultado científico: la <strong>curva de luz y el período</strong> de una estrella variable tipo δ Scuti.</p>
+<p>Esta sección une todo el blog en un solo proyecto realista. Partimos de lo que entrega una cámara CCD tras una noche de observación —<strong>imágenes crudas</strong>— y terminamos con un resultado científico: la <strong>curva de luz y el período</strong> de una estrella variable tipo δ Scuti.</p>
 <pre><code> Imágenes crudas ──► Calibración ──► Fotometría ──► Fotometría ──► Análisis
  (bias, flats,       (master bias,   de apertura    diferencial    (período)
   ciencia)            master flat)    en cada imagen
@@ -438,7 +438,7 @@ window.Quarto = {
 <table class="caption-top table">
 <thead>
 <tr class="header">
-<th>Módulo usado</th>
+<th>Sección usada</th>
 <th>Para qué</th>
 </tr>
 </thead>
@@ -514,7 +514,7 @@ window.Quarto = {
 <section id="paso-0-simular-la-noche-de-observación" class="level2" data-number="3">
 <h2 data-number="3" class="anchored" data-anchor-id="paso-0-simular-la-noche-de-observación"><span class="header-section-number">3</span> Paso 0: simular la noche de observación</h2>
 <p>Este bloque <strong>fabrica</strong> los archivos FITS que un observatorio entregaría. En un proyecto real te saltarías este paso: ya tendrías los archivos.</p>
-<div id="5bee2497" class="cell" data-execution_count="1">
+<div id="86ae3e8d" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># SIMULACIÓN de una noche de observación (en un proyecto real, ya tienes</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># estos archivos). Generamos bias, flats e imágenes de ciencia como FITS.</span></span>
@@ -606,7 +606,7 @@ window.Quarto = {
 <section id="paso-1-organizar-los-archivos" class="level2" data-number="4">
 <h2 data-number="4" class="anchored" data-anchor-id="paso-1-organizar-los-archivos"><span class="header-section-number">4</span> Paso 1: organizar los archivos</h2>
 <p>Lo primero en cualquier pipeline es <strong>clasificar</strong> los archivos leyendo sus encabezados, no confiando en el nombre del archivo.</p>
-<div id="b6237a25" class="cell" data-execution_count="2">
+<div id="e7f9e896" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Leer el encabezado de cada FITS y armar una tabla de inventario</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -642,8 +642,8 @@ LIGHT : 60 archivos</code></pre>
 </section>
 <section id="paso-2-master-bias" class="level2" data-number="5">
 <h2 data-number="5" class="anchored" data-anchor-id="paso-2-master-bias"><span class="header-section-number">5</span> Paso 2: master bias</h2>
-<p>Combinamos los 15 bias con la <strong>mediana recortada</strong> (módulo 10). Así el ruido de lectura baja y cualquier rayo cósmico desaparece.</p>
-<div id="1ba30ceb" class="cell" data-execution_count="3">
+<p>Combinamos los 15 bias con la <strong>mediana recortada</strong> (sección 10). Así el ruido de lectura baja y cualquier rayo cósmico desaparece.</p>
+<div id="81926a53" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Master bias: combinación píxel a píxel con recorte sigma a lo largo del eje 0</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -752,9 +752,9 @@ Figura&nbsp;2: Imagen cruda (izquierda) y calibrada (derecha) de la misma exposi
 <section id="paso-5-fotometría-en-cada-imagen" class="level2" data-number="8">
 <h2 data-number="8" class="anchored" data-anchor-id="paso-5-fotometría-en-cada-imagen"><span class="header-section-number">8</span> Paso 5: fotometría en cada imagen</h2>
 <p>El telescopio deriva un poco durante la noche, así que en cada imagen <strong>recalculamos el centro</strong> de cada estrella partiendo de su posición en la imagen anterior.</p>
-<div id="525f4661" class="cell" data-execution_count="6">
+<div id="e2709b33" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Fotometría de apertura (módulo 08) sobre las 60 imágenes calibradas</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Fotometría de apertura (sección 08) sobre las 60 imágenes calibradas</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> photutils.centroids <span class="im">import</span> centroid_sources, centroid_com</span>
@@ -873,7 +873,7 @@ Figura&nbsp;3: Arriba: flujo crudo (la nube domina). Abajo: fotometría diferenc
 <h2 data-number="10" class="anchored" data-anchor-id="paso-7-el-período"><span class="header-section-number">10</span> Paso 7: el período</h2>
 <div id="cell-fig-periodo-final" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Lomb–Scargle (módulo 15) sobre la magnitud diferencial</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Lomb–Scargle (sección 15) sobre la magnitud diferencial</span></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
@@ -923,7 +923,7 @@ Figura&nbsp;4: Periodograma y curva de luz doblada de la δ Scuti
 </section>
 <section id="paso-8-guardar-los-resultados" class="level2" data-number="11">
 <h2 data-number="11" class="anchored" data-anchor-id="paso-8-guardar-los-resultados"><span class="header-section-number">11</span> Paso 8: guardar los resultados</h2>
-<div id="88cca741" class="cell" data-execution_count="9">
+<div id="b41bd997" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Guardar la tabla de fotometría con metadatos para que sea reproducible</span></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -956,7 +956,7 @@ Columnas: ['flujo_objetivo', 'flujo_comp1', 'flujo_comp2', 'flujo_comp3', 'flujo
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Este módulo genera unos 85 archivos FITS en la carpeta <code>noche_simulada/</code>. Agrega <code>noche_simulada/</code> y <code>*.fits</code> a tu <code>.gitignore</code> para no subirlos.</p>
+<p>Esta sección genera unos 85 archivos FITS en la carpeta <code>noche_simulada/</code>. Agrega <code>noche_simulada/</code> y <code>*.fits</code> a tu <code>.gitignore</code> para no subirlos.</p>
 </div>
 </div>
 <hr>
@@ -981,7 +981,7 @@ Columnas: ['flujo_objetivo', 'flujo_comp1', 'flujo_comp2', 'flujo_comp3', 'flujo
 </div>
 <div id="callout-4" class="callout-4-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="49484528" class="cell" data-execution_count="10">
+<div id="f2d7740f" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="co"># SOLUCIÓN: calidad de cada estrella de comparación</span></span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -1015,7 +1015,7 @@ comp4           34720                9.1
 </section>
 <section id="felicitaciones" class="level2 seccion-aprendiste" data-number="13">
 <h2 class="seccion-aprendiste anchored" data-number="13" data-anchor-id="felicitaciones"><span class="header-section-number">13</span> ¡Felicitaciones!</h2>
-<p>Completaste los 17 módulos. En este proyecto final:</p>
+<p>Completaste las 17 secciones. En este proyecto final:</p>
 <ul>
 <li>✅ Organizaste archivos FITS a partir de sus encabezados</li>
 <li>✅ Construiste master bias y master flat con combinación robusta</li>
@@ -1514,7 +1514,7 @@ comp4           34720                9.1
 <span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a><span class="fu">## El proyecto</span></span>
 <span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a>Este módulo une todo el blog en un solo proyecto realista. Partimos de lo</span>
+<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a>Esta sección une todo el blog en un solo proyecto realista. Partimos de lo</span>
 <span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a>que entrega una cámara CCD tras una noche de observación —**imágenes</span>
 <span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a>crudas**— y terminamos con un resultado científico: la **curva de luz y el</span>
 <span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a>período** de una estrella variable tipo δ Scuti.</span>
@@ -1526,7 +1526,7 @@ comp4           34720                9.1
 <span id="cb21-29"><a href="#cb21-29" aria-hidden="true" tabindex="-1"></a><span class="in">     M06                M06, M10        M08            M08, M10       M15</span></span>
 <span id="cb21-30"><a href="#cb21-30" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb21-31"><a href="#cb21-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-32"><a href="#cb21-32" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Módulo usado <span class="pp">|</span> Para qué <span class="pp">|</span></span>
+<span id="cb21-32"><a href="#cb21-32" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Sección usada <span class="pp">|</span> Para qué <span class="pp">|</span></span>
 <span id="cb21-33"><a href="#cb21-33" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|</span></span>
 <span id="cb21-34"><a href="#cb21-34" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 03 · Tiempo <span class="pp">|</span> Tiempos de cada exposición <span class="pp">|</span></span>
 <span id="cb21-35"><a href="#cb21-35" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 05 · Tablas <span class="pp">|</span> Organizar las mediciones <span class="pp">|</span></span>
@@ -1696,7 +1696,7 @@ comp4           34720                9.1
 <span id="cb21-203"><a href="#cb21-203" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-204"><a href="#cb21-204" aria-hidden="true" tabindex="-1"></a><span class="fu">## Paso 2: master bias</span></span>
 <span id="cb21-205"><a href="#cb21-205" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-206"><a href="#cb21-206" aria-hidden="true" tabindex="-1"></a>Combinamos los 15 bias con la **mediana recortada** (módulo 10). Así el</span>
+<span id="cb21-206"><a href="#cb21-206" aria-hidden="true" tabindex="-1"></a>Combinamos los 15 bias con la **mediana recortada** (sección 10). Así el</span>
 <span id="cb21-207"><a href="#cb21-207" aria-hidden="true" tabindex="-1"></a>ruido de lectura baja y cualquier rayo cósmico desaparece.</span>
 <span id="cb21-208"><a href="#cb21-208" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-211"><a href="#cb21-211" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
@@ -1790,7 +1790,7 @@ comp4           34720                9.1
 <span id="cb21-303"><a href="#cb21-303" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-306"><a href="#cb21-306" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
 <span id="cb21-307"><a href="#cb21-307" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
-<span id="cb21-308"><a href="#cb21-308" aria-hidden="true" tabindex="-1"></a><span class="co"># Fotometría de apertura (módulo 08) sobre las 60 imágenes calibradas</span></span>
+<span id="cb21-308"><a href="#cb21-308" aria-hidden="true" tabindex="-1"></a><span class="co"># Fotometría de apertura (sección 08) sobre las 60 imágenes calibradas</span></span>
 <span id="cb21-309"><a href="#cb21-309" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb21-310"><a href="#cb21-310" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-311"><a href="#cb21-311" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> photutils.centroids <span class="im">import</span> centroid_sources, centroid_com</span>
@@ -1898,7 +1898,7 @@ comp4           34720                9.1
 <span id="cb21-417"><a href="#cb21-417" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Periodograma y curva de luz doblada de la δ Scuti"</span></span>
 <span id="cb21-418"><a href="#cb21-418" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-419"><a href="#cb21-419" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
-<span id="cb21-420"><a href="#cb21-420" aria-hidden="true" tabindex="-1"></a><span class="co"># Lomb–Scargle (módulo 15) sobre la magnitud diferencial</span></span>
+<span id="cb21-420"><a href="#cb21-420" aria-hidden="true" tabindex="-1"></a><span class="co"># Lomb–Scargle (sección 15) sobre la magnitud diferencial</span></span>
 <span id="cb21-421"><a href="#cb21-421" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb21-422"><a href="#cb21-422" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-423"><a href="#cb21-423" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
@@ -1956,7 +1956,7 @@ comp4           34720                9.1
 <span id="cb21-477"><a href="#cb21-477" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-478"><a href="#cb21-478" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip}</span>
 <span id="cb21-479"><a href="#cb21-479" aria-hidden="true" tabindex="-1"></a><span class="fu">## Para tu repositorio de GitHub</span></span>
-<span id="cb21-480"><a href="#cb21-480" aria-hidden="true" tabindex="-1"></a>Este módulo genera unos 85 archivos FITS en la carpeta <span class="in">`noche_simulada/`</span>.</span>
+<span id="cb21-480"><a href="#cb21-480" aria-hidden="true" tabindex="-1"></a>Esta sección genera unos 85 archivos FITS en la carpeta <span class="in">`noche_simulada/`</span>.</span>
 <span id="cb21-481"><a href="#cb21-481" aria-hidden="true" tabindex="-1"></a>Agrega <span class="in">`noche_simulada/`</span> y <span class="in">`*.fits`</span> a tu <span class="in">`.gitignore`</span> para no subirlos.</span>
 <span id="cb21-482"><a href="#cb21-482" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb21-483"><a href="#cb21-483" aria-hidden="true" tabindex="-1"></a></span>
@@ -1997,7 +1997,7 @@ comp4           34720                9.1
 <span id="cb21-520"><a href="#cb21-520" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-521"><a href="#cb21-521" aria-hidden="true" tabindex="-1"></a><span class="fu">## ¡Felicitaciones! {.seccion-aprendiste}</span></span>
 <span id="cb21-522"><a href="#cb21-522" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-523"><a href="#cb21-523" aria-hidden="true" tabindex="-1"></a>Completaste los 17 módulos. En este proyecto final:</span>
+<span id="cb21-523"><a href="#cb21-523" aria-hidden="true" tabindex="-1"></a>Completaste las 17 secciones. En este proyecto final:</span>
 <span id="cb21-524"><a href="#cb21-524" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-525"><a href="#cb21-525" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Organizaste archivos FITS a partir de sus encabezados</span>
 <span id="cb21-526"><a href="#cb21-526" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Construiste master bias y master flat con combinación robusta</span>

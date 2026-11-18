@@ -175,7 +175,7 @@ window.Quarto = {
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
     <a class="nav-link active" href="../../posts/basico/01-introduccion.html" aria-current="page"> 
-<span class="menu-text">Módulos</span></a>
+<span class="menu-text">Secciones</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../../sobre.html"> 
@@ -388,7 +388,7 @@ window.Quarto = {
   </ul></li>
   <li><a href="#más-allá-de-los-mínimos-cuadrados-mcmc" id="toc-más-allá-de-los-mínimos-cuadrados-mcmc" class="nav-link" data-scroll-target="#más-allá-de-los-mínimos-cuadrados-mcmc"><span class="header-section-number">6</span> Más allá de los mínimos cuadrados: MCMC</a></li>
   <li><a href="#ejercicio" id="toc-ejercicio" class="nav-link" data-scroll-target="#ejercicio"><span class="header-section-number">7</span> Ejercicio</a></li>
-  <li><a href="#qué-aprendiste-en-este-módulo" id="toc-qué-aprendiste-en-este-módulo" class="nav-link" data-scroll-target="#qué-aprendiste-en-este-módulo"><span class="header-section-number">8</span> ¿Qué aprendiste en este módulo?</a></li>
+  <li><a href="#qué-aprendiste-en-esta-sección" id="toc-qué-aprendiste-en-esta-sección" class="nav-link" data-scroll-target="#qué-aprendiste-en-esta-sección"><span class="header-section-number">8</span> ¿Qué aprendiste en esta sección?</a></li>
   </ul>
 </nav>
     </div>
@@ -437,7 +437,7 @@ window.Quarto = {
 <p><span class="badge-avanzado">🚀 Avanzado</span></p>
 <section id="cuando-lo-que-trae-astropy-no-alcanza" class="level2" data-number="1">
 <h2 data-number="1" class="anchored" data-anchor-id="cuando-lo-que-trae-astropy-no-alcanza"><span class="header-section-number">1</span> Cuando lo que trae Astropy no alcanza</h2>
-<p>Astropy es muy completo, pero tarde o temprano necesitarás algo propio: una unidad que usa tu grupo de investigación, una conversión especial, o un modelo físico que no existe en <code>astropy.modeling</code>. Este módulo muestra cómo <strong>extender</strong> Astropy de forma limpia:</p>
+<p>Astropy es muy completo, pero tarde o temprano necesitarás algo propio: una unidad que usa tu grupo de investigación, una conversión especial, o un modelo físico que no existe en <code>astropy.modeling</code>. Esta sección muestra cómo <strong>extender</strong> Astropy de forma limpia:</p>
 <ol type="1">
 <li>Unidades personalizadas y unidades logarítmicas (magnitudes)</li>
 <li>Equivalencias: conversiones entre magnitudes físicas distintas</li>
@@ -456,7 +456,7 @@ window.Quarto = {
 </div>
 <div class="callout-body-container callout-body">
 <ul>
-<li>Módulos 02 (unidades) y 10 (modelado)</li>
+<li>Secciones 02 (unidades) y 10 (modelado)</li>
 <li>Saber definir funciones y clases básicas en Python</li>
 </ul>
 </div>
@@ -465,7 +465,7 @@ window.Quarto = {
 </section>
 <section id="unidades-personalizadas" class="level2" data-number="2">
 <h2 data-number="2" class="anchored" data-anchor-id="unidades-personalizadas"><span class="header-section-number">2</span> Unidades personalizadas</h2>
-<div id="50f4b533" class="cell" data-execution_count="1">
+<div id="491b756d" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># def_unit crea una unidad nueva a partir de otras existentes</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -492,7 +492,7 @@ Un mes sinódico en horas: 708.7 h
 Apophis en 2029 pasará a 0.082 LD de la Tierra</code></pre>
 </div>
 </div>
-<div id="38623b23" class="cell" data-execution_count="2">
+<div id="9ecbe2b6" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Registrar las unidades para poder escribirlas como texto: u.Unit('LD')</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -508,7 +508,7 @@ Apophis en 2029 pasará a 0.082 LD de la Tierra</code></pre>
 <section id="unidades-logarítmicas-magnitudes" class="level3" data-number="2.1">
 <h3 data-number="2.1" class="anchored" data-anchor-id="unidades-logarítmicas-magnitudes"><span class="header-section-number">2.1</span> Unidades logarítmicas: magnitudes</h3>
 <p>Las magnitudes son <strong>logarítmicas</strong>: sumar 5 magnitudes equivale a dividir el flujo por 100. Astropy las maneja como unidades especiales.</p>
-<div id="8b90bc51" class="cell" data-execution_count="3">
+<div id="1b99ab19" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Magnitudes AB: sistema basado en densidad de flujo por unidad de frecuencia</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -541,14 +541,14 @@ Una estrella de mag 15 es 100 veces más brillante que una de mag 20</code></pre
 <section id="equivalencias" class="level2" data-number="3">
 <h2 data-number="3" class="anchored" data-anchor-id="equivalencias"><span class="header-section-number">3</span> Equivalencias</h2>
 <p>Algunas conversiones no son de “la misma dimensión” pero tienen sentido físico en un contexto: longitud de onda ↔︎ frecuencia, paralaje ↔︎ distancia, temperatura ↔︎ energía. Astropy las llama <strong>equivalencias</strong>.</p>
-<div id="ec5d88cc" class="cell" data-execution_count="4">
+<div id="dcd11036" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Equivalencias incluidas en Astropy</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> astropy.units <span class="im">as</span> u</span>
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Espectral: λ ↔ ν ↔ E  (lo usamos en el módulo 12)</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Espectral: λ ↔ ν ↔ E  (lo usamos en la sección 12)</span></span>
 <span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Hα (656.28 nm) = </span><span class="sc">{</span>(<span class="fl">656.28</span> <span class="op">*</span> u.nm)<span class="sc">.</span>to(u.eV, equivalencies<span class="op">=</span>u.spectral())<span class="sc">:.3f}</span><span class="ss">"</span>)</span>
 <span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Paralaje ↔ distancia  (d [pc] = 1 / p [arcsec])</span></span>
@@ -572,7 +572,7 @@ Paralaje de 7.3 mas → 137.0 pc
 <section id="crear-una-equivalencia-propia" class="level3" data-number="3.1">
 <h3 data-number="3.1" class="anchored" data-anchor-id="crear-una-equivalencia-propia"><span class="header-section-number">3.1</span> Crear una equivalencia propia</h3>
 <p>Una equivalencia es una lista de tuplas <code>(unidad_origen, unidad_destino, función_ida, función_vuelta)</code>.</p>
-<div id="d4bbd04b" class="cell" data-execution_count="5">
+<div id="cf33af94" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Equivalencia de Hubble: distancia ↔ velocidad de recesión (v = H0 · d)</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -593,7 +593,7 @@ Paralaje de 7.3 mas → 137.0 pc
 <span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Galaxia a 100 Mpc → v = </span><span class="sc">{</span>(<span class="dv">100</span> <span class="op">*</span> u.Mpc)<span class="sc">.</span>to(u.km <span class="op">/</span> u.s, equivalencies<span class="op">=</span>hubble())<span class="sc">:.0f}</span><span class="ss">"</span>)</span>
 <span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Galaxia a 5548 km/s → d = </span><span class="sc">{</span>(<span class="dv">5548</span> <span class="op">*</span> u.km <span class="op">/</span> u.s)<span class="sc">.</span>to(u.Mpc, equivalencies<span class="op">=</span>hubble())<span class="sc">:.1f}</span><span class="ss">"</span>)</span>
 <span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Y con otro valor de H0 (la "tensión de Hubble" del módulo 13)</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Y con otro valor de H0 (la "tensión de Hubble" de la sección 13)</span></span>
 <span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>h73 <span class="op">=</span> hubble(<span class="dv">73</span> <span class="op">*</span> u.km <span class="op">/</span> u.s <span class="op">/</span> u.Mpc)</span>
 <span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Con H0 = 73: 5548 km/s → d = </span><span class="sc">{</span>(<span class="dv">5548</span> <span class="op">*</span> u.km <span class="op">/</span> u.s)<span class="sc">.</span>to(u.Mpc, equivalencies<span class="op">=</span>h73)<span class="sc">:.1f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -612,7 +612,7 @@ Con H0 = 73: 5548 km/s → d = 76.0 Mpc</code></pre>
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Esta equivalencia (ley de Hubble lineal) solo vale para galaxias cercanas (z &lt; 0.1). Para distancias mayores usa <code>astropy.cosmology</code> (módulo 13).</p>
+<p>Esta equivalencia (ley de Hubble lineal) solo vale para galaxias cercanas (z &lt; 0.1). Para distancias mayores usa <code>astropy.cosmology</code> (sección 13).</p>
 </div>
 </div>
 <hr>
@@ -620,8 +620,8 @@ Con H0 = 73: 5548 km/s → d = 76.0 Mpc</code></pre>
 </section>
 <section id="funciones-que-validan-sus-unidades" class="level2" data-number="4">
 <h2 data-number="4" class="anchored" data-anchor-id="funciones-que-validan-sus-unidades"><span class="header-section-number">4</span> Funciones que validan sus unidades</h2>
-<p>El decorador <code>@u.quantity_input</code> comprueba automáticamente que los argumentos tengan unidades compatibles. Es la mejor defensa contra el tipo de error que destruyó el Mars Climate Orbiter (módulo 02).</p>
-<div id="0bb5ec6b" class="cell" data-execution_count="6">
+<p>El decorador <code>@u.quantity_input</code> comprueba automáticamente que los argumentos tengan unidades compatibles. Es la mejor defensa contra el tipo de error que destruyó el Mars Climate Orbiter (sección 02).</p>
+<div id="62e42df4" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Las anotaciones de tipo indican la unidad esperada (o compatible)</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -665,7 +665,7 @@ Error capturado: Argument 'radio' to function 'velocidad_escape' must be in unit
 <p><span class="math display">\[f(t) = A\,\frac{e^{-(t - t_0)/\tau_{caída}}}{1 + e^{-(t - t_0)/\tau_{subida}}} + B\]</span></p>
 <section id="forma-rápida-custom_model" class="level3" data-number="5.1">
 <h3 data-number="5.1" class="anchored" data-anchor-id="forma-rápida-custom_model"><span class="header-section-number">5.1</span> Forma rápida: <code>@custom_model</code></h3>
-<div id="51567043" class="cell" data-execution_count="7">
+<div id="8296eeae" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co"># @custom_model convierte una función normal en un modelo ajustable</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Los argumentos con valor por defecto se vuelven PARÁMETROS del modelo</span></span>
@@ -701,7 +701,7 @@ Flujo en t = 15 días: 131.01</code></pre>
 <section id="forma-completa-subclase-de-fittable1dmodel" class="level3" data-number="5.2">
 <h3 data-number="5.2" class="anchored" data-anchor-id="forma-completa-subclase-de-fittable1dmodel"><span class="header-section-number">5.2</span> Forma completa: subclase de <code>Fittable1DModel</code></h3>
 <p>La subclase permite fijar <strong>límites</strong> a los parámetros y documentarlos.</p>
-<div id="cf7fa165" class="cell" data-execution_count="8">
+<div id="43b4270b" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Modelo con parámetros declarados explícitamente y límites físicos</span></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -741,7 +741,7 @@ Parameters:
 <h3 data-number="5.3" class="anchored" data-anchor-id="ajustar-el-modelo-a-una-supernova-simulada"><span class="header-section-number">5.3</span> Ajustar el modelo a una supernova simulada</h3>
 <div id="cell-fig-supernova" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Datos simulados + ajuste por mínimos cuadrados (módulo 10)</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Datos simulados + ajuste por mínimos cuadrados (sección 10)</span></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -826,7 +826,7 @@ Figura&nbsp;1: Curva de luz de una supernova simulada y el ajuste del modelo de 
 <li>Si la explica peor, la acepta solo <strong>a veces</strong> (con probabilidad proporcional)</li>
 <li>Repite miles de veces: la nube de puntos visitados es la posterior</li>
 </ol>
-<div id="248183ed" class="cell" data-execution_count="10">
+<div id="b127062d" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Metropolis–Hastings escrito desde cero con numpy</span></span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -976,7 +976,7 @@ Figura&nbsp;3: Correlación entre el tiempo de referencia t0 y la escala de subi
 <li>Ajústalo a los datos simulados de abajo</li>
 <li>Reporta <span class="math inline">\(\alpha\)</span> y <span class="math inline">\(x_c\)</span> con sus errores</li>
 </ol>
-<div id="253cb712" class="cell" data-execution_count="13">
+<div id="f62dba5a" class="cell" data-execution_count="13">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Datos del ejercicio: espectro de energía de un púlsar (GeV)</span></span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> np.random.default_rng(<span class="dv">7</span>)</span>
@@ -1049,8 +1049,8 @@ Figura&nbsp;4: Ley de potencia con corte exponencial ajustada al espectro
 </div>
 <hr>
 </section>
-<section id="qué-aprendiste-en-este-módulo" class="level2 seccion-aprendiste" data-number="8">
-<h2 class="seccion-aprendiste anchored" data-number="8" data-anchor-id="qué-aprendiste-en-este-módulo"><span class="header-section-number">8</span> ¿Qué aprendiste en este módulo?</h2>
+<section id="qué-aprendiste-en-esta-sección" class="level2 seccion-aprendiste" data-number="8">
+<h2 class="seccion-aprendiste anchored" data-number="8" data-anchor-id="qué-aprendiste-en-esta-sección"><span class="header-section-number">8</span> ¿Qué aprendiste en esta sección?</h2>
 <ul>
 <li>✅ Crear y registrar unidades propias con <code>def_unit</code> y <code>add_enabled_units</code></li>
 <li>✅ Trabajar con magnitudes AB como unidades logarítmicas</li>
@@ -1059,7 +1059,7 @@ Figura&nbsp;4: Ley de potencia con corte exponencial ajustada al espectro
 <li>✅ Definir modelos con <code>@custom_model</code> y con subclases de <code>Fittable1DModel</code></li>
 <li>✅ Implementar un MCMC de Metropolis–Hastings y leer posteriores y correlaciones</li>
 </ul>
-<p><strong>Siguiente módulo →</strong> <a href="../../posts/avanzado/17-pipeline.html">17 · Pipeline completo de reducción</a></p>
+<p><strong>Siguiente sección →</strong> <a href="../../posts/avanzado/17-pipeline.html">17 · Pipeline completo de reducción</a></p>
 
 
 <!-- -->
@@ -1551,7 +1551,7 @@ Figura&nbsp;4: Ley de potencia con corte exponencial ajustada al espectro
 <span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a>Astropy es muy completo, pero tarde o temprano necesitarás algo propio:</span>
 <span id="cb28-21"><a href="#cb28-21" aria-hidden="true" tabindex="-1"></a>una unidad que usa tu grupo de investigación, una conversión especial,</span>
-<span id="cb28-22"><a href="#cb28-22" aria-hidden="true" tabindex="-1"></a>o un modelo físico que no existe en <span class="in">`astropy.modeling`</span>. Este módulo</span>
+<span id="cb28-22"><a href="#cb28-22" aria-hidden="true" tabindex="-1"></a>o un modelo físico que no existe en <span class="in">`astropy.modeling`</span>. Esta sección</span>
 <span id="cb28-23"><a href="#cb28-23" aria-hidden="true" tabindex="-1"></a>muestra cómo **extender** Astropy de forma limpia:</span>
 <span id="cb28-24"><a href="#cb28-24" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-25"><a href="#cb28-25" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Unidades personalizadas y unidades logarítmicas (magnitudes)</span>
@@ -1562,7 +1562,7 @@ Figura&nbsp;4: Ley de potencia con corte exponencial ajustada al espectro
 <span id="cb28-30"><a href="#cb28-30" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-31"><a href="#cb28-31" aria-hidden="true" tabindex="-1"></a>::: {.callout-note}</span>
 <span id="cb28-32"><a href="#cb28-32" aria-hidden="true" tabindex="-1"></a><span class="fu">## Requisitos previos</span></span>
-<span id="cb28-33"><a href="#cb28-33" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Módulos 02 (unidades) y 10 (modelado)</span>
+<span id="cb28-33"><a href="#cb28-33" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Secciones 02 (unidades) y 10 (modelado)</span>
 <span id="cb28-34"><a href="#cb28-34" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Saber definir funciones y clases básicas en Python</span>
 <span id="cb28-35"><a href="#cb28-35" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb28-36"><a href="#cb28-36" aria-hidden="true" tabindex="-1"></a></span>
@@ -1647,7 +1647,7 @@ Figura&nbsp;4: Ley de potencia con corte exponencial ajustada al espectro
 <span id="cb28-123"><a href="#cb28-123" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-124"><a href="#cb28-124" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> astropy.units <span class="im">as</span> u</span>
 <span id="cb28-125"><a href="#cb28-125" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-126"><a href="#cb28-126" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Espectral: λ ↔ ν ↔ E  (lo usamos en el módulo 12)</span></span>
+<span id="cb28-126"><a href="#cb28-126" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Espectral: λ ↔ ν ↔ E  (lo usamos en la sección 12)</span></span>
 <span id="cb28-127"><a href="#cb28-127" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Hα (656.28 nm) = </span><span class="sc">{</span>(<span class="fl">656.28</span> <span class="op">*</span> u.nm)<span class="sc">.</span>to(u.eV, equivalencies<span class="op">=</span>u.spectral())<span class="sc">:.3f}</span><span class="ss">"</span>)</span>
 <span id="cb28-128"><a href="#cb28-128" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-129"><a href="#cb28-129" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Paralaje ↔ distancia  (d [pc] = 1 / p [arcsec])</span></span>
@@ -1689,7 +1689,7 @@ Figura&nbsp;4: Ley de potencia con corte exponencial ajustada al espectro
 <span id="cb28-167"><a href="#cb28-167" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Galaxia a 100 Mpc → v = </span><span class="sc">{</span>(<span class="dv">100</span> <span class="op">*</span> u.Mpc)<span class="sc">.</span>to(u.km <span class="op">/</span> u.s, equivalencies<span class="op">=</span>hubble())<span class="sc">:.0f}</span><span class="ss">"</span>)</span>
 <span id="cb28-168"><a href="#cb28-168" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Galaxia a 5548 km/s → d = </span><span class="sc">{</span>(<span class="dv">5548</span> <span class="op">*</span> u.km <span class="op">/</span> u.s)<span class="sc">.</span>to(u.Mpc, equivalencies<span class="op">=</span>hubble())<span class="sc">:.1f}</span><span class="ss">"</span>)</span>
 <span id="cb28-169"><a href="#cb28-169" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-170"><a href="#cb28-170" aria-hidden="true" tabindex="-1"></a><span class="co"># Y con otro valor de H0 (la "tensión de Hubble" del módulo 13)</span></span>
+<span id="cb28-170"><a href="#cb28-170" aria-hidden="true" tabindex="-1"></a><span class="co"># Y con otro valor de H0 (la "tensión de Hubble" de la sección 13)</span></span>
 <span id="cb28-171"><a href="#cb28-171" aria-hidden="true" tabindex="-1"></a>h73 <span class="op">=</span> hubble(<span class="dv">73</span> <span class="op">*</span> u.km <span class="op">/</span> u.s <span class="op">/</span> u.Mpc)</span>
 <span id="cb28-172"><a href="#cb28-172" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Con H0 = 73: 5548 km/s → d = </span><span class="sc">{</span>(<span class="dv">5548</span> <span class="op">*</span> u.km <span class="op">/</span> u.s)<span class="sc">.</span>to(u.Mpc, equivalencies<span class="op">=</span>h73)<span class="sc">:.1f}</span><span class="ss">"</span>)</span>
 <span id="cb28-173"><a href="#cb28-173" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
@@ -1697,7 +1697,7 @@ Figura&nbsp;4: Ley de potencia con corte exponencial ajustada al espectro
 <span id="cb28-175"><a href="#cb28-175" aria-hidden="true" tabindex="-1"></a>::: {.callout-warning}</span>
 <span id="cb28-176"><a href="#cb28-176" aria-hidden="true" tabindex="-1"></a><span class="fu">## Úsala solo donde tiene sentido</span></span>
 <span id="cb28-177"><a href="#cb28-177" aria-hidden="true" tabindex="-1"></a>Esta equivalencia (ley de Hubble lineal) solo vale para galaxias cercanas</span>
-<span id="cb28-178"><a href="#cb28-178" aria-hidden="true" tabindex="-1"></a>(z &lt; 0.1). Para distancias mayores usa <span class="in">`astropy.cosmology`</span> (módulo 13).</span>
+<span id="cb28-178"><a href="#cb28-178" aria-hidden="true" tabindex="-1"></a>(z &lt; 0.1). Para distancias mayores usa <span class="in">`astropy.cosmology`</span> (sección 13).</span>
 <span id="cb28-179"><a href="#cb28-179" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb28-180"><a href="#cb28-180" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-181"><a href="#cb28-181" aria-hidden="true" tabindex="-1"></a>---</span>
@@ -1706,7 +1706,7 @@ Figura&nbsp;4: Ley de potencia con corte exponencial ajustada al espectro
 <span id="cb28-184"><a href="#cb28-184" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-185"><a href="#cb28-185" aria-hidden="true" tabindex="-1"></a>El decorador <span class="in">`@u.quantity_input`</span> comprueba automáticamente que los</span>
 <span id="cb28-186"><a href="#cb28-186" aria-hidden="true" tabindex="-1"></a>argumentos tengan unidades compatibles. Es la mejor defensa contra el tipo</span>
-<span id="cb28-187"><a href="#cb28-187" aria-hidden="true" tabindex="-1"></a>de error que destruyó el Mars Climate Orbiter (módulo 02).</span>
+<span id="cb28-187"><a href="#cb28-187" aria-hidden="true" tabindex="-1"></a>de error que destruyó el Mars Climate Orbiter (sección 02).</span>
 <span id="cb28-188"><a href="#cb28-188" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-191"><a href="#cb28-191" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
 <span id="cb28-192"><a href="#cb28-192" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -1807,7 +1807,7 @@ Figura&nbsp;4: Ley de potencia con corte exponencial ajustada al espectro
 <span id="cb28-293"><a href="#cb28-293" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Curva de luz de una supernova simulada y el ajuste del modelo de Bazin"</span></span>
 <span id="cb28-294"><a href="#cb28-294" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-295"><a href="#cb28-295" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
-<span id="cb28-296"><a href="#cb28-296" aria-hidden="true" tabindex="-1"></a><span class="co"># Datos simulados + ajuste por mínimos cuadrados (módulo 10)</span></span>
+<span id="cb28-296"><a href="#cb28-296" aria-hidden="true" tabindex="-1"></a><span class="co"># Datos simulados + ajuste por mínimos cuadrados (sección 10)</span></span>
 <span id="cb28-297"><a href="#cb28-297" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb28-298"><a href="#cb28-298" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-299"><a href="#cb28-299" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -2035,7 +2035,7 @@ Figura&nbsp;4: Ley de potencia con corte exponencial ajustada al espectro
 <span id="cb28-531"><a href="#cb28-531" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-532"><a href="#cb28-532" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb28-533"><a href="#cb28-533" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-534"><a href="#cb28-534" aria-hidden="true" tabindex="-1"></a><span class="fu">## ¿Qué aprendiste en este módulo? {.seccion-aprendiste}</span></span>
+<span id="cb28-534"><a href="#cb28-534" aria-hidden="true" tabindex="-1"></a><span class="fu">## ¿Qué aprendiste en esta sección? {.seccion-aprendiste}</span></span>
 <span id="cb28-535"><a href="#cb28-535" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-536"><a href="#cb28-536" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Crear y registrar unidades propias con <span class="in">`def_unit`</span> y <span class="in">`add_enabled_units`</span></span>
 <span id="cb28-537"><a href="#cb28-537" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Trabajar con magnitudes AB como unidades logarítmicas</span>
@@ -2044,7 +2044,7 @@ Figura&nbsp;4: Ley de potencia con corte exponencial ajustada al espectro
 <span id="cb28-540"><a href="#cb28-540" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Definir modelos con <span class="in">`@custom_model`</span> y con subclases de <span class="in">`Fittable1DModel`</span></span>
 <span id="cb28-541"><a href="#cb28-541" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Implementar un MCMC de Metropolis–Hastings y leer posteriores y correlaciones</span>
 <span id="cb28-542"><a href="#cb28-542" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-543"><a href="#cb28-543" aria-hidden="true" tabindex="-1"></a>**Siguiente módulo →** <span class="co">[</span><span class="ot">17 · Pipeline completo de reducción</span><span class="co">](17-pipeline.qmd)</span></span>
+<span id="cb28-543"><a href="#cb28-543" aria-hidden="true" tabindex="-1"></a>**Siguiente sección →** <span class="co">[</span><span class="ot">17 · Pipeline completo de reducción</span><span class="co">](17-pipeline.qmd)</span></span>
 </code></pre></div><button title="Copiar al portapapeles" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

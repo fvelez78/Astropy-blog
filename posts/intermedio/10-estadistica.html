@@ -175,7 +175,7 @@ window.Quarto = {
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
     <a class="nav-link active" href="../../posts/basico/01-introduccion.html" aria-current="page"> 
-<span class="menu-text">Módulos</span></a>
+<span class="menu-text">Secciones</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../../sobre.html"> 
@@ -384,7 +384,7 @@ window.Quarto = {
   </ul></li>
   <li><a href="#modelos-disponibles" id="toc-modelos-disponibles" class="nav-link" data-scroll-target="#modelos-disponibles"><span class="header-section-number">8</span> Modelos disponibles</a></li>
   <li><a href="#ejercicio" id="toc-ejercicio" class="nav-link" data-scroll-target="#ejercicio"><span class="header-section-number">9</span> Ejercicio</a></li>
-  <li><a href="#qué-aprendiste-en-este-módulo" id="toc-qué-aprendiste-en-este-módulo" class="nav-link" data-scroll-target="#qué-aprendiste-en-este-módulo"><span class="header-section-number">10</span> ¿Qué aprendiste en este módulo?</a></li>
+  <li><a href="#qué-aprendiste-en-esta-sección" id="toc-qué-aprendiste-en-esta-sección" class="nav-link" data-scroll-target="#qué-aprendiste-en-esta-sección"><span class="header-section-number">10</span> ¿Qué aprendiste en esta sección?</a></li>
   </ul>
 </nav>
     </div>
@@ -434,7 +434,7 @@ window.Quarto = {
 <section id="datos-astronómicos-ruidosos-y-con-intrusos" class="level2" data-number="1">
 <h2 data-number="1" class="anchored" data-anchor-id="datos-astronómicos-ruidosos-y-con-intrusos"><span class="header-section-number">1</span> Datos astronómicos: ruidosos y con “intrusos”</h2>
 <p>Los datos astronómicos casi nunca son limpios. En una imagen hay rayos cósmicos, píxeles calientes, satélites que cruzan el campo. En un catálogo hay estrellas mal medidas. Si calculamos un <strong>promedio</strong> simple, un solo valor extremo lo arruina.</p>
-<p>En este módulo veremos dos submódulos:</p>
+<p>En esta sección veremos dos submódulos:</p>
 <ul>
 <li><strong><code>astropy.stats</code></strong>: estimadores robustos, recorte sigma, bootstrap, intervalos de confianza para conteos de fotones</li>
 <li><strong><code>astropy.modeling</code></strong>: definir modelos (gaussianas, polinomios, perfiles) y ajustarlos a los datos</li>
@@ -450,7 +450,7 @@ window.Quarto = {
 </div>
 <div class="callout-body-container callout-body">
 <ul>
-<li>Módulos 01 al 08</li>
+<li>Secciones 01 a 08</li>
 <li>Conocer qué son media, mediana y desviación estándar</li>
 </ul>
 </div>
@@ -459,7 +459,7 @@ window.Quarto = {
 </section>
 <section id="estimadores-robustos" class="level2" data-number="2">
 <h2 data-number="2" class="anchored" data-anchor-id="estimadores-robustos"><span class="header-section-number">2</span> Estimadores robustos</h2>
-<div id="582ce572" class="cell" data-execution_count="1">
+<div id="a693646f" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Comparar estimadores clásicos y robustos cuando hay valores atípicos</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -503,7 +503,7 @@ Verdad    :    100.00        5.00</code></pre>
 <li>Descarta los puntos a más de N sigmas del centro</li>
 <li>Repite hasta que no se descarte nada</li>
 </ol>
-<div id="313313e2" class="cell" data-execution_count="2">
+<div id="51d2a195" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># sigma_clip devuelve un arreglo enmascarado: los valores rechazados</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># quedan "ocultos" pero no se borran</span></span>
@@ -519,7 +519,7 @@ Verdad    :    100.00        5.00</code></pre>
 <span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Media tras el recorte: </span><span class="sc">{</span>recortado<span class="sc">.</span>mean()<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
 <span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Desv. tras el recorte: </span><span class="sc">{</span>recortado<span class="sc">.</span>std()<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
 <span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Atajo: las tres estadísticas en una línea (lo usamos en el módulo 08)</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Atajo: las tres estadísticas en una línea (lo usamos en la sección 08)</span></span>
 <span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>media, mediana, desv <span class="op">=</span> sigma_clipped_stats(fondo, sigma<span class="op">=</span><span class="dv">3</span>)</span>
 <span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">sigma_clipped_stats → media=</span><span class="sc">{</span>media<span class="sc">:.2f}</span><span class="ss">, mediana=</span><span class="sc">{</span>mediana<span class="sc">:.2f}</span><span class="ss">, desv=</span><span class="sc">{</span>desv<span class="sc">:.2f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -590,7 +590,7 @@ Figura&nbsp;1: El mismo conjunto de datos con cuatro reglas para elegir los bins
 <section id="bootstrap-incertidumbre-sin-fórmulas" class="level2" data-number="5">
 <h2 data-number="5" class="anchored" data-anchor-id="bootstrap-incertidumbre-sin-fórmulas"><span class="header-section-number">5</span> Bootstrap: incertidumbre sin fórmulas</h2>
 <p>¿Cuál es el error de la mediana? No hay una fórmula sencilla. El <strong>bootstrap</strong> lo estima remuestreando los datos con reemplazo muchas veces.</p>
-<div id="a3bdca2f" class="cell" data-execution_count="4">
+<div id="39be831c" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimar el error de la mediana con bootstrap</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -626,7 +626,7 @@ Intervalo 68 %       : [5.328, 5.360]</code></pre>
 <section id="conteos-de-fotones-intervalos-de-poisson" class="level2" data-number="6">
 <h2 data-number="6" class="anchored" data-anchor-id="conteos-de-fotones-intervalos-de-poisson"><span class="header-section-number">6</span> Conteos de fotones: intervalos de Poisson</h2>
 <p>Cuando detectamos <strong>pocos</strong> fotones (rayos X, rayos gamma, neutrinos), la aproximación <span class="math inline">\(\sqrt{N}\)</span> falla. <code>poisson_conf_interval</code> da intervalos exactos.</p>
-<div id="ecf89c2a" class="cell" data-execution_count="5">
+<div id="69fb0d04" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Intervalos de confianza para conteos pequeños</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -729,7 +729,7 @@ Figura&nbsp;2: Ajuste de una gaussiana más un continuo lineal a una línea de e
 </section>
 <section id="calidad-del-ajuste-chi-cuadrado-reducido" class="level3" data-number="7.2">
 <h3 data-number="7.2" class="anchored" data-anchor-id="calidad-del-ajuste-chi-cuadrado-reducido"><span class="header-section-number">7.2</span> Calidad del ajuste: chi-cuadrado reducido</h3>
-<div id="056abd01" class="cell" data-execution_count="7">
+<div id="3a9bc5e6" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co"># χ² reducido ≈ 1 indica que el modelo describe los datos dentro de los errores</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -858,7 +858,7 @@ Figura&nbsp;3: Datos, modelo y residuos del ajuste gaussiano 2D a una estrella
 </tr>
 </tbody>
 </table>
-<p>En el módulo 16 aprenderemos a <strong>crear modelos propios</strong>.</p>
+<p>En la sección 16 aprenderemos a <strong>crear modelos propios</strong>.</p>
 <hr>
 </section>
 <section id="ejercicio" class="level2" data-number="9">
@@ -869,7 +869,7 @@ Figura&nbsp;3: Datos, modelo y residuos del ajuste gaussiano 2D a una estrella
 <li>Reporta el radio efectivo <code>r_eff</code> y el índice <code>n</code> con sus errores</li>
 <li>¿Es una elíptica (n ≈ 4) o un disco (n ≈ 1)?</li>
 </ol>
-<div id="4765b909" class="cell" data-execution_count="9">
+<div id="ed12c828" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Datos del ejercicio: perfil de brillo radial de una galaxia</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.modeling <span class="im">import</span> models</span>
@@ -942,8 +942,8 @@ Figura&nbsp;4: Ajuste de Sérsic al perfil radial (escala logarítmica)
 </div>
 <hr>
 </section>
-<section id="qué-aprendiste-en-este-módulo" class="level2 seccion-aprendiste" data-number="10">
-<h2 class="seccion-aprendiste anchored" data-number="10" data-anchor-id="qué-aprendiste-en-este-módulo"><span class="header-section-number">10</span> ¿Qué aprendiste en este módulo?</h2>
+<section id="qué-aprendiste-en-esta-sección" class="level2 seccion-aprendiste" data-number="10">
+<h2 class="seccion-aprendiste anchored" data-number="10" data-anchor-id="qué-aprendiste-en-esta-sección"><span class="header-section-number">10</span> ¿Qué aprendiste en esta sección?</h2>
 <ul>
 <li>✅ Estimadores robustos: mediana, <code>mad_std</code>, biweight</li>
 <li>✅ Recorte sigma con <code>sigma_clip</code> y <code>sigma_clipped_stats</code></li>
@@ -953,7 +953,7 @@ Figura&nbsp;4: Ajuste de Sérsic al perfil radial (escala logarítmica)
 <li>✅ Ajustar modelos 1D y 2D con <code>astropy.modeling</code> y obtener errores</li>
 <li>✅ Evaluar el ajuste con χ² reducido y residuos</li>
 </ul>
-<p><strong>Siguiente módulo →</strong> <a href="../../posts/intermedio/11-catalogos.html">11 · Consultas a catálogos en línea</a></p>
+<p><strong>Siguiente sección →</strong> <a href="../../posts/intermedio/11-catalogos.html">11 · Consultas a catálogos en línea</a></p>
 
 
 <!-- -->
@@ -1448,7 +1448,7 @@ Figura&nbsp;4: Ajuste de Sérsic al perfil radial (escala logarítmica)
 <span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a>hay estrellas mal medidas. Si calculamos un **promedio** simple, un solo</span>
 <span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a>valor extremo lo arruina.</span>
 <span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a>En este módulo veremos dos submódulos:</span>
+<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a>En esta sección veremos dos submódulos:</span>
 <span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**`astropy.stats`**: estimadores robustos, recorte sigma, bootstrap,</span>
 <span id="cb19-28"><a href="#cb19-28" aria-hidden="true" tabindex="-1"></a>  intervalos de confianza para conteos de fotones</span>
@@ -1457,7 +1457,7 @@ Figura&nbsp;4: Ajuste de Sérsic al perfil radial (escala logarítmica)
 <span id="cb19-31"><a href="#cb19-31" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-32"><a href="#cb19-32" aria-hidden="true" tabindex="-1"></a>::: {.callout-note}</span>
 <span id="cb19-33"><a href="#cb19-33" aria-hidden="true" tabindex="-1"></a><span class="fu">## Requisitos previos</span></span>
-<span id="cb19-34"><a href="#cb19-34" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Módulos 01 al 08</span>
+<span id="cb19-34"><a href="#cb19-34" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Secciones 01 a 08</span>
 <span id="cb19-35"><a href="#cb19-35" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Conocer qué son media, mediana y desviación estándar</span>
 <span id="cb19-36"><a href="#cb19-36" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb19-37"><a href="#cb19-37" aria-hidden="true" tabindex="-1"></a></span>
@@ -1520,7 +1520,7 @@ Figura&nbsp;4: Ajuste de Sérsic al perfil radial (escala logarítmica)
 <span id="cb19-98"><a href="#cb19-98" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Media tras el recorte: </span><span class="sc">{</span>recortado<span class="sc">.</span>mean()<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
 <span id="cb19-99"><a href="#cb19-99" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Desv. tras el recorte: </span><span class="sc">{</span>recortado<span class="sc">.</span>std()<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
 <span id="cb19-100"><a href="#cb19-100" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-101"><a href="#cb19-101" aria-hidden="true" tabindex="-1"></a><span class="co"># Atajo: las tres estadísticas en una línea (lo usamos en el módulo 08)</span></span>
+<span id="cb19-101"><a href="#cb19-101" aria-hidden="true" tabindex="-1"></a><span class="co"># Atajo: las tres estadísticas en una línea (lo usamos en la sección 08)</span></span>
 <span id="cb19-102"><a href="#cb19-102" aria-hidden="true" tabindex="-1"></a>media, mediana, desv <span class="op">=</span> sigma_clipped_stats(fondo, sigma<span class="op">=</span><span class="dv">3</span>)</span>
 <span id="cb19-103"><a href="#cb19-103" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">sigma_clipped_stats → media=</span><span class="sc">{</span>media<span class="sc">:.2f}</span><span class="ss">, mediana=</span><span class="sc">{</span>mediana<span class="sc">:.2f}</span><span class="ss">, desv=</span><span class="sc">{</span>desv<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
 <span id="cb19-104"><a href="#cb19-104" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
@@ -1775,7 +1775,7 @@ Figura&nbsp;4: Ajuste de Sérsic al perfil radial (escala logarítmica)
 <span id="cb19-365"><a href="#cb19-365" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`Sersic1D`</span>, <span class="in">`Sersic2D`</span> <span class="pp">|</span> Perfiles de brillo de galaxias <span class="pp">|</span></span>
 <span id="cb19-366"><a href="#cb19-366" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`BlackBody`</span> <span class="pp">|</span> Emisión térmica de estrellas <span class="pp">|</span></span>
 <span id="cb19-367"><a href="#cb19-367" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-368"><a href="#cb19-368" aria-hidden="true" tabindex="-1"></a>En el módulo 16 aprenderemos a **crear modelos propios**.</span>
+<span id="cb19-368"><a href="#cb19-368" aria-hidden="true" tabindex="-1"></a>En la sección 16 aprenderemos a **crear modelos propios**.</span>
 <span id="cb19-369"><a href="#cb19-369" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-370"><a href="#cb19-370" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb19-371"><a href="#cb19-371" aria-hidden="true" tabindex="-1"></a></span>
@@ -1838,7 +1838,7 @@ Figura&nbsp;4: Ajuste de Sérsic al perfil radial (escala logarítmica)
 <span id="cb19-432"><a href="#cb19-432" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-433"><a href="#cb19-433" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb19-434"><a href="#cb19-434" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-435"><a href="#cb19-435" aria-hidden="true" tabindex="-1"></a><span class="fu">## ¿Qué aprendiste en este módulo? {.seccion-aprendiste}</span></span>
+<span id="cb19-435"><a href="#cb19-435" aria-hidden="true" tabindex="-1"></a><span class="fu">## ¿Qué aprendiste en esta sección? {.seccion-aprendiste}</span></span>
 <span id="cb19-436"><a href="#cb19-436" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-437"><a href="#cb19-437" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Estimadores robustos: mediana, <span class="in">`mad_std`</span>, biweight</span>
 <span id="cb19-438"><a href="#cb19-438" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Recorte sigma con <span class="in">`sigma_clip`</span> y <span class="in">`sigma_clipped_stats`</span></span>
@@ -1848,7 +1848,7 @@ Figura&nbsp;4: Ajuste de Sérsic al perfil radial (escala logarítmica)
 <span id="cb19-442"><a href="#cb19-442" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Ajustar modelos 1D y 2D con <span class="in">`astropy.modeling`</span> y obtener errores</span>
 <span id="cb19-443"><a href="#cb19-443" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Evaluar el ajuste con χ² reducido y residuos</span>
 <span id="cb19-444"><a href="#cb19-444" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-445"><a href="#cb19-445" aria-hidden="true" tabindex="-1"></a>**Siguiente módulo →** <span class="co">[</span><span class="ot">11 · Consultas a catálogos en línea</span><span class="co">](11-catalogos.qmd)</span></span>
+<span id="cb19-445"><a href="#cb19-445" aria-hidden="true" tabindex="-1"></a>**Siguiente sección →** <span class="co">[</span><span class="ot">11 · Consultas a catálogos en línea</span><span class="co">](11-catalogos.qmd)</span></span>
 </code></pre></div><button title="Copiar al portapapeles" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

@@ -142,7 +142,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
     <a class="nav-link active" href="../../posts/basico/01-introduccion.html" aria-current="page"> 
-<span class="menu-text">Módulos</span></a>
+<span class="menu-text">Secciones</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../../sobre.html"> 
@@ -350,7 +350,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#buscar-un-objeto-por-nombre-con-get_icrs_coordinates" id="toc-buscar-un-objeto-por-nombre-con-get_icrs_coordinates" class="nav-link" data-scroll-target="#buscar-un-objeto-por-nombre-con-get_icrs_coordinates"><span class="header-section-number">7</span> Buscar un objeto por nombre con <code>get_icrs_coordinates</code></a></li>
   <li><a href="#tabla-de-referencia-sistemas-de-coordenadas" id="toc-tabla-de-referencia-sistemas-de-coordenadas" class="nav-link" data-scroll-target="#tabla-de-referencia-sistemas-de-coordenadas"><span class="header-section-number">8</span> Tabla de referencia: sistemas de coordenadas</a></li>
   <li><a href="#ejercicio" id="toc-ejercicio" class="nav-link" data-scroll-target="#ejercicio"><span class="header-section-number">9</span> Ejercicio</a></li>
-  <li><a href="#qué-aprendiste-en-este-módulo" id="toc-qué-aprendiste-en-este-módulo" class="nav-link" data-scroll-target="#qué-aprendiste-en-este-módulo"><span class="header-section-number">10</span> ¿Qué aprendiste en este módulo?</a></li>
+  <li><a href="#qué-aprendiste-en-esta-sección" id="toc-qué-aprendiste-en-esta-sección" class="nav-link" data-scroll-target="#qué-aprendiste-en-esta-sección"><span class="header-section-number">10</span> ¿Qué aprendiste en esta sección?</a></li>
   </ul>
 </nav>
     </div>
@@ -412,7 +412,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div class="callout-body-container callout-body">
 <ul>
-<li>Módulos 01, 02 y 03 completados</li>
+<li>Secciones 01, 02 y 03 completadas</li>
 <li>Astropy instalada: <code>pip install astropy</code></li>
 </ul>
 </div>
@@ -426,7 +426,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><strong>Declinación (Dec):</strong> equivale a la latitud. Va de −90° (polo sur celeste) a +90° (polo norte celeste)</li>
 <li><strong>Ascensión Recta (AR o RA):</strong> equivale a la longitud. Va de 0h a 24h (se mide en horas, minutos y segundos)</li>
 </ul>
-<div id="48476e50" class="cell" data-execution_count="1">
+<div id="48476e50" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Crear una posición en el cielo con SkyCoord</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Sistema ecuatorial ICRS (el estándar astronómico actual)</span></span>
@@ -460,7 +460,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   Dec (d:m:s)     : 7:24:25.56</code></pre>
 </div>
 </div>
-<div id="d34840a0" class="cell" data-execution_count="2">
+<div id="d34840a0" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># SkyCoord también acepta coordenadas en formato de cadena de texto</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Muy útil para copiar coordenadas directamente de catálogos o Simbad</span></span>
@@ -503,7 +503,7 @@ Nebulosa de Orión (M42):
 <section id="coordenadas-galácticas" class="level3" data-number="3.1">
 <h3 data-number="3.1" class="anchored" data-anchor-id="coordenadas-galácticas"><span class="header-section-number">3.1</span> Coordenadas galácticas</h3>
 <p>El sistema galáctico mide la posición respecto al plano de la Vía Láctea. Es muy usado en estudios de estructura galáctica.</p>
-<div id="aaa34b4c" class="cell" data-execution_count="3">
+<div id="aaa34b4c" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Sistema de coordenadas galácticas</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># l = longitud galáctica (0° a 360°, el centro galáctico está en l=0°)</span></span>
@@ -554,7 +554,7 @@ Cúmulo globular M13 (Hércules):
 <section id="coordenadas-eclípticas" class="level3" data-number="3.2">
 <h3 data-number="3.2" class="anchored" data-anchor-id="coordenadas-eclípticas"><span class="header-section-number">3.2</span> Coordenadas eclípticas</h3>
 <p>El sistema eclíptico mide la posición respecto al plano de la órbita de la Tierra. Es útil para objetos del Sistema Solar.</p>
-<div id="67487467" class="cell" data-execution_count="4">
+<div id="67487467" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Sistema de coordenadas eclípticas</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># lon = longitud eclíptica (0° a 360°)</span></span>
@@ -594,7 +594,7 @@ Cúmulo globular M13 (Hércules):
 </section>
 <section id="transformaciones-entre-sistemas" class="level2" data-number="4">
 <h2 data-number="4" class="anchored" data-anchor-id="transformaciones-entre-sistemas"><span class="header-section-number">4</span> Transformaciones entre sistemas</h2>
-<div id="bafd96d6" class="cell" data-execution_count="5">
+<div id="bafd96d6" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co"># SkyCoord transforma entre sistemas de coordenadas automáticamente</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Solo hay que llamar al atributo del sistema de destino</span></span>
@@ -642,7 +642,7 @@ Cúmulo globular M13 (Hércules):
 <section id="coordenadas-horizontales-altitud-y-acimut" class="level2" data-number="5">
 <h2 data-number="5" class="anchored" data-anchor-id="coordenadas-horizontales-altitud-y-acimut"><span class="header-section-number">5</span> Coordenadas horizontales: Altitud y Acimut</h2>
 <p>El sistema horizontal (Altitud–Acimut) describe dónde está un objeto <em>para un observador en un lugar y momento específicos</em>. Es el más intuitivo: altitud es cuánto está sobre el horizonte y acimut es la dirección (como una brújula).</p>
-<div id="bea079ae" class="cell" data-execution_count="6">
+<div id="bea079ae" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Para convertir a coordenadas horizontales necesitamos:</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   1. La posición del observador en la Tierra (latitud, longitud)</span></span>
@@ -696,7 +696,7 @@ Cúmulo globular M13 (Hércules):
 </section>
 <section id="distancia-angular-entre-dos-objetos" class="level2" data-number="6">
 <h2 data-number="6" class="anchored" data-anchor-id="distancia-angular-entre-dos-objetos"><span class="header-section-number">6</span> Distancia angular entre dos objetos</h2>
-<div id="84df2ad5" class="cell" data-execution_count="7">
+<div id="84df2ad5" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co"># separation() calcula la distancia angular entre dos objetos en el cielo</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Es el arco del gran círculo que los une</span></span>
@@ -734,7 +734,7 @@ Cúmulo globular M13 (Hércules):
   En arcominutos     : 2173.25 arcmin</code></pre>
 </div>
 </div>
-<div id="cb6a3977" class="cell" data-execution_count="8">
+<div id="cb6a3977" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Aplicación: buscar cuál estrella de una lista está más cerca de un objeto</span></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -779,7 +779,7 @@ Cúmulo globular M13 (Hércules):
 </section>
 <section id="buscar-un-objeto-por-nombre-con-get_icrs_coordinates" class="level2" data-number="7">
 <h2 data-number="7" class="anchored" data-anchor-id="buscar-un-objeto-por-nombre-con-get_icrs_coordinates"><span class="header-section-number">7</span> Buscar un objeto por nombre con <code>get_icrs_coordinates</code></h2>
-<div id="9dfda012" class="cell" data-execution_count="9">
+<div id="9dfda012" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="co"># SkyCoord.from_name() resuelve el nombre de un objeto astronómico</span></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co"># consultando la base de datos Simbad en línea</span></span>
@@ -892,7 +892,7 @@ Cúmulo globular M13 (Hércules):
 </div>
 <div id="callout-2" class="callout-2-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="7945ba8b" class="cell" data-execution_count="10">
+<div id="7945ba8b" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="co"># SOLUCIÓN: visibilidad de Sagitario A* desde ALMA</span></span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -947,8 +947,8 @@ Cúmulo globular M13 (Hércules):
 </div>
 <hr>
 </section>
-<section id="qué-aprendiste-en-este-módulo" class="level2 seccion-aprendiste" data-number="10">
-<h2 class="seccion-aprendiste anchored" data-number="10" data-anchor-id="qué-aprendiste-en-este-módulo"><span class="header-section-number">10</span> ¿Qué aprendiste en este módulo?</h2>
+<section id="qué-aprendiste-en-esta-sección" class="level2 seccion-aprendiste" data-number="10">
+<h2 class="seccion-aprendiste anchored" data-number="10" data-anchor-id="qué-aprendiste-en-esta-sección"><span class="header-section-number">10</span> ¿Qué aprendiste en esta sección?</h2>
 <ul>
 <li>✅ Crear posiciones en el cielo con <code>SkyCoord</code> en formato grados y h:m:s</li>
 <li>✅ El sistema ecuatorial: Ascensión Recta y Declinación</li>
@@ -958,7 +958,7 @@ Cúmulo globular M13 (Hércules):
 <li>✅ Medir la distancia angular entre objetos con <code>.separation()</code></li>
 <li>✅ Resolver nombres de objetos a coordenadas con <code>SkyCoord.from_name()</code></li>
 </ul>
-<p><strong>Siguiente módulo →</strong> <a href="../../posts/basico/05-tablas.html">05 · Tablas astronómicas con <code>astropy.table</code></a></p>
+<p><strong>Siguiente sección →</strong> <a href="../../posts/basico/05-tablas.html">05 · Tablas astronómicas con <code>astropy.table</code></a></p>
 
 
 <!-- -->
@@ -1460,7 +1460,7 @@ Cúmulo globular M13 (Hércules):
 <span id="cb21-29"><a href="#cb21-29" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-30"><a href="#cb21-30" aria-hidden="true" tabindex="-1"></a>::: {.callout-note}</span>
 <span id="cb21-31"><a href="#cb21-31" aria-hidden="true" tabindex="-1"></a><span class="fu">## Requisitos previos</span></span>
-<span id="cb21-32"><a href="#cb21-32" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Módulos 01, 02 y 03 completados</span>
+<span id="cb21-32"><a href="#cb21-32" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Secciones 01, 02 y 03 completadas</span>
 <span id="cb21-33"><a href="#cb21-33" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Astropy instalada: <span class="in">`pip install astropy`</span></span>
 <span id="cb21-34"><a href="#cb21-34" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb21-35"><a href="#cb21-35" aria-hidden="true" tabindex="-1"></a></span>
@@ -1884,7 +1884,7 @@ Cúmulo globular M13 (Hércules):
 <span id="cb21-473"><a href="#cb21-473" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-474"><a href="#cb21-474" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb21-475"><a href="#cb21-475" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-476"><a href="#cb21-476" aria-hidden="true" tabindex="-1"></a><span class="fu">## ¿Qué aprendiste en este módulo? {.seccion-aprendiste}</span></span>
+<span id="cb21-476"><a href="#cb21-476" aria-hidden="true" tabindex="-1"></a><span class="fu">## ¿Qué aprendiste en esta sección? {.seccion-aprendiste}</span></span>
 <span id="cb21-477"><a href="#cb21-477" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-478"><a href="#cb21-478" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Crear posiciones en el cielo con <span class="in">`SkyCoord`</span> en formato grados y h<span class="sc">:m:</span>s</span>
 <span id="cb21-479"><a href="#cb21-479" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ El sistema ecuatorial: Ascensión Recta y Declinación</span>
@@ -1894,7 +1894,7 @@ Cúmulo globular M13 (Hércules):
 <span id="cb21-483"><a href="#cb21-483" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Medir la distancia angular entre objetos con <span class="in">`.separation()`</span></span>
 <span id="cb21-484"><a href="#cb21-484" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Resolver nombres de objetos a coordenadas con <span class="in">`SkyCoord.from_name()`</span></span>
 <span id="cb21-485"><a href="#cb21-485" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-486"><a href="#cb21-486" aria-hidden="true" tabindex="-1"></a>**Siguiente módulo →** <span class="co">[</span><span class="ot">05 · Tablas astronómicas con `astropy.table`</span><span class="co">](05-tablas.qmd)</span></span>
+<span id="cb21-486"><a href="#cb21-486" aria-hidden="true" tabindex="-1"></a>**Siguiente sección →** <span class="co">[</span><span class="ot">05 · Tablas astronómicas con `astropy.table`</span><span class="co">](05-tablas.qmd)</span></span>
 </code></pre></div><button title="Copiar al portapapeles" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

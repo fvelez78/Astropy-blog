@@ -175,7 +175,7 @@ window.Quarto = {
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
     <a class="nav-link active" href="../../posts/basico/01-introduccion.html" aria-current="page"> 
-<span class="menu-text">Módulos</span></a>
+<span class="menu-text">Secciones</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../../sobre.html"> 
@@ -387,7 +387,7 @@ window.Quarto = {
   <li><a href="#ecuación-de-kepler-dónde-está-un-cuerpo-en-su-órbita" id="toc-ecuación-de-kepler-dónde-está-un-cuerpo-en-su-órbita" class="nav-link" data-scroll-target="#ecuación-de-kepler-dónde-está-un-cuerpo-en-su-órbita"><span class="header-section-number">6.2</span> Ecuación de Kepler: dónde está un cuerpo en su órbita</a></li>
   </ul></li>
   <li><a href="#ejercicio" id="toc-ejercicio" class="nav-link" data-scroll-target="#ejercicio"><span class="header-section-number">7</span> Ejercicio</a></li>
-  <li><a href="#qué-aprendiste-en-este-módulo" id="toc-qué-aprendiste-en-este-módulo" class="nav-link" data-scroll-target="#qué-aprendiste-en-este-módulo"><span class="header-section-number">8</span> ¿Qué aprendiste en este módulo?</a></li>
+  <li><a href="#qué-aprendiste-en-esta-sección" id="toc-qué-aprendiste-en-esta-sección" class="nav-link" data-scroll-target="#qué-aprendiste-en-esta-sección"><span class="header-section-number">8</span> ¿Qué aprendiste en esta sección?</a></li>
   </ul>
 </nav>
     </div>
@@ -441,7 +441,7 @@ window.Quarto = {
 <ul>
 <li><strong><code>get_body</code></strong>: posición del Sol, la Luna y los planetas vistos desde la Tierra (o desde un observatorio concreto)</li>
 <li><strong><code>get_body_barycentric</code></strong>: posición en el espacio respecto al centro de masa del Sistema Solar</li>
-<li>Toda la maquinaria de <code>SkyCoord</code>, <code>AltAz</code> y <code>Time</code> de los módulos 03 y 04</li>
+<li>Toda la maquinaria de <code>SkyCoord</code>, <code>AltAz</code> y <code>Time</code> de las secciones 03 y 04</li>
 </ul>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -454,7 +454,7 @@ window.Quarto = {
 </div>
 <div class="callout-body-container callout-body">
 <ul>
-<li>Módulos 03 (tiempo) y 04 (coordenadas)</li>
+<li>Secciones 03 (tiempo) y 04 (coordenadas)</li>
 <li>Sin instalaciones extra: usamos la efeméride integrada (<code>builtin</code>) de Astropy</li>
 </ul>
 </div>
@@ -489,7 +489,7 @@ window.Quarto = {
 </section>
 <section id="dónde-están-los-planetas-hoy" class="level2" data-number="2">
 <h2 data-number="2" class="anchored" data-anchor-id="dónde-están-los-planetas-hoy"><span class="header-section-number">2</span> ¿Dónde están los planetas hoy?</h2>
-<div id="a14e433d" class="cell" data-execution_count="1">
+<div id="a14e433d" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Posición de los planetas vistos desde la Tierra en una fecha dada</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -536,7 +536,7 @@ Saturn        0h34m08s     0d48m01s          8.686 AU  Cetus</code></pre>
 <section id="planificar-una-noche-de-observación" class="level2" data-number="3">
 <h2 data-number="3" class="anchored" data-anchor-id="planificar-una-noche-de-observación"><span class="header-section-number">3</span> Planificar una noche de observación</h2>
 <p>Calculamos la altura sobre el horizonte de varios cuerpos durante una noche, desde el <strong>Observatorio del Teide</strong> (Tenerife, España).</p>
-<div id="cell-fig-noche" class="cell" data-execution_count="2">
+<div id="cell-fig-noche" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Curvas de altura durante una noche</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -597,7 +597,7 @@ Figura&nbsp;1: Altura de la Luna y los planetas durante la noche. Las franjas gr
 <p>¿Por qué las curvas de Marte y Júpiter casi coinciden? Porque esa noche están en <strong>conjunción</strong>: ambos aparecen en Leo separados por poco más de un grado. Puedes comprobarlo con <code>get_body('mars', t).separation(get_body('jupiter', t))</code>.</p>
 <section id="hora-de-la-puesta-del-sol-y-del-inicio-de-la-noche" class="level3" data-number="3.1">
 <h3 data-number="3.1" class="anchored" data-anchor-id="hora-de-la-puesta-del-sol-y-del-inicio-de-la-noche"><span class="header-section-number">3.1</span> Hora de la puesta del Sol y del inicio de la noche</h3>
-<div id="871791f8" class="cell" data-execution_count="3">
+<div id="871791f8" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Encontrar cuándo el Sol cruza ciertas alturas</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Buscamos el primer instante en que la altura pasa por debajo del umbral</span></span>
@@ -635,7 +635,7 @@ Inicio de la noche astronómica  : 19:35 UTC</code></pre>
 </section>
 <section id="la-fase-de-la-luna" class="level2" data-number="4">
 <h2 data-number="4" class="anchored" data-anchor-id="la-fase-de-la-luna"><span class="header-section-number">4</span> La fase de la Luna</h2>
-<div id="cell-fig-fases" class="cell" data-execution_count="4">
+<div id="cell-fig-fases" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Fracción iluminada a partir de la elongación (ángulo Sol–Tierra–Luna)</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -698,7 +698,7 @@ Luna nueva ≈ 2026-11-09 06:00 UTC</code></pre>
 <section id="el-movimiento-retrógrado-de-marte" class="level2" data-number="5">
 <h2 data-number="5" class="anchored" data-anchor-id="el-movimiento-retrógrado-de-marte"><span class="header-section-number">5</span> El movimiento retrógrado de Marte</h2>
 <p>Visto desde la Tierra, Marte a veces parece <strong>retroceder</strong> en el cielo. No es que Marte cambie de dirección: es la Tierra adelantándolo en su órbita interior, como cuando adelantamos un auto en la autopista.</p>
-<div id="cell-fig-retrogrado" class="cell" data-execution_count="5">
+<div id="cell-fig-retrogrado" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Posición diaria de Marte en coordenadas eclípticas durante 9 meses</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -743,7 +743,7 @@ Figura&nbsp;3: Trayectoria de Marte en el cielo entre octubre de 2026 y julio de
 </div>
 <section id="la-explicación-desde-arriba" class="level3" data-number="5.1">
 <h3 data-number="5.1" class="anchored" data-anchor-id="la-explicación-desde-arriba"><span class="header-section-number">5.1</span> La explicación desde arriba</h3>
-<div id="cell-fig-orbitas" class="cell" data-execution_count="6">
+<div id="cell-fig-orbitas" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Posiciones en el espacio (baricéntricas) de la Tierra y Marte</span></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -798,7 +798,7 @@ Figura&nbsp;4: Órbitas de la Tierra y Marte vistas desde el polo norte de la ec
 <section id="tercera-ley-período-y-tamaño-de-la-órbita" class="level3" data-number="6.1">
 <h3 data-number="6.1" class="anchored" data-anchor-id="tercera-ley-período-y-tamaño-de-la-órbita"><span class="header-section-number">6.1</span> Tercera ley: período y tamaño de la órbita</h3>
 <p><span class="math display">\[P^2 = \frac{4\pi^2}{G M_\odot}\, a^3\]</span></p>
-<div id="4e05fefe" class="cell" data-execution_count="7">
+<div id="4e05fefe" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Período orbital a partir del semieje mayor (y viceversa)</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -833,7 +833,7 @@ Júpiter caliente: P = 4.57 d</code></pre>
 <p>Para una órbita elíptica, la posición en el tiempo se obtiene resolviendo la <strong>ecuación de Kepler</strong>, que no tiene solución algebraica:</p>
 <p><span class="math display">\[M = E - e \sin E\]</span></p>
 <p>donde <span class="math inline">\(M\)</span> (anomalía media) crece uniformemente con el tiempo y <span class="math inline">\(E\)</span> (anomalía excéntrica) da la posición. La resolvemos con el método de Newton.</p>
-<div id="cell-fig-halley" class="cell" data-execution_count="8">
+<div id="cell-fig-halley" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Propagar la órbita del cometa Halley resolviendo la ecuación de Kepler</span></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -923,7 +923,7 @@ Distancia en el afelio   : 35.1 AU</code></pre>
 </div>
 <div id="callout-5" class="callout-5-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="4281beff" class="cell" data-execution_count="9">
+<div id="4281beff" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="co"># SOLUCIÓN: próxima oposición de Marte</span></span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -960,8 +960,8 @@ Constelación         : Leo</code></pre>
 </div>
 <hr>
 </section>
-<section id="qué-aprendiste-en-este-módulo" class="level2 seccion-aprendiste" data-number="8">
-<h2 class="seccion-aprendiste anchored" data-number="8" data-anchor-id="qué-aprendiste-en-este-módulo"><span class="header-section-number">8</span> ¿Qué aprendiste en este módulo?</h2>
+<section id="qué-aprendiste-en-esta-sección" class="level2 seccion-aprendiste" data-number="8">
+<h2 class="seccion-aprendiste anchored" data-number="8" data-anchor-id="qué-aprendiste-en-esta-sección"><span class="header-section-number">8</span> ¿Qué aprendiste en esta sección?</h2>
 <ul>
 <li>✅ Obtener posiciones del Sol, la Luna y los planetas con <code>get_body</code></li>
 <li>✅ Saber en qué constelación está un objeto con <code>get_constellation</code></li>
@@ -971,7 +971,7 @@ Constelación         : Leo</code></pre>
 <li>✅ Aplicar la tercera ley de Kepler con unidades</li>
 <li>✅ Resolver la ecuación de Kepler para propagar una órbita</li>
 </ul>
-<p><strong>Siguiente módulo →</strong> <a href="../../posts/avanzado/15-series-temporales.html">15 · Series temporales astronómicas</a></p>
+<p><strong>Siguiente sección →</strong> <a href="../../posts/avanzado/15-series-temporales.html">15 · Series temporales astronómicas</a></p>
 
 
 <!-- -->
@@ -1471,11 +1471,11 @@ Constelación         : Leo</code></pre>
 <span id="cb18-27"><a href="#cb18-27" aria-hidden="true" tabindex="-1"></a>  Tierra (o desde un observatorio concreto)</span>
 <span id="cb18-28"><a href="#cb18-28" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**`get_body_barycentric`**: posición en el espacio respecto al centro de</span>
 <span id="cb18-29"><a href="#cb18-29" aria-hidden="true" tabindex="-1"></a>  masa del Sistema Solar</span>
-<span id="cb18-30"><a href="#cb18-30" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Toda la maquinaria de <span class="in">`SkyCoord`</span>, <span class="in">`AltAz`</span> y <span class="in">`Time`</span> de los módulos 03 y 04</span>
+<span id="cb18-30"><a href="#cb18-30" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Toda la maquinaria de <span class="in">`SkyCoord`</span>, <span class="in">`AltAz`</span> y <span class="in">`Time`</span> de las secciones 03 y 04</span>
 <span id="cb18-31"><a href="#cb18-31" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-32"><a href="#cb18-32" aria-hidden="true" tabindex="-1"></a>::: {.callout-note}</span>
 <span id="cb18-33"><a href="#cb18-33" aria-hidden="true" tabindex="-1"></a><span class="fu">## Requisitos previos</span></span>
-<span id="cb18-34"><a href="#cb18-34" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Módulos 03 (tiempo) y 04 (coordenadas)</span>
+<span id="cb18-34"><a href="#cb18-34" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Secciones 03 (tiempo) y 04 (coordenadas)</span>
 <span id="cb18-35"><a href="#cb18-35" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Sin instalaciones extra: usamos la efeméride integrada (<span class="in">`builtin`</span>) de Astropy</span>
 <span id="cb18-36"><a href="#cb18-36" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb18-37"><a href="#cb18-37" aria-hidden="true" tabindex="-1"></a></span>
@@ -1892,7 +1892,7 @@ Constelación         : Leo</code></pre>
 <span id="cb18-466"><a href="#cb18-466" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-467"><a href="#cb18-467" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb18-468"><a href="#cb18-468" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-469"><a href="#cb18-469" aria-hidden="true" tabindex="-1"></a><span class="fu">## ¿Qué aprendiste en este módulo? {.seccion-aprendiste}</span></span>
+<span id="cb18-469"><a href="#cb18-469" aria-hidden="true" tabindex="-1"></a><span class="fu">## ¿Qué aprendiste en esta sección? {.seccion-aprendiste}</span></span>
 <span id="cb18-470"><a href="#cb18-470" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-471"><a href="#cb18-471" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Obtener posiciones del Sol, la Luna y los planetas con <span class="in">`get_body`</span></span>
 <span id="cb18-472"><a href="#cb18-472" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Saber en qué constelación está un objeto con <span class="in">`get_constellation`</span></span>
@@ -1902,7 +1902,7 @@ Constelación         : Leo</code></pre>
 <span id="cb18-476"><a href="#cb18-476" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Aplicar la tercera ley de Kepler con unidades</span>
 <span id="cb18-477"><a href="#cb18-477" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Resolver la ecuación de Kepler para propagar una órbita</span>
 <span id="cb18-478"><a href="#cb18-478" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-479"><a href="#cb18-479" aria-hidden="true" tabindex="-1"></a>**Siguiente módulo →** <span class="co">[</span><span class="ot">15 · Series temporales astronómicas</span><span class="co">](15-series-temporales.qmd)</span></span>
+<span id="cb18-479"><a href="#cb18-479" aria-hidden="true" tabindex="-1"></a>**Siguiente sección →** <span class="co">[</span><span class="ot">15 · Series temporales astronómicas</span><span class="co">](15-series-temporales.qmd)</span></span>
 </code></pre></div><button title="Copiar al portapapeles" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

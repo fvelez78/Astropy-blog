@@ -175,7 +175,7 @@ window.Quarto = {
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
     <a class="nav-link active" href="../../posts/basico/01-introduccion.html" aria-current="page"> 
-<span class="menu-text">Módulos</span></a>
+<span class="menu-text">Secciones</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../../sobre.html"> 
@@ -385,7 +385,7 @@ window.Quarto = {
   </ul></li>
   <li><a href="#aplicación-el-diagrama-de-hubble" id="toc-aplicación-el-diagrama-de-hubble" class="nav-link" data-scroll-target="#aplicación-el-diagrama-de-hubble"><span class="header-section-number">7</span> Aplicación: el diagrama de Hubble</a></li>
   <li><a href="#ejercicio" id="toc-ejercicio" class="nav-link" data-scroll-target="#ejercicio"><span class="header-section-number">8</span> Ejercicio</a></li>
-  <li><a href="#qué-aprendiste-en-este-módulo" id="toc-qué-aprendiste-en-este-módulo" class="nav-link" data-scroll-target="#qué-aprendiste-en-este-módulo"><span class="header-section-number">9</span> ¿Qué aprendiste en este módulo?</a></li>
+  <li><a href="#qué-aprendiste-en-esta-sección" id="toc-qué-aprendiste-en-esta-sección" class="nav-link" data-scroll-target="#qué-aprendiste-en-esta-sección"><span class="header-section-number">9</span> ¿Qué aprendiste en esta sección?</a></li>
   </ul>
 </nav>
     </div>
@@ -477,8 +477,8 @@ window.Quarto = {
 </div>
 <div class="callout-body-container callout-body">
 <ul>
-<li>Módulos 02 (unidades) y 03 (tiempo)</li>
-<li>En el módulo 01 vimos que <code>H0</code> <strong>no está</strong> en <code>astropy.constants</code>: aquí es donde vive</li>
+<li>Secciones 02 (unidades) y 03 (tiempo)</li>
+<li>En la sección 01 vimos que <code>H0</code> <strong>no está</strong> en <code>astropy.constants</code>: aquí es donde vive</li>
 </ul>
 </div>
 </div>
@@ -486,7 +486,7 @@ window.Quarto = {
 </section>
 <section id="los-modelos-cosmológicos-incluidos" class="level2" data-number="2">
 <h2 data-number="2" class="anchored" data-anchor-id="los-modelos-cosmológicos-incluidos"><span class="header-section-number">2</span> Los modelos cosmológicos incluidos</h2>
-<div id="b41aa7b0" class="cell" data-execution_count="1">
+<div id="e6118c94" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Astropy trae los modelos medidos por las grandes misiones</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Planck18 = resultados finales del satélite Planck (2018)</span></span>
@@ -494,7 +494,7 @@ window.Quarto = {
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.cosmology <span class="im">import</span> Planck18, WMAP9</span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>cosmo <span class="op">=</span> Planck18     <span class="co"># modelo que usaremos en todo el módulo</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>cosmo <span class="op">=</span> Planck18     <span class="co"># modelo que usaremos en toda la sección</span></span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Modelo           : </span><span class="sc">{</span>cosmo<span class="sc">.</span>name<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"H0               : </span><span class="sc">{</span>cosmo<span class="sc">.</span>H0<span class="sc">}</span><span class="ss">"</span>)                 <span class="co"># constante de Hubble</span></span>
@@ -532,7 +532,7 @@ Comparación con WMAP9: H0 = 69.32 km / (Mpc s), edad = 13.769 Gyr</code></pre>
 </div>
 <section id="crear-un-modelo-propio" class="level3" data-number="2.1">
 <h3 data-number="2.1" class="anchored" data-anchor-id="crear-un-modelo-propio"><span class="header-section-number">2.1</span> Crear un modelo propio</h3>
-<div id="bb0dc124" class="cell" data-execution_count="2">
+<div id="afc82b4f" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># FlatLambdaCDM: universo plano con materia + constante cosmológica</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -559,8 +559,8 @@ Solo materia  : edad = 9.31 Gyr</code></pre>
 </section>
 <section id="distancias-para-un-corrimiento-al-rojo" class="level2" data-number="3">
 <h2 data-number="3" class="anchored" data-anchor-id="distancias-para-un-corrimiento-al-rojo"><span class="header-section-number">3</span> Distancias para un corrimiento al rojo</h2>
-<p>En el módulo 12 medimos <span class="math inline">\(z = 0.0185\)</span> para una galaxia. Veamos qué significa eso, junto con objetos más lejanos.</p>
-<div id="8367deec" class="cell" data-execution_count="3">
+<p>En la sección 12 medimos <span class="math inline">\(z = 0.0185\)</span> para una galaxia. Veamos qué significa eso, junto con objetos más lejanos.</p>
+<div id="46c44f17" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Las distintas distancias para varios corrimientos al rojo</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -569,7 +569,7 @@ Solo materia  : edad = 9.31 Gyr</code></pre>
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.table <span class="im">import</span> Table</span>
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>objetos <span class="op">=</span> {</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Galaxia del módulo 12'</span>: <span class="fl">0.0185</span>,</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Galaxia de la sección 12'</span>: <span class="fl">0.0185</span>,</span>
 <span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Cúmulo de Coma'</span>       : <span class="fl">0.0231</span>,</span>
 <span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Cuásar 3C 273'</span>        : <span class="fl">0.158</span>,</span>
 <span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Galaxia típica (z=1)'</span> : <span class="fl">1.0</span>,</span>
@@ -588,14 +588,14 @@ Solo materia  : edad = 9.31 Gyr</code></pre>
 <span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>})</span>
 <span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(tabla)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>        objeto          z    d_comovil  d_lum   d_ang  t_viaje
-                                Mpc      Mpc     Mpc     Gyr  
---------------------- ------ --------- -------- ------ -------
-Galaxia del módulo 12 0.0185      81.6     83.1   80.1   0.264
-       Cúmulo de Coma 0.0231     101.8    104.2   99.5   0.328
-        Cuásar 3C 273  0.158     673.6    780.0  581.7   2.042
- Galaxia típica (z=1)    1.0    3395.6   6791.3 1697.8   7.936
-  Galaxia lejana JWST   10.0    9636.3 105999.1  876.0  13.315</code></pre>
+<pre><code>         objeto            z    d_comovil  d_lum   d_ang  t_viaje
+                                   Mpc      Mpc     Mpc     Gyr  
+------------------------ ------ --------- -------- ------ -------
+Galaxia de la sección 12 0.0185      81.6     83.1   80.1   0.264
+          Cúmulo de Coma 0.0231     101.8    104.2   99.5   0.328
+           Cuásar 3C 273  0.158     673.6    780.0  581.7   2.042
+    Galaxia típica (z=1)    1.0    3395.6   6791.3 1697.8   7.936
+     Galaxia lejana JWST   10.0    9636.3 105999.1  876.0  13.315</code></pre>
 </div>
 </div>
 <p>Fíjate en dos curiosidades:</p>
@@ -643,7 +643,7 @@ Figura&nbsp;1: Las distintas distancias cosmológicas en función del corrimient
 </section>
 <section id="tiempos-cósmicos" class="level2" data-number="4">
 <h2 data-number="4" class="anchored" data-anchor-id="tiempos-cósmicos"><span class="header-section-number">4</span> Tiempos cósmicos</h2>
-<div id="a1e0a3c6" class="cell" data-execution_count="5">
+<div id="c1ca3882" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Edad del universo en cada época y tiempo transcurrido desde entonces</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -675,13 +675,13 @@ Pico de formación estelar            2            3.28 Gyr        10.51 Gyr
 Formación del Sol                 0.43            9.13 Gyr         4.66 Gyr</code></pre>
 </div>
 </div>
-<p>Esta es la forma correcta de hacer la “línea de tiempo cósmica” que en el módulo 03 tuvimos que simplificar: <code>astropy.time.Time</code> no sirve para miles de millones de años, pero <code>astropy.cosmology</code> sí.</p>
+<p>Esta es la forma correcta de hacer la “línea de tiempo cósmica” que en la sección 03 tuvimos que simplificar: <code>astropy.time.Time</code> no sirve para miles de millones de años, pero <code>astropy.cosmology</code> sí.</p>
 <hr>
 </section>
 <section id="el-camino-inverso-z_at_value" class="level2" data-number="5">
 <h2 data-number="5" class="anchored" data-anchor-id="el-camino-inverso-z_at_value"><span class="header-section-number">5</span> El camino inverso: <code>z_at_value</code></h2>
 <p>¿Qué corrimiento al rojo corresponde a una edad o distancia dada? Hay que invertir la función numéricamente. <code>z_at_value</code> lo hace por nosotros.</p>
-<div id="ede79ac9" class="cell" data-execution_count="6">
+<div id="65107d68" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Encontrar z a partir de una edad, un tiempo de viaje o una distancia</span></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -714,7 +714,7 @@ d_L = 1 Gpc corresponde a z = 0.198</code></pre>
 <h2 data-number="6" class="anchored" data-anchor-id="tamaños-y-brillos"><span class="header-section-number">6</span> Tamaños y brillos</h2>
 <section id="escala-angular" class="level3" data-number="6.1">
 <h3 data-number="6.1" class="anchored" data-anchor-id="escala-angular"><span class="header-section-number">6.1</span> Escala angular</h3>
-<div id="01d86750" class="cell" data-execution_count="7">
+<div id="d3725202" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co"># ¿Cuántos kiloparsecs abarca 1 segundo de arco a cada z?</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Útil para pasar el tamaño aparente de una galaxia a su tamaño real</span></span>
@@ -743,7 +743,7 @@ Galaxia de 12″ a z = 0.0185 → diámetro real ≈ 4.7 kpc</code></pre>
 <section id="módulo-de-distancia" class="level3" data-number="6.2">
 <h3 data-number="6.2" class="anchored" data-anchor-id="módulo-de-distancia"><span class="header-section-number">6.2</span> Módulo de distancia</h3>
 <p><span class="math display">\[\mu = m - M = 5 \log_{10}\left(\frac{d_L}{10\,\text{pc}}\right)\]</span></p>
-<div id="8a3d5df9" class="cell" data-execution_count="8">
+<div id="907ccac5" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co"># El módulo de distancia convierte magnitudes aparentes en absolutas</span></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -905,8 +905,8 @@ Figura&nbsp;3: χ² en función de Ω_m: el mínimo indica el mejor ajuste
 </div>
 <hr>
 </section>
-<section id="qué-aprendiste-en-este-módulo" class="level2 seccion-aprendiste" data-number="9">
-<h2 class="seccion-aprendiste anchored" data-number="9" data-anchor-id="qué-aprendiste-en-este-módulo"><span class="header-section-number">9</span> ¿Qué aprendiste en este módulo?</h2>
+<section id="qué-aprendiste-en-esta-sección" class="level2 seccion-aprendiste" data-number="9">
+<h2 class="seccion-aprendiste anchored" data-number="9" data-anchor-id="qué-aprendiste-en-esta-sección"><span class="header-section-number">9</span> ¿Qué aprendiste en esta sección?</h2>
 <ul>
 <li>✅ Usar los modelos cosmológicos incluidos (<code>Planck18</code>, <code>WMAP9</code>)</li>
 <li>✅ Crear modelos propios con <code>FlatLambdaCDM</code></li>
@@ -916,7 +916,7 @@ Figura&nbsp;3: χ² en función de Ω_m: el mínimo indica el mejor ajuste
 <li>✅ Escala angular (kpc/arcsec) y módulo de distancia</li>
 <li>✅ Reproducir el diagrama de Hubble que reveló la energía oscura</li>
 </ul>
-<p><strong>Siguiente módulo →</strong> <a href="../../posts/avanzado/14-orbital.html">14 · Mecánica orbital y efemérides</a></p>
+<p><strong>Siguiente sección →</strong> <a href="../../posts/avanzado/14-orbital.html">14 · Mecánica orbital y efemérides</a></p>
 
 
 <!-- -->
@@ -1423,8 +1423,8 @@ Figura&nbsp;3: χ² en función de Ω_m: el mínimo indica el mejor ajuste
 <span id="cb19-34"><a href="#cb19-34" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-35"><a href="#cb19-35" aria-hidden="true" tabindex="-1"></a>::: {.callout-note}</span>
 <span id="cb19-36"><a href="#cb19-36" aria-hidden="true" tabindex="-1"></a><span class="fu">## Requisitos previos</span></span>
-<span id="cb19-37"><a href="#cb19-37" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Módulos 02 (unidades) y 03 (tiempo)</span>
-<span id="cb19-38"><a href="#cb19-38" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>En el módulo 01 vimos que <span class="in">`H0`</span> **no está** en <span class="in">`astropy.constants`</span>: aquí es donde vive</span>
+<span id="cb19-37"><a href="#cb19-37" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Secciones 02 (unidades) y 03 (tiempo)</span>
+<span id="cb19-38"><a href="#cb19-38" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>En la sección 01 vimos que <span class="in">`H0`</span> **no está** en <span class="in">`astropy.constants`</span>: aquí es donde vive</span>
 <span id="cb19-39"><a href="#cb19-39" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb19-40"><a href="#cb19-40" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-41"><a href="#cb19-41" aria-hidden="true" tabindex="-1"></a>---</span>
@@ -1439,7 +1439,7 @@ Figura&nbsp;3: χ² en función de Ω_m: el mínimo indica el mejor ajuste
 <span id="cb19-52"><a href="#cb19-52" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-53"><a href="#cb19-53" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.cosmology <span class="im">import</span> Planck18, WMAP9</span>
 <span id="cb19-54"><a href="#cb19-54" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-55"><a href="#cb19-55" aria-hidden="true" tabindex="-1"></a>cosmo <span class="op">=</span> Planck18     <span class="co"># modelo que usaremos en todo el módulo</span></span>
+<span id="cb19-55"><a href="#cb19-55" aria-hidden="true" tabindex="-1"></a>cosmo <span class="op">=</span> Planck18     <span class="co"># modelo que usaremos en toda la sección</span></span>
 <span id="cb19-56"><a href="#cb19-56" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-57"><a href="#cb19-57" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Modelo           : </span><span class="sc">{</span>cosmo<span class="sc">.</span>name<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb19-58"><a href="#cb19-58" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"H0               : </span><span class="sc">{</span>cosmo<span class="sc">.</span>H0<span class="sc">}</span><span class="ss">"</span>)                 <span class="co"># constante de Hubble</span></span>
@@ -1487,7 +1487,7 @@ Figura&nbsp;3: χ² en función de Ω_m: el mínimo indica el mejor ajuste
 <span id="cb19-102"><a href="#cb19-102" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-103"><a href="#cb19-103" aria-hidden="true" tabindex="-1"></a><span class="fu">## Distancias para un corrimiento al rojo</span></span>
 <span id="cb19-104"><a href="#cb19-104" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-105"><a href="#cb19-105" aria-hidden="true" tabindex="-1"></a>En el módulo 12 medimos $z = 0.0185$ para una galaxia. Veamos qué</span>
+<span id="cb19-105"><a href="#cb19-105" aria-hidden="true" tabindex="-1"></a>En la sección 12 medimos $z = 0.0185$ para una galaxia. Veamos qué</span>
 <span id="cb19-106"><a href="#cb19-106" aria-hidden="true" tabindex="-1"></a>significa eso, junto con objetos más lejanos.</span>
 <span id="cb19-107"><a href="#cb19-107" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-110"><a href="#cb19-110" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
@@ -1499,7 +1499,7 @@ Figura&nbsp;3: χ² en función de Ω_m: el mínimo indica el mejor ajuste
 <span id="cb19-116"><a href="#cb19-116" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> astropy.table <span class="im">import</span> Table</span>
 <span id="cb19-117"><a href="#cb19-117" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-118"><a href="#cb19-118" aria-hidden="true" tabindex="-1"></a>objetos <span class="op">=</span> {</span>
-<span id="cb19-119"><a href="#cb19-119" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Galaxia del módulo 12'</span>: <span class="fl">0.0185</span>,</span>
+<span id="cb19-119"><a href="#cb19-119" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Galaxia de la sección 12'</span>: <span class="fl">0.0185</span>,</span>
 <span id="cb19-120"><a href="#cb19-120" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Cúmulo de Coma'</span>       : <span class="fl">0.0231</span>,</span>
 <span id="cb19-121"><a href="#cb19-121" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Cuásar 3C 273'</span>        : <span class="fl">0.158</span>,</span>
 <span id="cb19-122"><a href="#cb19-122" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Galaxia típica (z=1)'</span> : <span class="fl">1.0</span>,</span>
@@ -1584,8 +1584,8 @@ Figura&nbsp;3: χ² en función de Ω_m: el mínimo indica el mejor ajuste
 <span id="cb19-205"><a href="#cb19-205" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>nombre<span class="sc">:&lt;30}</span><span class="ss"> </span><span class="sc">{</span>zz<span class="sc">:&gt;7}</span><span class="ss"> </span><span class="sc">{</span>edad_txt<span class="sc">:&gt;19}</span><span class="ss"> </span><span class="sc">{</span>hace<span class="sc">.</span>to(u.Gyr)<span class="sc">:&gt;12.2f}</span><span class="ss">"</span>)</span>
 <span id="cb19-206"><a href="#cb19-206" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb19-207"><a href="#cb19-207" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-208"><a href="#cb19-208" aria-hidden="true" tabindex="-1"></a>Esta es la forma correcta de hacer la "línea de tiempo cósmica" que en el</span>
-<span id="cb19-209"><a href="#cb19-209" aria-hidden="true" tabindex="-1"></a>módulo 03 tuvimos que simplificar: <span class="in">`astropy.time.Time`</span> no sirve para miles</span>
+<span id="cb19-208"><a href="#cb19-208" aria-hidden="true" tabindex="-1"></a>Esta es la forma correcta de hacer la "línea de tiempo cósmica" que en la</span>
+<span id="cb19-209"><a href="#cb19-209" aria-hidden="true" tabindex="-1"></a>sección 03 tuvimos que simplificar: <span class="in">`astropy.time.Time`</span> no sirve para miles</span>
 <span id="cb19-210"><a href="#cb19-210" aria-hidden="true" tabindex="-1"></a>de millones de años, pero <span class="in">`astropy.cosmology`</span> sí.</span>
 <span id="cb19-211"><a href="#cb19-211" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-212"><a href="#cb19-212" aria-hidden="true" tabindex="-1"></a>---</span>
@@ -1774,7 +1774,7 @@ Figura&nbsp;3: χ² en función de Ω_m: el mínimo indica el mejor ajuste
 <span id="cb19-405"><a href="#cb19-405" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-406"><a href="#cb19-406" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb19-407"><a href="#cb19-407" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-408"><a href="#cb19-408" aria-hidden="true" tabindex="-1"></a><span class="fu">## ¿Qué aprendiste en este módulo? {.seccion-aprendiste}</span></span>
+<span id="cb19-408"><a href="#cb19-408" aria-hidden="true" tabindex="-1"></a><span class="fu">## ¿Qué aprendiste en esta sección? {.seccion-aprendiste}</span></span>
 <span id="cb19-409"><a href="#cb19-409" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-410"><a href="#cb19-410" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Usar los modelos cosmológicos incluidos (<span class="in">`Planck18`</span>, <span class="in">`WMAP9`</span>)</span>
 <span id="cb19-411"><a href="#cb19-411" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Crear modelos propios con <span class="in">`FlatLambdaCDM`</span></span>
@@ -1784,7 +1784,7 @@ Figura&nbsp;3: χ² en función de Ω_m: el mínimo indica el mejor ajuste
 <span id="cb19-415"><a href="#cb19-415" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Escala angular (kpc/arcsec) y módulo de distancia</span>
 <span id="cb19-416"><a href="#cb19-416" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Reproducir el diagrama de Hubble que reveló la energía oscura</span>
 <span id="cb19-417"><a href="#cb19-417" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-418"><a href="#cb19-418" aria-hidden="true" tabindex="-1"></a>**Siguiente módulo →** <span class="co">[</span><span class="ot">14 · Mecánica orbital y efemérides</span><span class="co">](14-orbital.qmd)</span></span>
+<span id="cb19-418"><a href="#cb19-418" aria-hidden="true" tabindex="-1"></a>**Siguiente sección →** <span class="co">[</span><span class="ot">14 · Mecánica orbital y efemérides</span><span class="co">](14-orbital.qmd)</span></span>
 </code></pre></div><button title="Copiar al portapapeles" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

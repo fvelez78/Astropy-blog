@@ -175,7 +175,7 @@ window.Quarto = {
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
     <a class="nav-link active" href="../../posts/basico/01-introduccion.html" aria-current="page"> 
-<span class="menu-text">Módulos</span></a>
+<span class="menu-text">Secciones</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../../sobre.html"> 
@@ -380,7 +380,7 @@ window.Quarto = {
   <li><a href="#nasa-exoplanet-archive" id="toc-nasa-exoplanet-archive" class="nav-link" data-scroll-target="#nasa-exoplanet-archive"><span class="header-section-number">4</span> NASA Exoplanet Archive</a></li>
   <li><a href="#gaia-con-adql-avanzado" id="toc-gaia-con-adql-avanzado" class="nav-link" data-scroll-target="#gaia-con-adql-avanzado"><span class="header-section-number">5</span> Gaia con ADQL (avanzado)</a></li>
   <li><a href="#ejercicio" id="toc-ejercicio" class="nav-link" data-scroll-target="#ejercicio"><span class="header-section-number">6</span> Ejercicio</a></li>
-  <li><a href="#qué-aprendiste-en-este-módulo" id="toc-qué-aprendiste-en-este-módulo" class="nav-link" data-scroll-target="#qué-aprendiste-en-este-módulo"><span class="header-section-number">7</span> ¿Qué aprendiste en este módulo?</a></li>
+  <li><a href="#qué-aprendiste-en-esta-sección" id="toc-qué-aprendiste-en-esta-sección" class="nav-link" data-scroll-target="#qué-aprendiste-en-esta-sección"><span class="header-section-number">7</span> ¿Qué aprendiste en esta sección?</a></li>
   </ul>
 </nav>
     </div>
@@ -430,7 +430,7 @@ window.Quarto = {
 <section id="el-cielo-ya-está-catalogado" class="level2" data-number="1">
 <h2 data-number="1" class="anchored" data-anchor-id="el-cielo-ya-está-catalogado"><span class="header-section-number">1</span> El cielo ya está catalogado</h2>
 <p>No hace falta un telescopio para trabajar con datos astronómicos reales. Misiones como <strong>Hipparcos</strong> y <strong>Gaia</strong> midieron la posición, distancia y brillo de millones de estrellas, y todo está disponible gratis en internet.</p>
-<p><strong>astroquery</strong> es la librería afiliada a Astropy que conecta Python con decenas de estos servicios. Todas las consultas devuelven una <code>Table</code> de Astropy (módulo 05), así que ya sabes trabajar con los resultados.</p>
+<p><strong>astroquery</strong> es la librería afiliada a Astropy que conecta Python con decenas de estos servicios. Todas las consultas devuelven una <code>Table</code> de Astropy (sección 05), así que ya sabes trabajar con los resultados.</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 33%">
@@ -483,7 +483,7 @@ window.Quarto = {
 </div>
 <div class="callout-body-container callout-body">
 <ul>
-<li>Módulos 04 (coordenadas) y 05 (tablas)</li>
+<li>Secciones 04 (coordenadas) y 05 (tablas)</li>
 <li>Instalar: <code>pip install astroquery</code></li>
 <li><strong>Conexión a internet</strong></li>
 </ul>
@@ -499,14 +499,14 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Los servicios en línea pueden estar lentos o caídos. En este módulo usamos un patrón profesional: <strong>si el archivo ya existe en disco, lo leemos; si no, consultamos y lo guardamos</strong>. Así tu análisis es reproducible y no dependes de la red cada vez que ejecutas el código.</p>
+<p>Los servicios en línea pueden estar lentos o caídos. En esta sección usamos un patrón profesional: <strong>si el archivo ya existe en disco, lo leemos; si no, consultamos y lo guardamos</strong>. Así tu análisis es reproducible y no dependes de la red cada vez que ejecutas el código.</p>
 </div>
 </div>
 <hr>
 </section>
 <section id="simbad-qué-es-este-objeto" class="level2" data-number="2">
 <h2 data-number="2" class="anchored" data-anchor-id="simbad-qué-es-este-objeto"><span class="header-section-number">2</span> Simbad: ¿qué es este objeto?</h2>
-<div id="5729014e" class="cell" data-execution_count="1">
+<div id="b3b54aca" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Consultar un objeto por su nombre en Simbad</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Envolvemos la consulta en try/except: si no hay internet,</span></span>
@@ -535,7 +535,7 @@ This could mean:
 </code></pre>
 </div>
 </div>
-<div id="a7035d39" class="cell" data-execution_count="2">
+<div id="faec8326" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># ¿Qué objetos hay alrededor de una posición? Búsqueda por cono</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -606,7 +606,7 @@ This could mean:
 </tr>
 </tbody>
 </table>
-<div id="ae26696c" class="cell" data-execution_count="3">
+<div id="01cf8d6c" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Consultar Hipparcos alrededor de las Pléyades con caché en disco</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -652,7 +652,7 @@ This could mean:
 <section id="filtrar-los-miembros-del-cúmulo-por-paralaje" class="level3" data-number="3.1">
 <h3 data-number="3.1" class="anchored" data-anchor-id="filtrar-los-miembros-del-cúmulo-por-paralaje"><span class="header-section-number">3.1</span> Filtrar los miembros del cúmulo por paralaje</h3>
 <p>Las estrellas de las Pléyades están todas a la misma distancia (~136 pc), así que tienen <strong>paralaje parecida</strong> (~7.3 mas). Las estrellas de fondo y de primer plano tienen paralajes diferentes.</p>
-<div id="41c3082b" class="cell" data-execution_count="4">
+<div id="8db970c1" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Separar miembros del cúmulo de las estrellas de campo</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># La distancia en parsecs es 1000 / paralaje (en mas)</span></span>
@@ -677,9 +677,9 @@ This could mean:
 <span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Distancia media        : </span><span class="sc">{</span>miembros[<span class="st">'dist_pc'</span>]<span class="sc">.</span>mean()<span class="sc">:.1f}</span><span class="ss"> pc"</span>)</span>
 <span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"                       = </span><span class="sc">{</span>(miembros[<span class="st">'dist_pc'</span>].mean() <span class="op">*</span> u.pc)<span class="sc">.</span>to(u.lyr)<span class="sc">:.0f}</span><span class="ss">"</span>)</span>
 <span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
-<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Sin datos: ejecuta este módulo con conexión a internet."</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Sin datos: ejecuta esta sección con conexión a internet."</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Sin datos: ejecuta este módulo con conexión a internet.</code></pre>
+<pre><code>Sin datos: ejecuta esta sección con conexión a internet.</code></pre>
 </div>
 </div>
 </section>
@@ -718,9 +718,9 @@ This could mean:
 <span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>    ax.legend()</span>
 <span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>    plt.show()</span>
 <span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
-<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Sin datos: ejecuta este módulo con conexión a internet."</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Sin datos: ejecuta esta sección con conexión a internet."</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Sin datos: ejecuta este módulo con conexión a internet.</code></pre>
+<pre><code>Sin datos: ejecuta esta sección con conexión a internet.</code></pre>
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-hr-pleyades-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -733,7 +733,7 @@ Figura&nbsp;1
 </section>
 <section id="nasa-exoplanet-archive" class="level2" data-number="4">
 <h2 data-number="4" class="anchored" data-anchor-id="nasa-exoplanet-archive"><span class="header-section-number">4</span> NASA Exoplanet Archive</h2>
-<div id="d1b9adb1" class="cell" data-execution_count="6">
+<div id="a0792c07" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Exoplanetas confirmados a menos de 30 parsecs del Sol</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co"># La tabla 'pscomppars' tiene un registro por planeta con los mejores valores</span></span>
@@ -813,7 +813,7 @@ HD 189733 b Radial Velocity  2.21857567 19.7638
 <span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>    ax.legend(fontsize<span class="op">=</span><span class="dv">8</span>)</span>
 <span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>    plt.show()</span>
 <span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
-<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Sin datos: ejecuta este módulo con conexión a internet."</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Sin datos: ejecuta esta sección con conexión a internet."</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Planetas por método de descubrimiento:
 discoverymethod
@@ -855,7 +855,7 @@ Figura&nbsp;2: Exoplanetas cercanos: período orbital vs radio, coloreados por m
 <section id="gaia-con-adql-avanzado" class="level2" data-number="5">
 <h2 data-number="5" class="anchored" data-anchor-id="gaia-con-adql-avanzado"><span class="header-section-number">5</span> Gaia con ADQL (avanzado)</h2>
 <p>El archivo de Gaia acepta consultas en <strong>ADQL</strong>, un SQL adaptado a la astronomía, con funciones para geometría en la esfera celeste. Este bloque no se ejecuta en el blog porque el servicio de Gaia puede tardar varios minutos; cópialo y pruébalo en tu computador.</p>
-<div id="5e0ce693" class="cell" data-execution_count="8">
+<div id="d5e95155" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Las 20 estrellas más brillantes de Gaia DR3 a menos de 1° de las Pléyades</span></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -898,7 +898,7 @@ Figura&nbsp;2: Exoplanetas cercanos: período orbital vs radio, coloreados por m
 </div>
 <div id="callout-4" class="callout-4-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="5404ba5f" class="cell" data-execution_count="9">
+<div id="d056d64b" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="co"># SOLUCIÓN: preguntas sobre la tabla de exoplanetas</span></span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -919,7 +919,7 @@ Figura&nbsp;2: Exoplanetas cercanos: período orbital vs radio, coloreados por m
 <span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>    por_anio <span class="op">=</span> df[<span class="st">'disc_year'</span>].value_counts()</span>
 <span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Año récord: </span><span class="sc">{</span><span class="bu">int</span>(por_anio.idxmax())<span class="sc">}</span><span class="ss"> con </span><span class="sc">{</span>por_anio<span class="sc">.</span><span class="bu">max</span>()<span class="sc">}</span><span class="ss"> planetas"</span>)</span>
 <span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
-<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Sin datos: ejecuta este módulo con conexión a internet."</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Sin datos: ejecuta esta sección con conexión a internet."</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Planeta más cercano: Proxima Cen b a 1.30 pc
 Descubiertos antes del 2000: 18
@@ -931,8 +931,8 @@ Año récord: 2020 con 47 planetas</code></pre>
 </div>
 <hr>
 </section>
-<section id="qué-aprendiste-en-este-módulo" class="level2 seccion-aprendiste" data-number="7">
-<h2 class="seccion-aprendiste anchored" data-number="7" data-anchor-id="qué-aprendiste-en-este-módulo"><span class="header-section-number">7</span> ¿Qué aprendiste en este módulo?</h2>
+<section id="qué-aprendiste-en-esta-sección" class="level2 seccion-aprendiste" data-number="7">
+<h2 class="seccion-aprendiste anchored" data-number="7" data-anchor-id="qué-aprendiste-en-esta-sección"><span class="header-section-number">7</span> ¿Qué aprendiste en esta sección?</h2>
 <ul>
 <li>✅ Qué servicios astronómicos existen y qué contienen</li>
 <li>✅ Consultar objetos por nombre y por región en Simbad</li>
@@ -942,7 +942,7 @@ Año récord: 2020 con 47 planetas</code></pre>
 <li>✅ Escribir consultas ADQL para Gaia</li>
 <li>✅ El patrón “consulta una vez y guarda en disco” para análisis reproducibles</li>
 </ul>
-<p><strong>Siguiente módulo →</strong> <a href="../../posts/avanzado/12-espectroscopia.html">12 · Espectroscopía con specutils</a></p>
+<p><strong>Siguiente sección →</strong> <a href="../../posts/avanzado/12-espectroscopia.html">12 · Espectroscopía con specutils</a></p>
 
 
 <!-- -->
@@ -1438,7 +1438,7 @@ Año récord: 2020 con 47 planetas</code></pre>
 <span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a>**astroquery** es la librería afiliada a Astropy que conecta Python con</span>
 <span id="cb18-25"><a href="#cb18-25" aria-hidden="true" tabindex="-1"></a>decenas de estos servicios. Todas las consultas devuelven una <span class="in">`Table`</span> de</span>
-<span id="cb18-26"><a href="#cb18-26" aria-hidden="true" tabindex="-1"></a>Astropy (módulo 05), así que ya sabes trabajar con los resultados.</span>
+<span id="cb18-26"><a href="#cb18-26" aria-hidden="true" tabindex="-1"></a>Astropy (sección 05), así que ya sabes trabajar con los resultados.</span>
 <span id="cb18-27"><a href="#cb18-27" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-28"><a href="#cb18-28" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Servicio <span class="pp">|</span> Qué contiene <span class="pp">|</span> Módulo de astroquery <span class="pp">|</span></span>
 <span id="cb18-29"><a href="#cb18-29" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|---|</span></span>
@@ -1450,14 +1450,14 @@ Año récord: 2020 con 47 planetas</code></pre>
 <span id="cb18-35"><a href="#cb18-35" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-36"><a href="#cb18-36" aria-hidden="true" tabindex="-1"></a>::: {.callout-note}</span>
 <span id="cb18-37"><a href="#cb18-37" aria-hidden="true" tabindex="-1"></a><span class="fu">## Requisitos previos</span></span>
-<span id="cb18-38"><a href="#cb18-38" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Módulos 04 (coordenadas) y 05 (tablas)</span>
+<span id="cb18-38"><a href="#cb18-38" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Secciones 04 (coordenadas) y 05 (tablas)</span>
 <span id="cb18-39"><a href="#cb18-39" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Instalar: <span class="in">`pip install astroquery`</span></span>
 <span id="cb18-40"><a href="#cb18-40" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Conexión a internet**</span>
 <span id="cb18-41"><a href="#cb18-41" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb18-42"><a href="#cb18-42" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-43"><a href="#cb18-43" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip}</span>
 <span id="cb18-44"><a href="#cb18-44" aria-hidden="true" tabindex="-1"></a><span class="fu">## Buena práctica: consulta una vez, guarda siempre</span></span>
-<span id="cb18-45"><a href="#cb18-45" aria-hidden="true" tabindex="-1"></a>Los servicios en línea pueden estar lentos o caídos. En este módulo usamos</span>
+<span id="cb18-45"><a href="#cb18-45" aria-hidden="true" tabindex="-1"></a>Los servicios en línea pueden estar lentos o caídos. En esta sección usamos</span>
 <span id="cb18-46"><a href="#cb18-46" aria-hidden="true" tabindex="-1"></a>un patrón profesional: **si el archivo ya existe en disco, lo leemos; si no,</span>
 <span id="cb18-47"><a href="#cb18-47" aria-hidden="true" tabindex="-1"></a>consultamos y lo guardamos**. Así tu análisis es reproducible y no</span>
 <span id="cb18-48"><a href="#cb18-48" aria-hidden="true" tabindex="-1"></a>dependes de la red cada vez que ejecutas el código.</span>
@@ -1593,7 +1593,7 @@ Año récord: 2020 con 47 planetas</code></pre>
 <span id="cb18-186"><a href="#cb18-186" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Distancia media        : </span><span class="sc">{</span>miembros[<span class="st">'dist_pc'</span>]<span class="sc">.</span>mean()<span class="sc">:.1f}</span><span class="ss"> pc"</span>)</span>
 <span id="cb18-187"><a href="#cb18-187" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"                       = </span><span class="sc">{</span>(miembros[<span class="st">'dist_pc'</span>].mean() <span class="op">*</span> u.pc)<span class="sc">.</span>to(u.lyr)<span class="sc">:.0f}</span><span class="ss">"</span>)</span>
 <span id="cb18-188"><a href="#cb18-188" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
-<span id="cb18-189"><a href="#cb18-189" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Sin datos: ejecuta este módulo con conexión a internet."</span>)</span>
+<span id="cb18-189"><a href="#cb18-189" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Sin datos: ejecuta esta sección con conexión a internet."</span>)</span>
 <span id="cb18-190"><a href="#cb18-190" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb18-191"><a href="#cb18-191" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-192"><a href="#cb18-192" aria-hidden="true" tabindex="-1"></a><span class="fu">### Diagrama color–magnitud (Hertzsprung–Russell)</span></span>
@@ -1635,7 +1635,7 @@ Año récord: 2020 con 47 planetas</code></pre>
 <span id="cb18-230"><a href="#cb18-230" aria-hidden="true" tabindex="-1"></a>    ax.legend()</span>
 <span id="cb18-231"><a href="#cb18-231" aria-hidden="true" tabindex="-1"></a>    plt.show()</span>
 <span id="cb18-232"><a href="#cb18-232" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
-<span id="cb18-233"><a href="#cb18-233" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Sin datos: ejecuta este módulo con conexión a internet."</span>)</span>
+<span id="cb18-233"><a href="#cb18-233" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Sin datos: ejecuta esta sección con conexión a internet."</span>)</span>
 <span id="cb18-234"><a href="#cb18-234" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb18-235"><a href="#cb18-235" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-236"><a href="#cb18-236" aria-hidden="true" tabindex="-1"></a>---</span>
@@ -1710,7 +1710,7 @@ Año récord: 2020 con 47 planetas</code></pre>
 <span id="cb18-309"><a href="#cb18-309" aria-hidden="true" tabindex="-1"></a>    ax.legend(fontsize<span class="op">=</span><span class="dv">8</span>)</span>
 <span id="cb18-310"><a href="#cb18-310" aria-hidden="true" tabindex="-1"></a>    plt.show()</span>
 <span id="cb18-311"><a href="#cb18-311" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
-<span id="cb18-312"><a href="#cb18-312" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Sin datos: ejecuta este módulo con conexión a internet."</span>)</span>
+<span id="cb18-312"><a href="#cb18-312" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Sin datos: ejecuta esta sección con conexión a internet."</span>)</span>
 <span id="cb18-313"><a href="#cb18-313" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb18-314"><a href="#cb18-314" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-315"><a href="#cb18-315" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip}</span>
@@ -1787,13 +1787,13 @@ Año récord: 2020 con 47 planetas</code></pre>
 <span id="cb18-390"><a href="#cb18-390" aria-hidden="true" tabindex="-1"></a>    por_anio <span class="op">=</span> df[<span class="st">'disc_year'</span>].value_counts()</span>
 <span id="cb18-391"><a href="#cb18-391" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Año récord: </span><span class="sc">{</span><span class="bu">int</span>(por_anio.idxmax())<span class="sc">}</span><span class="ss"> con </span><span class="sc">{</span>por_anio<span class="sc">.</span><span class="bu">max</span>()<span class="sc">}</span><span class="ss"> planetas"</span>)</span>
 <span id="cb18-392"><a href="#cb18-392" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
-<span id="cb18-393"><a href="#cb18-393" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Sin datos: ejecuta este módulo con conexión a internet."</span>)</span>
+<span id="cb18-393"><a href="#cb18-393" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Sin datos: ejecuta esta sección con conexión a internet."</span>)</span>
 <span id="cb18-394"><a href="#cb18-394" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb18-395"><a href="#cb18-395" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb18-396"><a href="#cb18-396" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-397"><a href="#cb18-397" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb18-398"><a href="#cb18-398" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-399"><a href="#cb18-399" aria-hidden="true" tabindex="-1"></a><span class="fu">## ¿Qué aprendiste en este módulo? {.seccion-aprendiste}</span></span>
+<span id="cb18-399"><a href="#cb18-399" aria-hidden="true" tabindex="-1"></a><span class="fu">## ¿Qué aprendiste en esta sección? {.seccion-aprendiste}</span></span>
 <span id="cb18-400"><a href="#cb18-400" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-401"><a href="#cb18-401" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Qué servicios astronómicos existen y qué contienen</span>
 <span id="cb18-402"><a href="#cb18-402" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Consultar objetos por nombre y por región en Simbad</span>
@@ -1803,7 +1803,7 @@ Año récord: 2020 con 47 planetas</code></pre>
 <span id="cb18-406"><a href="#cb18-406" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Escribir consultas ADQL para Gaia</span>
 <span id="cb18-407"><a href="#cb18-407" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ El patrón "consulta una vez y guarda en disco" para análisis reproducibles</span>
 <span id="cb18-408"><a href="#cb18-408" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-409"><a href="#cb18-409" aria-hidden="true" tabindex="-1"></a>**Siguiente módulo →** <span class="co">[</span><span class="ot">12 · Espectroscopía con specutils</span><span class="co">](../avanzado/12-espectroscopia.qmd)</span></span>
+<span id="cb18-409"><a href="#cb18-409" aria-hidden="true" tabindex="-1"></a>**Siguiente sección →** <span class="co">[</span><span class="ot">12 · Espectroscopía con specutils</span><span class="co">](../avanzado/12-espectroscopia.qmd)</span></span>
 </code></pre></div><button title="Copiar al portapapeles" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

@@ -146,7 +146,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
     <a class="nav-link active" href="../../posts/basico/01-introduccion.html" aria-current="page"> 
-<span class="menu-text">Módulos</span></a>
+<span class="menu-text">Secciones</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../../sobre.html"> 
@@ -352,7 +352,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#paso-3-doblar-promediar-y-caracterizar-el-planeta" id="toc-paso-3-doblar-promediar-y-caracterizar-el-planeta" class="nav-link" data-scroll-target="#paso-3-doblar-promediar-y-caracterizar-el-planeta"><span class="header-section-number">5.3</span> Paso 3: doblar, promediar y caracterizar el planeta</a></li>
   </ul></li>
   <li><a href="#ejercicio" id="toc-ejercicio" class="nav-link" data-scroll-target="#ejercicio"><span class="header-section-number">6</span> Ejercicio</a></li>
-  <li><a href="#qué-aprendiste-en-este-módulo" id="toc-qué-aprendiste-en-este-módulo" class="nav-link" data-scroll-target="#qué-aprendiste-en-este-módulo"><span class="header-section-number">7</span> ¿Qué aprendiste en este módulo?</a></li>
+  <li><a href="#qué-aprendiste-en-esta-sección" id="toc-qué-aprendiste-en-esta-sección" class="nav-link" data-scroll-target="#qué-aprendiste-en-esta-sección"><span class="header-section-number">7</span> ¿Qué aprendiste en esta sección?</a></li>
   </ul>
 </nav>
     </div>
@@ -445,7 +445,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div class="callout-body-container callout-body">
 <ul>
-<li>Módulos 03 (tiempo), 05 (tablas) y 10 (estadística)</li>
+<li>Secciones 03 (tiempo), 05 (tablas) y 10 (estadística)</li>
 </ul>
 </div>
 </div>
@@ -454,7 +454,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="una-estrella-variable-observada-desde-tierra" class="level2" data-number="2">
 <h2 data-number="2" class="anchored" data-anchor-id="una-estrella-variable-observada-desde-tierra"><span class="header-section-number">2</span> Una estrella variable observada desde tierra</h2>
 <p>Simulamos una estrella <strong>RR Lyrae</strong> (una pulsante clásica, usada para medir distancias en la galaxia) observada durante 40 noches desde un observatorio.</p>
-<div id="eb15b607" class="cell" data-execution_count="1">
+<div id="40b60be2" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Simular observaciones nocturnas e irregulares de una RR Lyrae</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -713,7 +713,7 @@ Figura&nbsp;4: Curva de luz simulada tipo TESS: los tránsitos apenas se disting
 </div>
 <section id="paso-1-quitar-la-variabilidad-lenta-detrending" class="level3" data-number="5.1">
 <h3 data-number="5.1" class="anchored" data-anchor-id="paso-1-quitar-la-variabilidad-lenta-detrending"><span class="header-section-number">5.1</span> Paso 1: quitar la variabilidad lenta (<em>detrending</em>)</h3>
-<div id="8694a8ff" class="cell" data-execution_count="6">
+<div id="b2d88de3" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Dividir por una versión suavizada de la curva (mediana móvil de 1 día)</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Así eliminamos la variación estelar lenta y conservamos los tránsitos cortos</span></span>
@@ -834,7 +834,7 @@ Figura&nbsp;6: Tránsito doblado: puntos individuales (gris) y promedios cada 20
 </div>
 </div>
 </div>
-<div id="59ef5d2c" class="cell" data-execution_count="9">
+<div id="f09d465d" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Del tránsito al planeta: radio y distancia a la estrella</span></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Profundidad ≈ (R_planeta / R_estrella)²</span></span>
@@ -849,7 +849,7 @@ Figura&nbsp;6: Tránsito doblado: puntos individuales (gris) y promedios cada 20
 <span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>R_planeta <span class="op">=</span> np.sqrt(prof_bls) <span class="op">*</span> R_estrella</span>
 <span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Radio del planeta: </span><span class="sc">{</span>R_planeta<span class="sc">.</span>to(u.R_jup)<span class="sc">:.2f}</span><span class="ss"> = </span><span class="sc">{</span>R_planeta<span class="sc">.</span>to(u.R_earth)<span class="sc">:.1f}</span><span class="ss">"</span>)</span>
 <span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Semieje mayor con la tercera ley de Kepler (módulo 14)</span></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Semieje mayor con la tercera ley de Kepler (sección 14)</span></span>
 <span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> ((const.G <span class="op">*</span> M_estrella <span class="op">*</span> P_bls<span class="op">**</span><span class="dv">2</span> <span class="op">/</span> (<span class="dv">4</span> <span class="op">*</span> np.pi<span class="op">**</span><span class="dv">2</span>)) <span class="op">**</span> (<span class="dv">1</span> <span class="op">/</span> <span class="dv">3</span>)).to(u.au)</span>
 <span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Distancia a la estrella: </span><span class="sc">{</span>a<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
 <span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"→ Un planeta del tamaño de Júpiter muy cerca de su estrella: un 'Júpiter caliente'"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
@@ -881,7 +881,7 @@ Distancia a la estrella: 0.0456 AU
 </div>
 <div id="callout-3" class="callout-3-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="ea2391e6" class="cell" data-execution_count="10">
+<div id="ca002079" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="co"># SOLUCIÓN: prueba de tránsitos pares vs impares</span></span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────────────────────────────────────────────</span></span>
@@ -919,8 +919,8 @@ Tránsitos individuales detectados: 8</code></pre>
 </div>
 <hr>
 </section>
-<section id="qué-aprendiste-en-este-módulo" class="level2 seccion-aprendiste" data-number="7">
-<h2 class="seccion-aprendiste anchored" data-number="7" data-anchor-id="qué-aprendiste-en-este-módulo"><span class="header-section-number">7</span> ¿Qué aprendiste en este módulo?</h2>
+<section id="qué-aprendiste-en-esta-sección" class="level2 seccion-aprendiste" data-number="7">
+<h2 class="seccion-aprendiste anchored" data-number="7" data-anchor-id="qué-aprendiste-en-esta-sección"><span class="header-section-number">7</span> ¿Qué aprendiste en esta sección?</h2>
 <ul>
 <li>✅ Crear y manejar <code>TimeSeries</code> con tiempos astronómicos</li>
 <li>✅ Encontrar períodos en datos irregulares con <code>LombScargle</code></li>
@@ -930,7 +930,7 @@ Tránsitos individuales detectados: 8</code></pre>
 <li>✅ Quitar tendencias lentas antes de buscar tránsitos</li>
 <li>✅ Detectar y caracterizar un exoplaneta con <code>BoxLeastSquares</code></li>
 </ul>
-<p><strong>Siguiente módulo →</strong> <a href="../../posts/avanzado/16-extensiones.html">16 · Extensiones y modelos propios</a></p>
+<p><strong>Siguiente sección →</strong> <a href="../../posts/avanzado/16-extensiones.html">16 · Extensiones y modelos propios</a></p>
 
 
 <!-- -->
@@ -1441,7 +1441,7 @@ Tránsitos individuales detectados: 8</code></pre>
 <span id="cb18-38"><a href="#cb18-38" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-39"><a href="#cb18-39" aria-hidden="true" tabindex="-1"></a>::: {.callout-note}</span>
 <span id="cb18-40"><a href="#cb18-40" aria-hidden="true" tabindex="-1"></a><span class="fu">## Requisitos previos</span></span>
-<span id="cb18-41"><a href="#cb18-41" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Módulos 03 (tiempo), 05 (tablas) y 10 (estadística)</span>
+<span id="cb18-41"><a href="#cb18-41" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Secciones 03 (tiempo), 05 (tablas) y 10 (estadística)</span>
 <span id="cb18-42"><a href="#cb18-42" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb18-43"><a href="#cb18-43" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-44"><a href="#cb18-44" aria-hidden="true" tabindex="-1"></a>---</span>
@@ -1776,7 +1776,7 @@ Tránsitos individuales detectados: 8</code></pre>
 <span id="cb18-391"><a href="#cb18-391" aria-hidden="true" tabindex="-1"></a>R_planeta <span class="op">=</span> np.sqrt(prof_bls) <span class="op">*</span> R_estrella</span>
 <span id="cb18-392"><a href="#cb18-392" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Radio del planeta: </span><span class="sc">{</span>R_planeta<span class="sc">.</span>to(u.R_jup)<span class="sc">:.2f}</span><span class="ss"> = </span><span class="sc">{</span>R_planeta<span class="sc">.</span>to(u.R_earth)<span class="sc">:.1f}</span><span class="ss">"</span>)</span>
 <span id="cb18-393"><a href="#cb18-393" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-394"><a href="#cb18-394" aria-hidden="true" tabindex="-1"></a><span class="co"># Semieje mayor con la tercera ley de Kepler (módulo 14)</span></span>
+<span id="cb18-394"><a href="#cb18-394" aria-hidden="true" tabindex="-1"></a><span class="co"># Semieje mayor con la tercera ley de Kepler (sección 14)</span></span>
 <span id="cb18-395"><a href="#cb18-395" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> ((const.G <span class="op">*</span> M_estrella <span class="op">*</span> P_bls<span class="op">**</span><span class="dv">2</span> <span class="op">/</span> (<span class="dv">4</span> <span class="op">*</span> np.pi<span class="op">**</span><span class="dv">2</span>)) <span class="op">**</span> (<span class="dv">1</span> <span class="op">/</span> <span class="dv">3</span>)).to(u.au)</span>
 <span id="cb18-396"><a href="#cb18-396" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Distancia a la estrella: </span><span class="sc">{</span>a<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
 <span id="cb18-397"><a href="#cb18-397" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"→ Un planeta del tamaño de Júpiter muy cerca de su estrella: un 'Júpiter caliente'"</span>)</span>
@@ -1826,7 +1826,7 @@ Tránsitos individuales detectados: 8</code></pre>
 <span id="cb18-443"><a href="#cb18-443" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-444"><a href="#cb18-444" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb18-445"><a href="#cb18-445" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-446"><a href="#cb18-446" aria-hidden="true" tabindex="-1"></a><span class="fu">## ¿Qué aprendiste en este módulo? {.seccion-aprendiste}</span></span>
+<span id="cb18-446"><a href="#cb18-446" aria-hidden="true" tabindex="-1"></a><span class="fu">## ¿Qué aprendiste en esta sección? {.seccion-aprendiste}</span></span>
 <span id="cb18-447"><a href="#cb18-447" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-448"><a href="#cb18-448" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Crear y manejar <span class="in">`TimeSeries`</span> con tiempos astronómicos</span>
 <span id="cb18-449"><a href="#cb18-449" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Encontrar períodos en datos irregulares con <span class="in">`LombScargle`</span></span>
@@ -1836,7 +1836,7 @@ Tránsitos individuales detectados: 8</code></pre>
 <span id="cb18-453"><a href="#cb18-453" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Quitar tendencias lentas antes de buscar tránsitos</span>
 <span id="cb18-454"><a href="#cb18-454" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Detectar y caracterizar un exoplaneta con <span class="in">`BoxLeastSquares`</span></span>
 <span id="cb18-455"><a href="#cb18-455" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-456"><a href="#cb18-456" aria-hidden="true" tabindex="-1"></a>**Siguiente módulo →** <span class="co">[</span><span class="ot">16 · Extensiones y modelos propios</span><span class="co">](16-extensiones.qmd)</span></span>
+<span id="cb18-456"><a href="#cb18-456" aria-hidden="true" tabindex="-1"></a>**Siguiente sección →** <span class="co">[</span><span class="ot">16 · Extensiones y modelos propios</span><span class="co">](16-extensiones.qmd)</span></span>
 </code></pre></div><button title="Copiar al portapapeles" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
